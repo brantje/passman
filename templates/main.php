@@ -139,7 +139,7 @@
 	</div>
 </div>
 <div id="editAddItemDialog" style="display: none;">
-   <form method="post" name="new_item">
+   <form method="post" name="new_item" id="editNewItem">
         <div id="item_tabs">
         <ul role="tablist">
             <li><a href="#tabs-01">Definition</a></li>

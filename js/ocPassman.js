@@ -111,7 +111,6 @@ $.fn.passwordStrength.defaults = {
 jQuery(document).ready(function($) {
 	containerHeight = $('#content').height();
 	containerWidth = $('#ocPassman').width();
-
 	$('#ocpContent').width(containerWidth - $('.menuContainer').width() - 2);
 	$('#pwList').width(containerWidth - $('.menuContainer').width());
 	$('#pwList').height(containerHeight - $('#infoContainer').height());
