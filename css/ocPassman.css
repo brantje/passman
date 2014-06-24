@@ -1,0 +1,153 @@
+#app-navigation li > a {
+ display: initial;
+ width: 100%; 
+ line-height: 25px;
+ padding: 0 0;
+}
+#ocPassman {
+	height: 100%;
+	width: 100%;
+}
+#menu ul {
+	margin-left: 1.3em;
+}
+.menuContainer {
+	width: 250px;
+	height: 100%;
+	float: left;
+	background-color: #f8f8f8;
+	border-right: 1px solid #ccc;
+}
+/*
+ #menu li {
+ background: url(../img/folder_closed.png) no-repeat;
+ padding-left: 20px;
+ background-position-y: 2px;
+ }
+ #menu li:hover {
+ background: url(../img/folder_open.png) no-repeat;
+ }
+ #menu .open {
+ background: url(../img/folder_open.png) no-repeat !important;
+ }*/
+
+div#ocpContent {
+	position: absolute;
+	left: 251px;
+	width: 76%;
+	height: 100%;
+}
+
+#addItem {
+	width: 95px;
+	float: right;
+}
+#pwList {
+	margin-left: 1px;
+	overflow: auto;
+	margin-top: 10px;
+}
+#pwList li {
+	list-style: none;
+	border-bottom: 1px solid #ddd;
+	height: 25px;
+	padding-left: 15px;
+}
+#pwList li:hover {
+	background: #f0f0f0;
+}
+
+div#infoContainer {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	border-top: 1px solid #ccc;
+	background: rgba(239, 239, 239, 1.0);
+}
+.icon-paste{
+	background: url(../img/copy.png) no-repeat;
+	background-position: center center;
+}
+#pwList .row-active {
+	background: #E2E2E2 !important;
+	font-weight: bold;
+}
+#pwList #actions {
+	float: right;
+	margin-right: 20px;
+	margin-top: 3px;
+	position: absolute;
+	right: 0px;
+}
+#actions span {
+	position: relative;
+	top: -3px;
+	margin-right: 10px;
+	font-weight: normal;
+}
+#actions span:hover {
+	color: rgb(0, 102, 255);
+}
+#infoContainer span.ui-icon.ui-icon-carat-1-e {
+	margin: 0px;
+}
+#item_tabs label {
+	display: block;
+}
+#item_tabs input, #item_tabs textarea {
+	width: 95%;
+}
+#item_tabs input[type="checkbox"]{
+	width:30px;
+}
+#pwTools{
+	font-size:9px; text-align:center; width:100%;
+}
+#pwTools label{
+	display:inline-block;
+}
+#pwTools input{
+	width: 30px;
+}
+.icon{
+	height:24px;
+	width: 24px;
+	display: inline-block;
+}
+label[for="item_login"]{
+	margin-top:10px;
+} 
+#tabs-02 > div {
+	margin-bottom: 10px;
+}
+#visible_pw {
+	display: none;
+	margin-left: 10px;
+	font-weight: bold;
+}
+#complex_attendue {
+	color: #D04806;
+}
+.save, .cancel {
+	width: 50px;
+	float: right;
+	text-align: center;
+}
+div#passwordStrengthDiv {
+	line-height: 3;
+	font-size: 13px;
+	margin: 0 auto;
+	margin-top: 10px;
+}
+
+.is0{background:url(../img/pwstrength.png) no-repeat 0 0;width:138px;height:7px;}
+.is10{background-position:0 -7px;}
+.is20{background-position:0 -14px;}
+.is30{background-position:0 -21px;}
+.is40{background-position:0 -28px;}
+.is50{background-position:0 -35px;}
+.is60{background-position:0 -42px;}
+.is70{background-position:0 -49px;}
+.is80{background-position:0 -56px;}
+.is90{background-position:0 -63px;}
+.is100{background-position:0 -70px;}
