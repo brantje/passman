@@ -104,19 +104,13 @@ $.fn.passwordStrength.defaults = {
 };
 
 jQuery(document).ready(function($) {
-	containerHeight = $('#content').height();
-	containerWidth = $('#ocPassman').width();
-	$('#ocpContent').width(containerWidth - $('.menuContainer').width() - 2);
-	$('#pwList').width(containerWidth - $('.menuContainer').width());
+	containerHeight = $('#app-content').height();
+	containerWidth = $('#app-content').width();
 	$('#pwList').height(containerHeight - $('#infoContainer').height());
-
+	$('#pwList').width(containerWidth-2);
+	
 	/* Setup menu */
 	$('#jsTree').jstree({
-		callback : {
-			onselect : function(NODE, TREE_OBJ) {
-				alert(NODE.id);
-			}
-		},
 		"core" : {
 			// so that create works
 			"check_callback" : true
@@ -195,7 +189,7 @@ jQuery(document).ready(function($) {
 
 	var openForm = function(v) {
 		$('#editAddItemDialog').dialog({
-			"width" : 425,
+			"width" : ($(document).width() > 425) ? 425 : $(document).width()-10,
 			close : function(event, ui) {
 				$(this).dialog('destroy');
 				document.getElementById("editNewItem").reset();

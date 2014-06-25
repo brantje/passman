@@ -4,6 +4,12 @@
  line-height: 25px;
  padding: 0 0;
 }
+#app-navigation-toggle {
+	z-index: 2;
+}
+#app-navigation {
+	overflow: auto;
+}
 #ocPassman {
 	height: 100%;
 	width: 100%;
@@ -52,6 +58,7 @@ div#ocpContent {
 	border-bottom: 1px solid #ddd;
 	height: 25px;
 	padding-left: 15px;
+	cursor: pointer;
 }
 #pwList li:hover {
 	background: #f0f0f0;

@@ -14,7 +14,9 @@ namespace OCA\Passman\AppInfo;
 
 use \OCP\AppFramework\App;
 
+
 use \OCA\Passman\Controller\PageController;
+use \OCA\Passman\Controller\FolderController;
 
 
 class Application extends App {
@@ -36,7 +38,13 @@ class Application extends App {
 			);
 		});
 
-
+		$container->registerService('FolderController', function($c) {
+			return new FolderController(
+				$c->query('AppName'), 
+				$c->query('Request'),
+				$c->query('UserId')
+			);
+		});
 		/**
 		 * Core
 		 */

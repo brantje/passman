@@ -21,7 +21,12 @@ namespace OCA\Passman\AppInfo;
  */
 $application = new Application();
 
-$application->registerRoutes($this, array('routes' => array(
+$application->registerRoutes($this, array(
+
+'routes' => array(
 	array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
-    array('name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'),
-)));
+),
+'resources' => array(
+	array('folder' => array('url' => '/folder')) 
+)
+));

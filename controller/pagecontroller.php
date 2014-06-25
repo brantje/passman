@@ -40,15 +40,4 @@ class PageController extends Controller {
         $params = array('user' => $this->userId);
         return new TemplateResponse('passman', 'main', $params);  // templates/main.php
     }
-
-
-    /**
-     * Simply method that posts back the payload of the request
-     * @NoAdminRequired
-     */
-    public function doEcho($echo) {
-        return array('echo' => $echo);
-    }
-
-
 }
