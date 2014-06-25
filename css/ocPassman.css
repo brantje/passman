@@ -56,9 +56,10 @@ div#ocpContent {
 #pwList li {
 	list-style: none;
 	border-bottom: 1px solid #ddd;
-	height: 25px;
+	height: 30px;
 	padding-left: 15px;
 	cursor: pointer;
+	line-height: 30px;
 }
 #pwList li:hover {
 	background: #f0f0f0;
@@ -70,6 +71,8 @@ div#infoContainer {
 	width: 100%;
 	border-top: 1px solid #ccc;
 	background: rgba(239, 239, 239, 1.0);
+	padding-bottom: 35px;
+	padding-top: 10px;
 }
 .icon-paste{
 	background: url(../img/copy.png) no-repeat;
@@ -86,11 +89,11 @@ div#infoContainer {
 	position: absolute;
 	right: 0px;
 }
-#actions span {
-	position: relative;
-	top: -3px;
-	margin-right: 10px;
-	font-weight: normal;
+#actions span:not(.icon) {
+position: relative;
+bottom: 8px;
+margin-right: 10px;
+font-weight: normal;
 }
 #actions span:hover {
 	color: rgb(0, 102, 255);
@@ -141,20 +144,13 @@ label[for="item_login"]{
 	text-align: center;
 }
 div#passwordStrengthDiv {
-	line-height: 3;
-	font-size: 13px;
-	margin: 0 auto;
+	font-size: 14px;
+	margin-left: 70px;
 	margin-top: 10px;
 }
 
-.is0{background:url(../img/pwstrength.png) no-repeat 0 0;width:138px;height:7px;}
-.is10{background-position:0 -7px;}
-.is20{background-position:0 -14px;}
-.is30{background-position:0 -21px;}
-.is40{background-position:0 -28px;}
-.is50{background-position:0 -35px;}
-.is60{background-position:0 -42px;}
-.is70{background-position:0 -49px;}
-.is80{background-position:0 -56px;}
-.is90{background-position:0 -63px;}
-.is100{background-position:0 -70px;}
+@media (max-width: 768px) {
+ div#topContent {
+   margin-left: 30px;
+ }
+}

@@ -2,6 +2,9 @@
 \OCP\Util::addStyle('passman', 'jstree-theme/style');
 \OCP\Util::addscript('passman', 'jstree.min');
 
+\OCP\Util::addStyle('passman', 'simplePassMeter/simplePassMeter');
+\OCP\Util::addscript('passman', 'jquery.simplePassMeter.min');
+
 \OCP\Util::addStyle('passman', 'ocPassman');
 \OCP\Util::addscript('passman', 'ocPassman');
 
@@ -184,7 +187,7 @@
                 <span class="icon-history icon" title="Generate password"></span>
                 <span class="icon-paste icon" title="Copy password"></span>
                 <span title="Mask/Display the password" class="icon icon-toggle"></span>
-                <br /><div id="passwordStrengthDiv" class="is0"></div>
+                <br /><div id="passwordStrengthDiv"></div>
             </div>
          </div>
         <div id="tabs-03" >
