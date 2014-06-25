@@ -32,14 +32,14 @@ class FolderController extends Controller {
      *          add it to any other method if you don't exactly know what it does
      *
      * @NoAdminRequired
-     * @NoCSRFRequired
      */
     public function index() {
         $params = array('test' => 'hi');
         return new JSONResponse($params);
     }
 	public function show() {
-		
+	    $params = array('test' => 'hi');
+        return new JSONResponse($params);
 		
 	}
 
