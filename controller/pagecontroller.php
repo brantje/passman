@@ -40,12 +40,12 @@ class PageController extends Controller {
         $params = array('user' => $this->userId);
         return new TemplateResponse('passman', 'main', $params);  // templates/main.php
     }
-	/*
+	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
 	public function settings() {
         $params = array('user' => $this->userId);
-        return new TemplateResponse('passman', 'main', $params);  // templates/main.php
+        return new TemplateResponse('passman', 'settings', $params);  // templates/main.php
     }
 }
