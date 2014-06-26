@@ -94,10 +94,11 @@ jQuery(document).ready(function($) {
 			close : function(event, ui) {
 				$(this).dialog('destroy');
 				document.getElementById("editNewItem").reset();
+				$('#pw1').trigger('keyup.simplePassMeter');
+				$('#item_tabs').tabs( 'destroy');
 			}
 		});
-		$('#item_tabs').tabs();
-
+	  $('#item_tabs').tabs();
 	};
 
 	$('#addItem').click(function() {
@@ -183,12 +184,12 @@ jQuery(document).ready(function($) {
 	
 	$('#pw1').bind({
         "score.simplePassMeter" : function(jQEvent, score) {
-            $('.simplePassMeterText').append(' ('+score+' points)');
+        	if(score > 0)
+            	$('.simplePassMeterText').append(' ('+score+' points)');
         }
     });
 	$('.button.cancel').click(function() {
-		$('#editAddItemDialog').dialog('destroy');
-		document.getElementById("editNewItem").reset();
+		$('#editAddItemDialog').dialog('close');
 	});
 });
 
