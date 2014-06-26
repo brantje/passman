@@ -27,6 +27,6 @@ $application->registerRoutes($this, array(
 	array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
 ),
 'resources' => array(
-	array('folder' => array('url' => '/folder')) 
+	array('folders' => array('url' => '/folders')) 
 )
 ));
