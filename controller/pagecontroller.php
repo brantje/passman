@@ -40,4 +40,9 @@ class PageController extends Controller {
         $params = array('user' => $this->userId);
         return new TemplateResponse('passman', 'main', $params);  // templates/main.php
     }
+	
+	public function settings() {
+        $params = array('user' => $this->userId);
+        return $params;// templates/main.php
+    }
 }

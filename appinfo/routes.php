@@ -28,6 +28,10 @@ $application->registerRoutes($this, array(
 
 'routes' => array(
 	array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
+	array('name' => 'page#settings', 'url' => '/settings', 'verb' => 'GET'),
+	array('name' => 'page#update_settings', 'url' => '/settings', 'verb' => 'POST'),
+
+	
 	
 	array('name' => 'folder_api#index', 'url' => '/api/v1/folders', 'verb' => 'GET'),
 	array('name' => 'folder_api#create', 'url' => '/api/v1/folders', 'verb' => 'POST'),
