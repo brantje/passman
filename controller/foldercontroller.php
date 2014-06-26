@@ -33,14 +33,11 @@ class FolderController extends Controller {
      *
      * @NoAdminRequired
      */
-    public function index() {
-        $params = array('test' => 'hi');
-        return new JSONResponse($params);
-    }
+    	public function index() {
+             return array('test' => 'hi');
+	}
 	public function show() {
-	    $params = array('test' => 'hi');
-        return new JSONResponse($params);
-		
+	     return array('test' => 'hi');
 	}
 
 	public function create() {
