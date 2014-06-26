@@ -21,6 +21,15 @@ jQuery(document).ready(function($) {
 			"items" : function($node) {
 				var tree = $("#jsTree").jstree(true);
 				return {
+					"Settings" : {
+						"separator_before" : false,
+						"separator_after" : true,
+						"label" : "Settings",  
+						"action" : function(obj) {
+ 						console.log($node);
+
+						}
+					},
 					"Create" : {
 						"separator_before" : false,
 						"separator_after" : false,
