@@ -37,6 +37,7 @@ class PageController extends Controller {
      */
     public function index() {
         $params = array('user' => $this->userId);
+		/* Added function that loads users folders */
         return new TemplateResponse('passman', 'main', $params);  // templates/main.php
     }
 	/**
@@ -45,6 +46,6 @@ class PageController extends Controller {
 	 */
 	public function settings() {
         $params = array('user' => $this->userId);
-        return new TemplateResponse('passman', 'settings', $params);  // templates/main.php
+        return new TemplateResponse('passman', 'settings', $params);  // templates/settings.php
     }
 }
