@@ -16,7 +16,7 @@ use \OCP\AppFramework\App;
 
 
 use \OCA\Passman\Controller\PageController;
-use \OCA\Passman\Controller\FolderController;
+use \OCA\Passman\Controller\FolderApiController;
 
 
 class Application extends App {
@@ -38,8 +38,8 @@ class Application extends App {
 			);
 		});
 
-		$container->registerService('FolderController', function($c) {
-			return new FolderController(
+		$container->registerService('FolderApiController', function($c) {
+			return new FolderApiController(
 				$c->query('AppName'), 
 				$c->query('Request'),
 				$c->query('UserId')
