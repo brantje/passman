@@ -17,7 +17,7 @@ use \OCP\AppFramework\App;
 
 use \OCA\Passman\Controller\PageController;
 use \OCA\Passman\Controller\FolderApiController;
-
+use \OCA\Passman\BusinessLayer\FolderBusinessLayer;
 
 class Application extends App {
 

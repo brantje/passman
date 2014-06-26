@@ -191,5 +191,8 @@ jQuery(document).ready(function($) {
 	$('.button.cancel').click(function() {
 		$('#editAddItemDialog').dialog('close');
 	});
+	
+	/* Load the folders */
+	$.getJSON(OC.generateUrl('apps/passman/api/v1/folders')).success(function(data) { console.log(data)});
 });
 
