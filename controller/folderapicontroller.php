@@ -33,7 +33,6 @@ class FolderApiController extends Controller {
      *          add it to any other method if you don't exactly know what it does
      *
      * @NoAdminRequired
-	 * @NoCSRFRequired
      */
 	public function index() {
         return array('test' => 'hi');
