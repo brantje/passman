@@ -25,15 +25,30 @@ class FolderBusinessLayer {
 		return $this->folderManager->getAllFromUser($userId);
 	}
 	
-	public function create($folderName, $userId, $parentId=0) {
+	public function create($folderName, $userId, $parentId=0,$renewal_period=0,$min_pw_strength) {
+		$folder =array();
+		$folder['name'] = $folderName;
+		$folder['user_id'] = $userId;
+		$folder['parent_id'] = $parentId;
+		$folder['renewal_period'] = $renewal_period;
+		$folder['min_pw_strength'] = $min_pw_strength;
+		return $this->folderManager->insert($folder);
+	}
+	public function update($folderId,$folderName, $userId, $parentId=0,$renewal_period=0,$min_pw_strength) {
+		$folder =array();
+		$folder['id'] = $folderId;
+		$folder['name'] = $folderName;
+		$folder['user_id'] = $userId;
+		$folder['parent_id'] = $parentId;
+		$folder['renewal_period'] = $renewal_period;
+		$folder['min_pw_strength'] = $min_pw_strength;
+		return $this->folderManager->update($folder);; 
+	}
 	
-
-		/*$folder = new Folder();
-		$folder->setName($folderName);
-		$folder->setUserId($userId);
-		$folder->setParentId($parentId);
-		$folder->setOpened(true);
-		return $this->folderMapper->insert($folder);*/
+	public function delete($folderId,$userId){
+		if(is_numeric($folderId)){
+			return $this->folderManager->delete($folderId,$userId);
+		}
 	}
 }
 

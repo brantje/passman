@@ -12,31 +12,7 @@
 <div id="app">
 	<div id="app-navigation">
 	<div id="jsTree">
-		<ul>
-	    <li id="node-1">Root
-	    <ul>
-	    <li>Root node 1
-	      <ul>
-	        <li>Child node 1</li>
-	        <li><a href="#">Child node 2</a></li>
-	      </ul>
-	    </li>
-	    <li>Root node 2</li>
-	    <li>Root node 3</li>
-	    <li>Root node 4
-	    	<ul>
-		        <li>Child node 1</li>
-		        <li><a href="#">Child node 2</a>
-		        	<ul>
-		       			 <li>child Child node 1</li>
-		       			 <li><a href="#">child Child node 2</a></li>
-		     			 </ul>
-		       </li>
-	      </ul>
-	   </li>
-	   </ul>
-	   </li>
-	  </ul>
+		
 	  </div>
   	</div>
 	<div id="app-content">
@@ -196,11 +172,24 @@
                 <span id="item_attach_uploadfiles" class="button">Start uploading files</span>
             </div>
         </div>
-        <div class="button cancel">Cancel</div>
+        <div class="button cancel" onclick="javascript:$(this).parent().parent().dialog('close')">Cancel</div>
         <div class="button save">Save</div>
         </div>
     </form>
 </div>
   
+ <div id="folderSettingsDialog" style="display: none;">
+ 	<form id="folderSettings">
+ 	<input type="hidden" name="folderId"  id="folderId"/>
+ 	<label for="edit_folder_complexity" class="label_cpm">Required complexity: </label><br />
+    <select id="min_pw_strength" name="min_pw_strength">
+                <option value="">---</option><option value="0">Very weak</option><option value="25">Weak</option><option value="50">Medium</option><option value="60">Strong</option><option value="70">Very strong</option><option value="80">Heavy</option><option value="90">Very heavy</option>
+    </select><br />
+    <label for="renewal_period" class="label_cpm">Renewal period (days): </label>
+    <input type="text" name="renewal_period" id="renewal_period" >
+    </form>
+    <div class="button cancel" onclick="javascript:$(this).parent().dialog('close')">Cancel</div>
+    <div class="button save">Save</div>
+ </div> 
 
   

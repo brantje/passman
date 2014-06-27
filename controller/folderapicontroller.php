@@ -41,30 +41,37 @@ class FolderApiController extends Controller {
      */
 	public function index() {
 		$result['folders'] = $this->folderBusinessLayer->getAll($this->userId); 
+		
 		return new JSONResponse($result);
 	}
 
-	
 	/**
+	 * Update to create and edit items 
+	 * @param Folder ID 
+	 *
 	 * @NoAdminRequired
 	 */
-	public function create() {
-		return array('test' => 'hi');
+	public function update($id) {
+		$folderId = $this->params('folderId');
+		$folderTitle = $this->params('title');
+		$folderparent = (int) $this->params('parent');
+		$renewal_period = (int) $this->params('renewal_period');
+		$min_pw_strength = (int) $this->params('min_pw_strength');
+		$response = array($folderId,$folderTitle,$folderparent);
+		if(is_numeric($folderId)){
+			$result['success'] = $this->folderBusinessLayer->update($folderId,$folderTitle,$this->userId,$folderparent,$renewal_period,$min_pw_strength);
+		}
+		else {
+			$result['folderid'] = $this->folderBusinessLayer->create($folderTitle,$this->userId,$folderparent,$renewal_period,$min_pw_strength); 
+		}
+		return new JSONResponse($result); 
 	}
-	
-	/**
-	 * @NoAdminRequired
-	 */
-	public function update() {
-		
-
-	}
 
 	/**
 	 * @NoAdminRequired
 	 */
-	public function delete() {
+	public function delete($folderId) {
 		
-
+	return new JSONResponse($this->folderBusinessLayer->delete($folderId,$this->userId)); 
 	}
 }
