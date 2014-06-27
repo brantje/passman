@@ -18,6 +18,7 @@ If you want to help, git clone this repo, make your changes and send a PR.
 
 #Todo
  - Create the backend logic
+ - File uploading
  - Firefox / chrome sync
  
 #Not working
