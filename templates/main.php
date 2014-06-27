@@ -172,7 +172,7 @@
                 <span id="item_attach_uploadfiles" class="button">Start uploading files</span>
             </div>
         </div>
-        <div class="button cancel" onclick="javascript:$(this).parent().parent().dialog('close')">Cancel</div>
+        <div class="button cancel">Cancel</div>
         <div class="button save">Save</div>
         </div>
     </form>
@@ -188,7 +188,7 @@
     <label for="renewal_period" class="label_cpm">Renewal period (days): </label>
     <input type="text" name="renewal_period" id="renewal_period" >
     </form>
-    <div class="button cancel" onclick="javascript:$(this).parent().dialog('close')">Cancel</div>
+    <div class="button cancel">Cancel</div>
     <div class="button save">Save</div>
  </div> 
 

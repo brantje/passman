@@ -141,7 +141,14 @@ jQuery(document).ready(function($) {
             	$('.simplePassMeterText').append(' ('+score+' points)');
         }
     });
-
+	$('#editAddItemDialog .cancel').click(function(){
+		$('#editAddItemDialog').dialog('close');
+	})
+	
+	$('#folderSettingsDialog .cancel').click(function(){
+		$('#folderSettingsDialog').dialog('close');
+	})
+	
 	$('#folderSettingsDialog .save').click(function(){
 		$(document).data('currentFolder');
 		
@@ -239,6 +246,7 @@ function generateFolderStructure(){
 			path += '<div class="' + classes + '" data-dir="' + $(dir).attr('id') + '"><a>' + v2 + '</a></div>';
 		});
 		$('#crumbs').html(path);
+		console.log('Load folder: '+ $(dir).attr('id').replace('ajson',''));
 	}).bind('loaded.jstree',function(evt){
 		$(this).jstree('open_node', $('#ajson0'));
 	});
