@@ -250,12 +250,12 @@ function generateFolderStructure(){
 }
 
 function getFolderById(id){
-	var currentFolder;
+	var folder;
 	$.each($(document).data('folderStructure'),function(){
 		if(id==this.id)
-			currentFolder = this;
+			folder = this;
 	})
-	return currentFolder;
+	return folder;
 }
 
 function folderSettings(node){

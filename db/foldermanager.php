@@ -43,7 +43,7 @@ class FolderManager {
 		$query -> bindParam(4, $folder['renewal_period'], \PDO::PARAM_INT);
 		$query -> bindParam(5, $folder['min_pw_strength'], \PDO::PARAM_INT);
 		$result = $query -> execute();
-		return $this->db->getInsertId('oc_passman_folders');
+		return $this->db->getInsertId('`*PREFIX*passman_folders`');
 		
 	}
 	public function update($folder) {
