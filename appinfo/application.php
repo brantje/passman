@@ -18,6 +18,7 @@ use \OCP\AppFramework\App;
 use \OCA\Passman\Controller\PageController;
 use \OCA\Passman\Controller\FolderApiController;
 use \OCA\Passman\BusinessLayer\FolderBusinessLayer;
+use \OCA\Passman\Db\FolderManager;
 
 class Application extends App {
 
@@ -42,16 +43,40 @@ class Application extends App {
 			return new FolderApiController(
 				$c->query('AppName'), 
 				$c->query('Request'),
+				$c->query('FolderBusinessLayer'),
 				$c->query('UserId')
 			);
 		});
+		
+		 
+		/**
+		* Business Layer
+		*/
+		$container->registerService('FolderBusinessLayer', function($c) {
+			return new FolderBusinessLayer(
+				$c->query('FolderManager')
+			);
+		});
+		
+		/**
+		 * Mappers
+		 */
+		$container->registerService('FolderManager', function($c) {
+			return new FolderManager(
+				$c->query('ServerContainer')->getDb()
+			);
+		});
+		
 		/**
 		 * Core
 		 */
 		$container->registerService('UserId', function($c) {
 			return \OCP\User::getUser();
 		});		
-		
+		$container->registerService('Db', function() {
+			return new Db();
+		});
+				
 	}
 
 

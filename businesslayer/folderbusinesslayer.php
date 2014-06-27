@@ -1,26 +1,40 @@
 <?php
 /**
- * ownCloud - News
+ * ownCloud - passman
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
- * @author Alessandro Cosentino <cosenal@gmail.com>
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
- * @copyright Alessandro Cosentino 2012
- * @copyright Bernhard Posselt 2012, 2014
+ * @author Sander Brand <brantje@gmail.com>
+ * @copyright Sander Brand 2014
  */
-
+ 
 namespace OCA\Passman\BusinessLayer;
 
-use \OCA\News\Db\Folder;
-use \OCA\News\Db\FolderMapper;
-use \OCA\News\Utility\Config;
+use \OCA\Passman\Db\FolderManager;
+use \OCA\Passman\Utility\Config;
 
 
 class FolderBusinessLayer {
+	private $folderManager;
+	public function __construct(FolderManager $folderManager){
+		$this->folderManager = $folderManager;
+	}
+	
+	public function getAll($userId) {
+		return $this->folderManager->getAllFromUser($userId);
+	}
+	
+	public function create($folderName, $userId, $parentId=0) {
+	
 
-
+		/*$folder = new Folder();
+		$folder->setName($folderName);
+		$folder->setUserId($userId);
+		$folder->setParentId($parentId);
+		$folder->setOpened(true);
+		return $this->folderMapper->insert($folder);*/
+	}
 }
 
 ?>
