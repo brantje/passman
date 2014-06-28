@@ -266,7 +266,7 @@ jQuery(document).ready(function($) {
 		}
         return $( "<li></li>" )
             .data( "item.autocomplete", item )
-            .append( "<a>" + item.label + "<br><font class=\"description\">" + line1 + "</font></a>" )
+            .append( "<a><strong>" + item.label + "</strong><br><font class=\"description\">" + line1 + "</font></a>" )
             .appendTo( ul );
     };
 
@@ -441,6 +441,7 @@ function generateFolderStructure(){
 		});
 		$('#crumbs').html(path);
 		loadFolder($(dir).attr('id').replace('ajson',''));
+		$('#pwList').click();
 	}).bind('loaded.jstree',function(evt){
 		$(this).jstree('open_node', $('#ajson0'));
 	});
