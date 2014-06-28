@@ -276,14 +276,10 @@ function encryptionKeyDialog(){
 								$(this).dialog("close");
 								setEncKey($('#ecKey').val())
 								if($('#ecRemember:checked').length > 0){
+									$.jStorage.set("ENC_KEY", $('#ecKey').val());
 									if($('#rememberTime').val() != 'forever'){
 										var time = $('#rememberTime').val()*60*1000;
-										$.jStorage.set("ENC_KEY", $('#ecKey').val());
 										$.jStorage.setTTL("ENC_KEY", time);
-									}
-									else
-									{
-										$.jStorage.set("ENC_KEY", $('#ecKey').val());
 									}
 								}
 							} 
