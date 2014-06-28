@@ -26,6 +26,7 @@
 					</div>  
 					<button class="button " id="addItem" disabled="disabled">Create item</button>
 					<button class="button" id="editItem" disabled="disabled">Edit item</button>
+					<button class="button" id="deleteItem" disabled="disabled">Delete item</button>
 		</div>
 		<div id="pwList">
 			<li>Label</li>

@@ -95,8 +95,9 @@ class ItemManager {
 		$sql = 'DELETE FROM `*PREFIX*passman_items` WHERE `id`=? AND user_id=?';
 		$query = $this->db -> prepareQuery($sql);
 		$query -> bindParam(1, $itemId, \PDO::PARAM_INT);
-		$query -> bindParam(2, $userId, \PDO::PARAM_INT);
+		$query -> bindParam(2, $userId, \PDO::PARAM_STR);
 		$result = $query -> execute();
-	}
+		return array('deleted'=>$itemId);
+		}
 
 }

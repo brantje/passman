@@ -37,15 +37,19 @@ jQuery(document).ready(function($) {
 		$(this).addClass('row-active');
 		loadItem($(this).attr('data-id'));
 		$('#editItem').attr('disabled',false)
+		$('#deleteItem').attr('disabled',false)
 
 	})
 	$('#pwList').click(function(){
 		$('#editItem').attr('disabled','disabled');
+		$('#deleteItem').attr('disabled','disabled');
 		$('#pwList li').removeClass('row-active');
 	})
 	$('#editItem').click(function(){
-		console.log('xlick');
 		editItem($('.row-active').attr('data-id'));
+	})
+	$('#deleteItem').click(function(){
+		deleteItem($('.row-active').attr('data-id'));
 	})
 
 	$('#addItem').click(function() {
@@ -354,7 +358,8 @@ function loadFolder(folderId){
 	}
 	else
 	{
-		$('#addItem').attr('disabled','disabled')
+		$('#addItem').attr('disabled','disabled');
+		$('#addItem').attr('disabled','disabled');
 	}
 	$('#pwList').html('<span id="itemsLoading" class="icon-loading icon" style="height: 32px; width: 32px; margin-left: 10px;"></span>')
 	$.get(OC.generateUrl('apps/passman/api/v1/items/'+folderId),function(data){
@@ -409,4 +414,15 @@ function editItem(itemId){
 	    var edtmapper = {item_id: item.id,folderid: item.folderid, label: item.label,desc: item.description,pw1: item.password,account: item.account,email: item.email, url: item.url,id_files: '',id_tags: ''}
 		openForm(edtmapper);
 	})
+}
+
+function deleteItem(itemId){
+	$.ajax({
+    url: OC.generateUrl('apps/passman/api/v1/item/'+itemId),
+    type: 'DELETE',
+    success: function(data) {
+    	console.log(data)
+        $('#pwList li[data-id='+ data.deleted+']').slideUp(function(){$(this).remove()});
+    }
+});
 }

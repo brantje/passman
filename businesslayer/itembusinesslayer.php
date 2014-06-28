@@ -55,10 +55,8 @@ class ItemBusinessLayer {
 		return $this->ItemManager->update($folder);
 	}
 	
-	public function delete($folderId,$userId){
-		if(is_numeric($folderId)){
-			return $this->ItemManager->delete($folderId,$userId);
-		}
+	public function delete($itemId,$userId){
+		return $this->ItemManager->delete($itemId,$userId);
 	}
 }
 
