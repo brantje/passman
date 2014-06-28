@@ -6,6 +6,7 @@
 \OCP\Util::addscript('passman', 'jquery.simplePassMeter.min');
 
 \OCP\Util::addscript('passman', 'encryption');
+\OCP\Util::addscript('passman', 'jsStorage');
 
 \OCP\Util::addStyle('passman', 'ocPassman');
 \OCP\Util::addscript('passman', 'ocPassman');
@@ -191,4 +192,20 @@
     <div class="button save">Save</div>
  </div> 
 
+<div id="encryptionKeyDialog">
+	<p>Eneter your encryption key.<br />If this if the first time you use Passman, this key will be used for encryption your passwords</p>
+	<input type="password" id="ecKey" style="width: 150px;" /><br />
+	<input type="checkbox" id="ecRemember" />Remeber this key for 
+	<select id="rememberTime">
+		<option value="15">15 Minutes</option>
+		<option value="15">30 Minutes</option>
+		<option value="60">60 Minutes</option>
+		<option value="180">3 Hours</option>
+		<option value="480">8 Hours</option>
+		<option value="1440">1 Day</option>
+		<option value="10080">7 Days</option>
+		<option value="forever">Forever</option>
+	</select>
+	
+</div>
   

@@ -44,6 +44,8 @@ jQuery(document).ready(function($) {
 		$('#editItem').attr('disabled','disabled');
 		$('#deleteItem').attr('disabled','disabled');
 		$('#pwList li').removeClass('row-active');
+		var mapper = {id_label:'',id_desc: '',hid_pw: '',id_login:'',id_email: '', id_url: '',id_files: '',id_tags: ''}
+		$.each(mapper,function(k,v){ $('#'+k).html(v)})
 	})
 	$('#editItem').click(function(){
 		editItem($('.row-active').attr('data-id'));
@@ -154,9 +156,10 @@ jQuery(document).ready(function($) {
 		/**
 		 * @TODO Add form check logic, password encryption
 		 */
-		
+		formData.pw1 = Aes.Ctr.encrypt(formData.pw1,getEncKey(),256);
+		formData.pw2 = Aes.Ctr.encrypt(formData.pw2,getEncKey(),256);
 		$.post(postUrl,formData,function(data){
-			if(data.success > 0){
+			if(data.success){
 				$('#pwList li[data-id='+ data.success.id+']').html( data.success.label );
 			}
 			else
@@ -188,7 +191,55 @@ jQuery(document).ready(function($) {
 	
 	/* Load items in the root folder */
 	setTimeout(function(){loadFolder(0)},250);
+	
+	/**
+	 * Request the user encryption key (if it is not found)
+	 */
+	var ls = $.jStorage.get("ENC_KEY");
+	if(!ls || !$.jStorage.storageAvailable()){
+	    encryptionKeyDialog();
+	}
+	else
+	{
+		setEncKey($.jStorage.get("ENC_KEY"));
+	}
 });
+function encryptionKeyDialog(){
+	$('#encryptionKeyDialog').dialog({
+						modal: true,
+						open: function(event, ui) { 
+							$(".ui-dialog-titlebar-close", ui.dialog || ui).hide(); 
+						},
+						buttons: { "Ok": function() {
+								$(this).dialog("close");
+								setEncKey($('#ecKey').val())
+								if($('#ecRemember:checked').length > 0){
+									if($('#rememberTime').val() != 'forever'){
+										var time = $('#rememberTime').val()*60*1000;
+										$.jStorage.set("ENC_KEY", $('#ecKey').val());
+										$.jStorage.setTTL("ENC_KEY", time);
+									}
+									else
+									{
+										$.jStorage.set("ENC_KEY", $('#ecKey').val());
+									}
+								}
+							} 
+						}
+					})
+}
+
+/**
+ * Set encryption key
+ */
+function setEncKey(key){
+	$(document).data('ENC_KEY',key);
+}
+
+function getEncKey(){
+	return $(document).data('ENC_KEY')
+}
+
 function loadFolders(){
 	$.getJSON(OC.generateUrl('apps/passman/api/v1/folders')).success(function(data) { 
 		var folders = [{'id': 'ajson0','parent': '#','text': 'Root'}]
@@ -386,7 +437,7 @@ function loadFolder(folderId){
 function loadItem(id){
 	$.get(OC.generateUrl('apps/passman/api/v1/item/'+id),function(data){
 		var item = data.item;
-		var mapper = {id_label: item.label,id_desc: item.description,hid_pw: item.password,account: item.account,id_email: item.email, id_url: item.url,id_files: '',id_tags: ''}
+		var mapper = {id_label: item.label,id_desc: item.description,hid_pw: item.password,id_login: item.account,id_email: item.email, id_url: item.url,id_files: '',id_tags: ''}
 		$.each(mapper,function(k,v){ $('#'+k).html(v)})
 		return mapper;
 	})
@@ -411,7 +462,8 @@ function openForm(mapper) {
 function editItem(itemId){
 	$.get(OC.generateUrl('apps/passman/api/v1/item/'+itemId),function(data){
 		var item = data.item;
-	    var edtmapper = {item_id: item.id,folderid: item.folderid, label: item.label,desc: item.description,pw1: item.password,account: item.account,email: item.email, url: item.url,id_files: '',id_tags: ''}
+		item.password = Aes.Ctr.decrypt(item.password,getEncKey(),256);
+	    var edtmapper = {item_id: item.id,folderid: item.folderid, label: item.label,desc: item.description,pw1: item.password,pw2: item.password,account: item.account,email: item.email, url: item.url,id_files: '',id_tags: ''}
 		openForm(edtmapper);
 	})
 }

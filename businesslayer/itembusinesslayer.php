@@ -25,7 +25,9 @@ class ItemBusinessLayer {
 		return $this->ItemManager->listItems($folderId,$userId);
 	}
 	public function get($itemId,$userId) {
-		return $this->ItemManager->get($itemId,$userId);
+		$result = $this->ItemManager->get($itemId,$userId);
+		$result['description'] = nl2br($result['description']);
+		return $result;
 	}
 	
 	public function create($folderId,$userId,$label,$desc,$pass,$account,$email,$url) {
