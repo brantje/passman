@@ -9,6 +9,7 @@ It features client side password encryption with aes.
 - Add items in a folder
 - Folder tree
 - Client side aes password encryption
+- Option to remember the encryption key in the localstorage.
 - Password generator with strength indicator
 - Abillity to add files to an item (usefull for qr codes, serials, ssl keys etc).
 
@@ -17,7 +18,8 @@ It features client side password encryption with aes.
 If you want to help, git clone this repo, make your changes and send a PR.
 
 #Todo
- - Create the backend logic
+ - Bug fixes
+ - Check in the backend if folderid exists
  - File uploading
  - Firefox / chrome sync
  
