@@ -19,6 +19,18 @@
 	<div id="jsTree">
 		
 	  </div>
+	  <div id="app-settings">
+			<div id="app-settings-header">
+				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
+			</div>
+			<div id="app-settings-content">
+					<div id="sessionTimeContainer" style="display: none;">
+						<h2>Session time</h2>
+						<em>Your session will expire in:<br /><span id="sessionExpire"></span></em>
+					</div>
+					<p><a href="#" class="lockSession">Lock session</a></p>
+			</div>
+		</div>
   	</div>
 	<div id="app-content">
 		<div id="topContent">
@@ -200,6 +212,7 @@
 	<input type="password" id="ecKey" style="width: 150px;" /><br />
 	<input type="checkbox" id="ecRemember" />Remeber this key for 
 	<select id="rememberTime">
+
 		<option value="15">15 Minutes</option>
 		<option value="15">30 Minutes</option>
 		<option value="60">60 Minutes</option>
@@ -207,7 +220,7 @@
 		<option value="480">8 Hours</option>
 		<option value="1440">1 Day</option>
 		<option value="10080">7 Days</option>
-		<option value="forever">Forever</option>
+		<option value="43200">30 Days</option>
 	</select>
 	
 </div>

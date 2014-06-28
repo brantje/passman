@@ -207,8 +207,13 @@ jQuery(document).ready(function($) {
 	else
 	{
 		setEncKey($.jStorage.get("ENC_KEY"));
+		$('#sessionTimeContainer').show();
+		countLSTTL();
 	}
-	
+	$('.lockSession').click(function(){
+		resetStorageKey();
+		encryptionKeyDialog();
+	})
 	
 	 /* Auto complete search */
 
@@ -262,6 +267,39 @@ jQuery(document).ready(function($) {
     };
 
 });
+
+function countLSTTL(){
+	var expire =  $.jStorage.getTTL('ENC_KEY')/1000;
+	var days=Math.floor(expire / 86400); 
+	var hours = Math.floor((expire - (days * 86400 ))/3600);
+	var minutes = Math.floor((expire - (days * 86400 ) - (hours *3600 ))/60);
+	var secs = Math.floor((expire - (days * 86400 ) - (hours *3600 ) - (minutes*60)));
+	
+	var str ='';
+	if(days > 0)
+		str += days + ' days ';
+	if(hours < 10)
+		hours = '0'+hours;
+	if(minutes < 10)
+		minutes = '0'+minutes;
+	if(secs < 10)
+		secs='0'+secs
+	str += hours+':';
+	str += minutes+':';
+	str += secs;
+	
+	if(days==0 && hours=="00" && minutes=="00" && secs=="00"){
+		resetStorageKey();
+		encryptionKeyDialog();
+		clearInterval(ttltimer);
+	}
+	
+	$('#sessionExpire').text(str)
+	ttltimer = setInterval(function(){
+		countLSTTL()
+	},1000)
+}
+
 function encryptionKeyDialog(){
 	$('#encryptionKeyDialog').dialog({
 						modal: true,
@@ -280,8 +318,13 @@ function encryptionKeyDialog(){
 									if($('#rememberTime').val() != 'forever'){
 										var time = $('#rememberTime').val()*60*1000;
 										$.jStorage.setTTL("ENC_KEY", time);
+										$('#sessionTimeContainer').show();
+										countLSTTL();
 									}
 								}
+							    $('#ecKey').val('');
+							    $('#ecRemember').removeAttr('checked');
+							    $('#rememberTime').val('15');
 							} 
 						}
 					})
@@ -291,6 +334,10 @@ function encryptionKeyDialog(){
 	 		$('.ui-dialog-buttonpane button').click()
 	 	}
 	 	
+	 })
+	 
+	 $('#rememberTime').change(function(){
+	 	$('#ecRemember').attr('checked','checked');
 	 })
 }
 
@@ -302,10 +349,11 @@ function setEncKey(key){
 }
 
 function getEncKey(){
-	return $(document).data('ENC_KEY')
+	return $(document).data('ENC_KEY');
 }
 function resetStorageKey(){
-	$.jStorage.deleteKey("ENC_KEY")
+	$.jStorage.deleteKey("ENC_KEY");
+	$(document).data('ENC_KEY');
 }
 
 function loadFolders(){
