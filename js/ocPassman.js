@@ -268,37 +268,38 @@ jQuery(document).ready(function($) {
 
 });
 
-function countLSTTL(){
-	var expire =  $.jStorage.getTTL('ENC_KEY')/1000;
-	var days=Math.floor(expire / 86400); 
-	var hours = Math.floor((expire - (days * 86400 ))/3600);
-	var minutes = Math.floor((expire - (days * 86400 ) - (hours *3600 ))/60);
-	var secs = Math.floor((expire - (days * 86400 ) - (hours *3600 ) - (minutes*60)));
-	
-	var str ='';
-	if(days > 0)
+
+function countLSTTL() {
+	var expire = $.jStorage.getTTL('ENC_KEY') / 1000;
+	var days = Math.floor(expire / 86400);
+	var hours = Math.floor((expire - (days * 86400 )) / 3600);
+	var minutes = Math.floor((expire - (days * 86400 ) - (hours * 3600 )) / 60);
+	var secs = Math.floor((expire - (days * 86400 ) - (hours * 3600 ) - (minutes * 60)));
+
+	var str = '';
+	if (days > 0)
 		str += days + ' days ';
-	if(hours < 10)
-		hours = '0'+hours;
-	if(minutes < 10)
-		minutes = '0'+minutes;
-	if(secs < 10)
-		secs='0'+secs
-	str += hours+':';
-	str += minutes+':';
+	if (hours < 10)
+		hours = '0' + hours;
+	if (minutes < 10)
+		minutes = '0' + minutes;
+	if (secs < 10)
+		secs = '0' + secs
+	str += hours + ':';
+	str += minutes + ':';
 	str += secs;
-	
-	if(days==0 && hours=="00" && minutes=="00" && secs=="00"){
+
+	$('#sessionExpire').text(str)
+	if (days == 0 && hours == "00" && minutes == "00" && secs == "00") {
 		resetStorageKey();
 		encryptionKeyDialog();
-		clearInterval(ttltimer);
+	} else {
+		ttltimer = setTimeout(function() {
+			countLSTTL()
+		}, 1000)
 	}
-	
-	$('#sessionExpire').text(str)
-	ttltimer = setInterval(function(){
-		countLSTTL()
-	},1000)
 }
+
 
 function encryptionKeyDialog(){
 	$('#encryptionKeyDialog').dialog({

@@ -212,7 +212,6 @@
 	<input type="password" id="ecKey" style="width: 150px;" /><br />
 	<input type="checkbox" id="ecRemember" />Remeber this key for 
 	<select id="rememberTime">
-
 		<option value="15">15 Minutes</option>
 		<option value="15">30 Minutes</option>
 		<option value="60">60 Minutes</option>
