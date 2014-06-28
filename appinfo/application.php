@@ -16,9 +16,14 @@ use \OCP\AppFramework\App;
 
 
 use \OCA\Passman\Controller\PageController;
+
 use \OCA\Passman\Controller\FolderApiController;
 use \OCA\Passman\BusinessLayer\FolderBusinessLayer;
 use \OCA\Passman\Db\FolderManager;
+
+use \OCA\Passman\Controller\ItemApiController;
+use \OCA\Passman\BusinessLayer\ItemBusinessLayer;
+use \OCA\Passman\Db\ItemManager;
 
 class Application extends App {
 
@@ -47,6 +52,14 @@ class Application extends App {
 				$c->query('UserId')
 			);
 		});
+		$container->registerService('ItemApiController', function($c) {
+			return new ItemApiController(
+				$c->query('AppName'), 
+				$c->query('Request'),
+				$c->query('ItemBusinessLayer'),
+				$c->query('UserId')
+			);
+		});
 		
 		 
 		/**
@@ -58,11 +71,22 @@ class Application extends App {
 			);
 		});
 		
+		$container->registerService('ItemBusinessLayer', function($c) {
+			return new ItemBusinessLayer(
+				$c->query('ItemManager')
+			);
+		});
+		
 		/**
 		 * Mappers
 		 */
 		$container->registerService('FolderManager', function($c) {
 			return new FolderManager(
+				$c->query('ServerContainer')->getDb()
+			);
+		});
+		$container->registerService('ItemManager', function($c) {
+			return new ItemManager(
 				$c->query('ServerContainer')->getDb()
 			);
 		});

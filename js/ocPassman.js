@@ -28,34 +28,30 @@ jQuery(document).ready(function($) {
 		$('#pwList').width(containerWidth - 2);
 	});
 	
-
-	$('#pwList li').click(function(evt) {
+	/**
+	 * Bind click to show the item information. Bind hover to show actions
+	 * Bind .action click to handle actions
+	 */
+	$(document).on('click','#pwList li',function(evt) {
 		$('#pwList li').removeClass('row-active');
 		$(this).addClass('row-active');
-		/* Load Item */
+		loadItem($(this).attr('data-id'));
+		$('#editItem').attr('disabled',false)
 
-	}).hover(function() {
-		var appendhtml = '<span id="actions"><a href="#" class="action" data-action="Share" original-title=""><span class="icon-share icon"></span><span>Share</span></a><a href="#" class="action" data-action="Edit" original-title=""><span class="icon-rename icon"></span><span>Edit</span></a><a href="#" class="action" original-title=""><span class="icon-delete icon"></span><span>Delete</span></a></span>';
-		$(this).append(appendhtml);
-	}, function() {
-		$('#actions').remove();
-	});
-
-	var openForm = function(v) {
-		$('#editAddItemDialog').dialog({
-			"width" : ($(document).width() > 425) ? 425 : $(document).width() - 10,
-			close : function(event, ui) {
-				$(this).dialog('destroy');
-				document.getElementById("editNewItem").reset();
-				$('#pw1').trigger('keyup.simplePassMeter');
-				$('#item_tabs').tabs( 'destroy');
-			}
-		});
-	  $('#item_tabs').tabs();
-	};
+	})
+	$('#pwList').click(function(){
+		$('#editItem').attr('disabled','disabled');
+		$('#pwList li').removeClass('row-active');
+	})
+	$('#editItem').click(function(){
+		console.log('xlick');
+		editItem($('.row-active').attr('data-id'));
+	})
 
 	$('#addItem').click(function() {
-		openForm(null);
+		if(selectedFolder.id!='ajson0'){
+		openForm({item_id:0, folderid: selectedFolder.id.replace('ajson','')});
+		}
 	});
 
 	$('#custom_pw').buttonset();
@@ -145,18 +141,38 @@ jQuery(document).ready(function($) {
 		$('#editAddItemDialog').dialog('close');
 	})
 	
+	$('#editAddItemDialog .save').click(function(){
+		formData = $('#editNewItem').serializeObject();
+		var createUrl = OC.generateUrl('apps/passman/api/v1/item');
+		var updateUrl = OC.generateUrl('apps/passman/api/v1/item/'+formData.item_id)
+		var postUrl = (formData.item_id==0) ? createUrl : updateUrl;
+		
+		/**
+		 * @TODO Add form check logic, password encryption
+		 */
+		
+		$.post(postUrl,formData,function(data){
+			if(data.success > 0){
+				$('#pwList li[data-id='+ data.success.id+']').html( data.success.label );
+			}
+			else
+			{
+				 var append = '<li data-id='+ data.itemid +'><div style="display: inline-block;">'+ formData.label +'</div></li>';
+				 $('#pwList').append(append);
+			}
+			$('#editAddItemDialog').dialog('close');
+		})
+	})
+	
 	$('#folderSettingsDialog .cancel').click(function(){
 		$('#folderSettingsDialog').dialog('close');
 	})
 	
 	$('#folderSettingsDialog .save').click(function(){
-		$(document).data('currentFolder');
-		
 		var foldersettings = $.extend($(document).data('currentFolder'),$('#folderSettings').serializeObject());
 		foldersettings.id = foldersettings.id.replace('ajson','');
 		foldersettings.parent = foldersettings.parent.replace('ajson','');
 		foldersettings.title = foldersettings.text;
-		console.log(foldersettings);
 		$.post(OC.generateUrl('apps/passman/api/v1/folders/'+foldersettings.id),foldersettings,function(){
 			$('#folderSettingsDialog').dialog('close');
 			foldersettings.id = 'ajson'+foldersettings.id
@@ -165,6 +181,9 @@ jQuery(document).ready(function($) {
 	
 	/* Load the folders */
 	loadFolders()
+	
+	/* Load items in the root folder */
+	setTimeout(function(){loadFolder(0)},250);
 });
 function loadFolders(){
 	$.getJSON(OC.generateUrl('apps/passman/api/v1/folders')).success(function(data) { 
@@ -246,7 +265,7 @@ function generateFolderStructure(){
 			path += '<div class="' + classes + '" data-dir="' + $(dir).attr('id') + '"><a>' + v2 + '</a></div>';
 		});
 		$('#crumbs').html(path);
-		console.log('Load folder: '+ $(dir).attr('id').replace('ajson',''));
+		loadFolder($(dir).attr('id').replace('ajson',''));
 	}).bind('loaded.jstree',function(evt){
 		$(this).jstree('open_node', $('#ajson0'));
 	});
@@ -259,17 +278,18 @@ function generateFolderStructure(){
 
 function getFolderById(id){
 	var folder;
+	
 	$.each($(document).data('folderStructure'),function(){
-		if(id==this.id)
+		if(id==this.id || (id.toString().replace('ajson','') == this.id.toString().replace('ajson','')))
 			folder = this;
 	})
 	return folder;
 }
-
+/**
+ * Show folder settings
+ */
 function folderSettings(node){
 	var currentFolder = getFolderById(node.id);
-	console.log(node)
-	console.log(currentFolder);
 	$(document).data('currentFolder',currentFolder);
 	$('#folderId').val(currentFolder.id.replace('ajson',''));
 	$('#min_pw_strength').val(currentFolder.min_pw_strength)
@@ -281,7 +301,9 @@ function folderSettings(node){
 										}
 	});
 }
-
+/**
+ * Rename a folder by context menu refference
+ */
 function renameFolder(node, obj){ 
 	var f = obj.node;
 	var folderID = f.id.replace('ajson','');
@@ -308,13 +330,83 @@ function renameFolder(node, obj){
 	});
 }
 
+/**
+ * Delete a folder by context menu refference
+ */
 function deleteFolder(ref){
 	var folderID = ref.node.id.replace('ajson','');
 	$.ajax({
 	    url: OC.generateUrl('apps/passman/api/v1/folders/'+folderID),
 	    type: 'DELETE',
 	    success: function(result) {
-	        // Do something with the result
+	        
 	    }
 	});
+}
+
+/**
+ * Load the items in a folder
+ * @param {int} folderId
+ */
+function loadFolder(folderId){
+	if(folderId!=0){
+		$('#addItem').attr('disabled',false)
+	}
+	else
+	{
+		$('#addItem').attr('disabled','disabled')
+	}
+	$('#pwList').html('<span id="itemsLoading" class="icon-loading icon" style="height: 32px; width: 32px; margin-left: 10px;"></span>')
+	$.get(OC.generateUrl('apps/passman/api/v1/items/'+folderId),function(data){
+		$('#itemsLoading').remove();
+		if(data.items.length != 0){
+			$.each(data.items,function(){
+				 var append = '<li data-id='+ this.id +'><div style="display: inline-block;">'+ this.label+'</div></li>';
+				 $('#pwList').append(append);
+			})
+		}
+		else
+		{
+			$('#pwList').html('Folder is empty');
+		}
+		
+		selectedFolder = getFolderById(folderId);
+	})
+}
+/**
+ * Load an item
+ * @param {int} id
+ */
+
+function loadItem(id){
+	$.get(OC.generateUrl('apps/passman/api/v1/item/'+id),function(data){
+		var item = data.item;
+		var mapper = {id_label: item.label,id_desc: item.description,hid_pw: item.password,account: item.account,id_email: item.email, id_url: item.url,id_files: '',id_tags: ''}
+		$.each(mapper,function(k,v){ $('#'+k).html(v)})
+		return mapper;
+	})
+}
+function openForm(mapper) {
+		$('#editAddItemDialog').dialog({
+			"width" : ($(document).width() > 425) ? 425 : $(document).width() - 10,
+			close : function(event, ui) {
+				$(this).dialog('destroy');
+				document.getElementById("editNewItem").reset();
+				$('#pw1').trigger('keyup.simplePassMeter');
+				$('#item_tabs').tabs( 'destroy');
+			}
+		});
+	 $('#item_tabs').tabs();
+	 if(mapper!=null){
+	 	$.each(mapper,function(k,v){ $('#'+k).val(v)})
+	 }
+
+}; 
+
+function editItem(itemId){
+	$.get(OC.generateUrl('apps/passman/api/v1/item/'+itemId),function(data){
+		var item = data.item;
+	    var edtmapper = {item_id: item.id,folderid: item.folderid, label: item.label,desc: item.description,pw1: item.password,account: item.account,email: item.email, url: item.url,id_files: '',id_tags: ''}
+		openForm(edtmapper);
+	})
 }

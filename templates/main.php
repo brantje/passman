@@ -5,6 +5,8 @@
 \OCP\Util::addStyle('passman', 'simplePassMeter/simplePassMeter');
 \OCP\Util::addscript('passman', 'jquery.simplePassMeter.min');
 
+\OCP\Util::addscript('passman', 'encryption');
+
 \OCP\Util::addStyle('passman', 'ocPassman');
 \OCP\Util::addscript('passman', 'ocPassman');
 
@@ -21,8 +23,9 @@
 							<div class="crumb last svg" data-dir="/documents">	
 									<a>Root</a>
 							</div>
-					</div> 
-					<div class="button" id="addItem">Create item</div>
+					</div>  
+					<button class="button " id="addItem" disabled="disabled">Create item</button>
+					<button class="button" id="editItem" disabled="disabled">Edit item</button>
 		</div>
 		<div id="pwList">
 			<li>Label</li>
@@ -101,13 +104,8 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>Restricted to :</td>
-                    <td>
-                        <div id="id_restricted_to" style="display:inline;"></div><input type="hidden" id="hid_restricted_to"><input type="hidden" id="hid_restricted_to_roles">
-                    </td>
-                </tr>
-                <tr>
+
+                <tr style="display: none;">
                     <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>Tags :</td>
                     <td>
                         <div id="id_tags" style="display:inline;"></div><input type="hidden" id="hid_tags">
@@ -119,6 +117,8 @@
 </div>
 <div id="editAddItemDialog" style="display: none;">
    <form method="post" name="new_item" id="editNewItem">
+   		<input type="hidden" id="item_id" name="item_id" value=""/>
+   		<input type="hidden" id="folderid" name="folderid" value=""/>
         <div id="item_tabs">
         <ul role="tablist">
             <li><a href="#tabs-01">Definition</a></li>
@@ -135,7 +135,7 @@
             </span>
             <br>
             <label for="item_login" class="label_cpm">Login (if needed) : </label>
-            <input type="text" name="item_login" id="item_login">
+            <input type="text" name="account" id="account">
             <label for="" class="label_cpm">Email : </label>
             <input type="text" name="email" id="email">
             <label for="" class="label_cpm">URL : </label>
@@ -146,10 +146,8 @@
                 <label>Required complexity</label>
                 <span id="complex_attendue"><b>Not defined</b></span>
             </div>
-            <label class="label_cpm">Password :
-				<span id="visible_pw"></span>
-            </label>
-            <input type="password" id="pw1">
+            <label class="label_cpm">Password :</label>
+            <input type="password" id="pw1" name="pw1">
             <label for="" class="label_cpm">Confirm :</label>
             <input type="password" name="pw2" id="pw2" >
 			<div id="pwTools">

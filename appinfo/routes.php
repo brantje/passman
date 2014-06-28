@@ -36,4 +36,10 @@ $application->registerRoutes($this, array(
 	array('name' => 'folder_api#index', 'url' => '/api/v1/folders', 'verb' => 'GET'),
 	array('name' => 'folder_api#update', 'url' => '/api/v1/folders/{folderId}', 'verb' => 'POST'),
 	array('name' => 'folder_api#delete', 'url' => '/api/v1/folders/{folderId}', 'verb' => 'DELETE'),
+
+	array('name' => 'item_api#index', 'url' => '/api/v1/items/{folderId}', 'verb' => 'GET'),
+	array('name' => 'item_api#get', 'url' => '/api/v1/item/{itemId}', 'verb' => 'GET'),
+	array('name' => 'item_api#create', 'url' => '/api/v1/item', 'verb' => 'POST'),
+	array('name' => 'item_api#update', 'url' => '/api/v1/item/{itemId}', 'verb' => 'POST'),
+	array('name' => 'item_api#delete', 'url' => '/api/v1/item/{itemId}', 'verb' => 'DELETE'),
 )));

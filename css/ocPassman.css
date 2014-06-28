@@ -44,7 +44,7 @@ div#ocpContent {
 	height: 100%;
 }
 
-#addItem {
+#addItem,#editItem {
 	width: 95px;
 	float: right;
 }

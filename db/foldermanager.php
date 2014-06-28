@@ -22,7 +22,7 @@ class FolderManager {
 	}
 
 	public function getAllFromUser($id) {
-		$sql = 'SELECT * FROM `*PREFIX*passman_folders` ' . 'WHERE `user_id` = ?';
+		$sql = 'SELECT * FROM `*PREFIX*passman_folders`  WHERE `user_id` = ?';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $id, \PDO::PARAM_INT);
 		$result = $query -> execute();
