@@ -45,7 +45,12 @@ jQuery(document).ready(function($) {
 		$('#deleteItem').attr('disabled','disabled');
 		$('#pwList li').removeClass('row-active');
 		var mapper = {id_label:'',id_desc: '',hid_pw: '',id_login:'',id_email: '', id_url: '',id_files: '',id_tags: ''}
-		$.each(mapper,function(k,v){ $('#'+k).html(v)})
+		$.each(mapper,function(k,v){ (k!='hid_pw') ? $('#'+k).html(v): $('#'+k).val(v)});
+		$('#showPW').remove();
+		$('#copyPW').remove();
+		$('#id_pw').html('');
+		
+		
 	})
 	$('#editItem').click(function(){
 		editItem($('.row-active').attr('data-id'));
@@ -95,11 +100,7 @@ jQuery(document).ready(function($) {
 		}
 		$('#pw1').val(retVal).change().focus().trigger('keyup.simplePassMeter');
 	});
-	$('#pw1').simplePassMeter({
-				  container: '#passwordStrengthDiv',
-				  requirements: {},
-				  defaultText : "Complexity",
-       			  ratings: [
+	passwordRatings = [
 				            {	
 				            	"minScore": 0,
 				                "className": "meterFail",
@@ -134,21 +135,49 @@ jQuery(document).ready(function($) {
 				                "className": "meterExcel",
 				                "text": "Very heavy"
 				            }
-       			 ]
+       			 ];
+	$('#pw1').simplePassMeter({
+				  container: '#passwordStrengthDiv',
+				  requirements: {},
+				  defaultText : "Complexity",
+       			  ratings: passwordRatings
 	});
 	
 	$('#pw1').bind({
         "score.simplePassMeter" : function(jQEvent, score) {
+        	$(document).data('passwordScore',score);
         	if(score > 0)
             	$('.simplePassMeterText').append(' ('+score+' points)');
         }
     });
+    
 	$('#editAddItemDialog .cancel').click(function(){
 		$('#editAddItemDialog').dialog('close');
 	})
 	
+	$(document).on('click','#showPW',function(){
+		if (!$(this).attr('data-toggled') || $(this).attr('data-toggled') == 'off'){
+	        /* currently it's not been toggled, or it's been toggled to the 'off' state,
+	           so now toggle to the 'on' state: */
+	           $(this).attr('data-toggled','on');
+	           $('#id_pw').text(Aes.Ctr.decrypt($('#hid_pw').val(),getEncKey(),256));
+	    }
+	    else if ($(this).attr('data-toggled') == 'on'){
+	        /* currently it has been toggled, and toggled to the 'on' state,
+	           so now turn off: */
+	           $(this).attr('data-toggled','off');
+	           var starPW ='';
+			   for(i = 0; i <12; i++){
+					starPW += '*';
+			   }
+			   $('#id_pw').html(starPW);
+	    }
+	})
+	
 	$('#editAddItemDialog .save').click(function(){
 		formData = $('#editNewItem').serializeObject();
+		$('#editAddItemDialog .error').remove();
+		var ERROR=false;
 		var createUrl = OC.generateUrl('apps/passman/api/v1/item');
 		var updateUrl = OC.generateUrl('apps/passman/api/v1/item/'+formData.item_id)
 		var postUrl = (formData.item_id==0) ? createUrl : updateUrl;
@@ -156,19 +185,41 @@ jQuery(document).ready(function($) {
 		/**
 		 * @TODO Add form check logic, password encryption
 		 */
+		var passwordStrength = $(document).data('passwordScore');
+		var requiredStrength = getRating(selectedFolder.min_pw_strength);
+		console.log(passwordStrength , requiredStrength.minScore)
+		if(passwordStrength < requiredStrength.minScore && $('#override:checked').length==0){
+			ERROR = 'Password complexity is not fulfilled!';
+		}
+		if(formData.pw1 != formData.pw2){
+			ERROR = 'Passwords do not match!';
+		}
+		if(formData.label == ''){
+			ERROR = 'A label is mandatory!';
+		}
 		formData.pw1 = Aes.Ctr.encrypt(formData.pw1,getEncKey(),256);
 		formData.pw2 = Aes.Ctr.encrypt(formData.pw2,getEncKey(),256);
-		$.post(postUrl,formData,function(data){
-			if(data.success){
-				$('#pwList li[data-id='+ data.success.id+']').html( data.success.label );
-			}
-			else
-			{
-				 var append = '<li data-id='+ data.itemid +'><div style="display: inline-block;">'+ formData.label +'</div></li>';
-				 $('#pwList').append(append);
-			}
-			$('#editAddItemDialog').dialog('close');
-		})
+		console.log(ERROR)
+		if(!ERROR){
+			$.post(postUrl,formData,function(data){
+				if(data.success){
+					$('#pwList li[data-id='+ data.success.id+']').html( data.success.label );
+					loadItem(data.success.id);
+					$('#showPW').remove();
+					$('#copyPW').remove();
+				}
+				else
+				{
+					 var append = '<li data-id='+ data.itemid +'><div style="display: inline-block;">'+ formData.label +'</div></li>';
+					 $('#pwList').append(append);
+				}
+				$('#editAddItemDialog').dialog('close');				
+			})
+		}
+		else
+		{
+			$('#editAddItemDialog').prepend('<div class="error">'+ ERROR +'</div>')	
+		}
 	})
 	
 	$('#folderSettingsDialog .cancel').click(function(){
@@ -434,39 +485,100 @@ function loadFolder(folderId){
  * @param {int} id
  */
 
-function loadItem(id){
-	$.get(OC.generateUrl('apps/passman/api/v1/item/'+id),function(data){
+
+function loadItem(id) {
+	$.get(OC.generateUrl('apps/passman/api/v1/item/' + id), function(data) {
 		var item = data.item;
-		var mapper = {id_label: item.label,id_desc: item.description,hid_pw: item.password,id_login: item.account,id_email: item.email, id_url: item.url,id_files: '',id_tags: ''}
-		$.each(mapper,function(k,v){ $('#'+k).html(v)})
+		item.description = nl2br(item.description);
+		var mapper = {
+			id_label : item.label,
+			id_desc : item.description,
+			hid_pw : item.password,
+			id_login : item.account,
+			id_email : item.email,
+			id_url : item.url,
+			id_files : '',
+			id_tags : ''
+		}
+		$.each(mapper, function(k, v) {
+			(k != 'hid_pw') ? $('#' + k).html(v) : $('#' + k).val(v)
+		})
+		var starPW = '';
+		for ( i = 0; i < 12; i++) {
+			starPW += '*';
+		}
+		var append = '<span id="showPW">[Show]</span> <span id="copyPW">[Copy]</span>';
+		$('#id_pw').html(starPW).after(append);
+		var client = new ZeroClipboard($('#copyPW'))
+		client.on('ready', function(event) {
+			client.on('copy', function(event) {
+				var clipboard = event.clipboardData;
+				clipboard.setData("text/plain",  Aes.Ctr.decrypt(item.password, getEncKey(), 256));
+				showNotification("Password copied to clipboard")
+			});
+		});
 		return mapper;
 	})
 }
+
+function getRating(str){
+	var scoreInfo;
+	 $.each(passwordRatings,function(k,v){
+	 	if(str >= this.minScore)
+	 		scoreInfo = this
+	 })		
+	return scoreInfo;
+}
+
 function openForm(mapper) {
-		$('#editAddItemDialog').dialog({
-			"width" : ($(document).width() > 425) ? 425 : $(document).width() - 10,
-			close : function(event, ui) {
-				$(this).dialog('destroy');
-				document.getElementById("editNewItem").reset();
-				$('#pw1').trigger('keyup.simplePassMeter');
-				$('#item_tabs').tabs( 'destroy');
-			}
-		});
-	 $('#item_tabs').tabs();
-	 if(mapper!=null){
-	 	$.each(mapper,function(k,v){ $('#'+k).val(v)})
-	 }
+	var folderPwStrength = getRating(selectedFolder.min_pw_strength);
+	$('#complex_attendue').html('<b>' + folderPwStrength.text + '</b>');
+	$('#editAddItemDialog').dialog({
+		"width" : ($(document).width() > 425) ? 425 : $(document).width() - 10,
+		close : function(event, ui) {
+			$(this).dialog('destroy');
+			document.getElementById("editNewItem").reset();
+			$('#pw1').trigger('keyup.simplePassMeter');
+			$('#item_tabs').tabs('destroy');
+			$('#complex_attendue').html('<b>Not defined</b>').removeAttr('class');
+			$('#editAddItemDialog .error').remove();
+		}
+	});
+	$('#item_tabs').tabs();
+	if (mapper != null) {
+		$.each(mapper, function(k, v) {
+			$('#' + k).val(v)
+		})
+		if (mapper.pw1) {
+			$('#pw1').change().trigger('keyup.simplePassMeter');
+		}
+	}
 
 }; 
 
-function editItem(itemId){
-	$.get(OC.generateUrl('apps/passman/api/v1/item/'+itemId),function(data){
+
+
+function editItem(itemId) {
+	$.get(OC.generateUrl('apps/passman/api/v1/item/' + itemId), function(data) {
 		var item = data.item;
-		item.password = Aes.Ctr.decrypt(item.password,getEncKey(),256);
-	    var edtmapper = {item_id: item.id,folderid: item.folderid, label: item.label,desc: item.description,pw1: item.password,pw2: item.password,account: item.account,email: item.email, url: item.url,id_files: '',id_tags: ''}
+		item.password = Aes.Ctr.decrypt(item.password, getEncKey(), 256);
+		var edtmapper = {
+			item_id : item.id,
+			folderid : item.folderid,
+			label : item.label,
+			desc : item.description,
+			pw1 : item.password,
+			pw2 : item.password,
+			account : item.account,
+			email : item.email,
+			url : item.url,
+			id_files : '',
+			id_tags : ''
+		}
 		openForm(edtmapper);
 	})
 }
+
 
 function deleteItem(itemId){
 	$.ajax({
@@ -477,4 +589,19 @@ function deleteItem(itemId){
         $('#pwList li[data-id='+ data.deleted+']').slideUp(function(){$(this).remove()});
     }
 });
+}
+
+
+function showNotification(str) {
+	OC.Notification.show(str)
+	setTimeout(function(){
+		OC.Notification.hide()
+	},3000)
+}
+
+
+
+function nl2br (str, is_xhtml) {   
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';    
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
 }

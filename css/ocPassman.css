@@ -1,8 +1,8 @@
 #app-navigation li > a {
- display: initial;
- width: 100%; 
- line-height: 25px;
- padding: 0 0;
+	display: initial;
+	width: 100%;
+	line-height: 25px;
+	padding: 0 0;
 }
 #app-navigation-toggle {
 	z-index: 2;
@@ -44,7 +44,7 @@ div#ocpContent {
 	height: 100%;
 }
 
-#addItem,#editItem,#deleteItem {
+#addItem, #editItem, #deleteItem {
 	width: 95px;
 	float: right;
 }
@@ -74,7 +74,7 @@ div#infoContainer {
 	padding-bottom: 35px;
 	padding-top: 10px;
 }
-.icon-paste{
+.icon-paste {
 	background: url(../img/copy.png) no-repeat;
 	background-position: center center;
 }
@@ -90,12 +90,12 @@ div#infoContainer {
 	right: 0px;
 }
 #actions span:not(.icon) {
-position: relative;
-bottom: 8px;
-margin-right: 10px;
-font-weight: normal;
+	position: relative;
+	bottom: 8px;
+	margin-right: 10px;
+	font-weight: normal;
 }
-#actions span:hover {
+#copyPW,#showPW {
 	color: rgb(0, 102, 255);
 }
 #infoContainer span.ui-icon.ui-icon-carat-1-e {
@@ -107,26 +107,28 @@ font-weight: normal;
 #item_tabs input, #item_tabs textarea {
 	width: 95%;
 }
-#item_tabs input[type="checkbox"]{
-	width:30px;
-}
-#pwTools{
-	font-size:9px; text-align:center; width:100%;
-}
-#pwTools label{
-	display:inline-block;
-}
-#pwTools input{
+#item_tabs input[type="checkbox"] {
 	width: 30px;
 }
-.icon{
-	height:24px;
+#pwTools {
+	font-size: 9px;
+	text-align: center;
+	width: 100%;
+}
+#pwTools label {
+	display: inline-block;
+}
+#pwTools input {
+	width: 30px;
+}
+.icon {
+	height: 24px;
 	width: 24px;
 	display: inline-block;
 }
-label[for="item_login"]{
-	margin-top:10px;
-} 
+label[for="item_login"] {
+	margin-top: 10px;
+}
 #tabs-02 > div {
 	margin-bottom: 10px;
 }
@@ -134,6 +136,13 @@ label[for="item_login"]{
 	display: none;
 	margin-left: 10px;
 	font-weight: bold;
+}
+#showPW{
+	margin-left:10px;
+}
+#copyPW:hover,#showPW:hover {
+	border-bottom: 1px solid rgb(0, 102, 255);
+	cursor:pointer;
 }
 #complex_attendue {
 	color: #D04806;
@@ -148,9 +157,15 @@ div#passwordStrengthDiv {
 	margin-left: 70px;
 	margin-top: 10px;
 }
-
+.error {
+	background: #fed7d7;
+	border: 1px solid #f00;
+	list-style-indent: inside;
+	margin: 0 0 0.5em;
+	padding: 1em;
+}
 @media (max-width: 768px) {
- div#topContent {
-   margin-left: 30px;
- }
+	div#topContent {
+		margin-left: 30px;
+	}
 }

@@ -8,6 +8,8 @@
 \OCP\Util::addscript('passman', 'encryption');
 \OCP\Util::addscript('passman', 'jsStorage');
 
+\OCP\Util::addscript('passman', 'zeroClipboard/zeroClipboard');
+
 \OCP\Util::addStyle('passman', 'ocPassman');
 \OCP\Util::addscript('passman', 'ocPassman');
 
@@ -82,25 +84,24 @@
                     <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>Account :</td>
                     <td>
                         <div id="id_login" style="float:left;"></div>
-                        <input type="hidden" id="hid_login" value="">
                     </td>
                 </tr>
                 <tr>
                     <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>Email :</td>
                     <td>
-                        <div id="id_email" style="display:inline;"></div><input type="hidden" id="hid_email" value="">
+                        <div id="id_email" style="display:inline;"></div>
                     </td>
                 </tr>
                 <tr>
                     <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>URL :</td>
                     <td>
-                        <div id="id_url" style="display:inline;"></div><input type="hidden" id="hid_url" value="">
+                        <div id="id_url" style="display:inline;"></div>
                     </td>
                 </tr>
                 <tr>
                     <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float:left; margin-right:.3em;">&nbsp;</span>Files &amp; Images :</td>
                     <td>
-                        <div id="id_files" style="display:inline;font-size:11px;"></div><input type="hidden" id="hid_files">
+                        <div id="id_files" style="display:inline;font-size:11px;"></div>
                         <div id="dialog_files" style="display: none;">
 
                         </div>
@@ -110,7 +111,7 @@
                 <tr style="display: none;">
                     <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>Tags :</td>
                     <td>
-                        <div id="id_tags" style="display:inline;"></div><input type="hidden" id="hid_tags">
+                        <div id="id_tags" style="display:inline;"></div>
                     </td>
                 </tr>
                 </tbody></table>
@@ -152,6 +153,8 @@
             <input type="password" id="pw1" name="pw1">
             <label for="" class="label_cpm">Confirm :</label>
             <input type="password" name="pw2" id="pw2" >
+            <label for="" class="label_cpm">Override required complexity : </label>
+            <input type="checkbox" id="override">
 			<div id="pwTools">
                 <span id="custom_pw">
                     <input type="checkbox" id="pw_numerics" checked="checked"><label for="pw_numerics">123</label>
@@ -206,6 +209,9 @@
 		<option value="10080">7 Days</option>
 		<option value="forever">Forever</option>
 	</select>
+	
+</div>
+<div id="notificationContainer">
 	
 </div>
   

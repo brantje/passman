@@ -26,7 +26,6 @@ class ItemBusinessLayer {
 	}
 	public function get($itemId,$userId) {
 		$result = $this->ItemManager->get($itemId,$userId);
-		$result['description'] = nl2br($result['description']);
 		return $result;
 	}
 	
