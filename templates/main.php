@@ -195,7 +195,7 @@
     <div class="button save">Save</div>
  </div> 
 
-<div id="encryptionKeyDialog">
+<div id="encryptionKeyDialog" style="display: none;">
 	<p>Enter your encryption key.<br />If this if the first time you use Passman, this key will be used for encryption your passwords</p>
 	<input type="password" id="ecKey" style="width: 150px;" /><br />
 	<input type="checkbox" id="ecRemember" />Remeber this key for 

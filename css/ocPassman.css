@@ -48,6 +48,9 @@ div#ocpContent {
 	width: 95px;
 	float: right;
 }
+#addItem:disabled, #editItem:disabled, #deleteItem:disabled {
+	display:none;
+}
 #pwList {
 	margin-left: 1px;
 	overflow: auto;
