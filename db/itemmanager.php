@@ -16,7 +16,7 @@ use \OCP\DB\insertid;
 class ItemManager {
 	private $userid;
 	private $db;
-	public function __construct(Db $db) {
+	public function __construct($db) {
 		$this -> db = $db;
 
 	}
@@ -29,6 +29,18 @@ class ItemManager {
 		$query -> bindParam(1, $folderId, \PDO::PARAM_INT);
 		$query -> bindParam(2, $userId, \PDO::PARAM_INT);
 		$result = $query -> execute();
+		$rows = array();
+		while ($row = $result -> fetchRow()) {
+			$rows[$row['id']] = $row;
+		}
+		return $rows;
+	}
+	/**
+	 * List items in a folder
+	 */
+	public function search($itemName,$userId) {
+		$sql = 'SELECT id,label,folderid,description,account,email FROM `*PREFIX*passman_items` WHERE `label` LIKE ? AND `user_id` = ?';
+		$result = $this -> db -> prepareQuery($sql) ->execute(array($itemName.'%',$userId));
 		$rows = array();
 		while ($row = $result -> fetchRow()) {
 			$rows[$row['id']] = $row;

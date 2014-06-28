@@ -95,6 +95,14 @@ class ItemApiController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 */
+	public function search($itemName) {
+		$deleted['deleted']	=$this->ItemBusinessLayer->search($itemName,$this->userId);
+		return new JSONResponse($deleted['deleted']); 
+	}
+	
+	/**
+	 * @NoAdminRequired
+	 */
 	public function delete($itemId) {
 		$deleted['deleted']	=$this->ItemBusinessLayer->delete($itemId,$this->userId);
 		return new JSONResponse($deleted['deleted']); 

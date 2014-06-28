@@ -169,3 +169,7 @@ div#passwordStrengthDiv {
 		margin-left: 30px;
 	}
 }
+li.ui-menu-item .description {
+	font-size: 13px;
+	color: #A5A5A5;
+}

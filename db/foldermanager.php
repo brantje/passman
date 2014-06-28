@@ -16,7 +16,7 @@ use \OCP\DB\insertid;
 class FolderManager {
 	private $userid;
 	private $db;
-	public function __construct(Db $db) {
+	public function __construct($db) {
 		$this -> db = $db;
 
 	}

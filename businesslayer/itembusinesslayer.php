@@ -17,7 +17,7 @@ use \OCA\Passman\Utility\Config;
 
 class ItemBusinessLayer {
 	private $ItemManager;
-	public function __construct(ItemManager $ItemManager){
+	public function __construct($ItemManager){
 		$this->ItemManager = $ItemManager;
 	}
 	
@@ -56,6 +56,9 @@ class ItemBusinessLayer {
 		return $this->ItemManager->update($folder);
 	}
 	
+	public function search($itemName,$userId){
+		return $this->ItemManager->search($itemName,$userId);
+	}
 	public function delete($itemId,$userId){
 		return $this->ItemManager->delete($itemId,$userId);
 	}

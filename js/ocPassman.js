@@ -174,53 +174,7 @@ jQuery(document).ready(function($) {
 	    }
 	})
 	
-	$('#editAddItemDialog .save').click(function(){
-		formData = $('#editNewItem').serializeObject();
-		$('#editAddItemDialog .error').remove();
-		var ERROR=false;
-		var createUrl = OC.generateUrl('apps/passman/api/v1/item');
-		var updateUrl = OC.generateUrl('apps/passman/api/v1/item/'+formData.item_id)
-		var postUrl = (formData.item_id==0) ? createUrl : updateUrl;
-		
-		/**
-		 * @TODO Add form check logic, password encryption
-		 */
-		var passwordStrength = $(document).data('passwordScore');
-		var requiredStrength = getRating(selectedFolder.min_pw_strength);
-		console.log(passwordStrength , requiredStrength.minScore)
-		if(passwordStrength < requiredStrength.minScore && $('#override:checked').length==0){
-			ERROR = 'Password complexity is not fulfilled!';
-		}
-		if(formData.pw1 != formData.pw2){
-			ERROR = 'Passwords do not match!';
-		}
-		if(formData.label == ''){
-			ERROR = 'A label is mandatory!';
-		}
-		formData.pw1 = Aes.Ctr.encrypt(formData.pw1,getEncKey(),256);
-		formData.pw2 = Aes.Ctr.encrypt(formData.pw2,getEncKey(),256);
-		console.log(ERROR)
-		if(!ERROR){
-			$.post(postUrl,formData,function(data){
-				if(data.success){
-					$('#pwList li[data-id='+ data.success.id+']').html( data.success.label );
-					loadItem(data.success.id);
-					$('#showPW').remove();
-					$('#copyPW').remove();
-				}
-				else
-				{
-					 var append = '<li data-id='+ data.itemid +'><div style="display: inline-block;">'+ formData.label +'</div></li>';
-					 $('#pwList').append(append);
-				}
-				$('#editAddItemDialog').dialog('close');				
-			})
-		}
-		else
-		{
-			$('#editAddItemDialog').prepend('<div class="error">'+ ERROR +'</div>')	
-		}
-	})
+	$('#editAddItemDialog .save').click(saveItem)
 	
 	$('#folderSettingsDialog .cancel').click(function(){
 		$('#folderSettingsDialog').dialog('close');
@@ -254,6 +208,59 @@ jQuery(document).ready(function($) {
 	{
 		setEncKey($.jStorage.get("ENC_KEY"));
 	}
+	
+	
+	 /* Auto complete search */
+
+	$("#searchbox").autocomplete({
+		source : function(request, response) {
+			$('#Code').val();
+			//clear code value
+			$.ajax({
+				url : OC.generateUrl('apps/passman/api/v1/item/search/'+$('#searchbox').val()),
+				type : 'GET',
+				contentType : "application/json; charset=utf-8",
+				dataType : 'json', //What kind of Result is expected. (Ex json, xml, etc)
+				success : function(data) {
+					var item = [];
+					$.each(data,function(){
+						item.push(this)
+					})
+					response(item);
+				}
+			})
+		},
+		minLength : 1,
+		select : function(event, ui) {
+			event.preventDefault();
+			console.log(ui.item);
+			$('#jsTree').jstree("select_node",'#ajson'+ui.item.folderid);
+			setTimeout(function(){
+					$('li[data-id="'+ui.item.id+'"]').addClass('row-active');
+					loadItem(ui.item.id);
+					$('#searchbox').val('').blur();
+			},250);
+		},
+		focus : function(event, ui) {
+			event.preventDefault();
+			
+		}
+	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+		var line1 = '';
+		if(item.email && !item.account)
+			line1 = 'Email: '+ item.email+'<br />';
+		if(!item.email && item.account)
+			line1 = 'Account: '+ item.account+'<br />';
+		if(item.description){
+			var desc = (item.description.length >= 15) ? item.description.substring(0, 15)+'...' : item.description;
+			line1 +=  'Description: '+ desc;
+		}
+        return $( "<li></li>" )
+            .data( "item.autocomplete", item )
+            .append( "<a>" + item.label + "<br><font class=\"description\">" + line1 + "</font></a>" )
+            .appendTo( ul );
+    };
+
 });
 function encryptionKeyDialog(){
 	$('#encryptionKeyDialog').dialog({
@@ -284,7 +291,6 @@ function encryptionKeyDialog(){
 					})
 					
 	 $('#ecKey').keypress(function(event) { 
-	 	console.log(event)
 	 	if(event.keyCode==13){
 	 		$('.ui-dialog-buttonpane button').click()
 	 	}
@@ -571,6 +577,53 @@ function openForm(mapper) {
 
 }; 
 
+function saveItem() {
+	formData = $('#editNewItem').serializeObject();
+	$('#editAddItemDialog .error').remove();
+	var ERROR = false;
+	var createUrl = OC.generateUrl('apps/passman/api/v1/item');
+	var updateUrl = OC.generateUrl('apps/passman/api/v1/item/' + formData.item_id)
+	var postUrl = (formData.item_id == 0) ? createUrl : updateUrl;
+
+	/**
+	 * @TODO Add form check logic, password encryption
+	 */
+	var passwordStrength = $(document).data('passwordScore');
+	var requiredStrength = getRating(selectedFolder.min_pw_strength);
+	console.log(passwordStrength, requiredStrength.minScore)
+	if (passwordStrength < requiredStrength.minScore && $('#override:checked').length == 0) {
+		ERROR = 'Password complexity is not fulfilled!';
+	}
+	if (formData.pw1 != formData.pw2) {
+		ERROR = 'Passwords do not match!';
+	}
+	if (formData.label == '') {
+		ERROR = 'A label is mandatory!';
+	}
+	formData.pw1 = Aes.Ctr.encrypt(formData.pw1, getEncKey(), 256);
+	formData.pw2 = Aes.Ctr.encrypt(formData.pw2, getEncKey(), 256);
+	console.log(ERROR)
+	if (!ERROR) {
+		$.post(postUrl, formData, function(data) {
+			if (data.success) {
+				$('#pwList li[data-id=' + data.success.id + ']').html(data.success.label);
+				loadItem(data.success.id);
+				$('#showPW').remove();
+				$('#copyPW').remove();
+			} else {
+				var append = '<li data-id=' + data.itemid + '><div style="display: inline-block;">' + formData.label + '</div></li>';
+				if($('#pwList').text()!='Folder is empty'){
+					$('#pwList').append(append);
+				}else{
+					$('#pwList').html(append);
+				}
+			}
+			$('#editAddItemDialog').dialog('close');
+		})
+	} else {
+		$('#editAddItemDialog').prepend('<div class="error">' + ERROR + '</div>')
+	}
+}
 
 
 function editItem(itemId) {
