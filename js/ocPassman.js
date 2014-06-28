@@ -259,9 +259,13 @@ function encryptionKeyDialog(){
 	$('#encryptionKeyDialog').dialog({
 						modal: true,
 						open: function(event, ui) { 
-							$(".ui-dialog-titlebar-close", ui.dialog || ui).hide(); 
+							$(".ui-dialog-titlebar-close").hide(); 
 						},
 						buttons: { "Ok": function() {
+								if($('#ecKey').val()==''){
+									showNotification("Encryption key can't be empty!")
+									return false;
+								}
 								$(this).dialog("close");
 								setEncKey($('#ecKey').val())
 								if($('#ecRemember:checked').length > 0){
@@ -278,6 +282,14 @@ function encryptionKeyDialog(){
 							} 
 						}
 					})
+					
+	 $('#ecKey').keypress(function(event) { 
+	 	console.log(event)
+	 	if(event.keyCode==13){
+	 		$('.ui-dialog-buttonpane button').click()
+	 	}
+	 	
+	 })
 }
 
 /**
