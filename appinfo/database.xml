@@ -39,8 +39,21 @@
 				<name>min_pw_strength</name>
 				<type>integer</type>
 			</field>
+			<index>
+				<name>folder_id_index</name>
+				<field>
+					<name>id</name>
+				</field>
+			</index>
+			<index>
+				<name>item_user_id_index</name>
+				<field>
+					<name>user_id</name>
+				</field>
+			</index>
 		</declaration>
 	</table>
+	
 	<table>
 		<name>*dbprefix*passman_items</name>
 		<declaration>
@@ -93,6 +106,24 @@
 				<notnull>true</notnull>
 				<length>64</length>
 			</field>
+			<index>
+				<name>item_id_index</name>
+				<field>
+					<name>id</name>
+				</field>
+			</index>
+			<index>
+				<name>item_folderid_index</name>
+				<field>
+					<name>folderid</name>
+				</field>
+			</index>
+			<index>
+				<name>item_user_id_index</name>
+				<field>
+					<name>user_id</name>
+				</field>
+			</index>
 		</declaration>
 	</table>
 </database>
