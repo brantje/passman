@@ -31,10 +31,13 @@ If you want to help, git clone this repo, make your changes and send a PR.
  - Firefox / chrome sync
  - Mobile sync??
  
-#Not working
-- Adding / editing / creating folders (disappear on refresh)
-- Adding / editing / creating items (Does not work at all)
+#What works
+- Adding / editing / deleting folders
+- Adding / editing / deleting items
 
+#What does not work
+- Tags
+- Files
 ## Running tests
 After [Installing PHPUnit](http://phpunit.de/getting-started.html) run:
 
