@@ -302,6 +302,9 @@ function setEncKey(key){
 function getEncKey(){
 	return $(document).data('ENC_KEY')
 }
+function resetStorageKey(){
+	$.jStorage.deleteKey("ENC_KEY")
+}
 
 function loadFolders(){
 	$.getJSON(OC.generateUrl('apps/passman/api/v1/folders')).success(function(data) { 

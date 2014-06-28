@@ -19,9 +19,11 @@ If you want to help, git clone this repo, make your changes and send a PR.
 
 #Todo
  - Bug fixes
+ - Translations
  - Check in the backend if folderid exists
  - File uploading
  - Firefox / chrome sync
+ - Mobile sync??
  
 #Not working
 - Adding / editing / creating folders (disappear on refresh)
