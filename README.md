@@ -5,11 +5,6 @@ Place this app in **owncloud/apps/**
 Passman is a password manager for owncloud.
 It features client side password encryption with aes.
 
-#Screenshots
-![Image](http://puu.sh/9NZUY/18d04fcb48.png)
-![Image](http://puu.sh/9NZWv/a55c6e5da5.png)
-![Image](http://puu.sh/9NZXr/3928a964a9.png)
-![Image](http://puu.sh/9NZYh/f044d9f147.png)
 #Features
 - Add items in a folder
 - Folder tree
@@ -17,6 +12,12 @@ It features client side password encryption with aes.
 - Option to remember the encryption key in the localstorage.
 - Password generator with strength indicator
 - Abillity to add files to an item (usefull for qr codes, serials, ssl keys etc).
+
+#Screenshots
+![Image](http://puu.sh/9NZUY/18d04fcb48.png)
+![Image](http://puu.sh/9NZWv/a55c6e5da5.png)
+![Image](http://puu.sh/9NZXr/3928a964a9.png)
+![Image](http://puu.sh/9NZYh/f044d9f147.png)
 
 
 #Contribute
