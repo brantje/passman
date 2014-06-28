@@ -57,7 +57,6 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	public function create() {
-		$id = (int) $itemId;
 		$userId = $this->userId;
 		$label = $this->params('label');
 		$folderId = $this->params('folderid');

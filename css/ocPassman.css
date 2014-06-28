@@ -176,3 +176,6 @@ li.ui-menu-item .description {
 	font-size: 13px;
 	color: #A5A5A5;
 }
+.ui-autocomplete {
+	max-height: 300px;
+}

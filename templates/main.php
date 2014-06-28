@@ -8,6 +8,8 @@
 \OCP\Util::addscript('passman', 'encryption');
 \OCP\Util::addscript('passman', 'jsStorage');
 
+\OCP\Util::addscript('passman', 'teampass');
+
 \OCP\Util::addscript('passman', 'zeroClipboard/zeroClipboard');
 
 \OCP\Util::addStyle('passman', 'ocPassman');

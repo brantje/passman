@@ -52,6 +52,10 @@ jQuery(document).ready(function($) {
 		
 		
 	})
+	$(document).on('dblclick','#pwList li',function(evt) {
+		editItem($('.row-active').attr('data-id'));
+	})
+	
 	$('#editItem').click(function(){
 		editItem($('.row-active').attr('data-id'));
 	})
@@ -419,7 +423,6 @@ function generateFolderStructure(){
 			}
 		}
 	}).bind('create_node.jstree', function(node, ref) {
-		console.log('oncreate');
 
 	}).bind('rename_node.jstree', function(node, obj) {
 		renameFolder(node,obj);
@@ -635,7 +638,6 @@ function saveItem() {
 	 */
 	var passwordStrength = $(document).data('passwordScore');
 	var requiredStrength = getRating(selectedFolder.min_pw_strength);
-	console.log(passwordStrength, requiredStrength.minScore)
 	if (passwordStrength < requiredStrength.minScore && $('#override:checked').length == 0) {
 		ERROR = 'Password complexity is not fulfilled!';
 	}
@@ -647,7 +649,6 @@ function saveItem() {
 	}
 	formData.pw1 = Aes.Ctr.encrypt(formData.pw1, getEncKey(), 256);
 	formData.pw2 = Aes.Ctr.encrypt(formData.pw2, getEncKey(), 256);
-	console.log(ERROR)
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {
@@ -711,7 +712,6 @@ function showNotification(str) {
 		OC.Notification.hide()
 	},3000)
 }
-
 
 
 function nl2br (str, is_xhtml) {   
