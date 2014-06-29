@@ -107,7 +107,7 @@ div#infoContainer {
 	cursor: pointer;
 }
 .link {
-	color: rgb(0, 102, 255);
+	color: rgb(0, 102, 255) !important;
 	cursor: pointer;
 }
 .link:hover {

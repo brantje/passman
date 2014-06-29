@@ -9,6 +9,7 @@
 \OCP\Util::addscript('passman', 'jsStorage');
 
 \OCP\Util::addscript('passman', 'importers/teampass');
+\OCP\Util::addscript('passman', 'importers/keepass2');
 
 \OCP\Util::addscript('passman', 'zeroClipboard/zeroClipboard');
 

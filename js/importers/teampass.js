@@ -30,7 +30,7 @@ function importTeamPassDialog() {
 
 				}
 			},
-			title : "Import password and folders team teampass."
+			title : "Import password and folders from teamteampass."
 		})
 		document.getElementById('importFile').addEventListener('change', handleFileChange, false);
 	} else {
@@ -166,7 +166,7 @@ function importTeampassItems() {
 			console.log('Error folder not found', ImportToFolder)
 		}
 	})
-	showNotification("Import complete, enjoy!.")
+	showNotification("Import complete, enjoy!")
 	$('#jsTree').jstree('destroy')
 	loadFolders();
 	$('#importFile').val('');
