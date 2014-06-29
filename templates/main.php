@@ -185,6 +185,7 @@
                 <br /><div id="passwordStrengthDiv"></div>
             </div>
          </div>
+	    </form>
         <div id="tabs-03" >
                 <div id="item_upload_list"></div><br>
                 <span id="item_attach_pickfiles" class="button">select</span>
@@ -194,7 +195,6 @@
         <div class="button cancel">Cancel</div>
         <div class="button save">Save</div>
         </div>
-    </form>
 </div>
   
  <div id="folderSettingsDialog" style="display: none;">

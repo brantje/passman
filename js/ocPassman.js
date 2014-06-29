@@ -642,6 +642,13 @@ function openForm(mapper) {
 	});
 	$('#item_tabs').tabs();
 	if (mapper != null) {
+		if(mapper.item_id != 0){
+			$('a[href="#tabs-03"]').show();
+		}
+		else
+		{
+			$('a[href="#tabs-03"]').hide();
+		}
 		$.each(mapper, function(k, v) {
 			$('#' + k).val(v)
 		})
@@ -700,6 +707,7 @@ function saveItem() {
 
 
 function editItem(itemId) {
+	
 	$.get(OC.generateUrl('apps/passman/api/v1/item/' + itemId), function(data) {
 		var item = data.item;
 		item.password = Aes.Ctr.decrypt(item.password, getEncKey(), 256);
