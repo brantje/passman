@@ -38,7 +38,7 @@ class FolderManager {
 		$sql .= ' VALUES (?,?,?,?,?)'; 	
 		$query = $this->db -> prepareQuery($sql);
 		$query -> bindParam(1, $folder['user_id'], \PDO::PARAM_INT);
-		$query -> bindParam(2, $folder['name'], \PDO::PARAM_STR);
+		$query -> bindParam(2, $folder['name'], \PDO::PARAM_STR); 
 		$query -> bindParam(3, $folder['parent_id'], \PDO::PARAM_INT);
 		$query -> bindParam(4, $folder['renewal_period'], \PDO::PARAM_INT);
 		$query -> bindParam(5, $folder['min_pw_strength'], \PDO::PARAM_INT);
@@ -48,7 +48,7 @@ class FolderManager {
 	}
 	public function update($folder) {
 		$sql = 'UPDATE `*PREFIX*passman_folders` SET `user_id`=?,`title`=?,`parent_id`=?,`renewal_period`=?,`min_pw_strength`=? WHERE id=?';
-		$query = $this->db -> prepareQuery($sql);
+	    $query = $this->db -> prepareQuery($sql);
 		$query -> bindParam(1, $folder['user_id'], \PDO::PARAM_INT);
 		$query -> bindParam(2, $folder['name'], \PDO::PARAM_STR);
 		$query -> bindParam(3, $folder['parent_id'], \PDO::PARAM_INT);

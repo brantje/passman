@@ -47,6 +47,7 @@ div#ocpContent {
 #addItem, #editItem, #deleteItem {
 	width: 95px;
 	float: right;
+	color: #555;
 }
 #addItem:disabled, #editItem:disabled, #deleteItem:disabled {
 	display:none;
