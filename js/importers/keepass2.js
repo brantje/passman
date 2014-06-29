@@ -67,48 +67,24 @@ function importKeepass2Dialog() {
 	}
 }
 
-var NewFolderParentId = 0;
-$(document).data('importFolders',[])
 function importKeePass2() {
+	$(document).data('importFolders',[])
 	var rows = processData(keypassData);
 	
 	$.each(rows, function(k, v) {
+		console.log(v)
 		folder = v['group-tree']
 		var folderArray = folder.split("\\");
 		var folderLevel = 0;
 		for ( i = 0; i < folderArray.length; i++) {
-			parentName = findKeeypassImportFolderByName(folderArray[i-1]);
-			folders = $(document).data('importFolders')
-			console.log(parentName);
-			if(!parentName){
-				var postData = {
-					'folderId' : 'new',
-					'parent' : NewFolderParentId++,
-					'title' : folderArray[i]
-				}
-				folders.push(postData)
-				$(document).data('importFolders', folders)
-			}
-			else
-			{
-				console.log(parentName)
-				var postData = {
-					'folderId' : 'new',
-					'parent' : parentName.parent,
-					'title' : folderArray[i]
-				}
-				folders.push(postData)
-				$(document).data('importFolders', folders)
-			}
+			//parentName = findKeeypassImportFolderByName(folderArray[i-1]);
+			
 		}
 	})
-	console.log(folders)
-
 }
 
 function findKeeypassImportFolderByName(name) {
 	var foundFolder = '';
-	console.log(name);
 	$.each($(document).data('importFolders'), function() {
 		if (this.title.indexOf(name) > -1)
 			foundFolder = this;
