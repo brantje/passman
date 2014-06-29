@@ -44,8 +44,7 @@ function importTeamPass() {
 	importTeamPassFolders();
 
 	//clean up
-	//teampassData = [];
-	//$(document).data('importFolders',{})
+
 }
 
 function importTeamPassFolders() {
@@ -170,7 +169,9 @@ function importTeampassItems() {
 	showNotification("Import complete, enjoy!.")
 	$('#jsTree').jstree('destroy')
 	loadFolders();
-	$('#importFile').val('')
+	$('#importFile').val('');
+	teampassData = [];
+	$(document).data('importFolders', {})
 }
 
 function findImportFolderByName(name) {
@@ -195,3 +196,13 @@ Array.prototype.clean = function(deleteValue) {
 	return this;
 };
 
+$(document).ready(function() {
+	if ($(document).data('importers')) {
+		var importers = $(document).data('importers');
+		importers.push['Teampass', 'importTeamPassDialog']
+	} else {
+		var importer = [['Teampass', 'importTeamPassDialog']];
+		$(document).data('importers', importer);
+	}
+
+})

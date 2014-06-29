@@ -50,7 +50,7 @@ div#ocpContent {
 	color: #555;
 }
 #addItem:disabled, #editItem:disabled, #deleteItem:disabled {
-	display:none;
+	display: none;
 }
 #pwList {
 	margin-left: 1px;
@@ -99,8 +99,19 @@ div#infoContainer {
 	margin-right: 10px;
 	font-weight: normal;
 }
-#copyPW,#showPW {
+#copyPW, #showPW {
 	color: rgb(0, 102, 255);
+}
+#copyPW:hover, #showPW:hover {
+	border-bottom: 1px solid rgb(0, 102, 255);
+	cursor: pointer;
+}
+.link {
+	color: rgb(0, 102, 255);
+	cursor: pointer;
+}
+.link:hover {
+	text-decoration: underline;
 }
 #infoContainer span.ui-icon.ui-icon-carat-1-e {
 	margin: 0px;
@@ -141,12 +152,8 @@ label[for="item_login"] {
 	margin-left: 10px;
 	font-weight: bold;
 }
-#showPW{
-	margin-left:10px;
-}
-#copyPW:hover,#showPW:hover {
-	border-bottom: 1px solid rgb(0, 102, 255);
-	cursor:pointer;
+#showPW {
+	margin-left: 10px;
 }
 #complex_attendue {
 	color: #D04806;

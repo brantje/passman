@@ -26,11 +26,12 @@
 				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
 			</div>
 			<div id="app-settings-content">
+					<p class="import link">Import data</p>
 					<div id="sessionTimeContainer" style="display: none;">
 						<h2>Session time</h2>
 						<em>Your session will expire in:<br /><span id="sessionExpire"></span></em>
 					</div>
-					<p><a href="#" class="lockSession">Lock session</a></p>
+					<p><a href="#" class="lockSession link">Lock session</a></p>
 			</div>
 		</div>
   	</div>

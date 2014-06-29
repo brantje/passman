@@ -218,7 +218,7 @@ jQuery(document).ready(function($) {
 		resetStorageKey();
 		encryptionKeyDialog();
 	})
-	
+	$('.import.link').click(importDialog)
 	 /* Auto complete search */
 
 	$("#searchbox").autocomplete({
@@ -271,6 +271,32 @@ jQuery(document).ready(function($) {
     };
 
 });
+function importDialog(){
+	
+	var option ='';
+	$.each($(document).data('importers'),function(k,importer){
+		var name = importer[0];
+		var func = importer[1];
+		option += '<option value="'+ func + '">'+ name +'</option>';
+	})
+	html = 'Select the importer you want to use';
+	html += '<select id="importer">'+ option +'</select>';
+	$('<div>'+html+'</div>').dialog({
+		close:  function(){
+					$(this).remove();	
+				},
+		buttons: {
+					"Ok": function(){
+						window[$('#importer').val()]();
+						$(this).dialog('close');	
+					},
+					"Cancel": function(){
+						$(this).dialog('close');	
+					}
+		}
+		
+	})
+}
 
 
 function countLSTTL() {
