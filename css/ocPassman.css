@@ -2,7 +2,9 @@
 	display: initial;
 	width: 100%;
 	line-height: 25px;
+	height: 26px;
 	padding: 0 0;
+	display: inline-block;
 }
 #app-navigation-toggle {
 	z-index: 2;
@@ -23,6 +25,13 @@
 	float: left;
 	background-color: #f8f8f8;
 	border-right: 1px solid #ccc;
+}
+.jstree-default .jstree-themeicon {
+	background-image: url('../../../core/img/filetypes/folder.svg') !important;
+	background-position: center center;
+	background-size: contain;
+	height: 25px !important;
+	width: 25px !important;
 }
 /*
  #menu li {
@@ -175,15 +184,15 @@ div#passwordStrengthDiv {
 	margin: 0 0 0.5em;
 	padding: 1em;
 }
-@media (max-width: 768px) {
-	div#topContent {
-		margin-left: 30px;
-	}
-}
 li.ui-menu-item .description {
 	font-size: 13px;
 	color: #A5A5A5;
 }
 .ui-autocomplete {
 	max-height: 300px;
+}
+@media (max-width: 768px) {
+	div#topContent {
+		margin-left: 30px;
+	}
 }
