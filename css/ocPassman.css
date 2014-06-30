@@ -68,9 +68,14 @@ div#ocpContent {
 	list-style:none;
 	border-bottom:1px solid #ddd;
 	height:30px;
-	padding-left:15px;
 	cursor:pointer;
 	line-height:30px;
+}
+#pwList li div{
+	padding-left:20px;
+	background-image: url('../img/key.png');
+	background-repeat: no-repeat;
+	background-position: 3px 6px;
 }
 #pwList li:hover {
 	background:#f0f0f0;
@@ -199,12 +204,14 @@ li.ui-menu-item .description {
 	height:16px;
 	width:16px;
 	display:inline-block;
+	background-size: cover;
 }
 .filetype-file {
 	background-image:url('../img/filetypes/file.png');
-	height:16px;
-	width:16px;
+	height:20px;
+	width:20px;
 	display:inline-block;
+	background-size: cover;
 }
 li.fileListItem {
 	width: 100%;

@@ -39,7 +39,7 @@
 	<div id="app-content">
 		<div id="topContent">
 					<div id="crumbs">
-							<div class="crumb last svg" data-dir="/documents">	
+							<div class="crumb last svg">	
 									<a>Root</a>
 							</div>
 					</div>  
