@@ -63,9 +63,8 @@ jQuery(document).ready(function($) {
 		$('#copyPW').remove();
 		$('#id_pw').html('');
 		$('#id_files').html('')
-		
-		
 	})
+	
 	$(document).on('dblclick','#pwList li',function(evt) {
 		editItem($('.row-active').attr('data-id'));
 	})
@@ -429,6 +428,7 @@ function loadFolders(){
 }
 function generateFolderStructure(){
 	/* Setup menu */
+	$.jstree.defaults.contextmenu.show_at_node = false;
 	$('#jsTree').jstree({
 		"core" : {
 			// so that create works
@@ -460,6 +460,7 @@ function generateFolderStructure(){
 					"Rename" : {
 						"separator_before" : false,
 						"separator_after" : false,
+						"shortcut_label": "F2",
 						"label" : "Rename",
 						"action" : function(obj) {
 							tree.edit($node);
@@ -613,6 +614,7 @@ function loadFolder(folderId){
 
 function loadItem(id,rawDesc) {
 	$.get(OC.generateUrl('apps/passman/api/v1/item/' + id), function(data) {
+		$('#id_files').html('')
 		var item = data.item;
 		item.description = nl2br(item.description);
 		var mapper = {
