@@ -682,7 +682,6 @@ function openForm(mapper) {
 		}
 	});
 	$('#item_tabs').tabs();
-	console.log(mapper);
 	if (mapper != null) {
 		if(mapper.item_id != 0){
 			$('a[href="#tabs-03"]').show();
@@ -735,7 +734,7 @@ function saveItem() {
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {
-				$('#pwList li[data-id=' + data.success.id + ']').html(data.success.label);
+				$('#pwList li[data-id=' + data.success.id + ']').html('<div style="display: inline-block;">'+data.success.label+'</div>');
 				loadItem(data.success.id);
 				$('#showPW').remove();
 				$('#copyPW').remove();
