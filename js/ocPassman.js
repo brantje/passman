@@ -793,7 +793,7 @@ function deleteItem(itemId){
 function addFilesToItem(files) {
 	var itemId = $('#item_id').val();
 	//Will be changed later
-	var allowedMimeTypes = ['image/x-icon', 'image/tiff', 'image/svg+xml', 'image/pipeg', 'image/ief', 'image/bmp', 'image/gif', 'image/jpeg', 'application/pkixcmp', 'application/pkix-crl', 'image/jpeg', 'image/png', 'application/pdf', 'application/pkix-cert', 'application/pkixcmp', 'application/x-x509-ca-cert', 'text/html', 'text/plain', 'text/x-vcard', 'application/x-pkcs12', 'application/x-pkcs7-certificates', 'pplication/x-pkcs7-mime', 'application/x-pkcs7-certreqresp', 'application/vnd.ms-powerpoint', 'application/vnd.ms-outlook', 'application/vnd.ms-excel', 'application/postscript', 'application/pkcs10,', 'application/pkix-crl', 'application/msword'];
+	//var allowedMimeTypes = ['image/x-icon', 'image/tiff', 'image/svg+xml', 'image/pipeg', 'image/ief', 'image/bmp', 'image/gif', 'image/jpeg', 'application/pkixcmp', 'application/pkix-crl', 'image/jpeg', 'image/png', 'application/pdf', 'application/pkix-cert', 'application/pkixcmp', 'application/x-x509-ca-cert', 'text/html', 'text/plain', 'text/x-vcard', 'application/x-pkcs12', 'application/x-pkcs7-certificates', 'pplication/x-pkcs7-mime', 'application/x-pkcs7-certreqresp', 'application/vnd.ms-powerpoint', 'application/vnd.ms-outlook', 'application/vnd.ms-excel', 'application/postscript', 'application/pkcs10,', 'application/pkix-crl', 'application/msword'];
 	$.each(files, function() {
 		file = this
 
@@ -813,15 +813,15 @@ function addFilesToItem(files) {
 						size : file.size,
 						content : encryptedFile
 					}
-					if ($.inArray(mimeType, allowedMimeTypes) !== -1) {
+					//if ($.inArray(mimeType, allowedMimeTypes) !== -1) {
 						$.post(OC.generateUrl('apps/passman/api/v1/item/' + itemId + '/addfile'), postData, function(data) {
 							$('#fileList').append('<li data-filename="' + data.filename + '" data-fileid="'+ data.id +'">' + file.name + ' (' + humanFileSize(file.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
 						})
-					}
-					else
-					{
-						$('#fileList').append('<li class="error">' + file.name + ' mimetype: ' + mimeType +' not allowed</li>')//.delay(5000).slideUp();
-					}
+					//}
+					//else
+					//{
+					//	$('#fileList').append('<li class="error">' + file.name + ' mimetype: ' + mimeType +' not allowed</li>')//.delay(5000).slideUp();
+					//}
 
 				} else {
 					$('#fileList').append('<li>' + file.name + ' Can\'t upload max file size: ' + humanFileSize(20971520) + '</li>');
