@@ -27,7 +27,7 @@ jQuery(document).ready(function($) {
 	for (var i = 0; i < highestTimeoutId; i++) {
 		clearTimeout(i);
 	}
-	Snap = null
+	Snap = null;
 	
 	containerHeight = $('#app-content').height();
 	containerWidth = $('#app-content').width();
@@ -49,32 +49,32 @@ jQuery(document).ready(function($) {
 		$('#pwList li').removeClass('row-active');
 		$(this).addClass('row-active');
 		loadItem($(this).attr('data-id'));
-		$('#editItem').attr('disabled',false)
-		$('#deleteItem').attr('disabled',false)
+		$('#editItem').attr('disabled',false);
+		$('#deleteItem').attr('disabled',false);
 
-	})
+	});
 	$('#pwList').click(function(){
 		$('#editItem').attr('disabled','disabled');
 		$('#deleteItem').attr('disabled','disabled');
 		$('#pwList li').removeClass('row-active');
-		var mapper = {id_label:'',id_desc: '',hid_pw: '',id_login:'',id_email: '', id_url: '',id_files: '',id_tags: ''}
-		$.each(mapper,function(k,v){ (k!='hid_pw') ? $('#'+k).html(v): $('#'+k).val(v)});
+		var mapper = {id_label:'',id_desc: '',hid_pw: '',id_login:'',id_email: '', id_url: '',id_files: '',id_tags: ''};
+		$.each(mapper,function(k,v){ (k!='hid_pw') ? $('#'+k).html(v) : $('#'+k).val(v);});
 		$('#showPW').remove();
 		$('#copyPW').remove();
 		$('#id_pw').html('');
-		$('#id_files').html('')
-	})
+		$('#id_files').html('');
+	});
 	
 	$(document).on('dblclick','#pwList li',function(evt) {
 		editItem($('.row-active').attr('data-id'));
-	})
+	});
 	
 	$('#editItem').click(function(){
 		editItem($('.row-active').attr('data-id'));
-	})
+	});
 	$('#deleteItem').click(function(){
 		deleteItem($('.row-active').attr('data-id'));
-	})
+	});
 
 	$('#addItem').click(function() {
 		if(selectedFolder.id!='ajson0'){
@@ -84,8 +84,8 @@ jQuery(document).ready(function($) {
 	
 	$(document).on('click','.link.loadFile',function(){
 		var fileId = $(this).attr('data-fileid');
-		loadFile(fileId)
-	})
+		loadFile(fileId);
+	});
 	
 	$('#custom_pw').buttonset();
 	$('#pwTools').tooltip();
@@ -180,12 +180,12 @@ jQuery(document).ready(function($) {
 
 	$(document).on('click','.fileListItem .icon-delete',function(){
 		deleteFile($(this).parent().attr('data-fileid'));
-	})
+	});
 
 
 	$('#editAddItemDialog .cancel').click(function(){
 		$('#editAddItemDialog').dialog('close');
-	})
+	});
 	
 	$(document).on('click','#showPW',function(){
 		if (!$(this).attr('data-toggled') || $(this).attr('data-toggled') == 'off'){
@@ -204,13 +204,13 @@ jQuery(document).ready(function($) {
 			   }
 			   $('#id_pw').html(starPW);
 	    }
-	})
+	});
 	
-	$('#editAddItemDialog .save').click(saveItem)
+	$('#editAddItemDialog .save').click(saveItem);
 	
 	$('#folderSettingsDialog .cancel').click(function(){
 		$('#folderSettingsDialog').dialog('close');
-	})
+	});
 	
 	$('#folderSettingsDialog .save').click(function(){
 		var foldersettings = $.extend($(document).data('currentFolder'),$('#folderSettings').serializeObject());
@@ -219,12 +219,12 @@ jQuery(document).ready(function($) {
 		foldersettings.title = foldersettings.text;
 		$.post(OC.generateUrl('apps/passman/api/v1/folders/'+foldersettings.id),foldersettings,function(){
 			$('#folderSettingsDialog').dialog('close');
-			foldersettings.id = 'ajson'+foldersettings.id
-		})
-	})
+			foldersettings.id = 'ajson'+foldersettings.id;
+		});
+	});
 	
 	/* Load the folders */
-	loadFolders()
+	loadFolders();
 	
 
 	
@@ -244,8 +244,8 @@ jQuery(document).ready(function($) {
 	$('.lockSession').click(function(){
 		resetStorageKey();
 		encryptionKeyDialog();
-	})
-	$('.import.link').click(importDialog)
+	});
+	$('.import.link').click(importDialog);
 	 /* Auto complete search */
 
 	$("#searchbox").autocomplete({
@@ -260,11 +260,11 @@ jQuery(document).ready(function($) {
 				success : function(data) {
 					var item = [];
 					$.each(data,function(){
-						item.push(this)
-					})
+						item.push(this);
+					});
 					response(item);
 				}
-			})
+			});
 		},
 		minLength : 1,
 		select : function(event, ui) {
@@ -305,7 +305,7 @@ function importDialog(){
 		var name = importer[0];
 		var func = importer[1];
 		option += '<option value="'+ func + '">'+ name +'</option>';
-	})
+	});
 	html = 'Select the importer you want to use';
 	html += '<select id="importer">'+ option +'</select>';
 	$('<div>'+html+'</div>').dialog({
@@ -322,7 +322,7 @@ function importDialog(){
 					}
 		}
 		
-	})
+	});
 }
 
 function countLSTTL() {
@@ -340,20 +340,20 @@ function countLSTTL() {
 	if (minutes < 10)
 		minutes = '0' + minutes;
 	if (secs < 10)
-		secs = '0' + secs
+		secs = '0' + secs;
 	str += hours + ':';
 	str += minutes + ':';
 	str += secs;
 
-	$('#sessionExpire').text(str)
+	$('#sessionExpire').text(str);
 	if (days == 0 && hours == "00" && minutes == "00" && secs == "00") {
 		resetStorageKey();
 		encryptionKeyDialog();
 	} else {
 
 		ttltimer = setTimeout(function() {
-			countLSTTL()
-		}, 1000)
+			countLSTTL();
+		}, 1000);
 	}
 }
 
@@ -366,11 +366,11 @@ function encryptionKeyDialog(){
 						},
 						buttons: { "Ok": function() {
 								if($('#ecKey').val()==''){
-									showNotification("Encryption key can't be empty!")
+									showNotification("Encryption key can't be empty!");
 									return false;
 								}
 								$(this).dialog("close");
-								setEncKey($('#ecKey').val())
+								setEncKey($('#ecKey').val());
 								if($('#ecRemember:checked').length > 0){
 									$.jStorage.set("ENC_KEY", $('#ecKey').val());
 									if($('#rememberTime').val() != 'forever'){
@@ -385,18 +385,18 @@ function encryptionKeyDialog(){
 							    $('#rememberTime').val('15');
 							} 
 						}
-					})
+				});
 					
 	 $('#ecKey').keypress(function(event) { 
 	 	if(event.keyCode==13){
-	 		$('.ui-dialog-buttonpane button').click()
+	 		$('.ui-dialog-buttonpane button').click();
 	 	}
 	 	
-	 })
+	 });
 	 
 	 $('#rememberTime').change(function(){
 	 	$('#ecRemember').attr('checked','checked');
-	 })
+	 });
 }
 
 /**
@@ -416,11 +416,11 @@ function resetStorageKey(){
 
 function loadFolders(){
 	$.getJSON(OC.generateUrl('apps/passman/api/v1/folders')).success(function(data) { 
-		var folders = [{'id': 'ajson0','parent': '#','text': 'Root'}]
+		var folders = [{'id': 'ajson0','parent': '#','text': 'Root'}];
 		$.each(data.folders,function(k,v){
 			var parent = (this.id==0) ? '#' : 'ajson'+this.parent_id;
-			var folderData = {'id': "ajson"+ this.id,'parent': parent,'text': this.title,'renewal_period': this.renewal_period,'min_pw_strength': this.min_pw_strength}
-			folders.push(folderData)
+			var folderData = {'id': "ajson"+ this.id,'parent': parent,'text': this.title,'renewal_period': this.renewal_period,'min_pw_strength': this.min_pw_strength};
+			folders.push(folderData);
 		});
 		$(document).data('folderStructure',folders);
 		generateFolderStructure();
@@ -429,13 +429,19 @@ function loadFolders(){
 function generateFolderStructure(){
 	/* Setup menu */
 	$.jstree.defaults.contextmenu.show_at_node = false;
+	
 	$('#jsTree').jstree({
 		"core" : {
 			// so that create works
 			"check_callback" : true,
-			'data': $(document).data('folderStructure')
+			'data' : $(document).data('folderStructure'),
 		},
-		"plugins" : ["contextmenu"],
+		"dnd" : {
+            "drop_finish" : function () { 
+                alert("DROP"); 
+          }
+         },
+		"plugins" : ["contextmenu", "hotkeys", "state", "dnd"],
 		"contextmenu" : {
 			"items" : function($node) {
 				var tree = $("#jsTree").jstree(true);
@@ -443,7 +449,7 @@ function generateFolderStructure(){
 					"Settings" : {
 						"separator_before" : false,
 						"separator_after" : true,
-						"label" : "Settings",  
+						"label" : "Settings",
 						"action" : function(obj) {
 							folderSettings($node);
 						}
@@ -460,7 +466,6 @@ function generateFolderStructure(){
 					"Rename" : {
 						"separator_before" : false,
 						"separator_after" : false,
-						"shortcut_label": "F2",
 						"label" : "Rename",
 						"action" : function(obj) {
 							tree.edit($node);
@@ -477,12 +482,10 @@ function generateFolderStructure(){
 				};
 			}
 		}
-	}).bind('create_node.jstree', function(node, ref) {
-
 	}).bind('rename_node.jstree', function(node, obj) {
-		renameFolder(node,obj);
+		updateFolder(node, obj);
 	}).bind('delete_node.jstree', function(node, ref) {
-		deleteFolder(ref)
+		deleteFolder(ref);
 	}).bind("select_node.jstree", function(event, data) {
 		var ids = (data) ? $('#jsTree').jstree("get_path", data.node.id) : $('#jsTree').jstree("get_path", $(document).data('dirid'));
 		var path = "";
@@ -495,17 +498,25 @@ function generateFolderStructure(){
 			path += '<div class="' + classes + '" data-dir="' + $(dir).attr('id') + '"><a>' + v2 + '</a></div>';
 		});
 		$('#crumbs').html(path);
-		loadFolder($(dir).attr('id').replace('ajson',''));
+		loadFolder($(dir).attr('id').replace('ajson', ''));
 		$('#pwList').click();
-	}).bind('loaded.jstree',function(evt){
-		$(this).jstree('open_node', $('#ajson0'));
+	}).bind('loaded.jstree', function(evt) {
+		$('#jsTree').jstree('open_node', $('#ajson0'));
+		$('#jsTree').bind("move_node.jstree", function(event, object) {
+			/**
+			 * When a folder is moved
+			 * @TODO Write changes to DB
+			 */
+			updateFolder(event,object);
+		});
 	});
 	$(document).on('click', '.crumb', function() {
 		$('.jstree-clicked').removeClass('jstree-clicked');
 		$(document).data('dirid', $(this).attr('data-dir'));
 		$("#jsTree").jstree("select_node", '#' + $(this).attr('data-dir')).trigger("select_node.jstree");
-	});
-	loadFolder(0)
+	}); 
+
+	loadFolder(0);
 }
 
 function getFolderById(id){
@@ -514,7 +525,7 @@ function getFolderById(id){
 	$.each($(document).data('folderStructure'),function(){
 		if(id==this.id || (id.toString().replace('ajson','') == this.id.toString().replace('ajson','')))
 			folder = this;
-	})
+	});
 	return folder;
 }
 /**
@@ -524,35 +535,34 @@ function folderSettings(node){
 	var currentFolder = getFolderById(node.id);
 	$(document).data('currentFolder',currentFolder);
 	$('#folderId').val(currentFolder.id.replace('ajson',''));
-	$('#min_pw_strength').val(currentFolder.min_pw_strength)
-	$('#renewal_period').val(currentFolder.renewal_period)
+	$('#min_pw_strength').val(currentFolder.min_pw_strength);
+	$('#renewal_period').val(currentFolder.renewal_period);
 	$('#folderSettingsDialog').dialog({ title: currentFolder.text+" settings",width: 200, close: 
 										function() {
-		  									$('#edit_folder_complexity').val('')
-											$('#renewal_period').val('')
+		  									$('#edit_folder_complexity').val('');
+											$('#renewal_period').val('');
 										}
 	});
 }
 /**
  * Rename a folder by context menu refference
  */
-function renameFolder(node, obj){ 
+function updateFolder(node, obj){ 
 	var f = obj.node;
 	var folderID = f.id.replace('ajson','');
 	var parent = f.parent.replace('ajson','');
 	var title = f.text;
 	$.post(OC.generateUrl('apps/passman/api/v1/folders/'+folderID),{'folderId': folderID,'parent': parent,'title': title },function(data){
-		console.log(data);
 		if(data.folderid){
 			 var folders = $(document).data('folderStructure');
-			  folders.push({'id': "ajson"+ data.folderid,'parent': 'ajson'+parent,'text': title,'renewal_period': 0,'min_pw_strength': 0})
+			  folders.push({'id': "ajson"+ data.folderid,'parent': 'ajson'+parent,'text': title,'renewal_period': 0,'min_pw_strength': 0});
 			  $(document).data('folderStructure',folders);
 			 /* 
 			  * set_id is not working, as work arround i add the item to the array, destroy the tree and rebuld it.
 			  * Not neat i know..
 			  */
 			 $('#jsTree').jstree("destroy");
-			 generateFolderStructure()
+			 generateFolderStructure();
 		}
 		else
 		{
@@ -582,21 +592,21 @@ function deleteFolder(ref){
  */
 function loadFolder(folderId){
 	if(folderId!=0){
-		$('#addItem').attr('disabled',false)
+		$('#addItem').attr('disabled',false);
 	}
 	else
 	{
 		$('#addItem').attr('disabled','disabled');
 		$('#addItem').attr('disabled','disabled');
 	}
-	$('#pwList').html('<span id="itemsLoading" class="icon-loading icon" style="height: 32px; width: 32px; margin-left: 10px;"></span>')
+	$('#pwList').html('<span id="itemsLoading" class="icon-loading icon" style="height: 32px; width: 32px; margin-left: 10px;"></span>');
 	$.get(OC.generateUrl('apps/passman/api/v1/items/'+folderId),function(data){
 		$('#itemsLoading').remove();
 		if(data.items.length != 0){
 			$.each(data.items,function(){
 				 var append = '<li data-id='+ this.id +'><div style="display: inline-block;">'+ this.label+'</div></li>';
 				 $('#pwList').append(append);
-			})
+			});
 		}
 		else
 		{
@@ -604,7 +614,7 @@ function loadFolder(folderId){
 		}
 		
 		selectedFolder = getFolderById(folderId);
-	})
+	});
 }
 /**
  * Load an item
@@ -614,7 +624,7 @@ function loadFolder(folderId){
 
 function loadItem(id,rawDesc) {
 	$.get(OC.generateUrl('apps/passman/api/v1/item/' + id), function(data) {
-		$('#id_files').html('')
+		$('#id_files').html('');
 		var item = data.item;
 		item.description = nl2br(item.description);
 		var mapper = {
@@ -626,17 +636,17 @@ function loadItem(id,rawDesc) {
 			id_url : item.url,
 			files : item.files,
 			id_tags : ''
-		}
+		};
 		$.each(mapper, function(k, v) {
-			(k != 'hid_pw') ? $('#' + k).html(v) : $('#' + k).val(v)
-		})
+			(k != 'hid_pw') ? $('#' + k).html(v) : $('#' + k).val(v);
+		});
 		var starPW = '';
 		for ( i = 0; i < 12; i++) {
 			starPW += '*';
 		}
 		var append = '<span id="showPW">[Show]</span> <span id="copyPW">[Copy]</span>';
 		$('#id_pw').html(starPW).after(append);
-		var client = new ZeroClipboard($('#copyPW'))
+		var client = new ZeroClipboard($('#copyPW'));
 		client.on('ready', function(event) {
 			client.on('copy', function(event) {
 				var clipboard = event.clipboardData;
@@ -648,24 +658,24 @@ function loadItem(id,rawDesc) {
 			$.each(mapper.files,function(){
 				var icon = (this.type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
 				$('#id_files').append('<span class="link loadFile" data-fileid="'+this.id+'"> <span class="'+ icon +'"></span>'+ this.filename +' (' + humanFileSize(this.size) + ')' );
-			})
+			});
 		}
 		else
 		{
-			$('#id_files').html('')
+			$('#id_files').html('');
 		}
 			
 		
 		return mapper;
-	})
+	});
 }
 
 function getRating(str){
 	var scoreInfo;
 	 $.each(passwordRatings,function(k,v){
 	 	if(str >= this.minScore)
-	 		scoreInfo = this
-	 })		
+	 		scoreInfo = this;
+	 });
 	return scoreInfo;
 }
 
@@ -694,7 +704,7 @@ function openForm(mapper) {
 		}
 		$.each(mapper, function(k, v) {
 			$('#' + k).val(v.toString().replace(/<br \/>/g,"\n"));
-		})
+		});
 		if (mapper.pw1) {
 			$('#pw1').change().trigger('keyup.simplePassMeter');
 		}
@@ -703,7 +713,7 @@ function openForm(mapper) {
 				var data = this;
 				var filename =  (data.filename.length >= 20) ? data.filename.substring(0, 20)+'...' : data.filename;
 				$('#fileList').append('<li data-filename="' + data.filename + '" data-fileid="'+ data.id +'" class="fileListItem">' + filename + ' (' + humanFileSize(data.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
-			})
+			});
 		}
 	}
 
@@ -714,11 +724,11 @@ function saveItem() {
 	$('#editAddItemDialog .error').remove();
 	var ERROR = false;
 	var createUrl = OC.generateUrl('apps/passman/api/v1/item');
-	var updateUrl = OC.generateUrl('apps/passman/api/v1/item/' + formData.item_id)
+	var updateUrl = OC.generateUrl('apps/passman/api/v1/item/' + formData.item_id);
 	var postUrl = (formData.item_id == 0) ? createUrl : updateUrl;
 
 	/**
-	 * @TODO Add form check logic, password encryption
+	 *
 	 */
 	var passwordStrength = $(document).data('passwordScore');
 	var requiredStrength = getRating(selectedFolder.min_pw_strength);
@@ -749,9 +759,9 @@ function saveItem() {
 				}
 			}
 			$('#editAddItemDialog').dialog('close');
-		})
+		});
 	} else {
-		$('#editAddItemDialog').prepend('<div class="error">' + ERROR + '</div>')
+		$('#editAddItemDialog').prepend('<div class="error">' + ERROR + '</div>');
 	}
 }
 
@@ -773,9 +783,9 @@ function editItem(itemId) {
 			url : item.url,
 			files : item.files,
 			id_tags : ''
-		}
+		};
 		openForm(edtmapper);
-	})
+	});
 }
 
 
@@ -786,8 +796,7 @@ function deleteItem(itemId){
     url: OC.generateUrl('apps/passman/api/v1/item/'+itemId),
     type: 'DELETE',
     success: function(data) {
-    	console.log(data)
-        $('#pwList li[data-id='+ data.deleted+']').slideUp(function(){$(this).remove()});
+        $('#pwList li[data-id='+ data.deleted+']').slideUp(function(){$(this).remove();});
     }
 });
 }
@@ -797,7 +806,7 @@ function addFilesToItem(files) {
 	//Will be changed later
 	//var allowedMimeTypes = ['image/x-icon', 'image/tiff', 'image/svg+xml', 'image/pipeg', 'image/ief', 'image/bmp', 'image/gif', 'image/jpeg', 'application/pkixcmp', 'application/pkix-crl', 'image/jpeg', 'image/png', 'application/pdf', 'application/pkix-cert', 'application/pkixcmp', 'application/x-x509-ca-cert', 'text/html', 'text/plain', 'text/x-vcard', 'application/x-pkcs12', 'application/x-pkcs7-certificates', 'pplication/x-pkcs7-mime', 'application/x-pkcs7-certreqresp', 'application/vnd.ms-powerpoint', 'application/vnd.ms-outlook', 'application/vnd.ms-excel', 'application/postscript', 'application/pkcs10,', 'application/pkix-crl', 'application/msword'];
 	$.each(files, function() {
-		file = this
+		file = this;
 
 		reader = new FileReader();
 		reader.onloadend = (function(file) {
@@ -805,7 +814,6 @@ function addFilesToItem(files) {
 				if (file.size < 20971520) {
 					var dataURL = evt.target.result;
 					var mimeType = dataURL.split(",")[0].split(":")[1].split(";")[0];
-					console.log(mimeType)
 					var encryptedFile = Aes.Ctr.encrypt(dataURL, getEncKey(), 256);
 					var postData = {
 						item_id : itemId,
@@ -814,11 +822,11 @@ function addFilesToItem(files) {
 						mimetype : mimeType,
 						size : file.size,
 						content : encryptedFile
-					}
+					};
 					//if ($.inArray(mimeType, allowedMimeTypes) !== -1) {
 						$.post(OC.generateUrl('apps/passman/api/v1/item/' + itemId + '/addfile'), postData, function(data) {
 							$('#fileList').append('<li data-filename="' + data.filename + '" data-fileid="'+ data.id +'">' + file.name + ' (' + humanFileSize(file.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
-						})
+						});
 					//}
 					//else
 					//{
@@ -831,7 +839,7 @@ function addFilesToItem(files) {
 			};
 		})(file);
 		reader.readAsDataURL(file);
-	})
+	});
 }
 
 
@@ -854,7 +862,7 @@ function loadFile(fileId) {
 				});
 				var win = $(window);
 				if ($('#fileImg').width() > win.width() || $('#fileImg').height() > win.height()) {
-					$('#fileImg').css('width', $(window).width() * 0.8)
+					$('#fileImg').css('width', $(window).width() * 0.8);
 						$('#dialog_files').parent().position({
 						    my: "center",
 						    at: "center",
@@ -870,7 +878,7 @@ function loadFile(fileId) {
 				content : 'test',
 				buttons : {
 					"Download" : function() {
-						var uriContent = dataURItoBlob(fileData,data.type)
+						var uriContent = dataURItoBlob(fileData,data.type);
 						/*var newWindow = window.open(uriContent, data.filename);*/
 						var a = document.createElement("a");
 						a.style = "display: none";
@@ -884,9 +892,9 @@ function loadFile(fileId) {
 						$(this).remove();
 					}
 				}
-			})
+			});
 		}
-	})
+	});
 }
 
 function dataURItoBlob(dataURI, ftype) {
@@ -895,7 +903,7 @@ function dataURItoBlob(dataURI, ftype) {
     var byteString = atob(dataURI.split(',')[1]);
  
     // separate out the mime component
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
  
     // write the bytes of the string to an ArrayBuffer
     var ab = new ArrayBuffer(byteString.length);
@@ -918,16 +926,16 @@ function deleteFile(fileId){
 	    url: OC.generateUrl('apps/passman/api/v1/item/file/'+fileId),
 	    type: 'DELETE',
 	    success: function(result) {
-	        $('li[data-fileid="'+ fileId+'"]').slideUp()
+	        $('li[data-fileid="'+ fileId+'"]').slideUp();
 	    }
 	});
 }
 
 function showNotification(str) {
-	OC.Notification.show(str)
+	OC.Notification.show(str);
 	setTimeout(function(){
-		OC.Notification.hide()
-	},3000)
+		OC.Notification.hide();
+	},3000);
 }
 
 
