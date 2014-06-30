@@ -119,7 +119,8 @@
                     <td>
                         <div id="id_files" style="display:inline;font-size:11px;"></div>
                         <div id="dialog_files" style="display: none;">
-							<img id="fileImg" />
+							<img id="fileImg" /><br />
+							<span id="downloadImage"></span>
                         </div>
                     </td>
                 </tr>

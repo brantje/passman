@@ -844,6 +844,7 @@ function loadFile(fileId) {
 		if (data.type.indexOf('image') >= 0) {
 			var imageData = Aes.Ctr.decrypt(data.content, getEncKey(), 256);
 			$('#fileImg').attr('src', imageData);
+			$('#downloadImage').html('<a href="'+ imageData +'" download="'+ data.filename +'">Save this image</a>');
 			$('#fileImg').load(function() {
 				$('#dialog_files').dialog({
 					width : 'auto',
