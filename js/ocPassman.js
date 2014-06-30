@@ -691,9 +691,6 @@ function openForm(mapper) {
 		{
 			$('a[href="#tabs-03"]').hide();
 		}
-		if(mapper.desc){
-			mapper.desc = mapper.desc.replace('<br />','\n');
-		}
 		$.each(mapper, function(k, v) {
 			$('#' + k).val(v.toString().replace(/<br \/>/g,"\n"));
 		})
