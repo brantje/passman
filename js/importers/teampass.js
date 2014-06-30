@@ -20,7 +20,7 @@ function importTeamPassDialog() {
 	// Check for the various File API support.
 	if (window.File && window.FileReader && window.FileList && window.Blob) {
 
-		$('<div><p>First follow the instructions <a href="https://github.com/brantje/teampass-to-passman" target="_blank">here</a><input type="file" id="importFile"/>').dialog({
+		$('<div><p>First follow the instructions <a href="https://github.com/brantje/passman/wiki/Import-teampass" target="_blank" class="link">here</a><input type="file" id="importFile"/>').dialog({
 			buttons : {
 				"Import" : function() {
 					importTeamPass();

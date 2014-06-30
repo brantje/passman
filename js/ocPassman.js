@@ -15,7 +15,20 @@ $.fn.serializeObject = function()
     return o;
 };
 
+
+
+
 jQuery(document).ready(function($) {
+
+	/*
+	 * Stop all snap.js timers
+	 */
+	var highestTimeoutId = setTimeout(";");
+	for (var i = 0; i < highestTimeoutId; i++) {
+		clearTimeout(i);
+	}
+	Snap = null
+	
 	containerHeight = $('#app-content').height();
 	containerWidth = $('#app-content').width();
 	$('#pwList').height(containerHeight - $('#infoContainer').height() - 85);
@@ -49,6 +62,7 @@ jQuery(document).ready(function($) {
 		$('#showPW').remove();
 		$('#copyPW').remove();
 		$('#id_pw').html('');
+		$('#id_files').html('')
 		
 		
 	})
@@ -68,7 +82,12 @@ jQuery(document).ready(function($) {
 		openForm({item_id:0, folderid: selectedFolder.id.replace('ajson','')});
 		}
 	});
-
+	
+	$(document).on('click','.link.loadFile',function(){
+		var fileId = $(this).attr('data-fileid');
+		loadFile(fileId)
+	})
+	
 	$('#custom_pw').buttonset();
 	$('#pwTools').tooltip();
 
@@ -154,7 +173,17 @@ jQuery(document).ready(function($) {
             	$('.simplePassMeterText').append(' ('+score+' points)');
         }
     });
-    
+	
+	$('#fileInput').change(function () {
+	  addFilesToItem(this.files);
+	});
+	
+
+	$(document).on('click','.fileListItem .icon-delete',function(){
+		deleteFile($(this).parent().attr('data-fileid'));
+	})
+
+
 	$('#editAddItemDialog .cancel').click(function(){
 		$('#editAddItemDialog').dialog('close');
 	})
@@ -198,8 +227,7 @@ jQuery(document).ready(function($) {
 	/* Load the folders */
 	loadFolders()
 	
-	/* Load items in the root folder */
-	setTimeout(function(){loadFolder(0)},250);
+
 	
 	/**
 	 * Request the user encryption key (if it is not found)
@@ -298,7 +326,6 @@ function importDialog(){
 	})
 }
 
-
 function countLSTTL() {
 	var expire = $.jStorage.getTTL('ENC_KEY') / 1000;
 	var days = Math.floor(expire / 86400);
@@ -324,6 +351,7 @@ function countLSTTL() {
 		resetStorageKey();
 		encryptionKeyDialog();
 	} else {
+
 		ttltimer = setTimeout(function() {
 			countLSTTL()
 		}, 1000)
@@ -476,6 +504,7 @@ function generateFolderStructure(){
 		$(document).data('dirid', $(this).attr('data-dir'));
 		$("#jsTree").jstree("select_node", '#' + $(this).attr('data-dir')).trigger("select_node.jstree");
 	});
+	loadFolder(0)
 }
 
 function getFolderById(id){
@@ -593,7 +622,7 @@ function loadItem(id) {
 			id_login : item.account,
 			id_email : item.email,
 			id_url : item.url,
-			id_files : '',
+			files : item.files,
 			id_tags : ''
 		}
 		$.each(mapper, function(k, v) {
@@ -610,9 +639,21 @@ function loadItem(id) {
 			client.on('copy', function(event) {
 				var clipboard = event.clipboardData;
 				clipboard.setData("text/plain",  Aes.Ctr.decrypt(item.password, getEncKey(), 256));
-				showNotification("Password copied to clipboard")
+				showNotification("Password copied to clipboard");
 			});
 		});
+		if(mapper.files){
+			$.each(mapper.files,function(){
+				var icon = (this.type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
+				$('#id_files').append('<span class="link loadFile" data-fileid="'+this.id+'"> <span class="'+ icon +'"></span>'+ this.filename +' (' + humanFileSize(this.size) + ')' );
+			})
+		}
+		else
+		{
+			$('#id_files').html('')
+		}
+			
+		
 		return mapper;
 	})
 }
@@ -654,6 +695,13 @@ function openForm(mapper) {
 		})
 		if (mapper.pw1) {
 			$('#pw1').change().trigger('keyup.simplePassMeter');
+		}
+		if(mapper.files){
+			$.each(mapper.files,function(){
+				var data = this;
+				var filename =  (data.filename.length >= 20) ? data.filename.substring(0, 20)+'...' : data.filename;
+				$('#fileList').append('<li data-filename="' + data.filename + '" data-fileid="'+ data.id +'" class="fileListItem">' + filename + ' (' + humanFileSize(data.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
+			})
 		}
 	}
 
@@ -721,12 +769,14 @@ function editItem(itemId) {
 			account : item.account,
 			email : item.email,
 			url : item.url,
-			id_files : '',
+			files : item.files,
 			id_tags : ''
 		}
 		openForm(edtmapper);
 	})
 }
+
+
 
 
 function deleteItem(itemId){
@@ -740,6 +790,135 @@ function deleteItem(itemId){
 });
 }
 
+function addFilesToItem(files) {
+	var itemId = $('#item_id').val();
+	//Will be changed later
+	var allowedMimeTypes = ['image/x-icon', 'image/tiff', 'image/svg+xml', 'image/pipeg', 'image/ief', 'image/bmp', 'image/gif', 'image/jpeg', 'application/pkixcmp', 'application/pkix-crl', 'image/jpeg', 'image/png', 'application/pdf', 'application/pkix-cert', 'application/pkixcmp', 'application/x-x509-ca-cert', 'text/html', 'text/plain', 'text/x-vcard', 'application/x-pkcs12', 'application/x-pkcs7-certificates', 'pplication/x-pkcs7-mime', 'application/x-pkcs7-certreqresp', 'application/vnd.ms-powerpoint', 'application/vnd.ms-outlook', 'application/vnd.ms-excel', 'application/postscript', 'application/pkcs10,', 'application/pkix-crl', 'application/msword'];
+	$.each(files, function() {
+		file = this
+
+		reader = new FileReader();
+		reader.onloadend = (function(file) {
+			return function(evt) {
+				if (file.size < 20971520) {
+					var dataURL = evt.target.result;
+					var mimeType = dataURL.split(",")[0].split(":")[1].split(";")[0];
+					console.log(mimeType)
+					var encryptedFile = Aes.Ctr.encrypt(dataURL, getEncKey(), 256);
+					var postData = {
+						item_id : itemId,
+						filename : file.name,
+						type : file.type,
+						mimetype : mimeType,
+						size : file.size,
+						content : encryptedFile
+					}
+					if ($.inArray(mimeType, allowedMimeTypes) !== -1) {
+						$.post(OC.generateUrl('apps/passman/api/v1/item/' + itemId + '/addfile'), postData, function(data) {
+							$('#fileList').append('<li data-filename="' + data.filename + '" data-fileid="'+ data.id +'">' + file.name + ' (' + humanFileSize(file.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
+						})
+					}
+					else
+					{
+						$('#fileList').append('<li class="error">' + file.name + ' mimetype: ' + mimeType +' not allowed</li>')//.delay(5000).slideUp();
+					}
+
+				} else {
+					$('#fileList').append('<li>' + file.name + ' Can\'t upload max file size: ' + humanFileSize(20971520) + '</li>');
+				}
+			};
+		})(file);
+		reader.readAsDataURL(file);
+	})
+}
+
+
+
+
+
+
+function loadFile(fileId) {
+	$.get(OC.generateUrl('/apps/passman/api/v1/item/file/' + fileId), function(data) {
+		console.log(data);
+		/* Show the image if it is ofcourse */
+		if (data.type.indexOf('image') >= 0) {
+			var imageData = Aes.Ctr.decrypt(data.content, getEncKey(), 256);
+			$('#fileImg').attr('src', imageData);
+			$('#fileImg').load(function() {
+				$('#dialog_files').dialog({
+					width : 'auto',
+					title : data.filename
+				});
+				var win = $(window);
+				if ($('#fileImg').width() > win.width() || $('#fileImg').height() > win.height()) {
+					$('#fileImg').css('width', $(window).width() * 0.8)
+						$('#dialog_files').parent().position({
+						    my: "center",
+						    at: "center",
+						    of: window
+						});
+				}
+			});
+		} else {
+			var fileData = Aes.Ctr.decrypt(data.content, getEncKey(), 256);
+			//console.log(fileData);
+			$('<div>Due popup blockers you have to click the below button to download your file.</div>').dialog({
+				title : "Download " + data.filename,
+				content : 'test',
+				buttons : {
+					"Download" : function() {
+						var uriContent = dataURItoBlob(fileData,data.type)
+						/*var newWindow = window.open(uriContent, data.filename);*/
+						var a = document.createElement("a");
+						a.style = "display: none";
+						a.href = uriContent;
+				        a.download = data.filename;
+				        a.click();
+				        window.URL.revokeObjectURL(url);
+						$(this).remove();
+					},
+					"Cancel" : function() {
+						$(this).remove();
+					}
+				}
+			})
+		}
+	})
+}
+
+function dataURItoBlob(dataURI, ftype) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+ 
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+ 
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+ 
+    // write the ArrayBuffer to a blob, and you're done
+    var bb = new Blob([ab], {type: ftype}) ;
+   	
+    return URL.createObjectURL(bb);
+}
+/**
+ * @todo delete file
+ * @param {Object} str
+ */
+function deleteFile(fileId){
+	$.ajax({
+	    url: OC.generateUrl('apps/passman/api/v1/item/file/'+fileId),
+	    type: 'DELETE',
+	    success: function(result) {
+	        $('li[data-fileid="'+ fileId+'"]').slideUp()
+	    }
+	});
+}
 
 function showNotification(str) {
 	OC.Notification.show(str)

@@ -43,4 +43,9 @@ $application->registerRoutes($this, array(
 	array('name' => 'item_api#update', 'url' => '/api/v1/item/{itemId}', 'verb' => 'POST'),
 	array('name' => 'item_api#delete', 'url' => '/api/v1/item/{itemId}', 'verb' => 'DELETE'),
 	array('name' => 'item_api#search', 'url' => '/api/v1/item/search/{itemName}', 'verb' => 'GET'),
+
+	array('name' => 'item_api#addfile', 'url' => '/api/v1/item/{itemId}/addfile', 'verb' => 'POST'),
+	array('name' => 'item_api#getfile', 'url' => '/api/v1/item/file/{fileId}', 'verb' => 'GET'),
+	array('name' => 'item_api#deletefile', 'url' => '/api/v1/item/file/{fileId}', 'verb' => 'DELETE'),
+	
 )));

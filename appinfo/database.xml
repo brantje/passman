@@ -55,6 +55,72 @@
 	</table>
 	
 	<table>
+		<name>*dbprefix*passman_files</name>
+		<declaration>
+			<field>
+				<name>id</name>
+				<type>integer</type>
+				<default>0</default>
+				<autoincrement>1</autoincrement>
+				<length>41</length>
+			</field>
+			<field>
+				<name>item_id</name>
+				<type>integer</type>
+				<default>0</default>
+				<length>41</length>
+			</field>
+			<field>
+				<name>user_id</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>64</length>
+			</field>
+			<field>
+				<name>filename</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>255</length>
+			</field>
+			<field>
+				<name>type</name>
+				<type>text</type>
+				<length>255</length>
+			</field>
+			<field>
+				<name>mimetype</name>
+				<type>clob</type>
+			</field>
+			<field>
+				<name>size</name>
+				<length>8</length>
+				<type>text</type>
+			</field>
+			<field>
+				<name>content</name>
+				<type>blob</type>
+			</field>
+			<index>
+				<name>item_file_id_index</name>
+				<field>
+					<name>id</name>
+				</field>
+			</index>
+			<index>
+				<name>item_file_uid_index</name>
+				<field>
+					<name>user_id</name>
+				</field>
+			</index>
+			<index>
+				<name>item_id_index</name>
+				<field>
+					<name>item_id</name>
+				</field>
+			</index>
+		</declaration>
+	</table>
+	<table>
 		<name>*dbprefix*passman_items</name>
 		<declaration>
 			<field>

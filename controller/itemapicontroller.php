@@ -21,12 +21,13 @@ use \OCP\AppFramework\Http\JSONResponse;
 class ItemApiController extends Controller {
     private $userId;
 	private $ItemBusinessLayer;
-	
+	public $request; 
 	
     public function __construct($appName, IRequest $request,  ItemBusinessLayer $ItemBusinessLayer,$userId){
         parent::__construct($appName, $request);
         $this->userId = $userId;
 		$this->ItemBusinessLayer = $ItemBusinessLayer;
+		$this->request = $request;
     }
 
 
@@ -85,7 +86,7 @@ class ItemApiController extends Controller {
 		$pass = $this->params('pw1');
 		$email = $this->params('email');
 		$url = $this->params('url');
-		
+
 		$result['success'] = $this->ItemBusinessLayer->update($id,$folderId,$userId,$label,$desc,$pass,$account,$email,$url);
 
 		return new JSONResponse($result); 
@@ -106,4 +107,41 @@ class ItemApiController extends Controller {
 		$deleted['deleted']	=$this->ItemBusinessLayer->delete($itemId,$this->userId);
 		return new JSONResponse($deleted['deleted']); 
 	}
+	/**
+	 * addFile
+	 * File has to be encrypted with the users key.
+	 * postData = {
+						item_id : itemId,
+						filename : file.name,
+						type : file.type,
+						mimetype : mimeType,
+						size : file.size,
+						content : encryptedFile
+					}
+	 */
+	public function addfile($itemId){
+		//echo $itemId;
+		$file = array();
+		$file['item_id'] = $this->params('item_id');
+		$file['filename'] = $this->params('filename');
+		$file['type'] = $this->params('type');
+		$file['mimetype'] = $this->params('mimetype');
+		$file['size'] = $this->params('size');
+		$file['content'] = $this->params('content');
+		$file['user_id'] = $this->userId;
+		//print_r($this->request);
+		return new JSONResponse($this->ItemBusinessLayer->addFileToItem($file));  
+	}
+	
+	/**
+	 * GetFile get a single file and his content
+	 */
+	 public function getfile($fileId){
+		return new JSONResponse($this->ItemBusinessLayer->getFile($fileId,$this->userId));  
+	}
+	 
+	public function deletefile($fileId){
+		return new JSONResponse($this->ItemBusinessLayer->deleteFile($fileId,$this->userId));  
+	}
+	
 }

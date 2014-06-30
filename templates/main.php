@@ -119,7 +119,7 @@
                     <td>
                         <div id="id_files" style="display:inline;font-size:11px;"></div>
                         <div id="dialog_files" style="display: none;">
-
+							<img id="fileImg" />
                         </div>
                     </td>
                 </tr>
@@ -187,9 +187,14 @@
          </div>
 	    </form>
         <div id="tabs-03" >
-                <div id="item_upload_list"></div><br>
-                <span id="item_attach_pickfiles" class="button">select</span>
-                <span id="item_attach_uploadfiles" class="button">Start uploading files</span>
+                <form enctype="multipart/form-data" id="fileUploader">
+				    <input name="uploadFile" type="file" id="fileInput" multiple="true"/>
+					<h2>Files:</h2>
+					<ul id="fileList">
+						
+					</ul>				  
+				  
+				</form>
             </div>
         </div>
         <div class="button cancel">Cancel</div>

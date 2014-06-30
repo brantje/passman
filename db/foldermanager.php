@@ -22,13 +22,13 @@ class FolderManager {
 	}
 
 	public function getAllFromUser($id) {
-		$sql = 'SELECT * FROM `*PREFIX*passman_folders`  WHERE `user_id` = ?';
+		$sql = 'SELECT * FROM `*PREFIX*passman_folders`  WHERE `user_id` = ? ORDER BY `title` ASC';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $id, \PDO::PARAM_INT);
 		$result = $query -> execute();
 		$rows = array();
 		while ($row = $result -> fetchRow()) {
-			$rows[$row['id']] = $row;
+			$rows[] = $row;
 		}
 		return $rows;
 	}

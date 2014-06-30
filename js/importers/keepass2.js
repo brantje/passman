@@ -77,7 +77,10 @@ function importKeePass2() {
 		var folderArray = folder.split("\\");
 		var folderLevel = 0;
 		for ( i = 0; i < folderArray.length; i++) {
-			//parentName = findKeeypassImportFolderByName(folderArray[i-1]);
+			//parentName = (i > 0) findKeeypassImportFolderByName(folderArray[i-1]);
+			if(parentName==''){
+				
+			}
 			
 		}
 	})
