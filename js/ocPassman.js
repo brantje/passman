@@ -611,7 +611,7 @@ function loadFolder(folderId){
  */
 
 
-function loadItem(id) {
+function loadItem(id,rawDesc) {
 	$.get(OC.generateUrl('apps/passman/api/v1/item/' + id), function(data) {
 		var item = data.item;
 		item.description = nl2br(item.description);
@@ -682,6 +682,7 @@ function openForm(mapper) {
 		}
 	});
 	$('#item_tabs').tabs();
+	console.log(mapper);
 	if (mapper != null) {
 		if(mapper.item_id != 0){
 			$('a[href="#tabs-03"]').show();
@@ -690,8 +691,11 @@ function openForm(mapper) {
 		{
 			$('a[href="#tabs-03"]').hide();
 		}
+		if(mapper.desc){
+			mapper.desc = mapper.desc.replace('<br />','\n');
+		}
 		$.each(mapper, function(k, v) {
-			$('#' + k).val(v)
+			$('#' + k).val(v.toString().replace(/<br \/>/g,"\n"));
 		})
 		if (mapper.pw1) {
 			$('#pw1').change().trigger('keyup.simplePassMeter');
