@@ -220,6 +220,12 @@ li.fileListItem {
 li.fileListItem .icon-delete {
 cursor: pointer;
 }
+
+input.jstree-rename-input {
+	line-height: 25px !important;
+	height: 25px !important;
+	padding-left: 3px !important;
+}
 /*
  #popupDiv{
  width:300px;

@@ -269,7 +269,7 @@ jQuery(document).ready(function($) {
 		minLength : 1,
 		select : function(event, ui) {
 			event.preventDefault();
-			console.log(ui.item);
+			/*console.log(ui.item);*/
 			$('#jsTree').jstree("select_node",'#ajson'+ui.item.folderid);
 			setTimeout(function(){
 					$('li[data-id="'+ui.item.id+'"]').addClass('row-active');
@@ -436,12 +436,7 @@ function generateFolderStructure(){
 			"check_callback" : true,
 			'data' : $(document).data('folderStructure'),
 		},
-		"dnd" : {
-            "drop_finish" : function () { 
-                alert("DROP"); 
-          }
-         },
-		"plugins" : ["contextmenu", "hotkeys", "state", "dnd"],
+		"plugins" : ["contextmenu", "state", "dnd"],
 		"contextmenu" : {
 			"items" : function($node) {
 				var tree = $("#jsTree").jstree(true);
@@ -484,8 +479,17 @@ function generateFolderStructure(){
 		}
 	}).bind('rename_node.jstree', function(node, obj) {
 		updateFolder(node, obj);
-	}).bind('delete_node.jstree', function(node, ref) {
-		deleteFolder(ref);
+	}).bind('delete_node.jstree', function(node, obj) {
+		CreateDialog('Are you sure?', 'This will delete all child folders and items in this folder', "I'm sure", "Cancel", function(obj) {
+			$.each(obj.node.children_d, function(k, v) {
+				deleteFolder(v.replace('ajson',''));
+			});
+			deleteFolder(obj.node.id.replace('ajson',''));
+			
+		}.bind(node, obj), function() {
+			$('#jsTree').jstree('destroy');
+			generateFolderStructure();
+		});
 	}).bind("select_node.jstree", function(event, data) {
 		var ids = (data) ? $('#jsTree').jstree("get_path", data.node.id) : $('#jsTree').jstree("get_path", $(document).data('dirid'));
 		var path = "";
@@ -505,7 +509,7 @@ function generateFolderStructure(){
 		$('#jsTree').bind("move_node.jstree", function(event, object) {
 			/**
 			 * When a folder is moved
-			 * @TODO Write changes to DB
+			 * @TODO Save folder order 
 			 */
 			updateFolder(event,object);
 		});
@@ -548,6 +552,7 @@ function folderSettings(node){
  * Rename a folder by context menu refference
  */
 function updateFolder(node, obj){ 
+	console.log(node,obj);
 	var f = obj.node;
 	var folderID = f.id.replace('ajson','');
 	var parent = f.parent.replace('ajson','');
@@ -573,13 +578,22 @@ function updateFolder(node, obj){
 }
 
 /**
- * Delete a folder by context menu refference
+ * Delete a folder by id
  */
-function deleteFolder(ref){
-	var folderID = ref.node.id.replace('ajson','');
+function deleteFolder(folderId){
+	console.log(folderId);
+	
+	var tempstorage = [];
+	$.each($(document).data('folderStructure'),function(){
+		if('ajson'+folderId !=this.id){
+			tempstorage.push(this);
+		}
+	});
+	$(document).data('folderStructure',tempstorage);
 	$.ajax({
-	    url: OC.generateUrl('apps/passman/api/v1/folders/'+folderID),
+	    url: OC.generateUrl('apps/passman/api/v1/folders/'+folderId),
 	    type: 'DELETE',
+	    async: false,
 	    success: function(result) {
 	        
 	    }
@@ -654,6 +668,17 @@ function loadItem(id,rawDesc) {
 				showNotification("Password copied to clipboard");
 			});
 		});
+		/**
+		 * @TODO Copy username
+		 */
+		/*var client = new ZeroClipboard($('#copyPW'));
+		client.on('ready', function(event) {
+			client.on('copy', function(event) {
+				var clipboard = event.clipboardData;
+				clipboard.setData("text/plain",  Aes.Ctr.decrypt(item.password, getEncKey(), 256));
+				showNotification("Password copied to clipboard");
+			});
+		});*/
 		if(mapper.files){
 			$.each(mapper.files,function(){
 				var icon = (this.type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
@@ -930,6 +955,40 @@ function deleteFile(fileId){
 	    }
 	});
 }
+
+/* General functions */
+
+/**
+ * Ask the user something.
+ * When the user presses ok the callback will be executed
+ * @t title
+ * @m message
+ * 
+ */
+function CreateDialog(t,m,okText, cancelText, okCallback, cancelCallback) {
+        $('<div>'+m+'</div>' ).dialog({
+        	title: t,
+            resizable: false,
+            height:'auto',
+            buttons: [{
+                text: okText,
+                click : function() {    
+                    $( this ).dialog( "close" );
+                    okCallback();
+                    }
+                }, {
+                text: cancelText,
+                click: function() {
+                    $( this ).dialog( "close" );
+                    cancelCallback();
+                }}]
+            });
+}
+
+/**
+ * Show a notification
+ * @param {Object} str
+ */
 
 function showNotification(str) {
 	OC.Notification.show(str);
