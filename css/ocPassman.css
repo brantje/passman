@@ -226,6 +226,13 @@ input.jstree-rename-input {
 	height: 25px !important;
 	padding-left: 3px !important;
 }
+.copy {
+margin-left: 10px;
+color: rgb(0, 102, 255);
+}
+.copy:hover{
+	text-decoration: underline;
+}
 /*
  #popupDiv{
  width:300px;

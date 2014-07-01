@@ -107,7 +107,18 @@ class ItemApiController extends Controller {
 		$deleted['deleted']	=$this->ItemBusinessLayer->delete($itemId,$this->userId);
 		return new JSONResponse($deleted['deleted']); 
 	}
+
 	/**
+	 * @TODO function to delete items by folderid
+	 */
+	public function deleteByFolderId($folderId){
+		
+	} 
+	
+	/**
+	 * @TODO move the file functions to a seperate class
+ 	 *
+	 * 
 	 * addFile
 	 * File has to be encrypted with the users key.
 	 * postData = {
@@ -144,4 +155,5 @@ class ItemApiController extends Controller {
 		return new JSONResponse($this->ItemBusinessLayer->deleteFile($fileId,$this->userId));  
 	}
 	
+
 }

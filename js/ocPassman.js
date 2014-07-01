@@ -641,6 +641,9 @@ function loadItem(id,rawDesc) {
 		$('#id_files').html('');
 		var item = data.item;
 		item.description = nl2br(item.description);
+		
+		
+		
 		var mapper = {
 			id_label : item.label,
 			id_desc : item.description,
@@ -654,6 +657,28 @@ function loadItem(id,rawDesc) {
 		$.each(mapper, function(k, v) {
 			(k != 'hid_pw') ? $('#' + k).html(v) : $('#' + k).val(v);
 		});
+		var copyableFields = ['id_login','id_desc','id_url','id_email'];
+		
+	
+		$.each(copyableFields, function(k, v) {
+			if (mapper[v] != '') {
+				if (v != 'id_url') {
+					$('#' + v).append('<span id="copy' + v + '" class="copy">[Copy]</span>');
+					var client = new ZeroClipboard($('#copy'+v));
+					client.on('ready', function(event) {
+						client.on('copy', function(event) {
+							var clipboard = event.clipboardData;
+							clipboard.setData("text/plain", $('<div>'+mapper[v]+'</div>').text());
+							showNotification("Password copied to clipboard");
+						});
+					});
+				} else {
+					$('#' + v).append('<a href="' + mapper[v] + '" target="_blank" class="link">[Go to url]</span>');
+				}
+			}
+		}); 
+
+		
 		var starPW = '';
 		for ( i = 0; i < 12; i++) {
 			starPW += '*';
@@ -668,17 +693,6 @@ function loadItem(id,rawDesc) {
 				showNotification("Password copied to clipboard");
 			});
 		});
-		/**
-		 * @TODO Copy username
-		 */
-		/*var client = new ZeroClipboard($('#copyPW'));
-		client.on('ready', function(event) {
-			client.on('copy', function(event) {
-				var clipboard = event.clipboardData;
-				clipboard.setData("text/plain",  Aes.Ctr.decrypt(item.password, getEncKey(), 256));
-				showNotification("Password copied to clipboard");
-			});
-		});*/
 		if(mapper.files){
 			$.each(mapper.files,function(){
 				var icon = (this.type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
