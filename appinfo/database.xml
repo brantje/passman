@@ -188,11 +188,6 @@
 				<default>0</default>
 			</field>
 			<field>
-				<name>deleted</name>
-				<type>integer</type>
-				<default>0</default>
-			</field>
-			<field>
 				<name>delete_date</name>
 				<type>integer</type>
 				<default>0</default>

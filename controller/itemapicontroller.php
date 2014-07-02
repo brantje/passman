@@ -21,13 +21,15 @@ use \OCP\AppFramework\Http\JSONResponse;
 class ItemApiController extends Controller {
     private $userId;
 	private $ItemBusinessLayer;
+	private $FolderBusinessLayer;
 	public $request; 
 	
-    public function __construct($appName, IRequest $request,  ItemBusinessLayer $ItemBusinessLayer,$userId){
+    public function __construct($appName, IRequest $request,  ItemBusinessLayer $ItemBusinessLayer,$userId,FolderBusinessLayer $FolderBusinessLayer){
         parent::__construct($appName, $request);
         $this->userId = $userId;
 		$this->ItemBusinessLayer = $ItemBusinessLayer;
 		$this->request = $request;
+		$this->FolderBusinessLayer = $FolderBusinessLayer;
     }
 
 
@@ -43,7 +45,9 @@ class ItemApiController extends Controller {
 		$result['items'] = $this->ItemBusinessLayer->listItems($folderId,$this->userId); 
 		return new JSONResponse($result);
 	}
-     
+     /**
+	 * @NoAdminRequired
+     */
      public function get($itemId) {
      	$itemId = (int) $itemId;
 		$result['item'] = $this->ItemBusinessLayer->get($itemId,$this->userId); 
@@ -58,6 +62,7 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	public function create() {
+		$errors = array();
 		$userId = $this->userId;
 		$label = $this->params('label');
 		$folderId = $this->params('folderid');
@@ -66,7 +71,22 @@ class ItemApiController extends Controller {
 		$pass = $this->params('pw1');
 		$email = $this->params('email');
 		$url = $this->params('url');
-		$result['itemid'] = $this->ItemBusinessLayer->create($folderId,$userId,$label,$desc,$pass,$account,$email,$url); 
+		
+		if(empty($label)){
+			array_push($errors,'Label is mandatory');
+		}
+		if(!is_numeric($folderId)){
+			array_push($errors,'Folder id is not numeric');
+		}
+		if(empty($this->FolderBusinessLayer->get($folderId))){
+			array_push($errors,'Folder not found');
+		}
+	
+		if(empty($errors)){
+			$result['itemid'] = $this->ItemBusinessLayer->create($folderId,$userId,$label,$desc,$pass,$account,$email,$url); 
+		} else {
+			$result['errors'] = $errors;
+		}
 		
 		return new JSONResponse($result); 
 	}
@@ -86,9 +106,25 @@ class ItemApiController extends Controller {
 		$pass = $this->params('pw1');
 		$email = $this->params('email');
 		$url = $this->params('url');
-
-		$result['success'] = $this->ItemBusinessLayer->update($id,$folderId,$userId,$label,$desc,$pass,$account,$email,$url);
-
+		
+		if(empty($label)){
+			array_push($errors,'Label is mandatory');
+		}
+		if(!is_numeric($folderId)){
+			array_push($errors,'Folder id is not numeric');
+		}
+		if(empty($this->FolderBusinessLayer->get($folderId))){
+			array_push($errors,'Folder not found');
+		}
+		if(empty($this->get($itemId))){
+			array_push($errors,'Item not found');
+		}
+		
+		if(empty($errors)){
+			$result['success'] = $this->ItemBusinessLayer->update($id,$folderId,$userId,$label,$desc,$pass,$account,$email,$url);
+		} else {
+			$result['errors'] = $errors;
+		}
 		return new JSONResponse($result); 
 	}
 
@@ -104,8 +140,15 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	public function delete($itemId) {
-		$deleted['deleted']	=$this->ItemBusinessLayer->delete($itemId,$this->userId);
-		return new JSONResponse($deleted['deleted']); 
+		if(empty($this->get($itemId))){
+			array_push($errors,'Item not found');
+		}
+		if(empty($errors)){
+			$result['deleted']	=$this->ItemBusinessLayer->delete($itemId,$this->userId);
+		}else {
+			$result['errors'] = $errors;
+		}
+		return new JSONResponse($result['deleted']); 
 	}
 
 	/**

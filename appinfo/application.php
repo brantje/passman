@@ -57,7 +57,8 @@ class Application extends App {
 				$c->query('AppName'), 
 				$c->query('Request'),
 				$c->query('ItemBusinessLayer'),
-				$c->query('UserId')
+				$c->query('UserId'),
+				$c->query('FolderBusinessLayer')
 			);
 		});
 		

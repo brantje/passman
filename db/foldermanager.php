@@ -21,16 +21,24 @@ class FolderManager {
 
 	}
 
-	public function getAllFromUser($id) {
+	public function getAllFromUser($userId) {
 		$sql = 'SELECT * FROM `*PREFIX*passman_folders`  WHERE `user_id` = ? ORDER BY `title` ASC';
 		$query = $this -> db -> prepareQuery($sql);
-		$query -> bindParam(1, $id, \PDO::PARAM_INT);
+		$query -> bindParam(1, $userId, \PDO::PARAM_INT);
 		$result = $query -> execute();
 		$rows = array();
 		while ($row = $result -> fetchRow()) {
 			$rows[] = $row;
 		}
 		return $rows;
+	}
+	public function get($folderId,$userId) {
+		$sql = 'SELECT * FROM `*PREFIX*passman_folders`  WHERE `id`=? AND `user_id` = ? ORDER BY `title` ASC';
+		$query = $this -> db -> prepareQuery($sql);
+		$query -> bindParam(1, $id, \PDO::PARAM_INT);
+		$query -> bindParam(2, $id, \PDO::PARAM_STR);
+		$result = $query -> execute()-> fetchRow();
+		return $result;
 	}
 
 	public function insert($folder) {

@@ -25,6 +25,10 @@ class FolderBusinessLayer {
 		return $this->folderManager->getAllFromUser($userId);
 	}
 	
+	public function get($folderId,$userId){
+		return $this->folderManager->get($folderId,$userId);
+	}
+	
 	public function create($folderName, $userId, $parentId=0,$renewal_period=0,$min_pw_strength) {
 		$folder =array();
 		$folder['name'] = $folderName;
