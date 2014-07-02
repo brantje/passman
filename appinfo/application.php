@@ -49,7 +49,8 @@ class Application extends App {
 				$c->query('AppName'), 
 				$c->query('Request'),
 				$c->query('FolderBusinessLayer'),
-				$c->query('UserId')
+				$c->query('UserId'),
+				$c->query('ItemBusinessLayer')
 			);
 		});
 		$container->registerService('ItemApiController', function($c) {

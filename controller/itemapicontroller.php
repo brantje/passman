@@ -78,7 +78,8 @@ class ItemApiController extends Controller {
 		if(!is_numeric($folderId)){
 			array_push($errors,'Folder id is not numeric');
 		}
-		if(empty($this->FolderBusinessLayer->get($folderId))){
+		$folderCheckResult = $this->FolderBusinessLayer->get($folderId,$userId);
+		if(empty($folderCheckResult)){
 			array_push($errors,'Folder not found');
 		}
 	
@@ -153,10 +154,18 @@ class ItemApiController extends Controller {
 
 	/**
 	 * @TODO function to delete items by folderid
+	 * @NoAdminRequired
 	 */
 	public function deleteByFolderId($folderId){
-		
-	} 
+		if(empty($this->FolderBusinessLayer->get($folderId))){
+			array_push($errors,'Folder not found');
+		}
+		if(empty($errors)){
+			$result['deleted']	=$this->ItemBusinessLayer->deleteByFolder($folderId,$this->userId);
+		}else {
+			$result['errors'] = $errors;
+		}
+	}
 	
 	/**
 	 * @TODO move the file functions to a seperate class
@@ -172,6 +181,7 @@ class ItemApiController extends Controller {
 						size : file.size,
 						content : encryptedFile
 					}
+	 * @NoAdminRequired
 	 */
 	public function addfile($itemId){
 		//echo $itemId;
@@ -189,11 +199,15 @@ class ItemApiController extends Controller {
 	
 	/**
 	 * GetFile get a single file and his content
+	 * @NoAdminRequired
 	 */
 	 public function getfile($fileId){
 		return new JSONResponse($this->ItemBusinessLayer->getFile($fileId,$this->userId));  
 	}
 	 
+	/**
+	  * @NoAdminRequired
+	 */ 
 	public function deletefile($fileId){
 		return new JSONResponse($this->ItemBusinessLayer->deleteFile($fileId,$this->userId));  
 	}

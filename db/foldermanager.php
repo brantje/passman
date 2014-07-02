@@ -35,9 +35,10 @@ class FolderManager {
 	public function get($folderId,$userId) {
 		$sql = 'SELECT * FROM `*PREFIX*passman_folders`  WHERE `id`=? AND `user_id` = ? ORDER BY `title` ASC';
 		$query = $this -> db -> prepareQuery($sql);
-		$query -> bindParam(1, $id, \PDO::PARAM_INT);
-		$query -> bindParam(2, $id, \PDO::PARAM_STR);
+		$query -> bindParam(1, $folderId, \PDO::PARAM_INT);
+		$query -> bindParam(2, $userId, \PDO::PARAM_STR);
 		$result = $query -> execute()-> fetchRow();
+
 		return $result;
 	}
 

@@ -31,30 +31,30 @@ class ItemBusinessLayer {
 	}
 
 	public function create($folderId, $userId, $label, $desc, $pass, $account, $email, $url) {
-		$folder = array();
-		$folder['folder_id'] = $folderId;
-		$folder['user_id'] = $userId;
-		$folder['label'] = $label;
-		$folder['description'] = $desc;
-		$folder['password'] = $pass;
-		$folder['account'] = $account;
-		$folder['email'] = $email;
-		$folder['url'] = $url;
-		return $this -> ItemManager -> insert($folder);
+		$item = array();
+		$item['folder_id'] = $folderId;
+		$item['user_id'] = $userId;
+		$item['label'] = $label;
+		$item['description'] = $desc;
+		$item['password'] = $pass;
+		$item['account'] = $account;
+		$item['email'] = $email;
+		$item['url'] = $url;
+		return $this -> ItemManager -> insert($item);
 	}
 
 	public function update($id, $folderId, $userId, $label, $desc, $pass, $account, $email, $url) {
-		$folder = array();
-		$folder['id'] = $id;
-		$folder['folder_id'] = $folderId;
-		$folder['user_id'] = $userId;
-		$folder['label'] = $label;
-		$folder['description'] = $desc;
-		$folder['password'] = $pass;
-		$folder['account'] = $account;
-		$folder['email'] = $email;
-		$folder['url'] = $url;
-		return $this -> ItemManager -> update($folder);
+		$item = array();
+		$item['id'] = $id;
+		$item['folder_id'] = $folderId;
+		$item['user_id'] = $userId;
+		$item['label'] = $label;
+		$item['description'] = $desc;
+		$item['password'] = $pass;
+		$item['account'] = $account;
+		$item['email'] = $email;
+		$item['url'] = $url;
+		return $this -> ItemManager -> update($item);
 	}
 
 	public function search($itemName, $userId) {
@@ -64,7 +64,11 @@ class ItemBusinessLayer {
 	public function delete($itemId, $userId) {
 		return $this -> ItemManager -> delete($itemId, $userId);
 	}
-
+	
+	public function deleteByFolder($folderId,$userId){
+		return $this-> ItemManager -> deleteByFolder($folderId,$userId);
+	}
+	
 	public function addFileToItem($file) {
 		return $this -> ItemManager -> addFile($file);
 	}

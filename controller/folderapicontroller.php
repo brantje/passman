@@ -12,6 +12,7 @@
 namespace OCA\Passman\Controller;
 
 use \OCA\Passman\BusinessLayer\FolderBusinessLayer;
+use \OCA\Passman\BusinessLayer\ItemBusinessLayer;
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Controller;
@@ -21,12 +22,14 @@ use \OCP\AppFramework\Http\JSONResponse;
 class FolderApiController extends Controller {
     private $userId;
 	private $folderBusinessLayer;
+	private $itemBusinessLayer;
 	
 	
-    public function __construct($appName, IRequest $request,  FolderBusinessLayer $folderBusinessLayer,$userId){
+    public function __construct($appName, IRequest $request,  FolderBusinessLayer $folderBusinessLayer,$userId,ItemBusinessLayer $itemBusinessLayer){
         parent::__construct($appName, $request);
         $this->userId = $userId;
 		$this->folderBusinessLayer = $folderBusinessLayer;
+		$this->itemBusinessLayer = $itemBusinessLayer;
     }
 
 
@@ -71,7 +74,7 @@ class FolderApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	public function delete($folderId) {
-		
+	$this->itemBusinessLayer->deleteByFolder($folderId,$this->userId);
 	return new JSONResponse($this->folderBusinessLayer->delete($folderId,$this->userId)); 
 	}
 }

@@ -113,6 +113,19 @@ class ItemManager {
 		$result = $query -> execute();
 		return array('deleted' => $itemId);
 	}
+	/**
+	 * Delete items by folder id
+	 */
+	public function deleteByFolder($folderId, $userId) {
+		$sql = 'DELETE FROM `*PREFIX*passman_items` WHERE `folderid`=? AND user_id=?';
+		$query = $this -> db -> prepareQuery($sql);
+		$query -> bindParam(1, $folderId, \PDO::PARAM_INT);
+		$query -> bindParam(2, $userId, \PDO::PARAM_STR);
+		$result = $query -> execute();
+		print_r($folderId);
+		print_r($userId);
+		return array('deleted' => 'success');
+	}
 
 	/**
 	 * Add a to to an item
