@@ -39,6 +39,16 @@
 				<name>min_pw_strength</name>
 				<type>integer</type>
 			</field>
+			<field>
+				<name>deleted</name>
+				<type>integer</type>
+				<default>0</default>
+			</field>
+			<field>
+				<name>delete_date</name>
+				<type>integer</type>
+				<default>0</default>
+			</field>
 			<index>
 				<name>folder_id_index</name>
 				<field>
@@ -171,6 +181,16 @@
 				<type>text</type>
 				<notnull>true</notnull>
 				<length>64</length>
+			</field>
+			<field>
+				<name>deleted</name>
+				<type>integer</type>
+				<default>0</default>
+			</field>
+			<field>
+				<name>delete_date</name>
+				<type>integer</type>
+				<default>0</default>
 			</field>
 			<index>
 				<name>item_id_index</name>

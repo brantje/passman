@@ -1,3 +1,6 @@
+/**
+ * @TODO recover deleted items
+ */
 $.fn.serializeObject = function()
 {
     var o = {};
@@ -605,6 +608,7 @@ function deleteFolder(folderId){
  * @param {int} folderId
  */
 function loadFolder(folderId){
+	$('#pwList').html('');
 	if(folderId!=0){
 		$('#addItem').attr('disabled',false);
 	}
@@ -673,7 +677,7 @@ function loadItem(id,rawDesc) {
 						});
 					});
 				} else {
-					$('#' + v).append('<a href="' + mapper[v] + '" target="_blank" class="link">[Go to url]</span>');
+					$('#' + v).append('<a href="' + mapper[v] + '" target="_blank" class="copy link">[Go to url]</span>');
 				}
 			}
 		}); 
