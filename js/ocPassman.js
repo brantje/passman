@@ -195,7 +195,7 @@ jQuery(document).ready(function($) {
 	        /* currently it's not been toggled, or it's been toggled to the 'off' state,
 	           so now toggle to the 'on' state: */
 	           $(this).attr('data-toggled','on');
-	           $('#id_pw').text(Aes.Ctr.decrypt($('#hid_pw').val(),getEncKey(),256));
+	           $('#id_pw').text(decryptThis($('#hid_pw').val()));
 	    }
 	    else if ($(this).attr('data-toggled') == 'on'){
 	        /* currently it has been toggled, and toggled to the 'on' state,
@@ -417,6 +417,13 @@ function resetStorageKey(){
 	$(document).data('ENC_KEY');
 }
 
+function encryptThis(str){
+	return Aes.Ctr.encrypt(str,getEncKey(),256);
+}
+
+function decryptThis(str){
+	return Aes.Ctr.decrypt(str, getEncKey(), 256);
+}
 function loadFolders(){
 	$.getJSON(OC.generateUrl('apps/passman/api/v1/folders')).success(function(data) { 
 		var folders = [{'id': 'ajson0','parent': '#','text': 'Root'}];
@@ -693,7 +700,7 @@ function loadItem(id,rawDesc) {
 		client.on('ready', function(event) {
 			client.on('copy', function(event) {
 				var clipboard = event.clipboardData;
-				clipboard.setData("text/plain",  Aes.Ctr.decrypt(item.password, getEncKey(), 256));
+				clipboard.setData("text/plain",  decryptThis(item.password));
 				showNotification("Password copied to clipboard");
 			});
 		});
@@ -784,8 +791,9 @@ function saveItem() {
 	if (formData.label == '') {
 		ERROR = 'A label is mandatory!';
 	}
-	formData.pw1 = Aes.Ctr.encrypt(formData.pw1, getEncKey(), 256);
-	formData.pw2 = Aes.Ctr.encrypt(formData.pw2, getEncKey(), 256);
+	formData.pw1 = encryptThis(formData.pw1);
+	formData.pw2 = encryptThis(formData.pw2);
+	var ignoredEncryptionFields = [];
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {
@@ -813,7 +821,7 @@ function editItem(itemId) {
 	
 	$.get(OC.generateUrl('apps/passman/api/v1/item/' + itemId), function(data) {
 		var item = data.item;
-		item.password = Aes.Ctr.decrypt(item.password, getEncKey(), 256);
+		item.password = decryptThis(item.password);
 		var edtmapper = {
 			item_id : item.id,
 			folderid : item.folderid,
@@ -857,7 +865,7 @@ function addFilesToItem(files) {
 				if (file.size < 20971520) {
 					var dataURL = evt.target.result;
 					var mimeType = dataURL.split(",")[0].split(":")[1].split(";")[0];
-					var encryptedFile = Aes.Ctr.encrypt(dataURL, getEncKey(), 256);
+					var encryptedFile = encryptThis(dataURL);
 					var postData = {
 						item_id : itemId,
 						filename : file.name,
@@ -895,7 +903,7 @@ function loadFile(fileId) {
 		console.log(data);
 		/* Show the image if it is ofcourse */
 		if (data.type.indexOf('image') >= 0) {
-			var imageData = Aes.Ctr.decrypt(data.content, getEncKey(), 256);
+			var imageData = decryptThis(data.content);
 			$('#fileImg').attr('src', imageData);
 			$('#downloadImage').html('<a href="'+ imageData +'" download="'+ data.filename +'">Save this image</a>');
 			$('#fileImg').load(function() {
@@ -914,7 +922,7 @@ function loadFile(fileId) {
 				}
 			});
 		} else {
-			var fileData = Aes.Ctr.decrypt(data.content, getEncKey(), 256);
+			var fileData = decryptThis(data.content);
 			//console.log(fileData);
 			$('<div>Due popup blockers you have to click the below button to download your file.</div>').dialog({
 				title : "Download " + data.filename,
