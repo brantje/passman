@@ -318,10 +318,10 @@ function importDialog(){
 		buttons: {
 					"Ok": function(){
 						window[$('#importer').val()]();
-						$(this).dialog('close');	
+						$(this).dialog('destroy').remove();	
 					},
 					"Cancel": function(){
-						$(this).dialog('close');	
+						$(this).dialog('destroy').remove();	
 					}
 		}
 		
@@ -416,11 +416,15 @@ function resetStorageKey(){
 	$.jStorage.deleteKey("ENC_KEY");
 	$(document).data('ENC_KEY');
 }
-
+/**
+ * Encrypt a string with the algorithm
+ */
 function encryptThis(str){
 	return Aes.Ctr.encrypt(str,getEncKey(),256);
 }
-
+/**
+ * Decrypt a string with the algorithm
+ */
 function decryptThis(str){
 	return Aes.Ctr.decrypt(str, getEncKey(), 256);
 }
@@ -629,7 +633,7 @@ function loadFolder(folderId){
 		$('#itemsLoading').remove();
 		if(data.items.length != 0){
 			$.each(data.items,function(){
-				 var append = '<li data-id='+ this.id +'><div style="display: inline-block;">'+ this.label+'</div></li>';
+				 var append = '<li data-id='+ this.id +'><div style="display: inline-block;">'+ decryptThis(this.label)+'</div></li>';
 				 $('#pwList').append(append);
 			});
 		}
@@ -656,12 +660,12 @@ function loadItem(id,rawDesc) {
 		
 		
 		var mapper = {
-			id_label : item.label,
-			id_desc : item.description,
+			id_label :  decryptThis(item.label),
+			id_desc : decryptThis(item.description),
 			hid_pw : item.password,
-			id_login : item.account,
-			id_email : item.email,
-			id_url : item.url,
+			id_login : decryptThis(item.account),
+			id_email : decryptThis(item.email),
+			id_url : decryptThis(item.url),
 			files : item.files,
 			id_tags : ''
 		};
@@ -707,7 +711,7 @@ function loadItem(id,rawDesc) {
 		if(mapper.files){
 			$.each(mapper.files,function(){
 				var icon = (this.type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
-				$('#id_files').append('<span class="link loadFile" data-fileid="'+this.id+'"> <span class="'+ icon +'"></span>'+ this.filename +' (' + humanFileSize(this.size) + ')' );
+				$('#id_files').append('<span class="link loadFile" data-fileid="'+this.id+'"> <span class="'+ icon +'"></span>'+ decryptThis(this.filename) +' (' + humanFileSize(this.size) + ')' );
 			});
 		}
 		else
@@ -791,18 +795,23 @@ function saveItem() {
 	if (formData.label == '') {
 		ERROR = 'A label is mandatory!';
 	}
-	formData.pw1 = encryptThis(formData.pw1);
-	formData.pw2 = encryptThis(formData.pw2);
-	var ignoredEncryptionFields = [];
+
+	var ignoredEncryptionFields = ['folderid','item_id'];
+	$.each(formData,function(k,v){
+		console.log($.inArray(k,ignoredEncryptionFields));
+		if($.inArray(k,ignoredEncryptionFields)==-1){
+			formData[k] = encryptThis(v);
+		}
+	});
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {
-				$('#pwList li[data-id=' + data.success.id + ']').html('<div style="display: inline-block;">'+data.success.label+'</div>');
+				$('#pwList li[data-id=' + data.success.id + ']').html('<div style="display: inline-block;">'+ decryptThis(data.success.label) +'</div>');
 				loadItem(data.success.id);
 				$('#showPW').remove();
 				$('#copyPW').remove();
 			} else {
-				var append = '<li data-id=' + data.itemid + '><div style="display: inline-block;">' + formData.label + '</div></li>';
+				var append = '<li data-id=' + data.itemid + '><div style="display: inline-block;">' + decryptThis(formData.label) + '</div></li>';
 				if($('#pwList').text()!='Folder is empty'){
 					$('#pwList').append(append);
 				}else{
@@ -825,13 +834,13 @@ function editItem(itemId) {
 		var edtmapper = {
 			item_id : item.id,
 			folderid : item.folderid,
-			label : item.label,
-			desc : item.description,
+			label : decryptThis(item.label),
+			desc : decryptThis(item.description),
 			pw1 : item.password,
 			pw2 : item.password,
-			account : item.account,
-			email : item.email,
-			url : item.url,
+			account : decryptThis(item.account),
+			email : decryptThis(item.email),
+			url : decryptThis(item.url),
 			files : item.files,
 			id_tags : ''
 		};
@@ -868,7 +877,7 @@ function addFilesToItem(files) {
 					var encryptedFile = encryptThis(dataURL);
 					var postData = {
 						item_id : itemId,
-						filename : file.name,
+						filename :  encryptThis(file.name),
 						type : file.type,
 						mimetype : mimeType,
 						size : file.size,
@@ -940,7 +949,7 @@ function loadFile(fileId) {
 						$(this).remove();
 					},
 					"Cancel" : function() {
-						$(this).remove();
+						$(this).dialog('destroy').remove();
 					}
 				}
 			});
@@ -999,13 +1008,13 @@ function CreateDialog(t,m,okText, cancelText, okCallback, cancelCallback) {
             buttons: [{
                 text: okText,
                 click : function() {    
-                    $( this ).dialog( "close" );
+                    $( this ).dialog( "destroy" ).remove();
                     okCallback();
                     }
                 }, {
                 text: cancelText,
                 click: function() {
-                    $( this ).dialog( "close" );
+                    $( this ).dialog( "destroy" ).remove();
                     cancelCallback();
                 }}]
             });

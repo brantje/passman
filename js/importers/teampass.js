@@ -20,7 +20,7 @@ function importTeamPassDialog() {
 	// Check for the various File API support.
 	if (window.File && window.FileReader && window.FileList && window.Blob) {
 
-		$('<div><p>First follow the instructions <a href="https://github.com/brantje/passman/wiki/Import-teampass" target="_blank" class="link">here</a><input type="file" id="importFile"/>').dialog({
+		$('<div id="teampassPopup"><p>First follow the instructions <a href="https://github.com/brantje/passman/wiki/Import-teampass" target="_blank" class="link">here</a><input type="file" id="importFile"/>').dialog({
 			buttons : {
 				"Import" : function() {
 					importTeamPass();
@@ -143,13 +143,13 @@ function importTeampassItems() {
 		if (ImportToFolder) {
 			postData = {
 
-				'label' : this.label,
+				'label' : encryptThis(this.label),
 				'folderid' : ImportToFolder.id,
-				'desc' : this.description,
-				'account' : this.login,
+				'desc' : encryptThis(this.description),
+				'account' : encryptThis(this.login),
 				'pw1' : encPw,
-				'email' : this.email,
-				'url' : this.url
+				'email' : encryptThis(this.email),
+				'url' : encryptThis(this.url)
 			}
 			$.ajax({
 				async : false,
@@ -166,13 +166,21 @@ function importTeampassItems() {
 			console.log('Error folder not found', ImportToFolder)
 		}
 	})
-	showNotification("Import complete, enjoy!")
+	$('#teampassPopup').dialog('destroy').remove();
+	$('<div>The import was a success!</div>').dialog({
+		buttons : {
+				"close": function(){
+					$(this).dialog('destroy').remove();
+				}
+		}
+	})
 	$('#jsTree').jstree('destroy')
 	loadFolders();
 	$('#importFile').val('');
 	teampassData = [];
 	$(document).data('importFolders', {})
 }
+
 
 function findImportFolderByName(name) {
 	var foundFolder = '';
