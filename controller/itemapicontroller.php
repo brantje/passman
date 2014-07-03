@@ -153,7 +153,7 @@ class ItemApiController extends Controller {
 	}
 
 	/**
-	 * @TODO function to delete items by folderid
+	 * 
 	 * @NoAdminRequired
 	 */
 	public function deleteByFolderId($folderId){

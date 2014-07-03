@@ -85,7 +85,6 @@ function importTeamPassFolders() {
 			} else {
 				if (!findImportFolderByName(folder.name)) {
 					var parentFolder = findImportFolderByName(folder.parent_title);
-					console.log('Parent', parentFolder);
 					if (parentFolder != '') {
 						var parentId = parentFolder.id;
 						var postData = {
@@ -158,7 +157,7 @@ function importTeampassItems() {
 				dataType : 'JSON',
 				data : postData,
 				success : function(data) {
-					console.log('Added item' + postData.label)
+					console.log('Added item ' + postData.label)
 				}
 			});
 		} else {
@@ -168,12 +167,13 @@ function importTeampassItems() {
 	})
 	$('#teampassPopup').dialog('destroy').remove();
 	$('<div>The import was a success!</div>').dialog({
+		title: "Teampass import",
 		buttons : {
 				"close": function(){
 					$(this).dialog('destroy').remove();
 				}
 		}
-	})
+	});
 	$('#jsTree').jstree('destroy')
 	loadFolders();
 	$('#importFile').val('');
