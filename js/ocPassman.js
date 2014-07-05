@@ -652,7 +652,7 @@ function makeDragable(){
                 $(ui.helper).css("margin-top", event.clientY - $(event.target).offset().top-10);
             }
 	});
-	/*$('#ajson0 li').droppable({
+	$('#ajson0 li').droppable({
       activeClass: "ui-state-default",
       hoverClass: "ui-state-hover",
       drop: function( event, ui ) {
@@ -664,7 +664,7 @@ function makeDragable(){
       		});
       	}
       }
-    });*/
+    });
 }
 
 /**
