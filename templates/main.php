@@ -39,11 +39,6 @@
   	</div>
 	<div id="app-content">
 		<div id="topContent">
-					<div id="crumbs">
-							<div class="crumb last svg">	
-									<a>Root</a>
-							</div>
-					</div>  
 					<button class="button " id="addItem" disabled="disabled">Create item</button>
 					<button class="button" id="editItem" disabled="disabled">Edit item</button>
 					<button class="button" id="deleteItem" disabled="disabled">Delete item</button>

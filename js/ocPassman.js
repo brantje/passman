@@ -498,18 +498,10 @@ function generateFolderStructure(){
 			generateFolderStructure();
 		});
 	}).bind("select_node.jstree", function(event, data) {
-		var ids = (data) ? $('#jsTree').jstree("get_path", data.node.id) : $('#jsTree').jstree("get_path", $(document).data('dirid'));
-		var path = "";
-		$.each(ids, function(k, v) {
-			var l = ids.length;
-			var classes = (k == l - 1) ? 'crumb last svg' : 'crumb';
-			v2 = v.replace(/\s+/g, ' ');
-			dir = $('.jstree-node:contains(' + v + ')');
-			dir = dir[dir.length - 1];
-			path += '<div class="' + classes + '" data-dir="' + $(dir).attr('id') + '"><a>' + v2 + '</a></div>';
-		});
-		$('#crumbs').html(path);
-		loadFolder(data.node.id.replace('ajson', ''));
+		
+		var id = data.node.id.replace('ajson', '');
+		
+		loadFolder(id);
 		$('#pwList').click();
 		}).bind('loaded.jstree', function(evt) {
 		$('#jsTree').jstree('open_node', $('#ajson0'));
@@ -695,25 +687,25 @@ function loadItem(id,rawDesc) {
 		});
 		var copyableFields = ['id_login','id_desc','id_url','id_email'];
 		
-	
-		$.each(copyableFields, function(k, v) {
-			if (mapper[v] != '') {
-				if (v != 'id_url') {
-					$('#' + v).append('<span id="copy' + v + '" class="copy">[Copy]</span>');
-					var client = new ZeroClipboard($('#copy'+v));
-					client.on('ready', function(event) {
-						client.on('copy', function(event) {
-							var clipboard = event.clipboardData;
-							clipboard.setData("text/plain", $('<div>'+mapper[v]+'</div>').text());
-							showNotification("Password copied to clipboard");
+		if(!isMobile()){
+			$.each(copyableFields, function(k, v) {
+				if (mapper[v] != '') {
+					if (v != 'id_url') {
+						$('#' + v).append('<span id="copy' + v + '" class="copy">[Copy]</span>');
+						var client = new ZeroClipboard($('#copy'+v));
+						client.on('ready', function(event) {
+							client.on('copy', function(event) {
+								var clipboard = event.clipboardData;
+								clipboard.setData("text/plain", $('<div>'+mapper[v]+'</div>').text());
+								showNotification("Password copied to clipboard");
+							});
 						});
-					});
-				} else {
-					$('#' + v).append('<a href="' + mapper[v] + '" target="_blank" class="copy link">[Go to url]</span>');
+					} else {
+						$('#' + v).append('<a href="' + mapper[v] + '" target="_blank" class="copy link">[Go to url]</span>');
+					}
 				}
-			}
-		}); 
-		
+			}); 
+		}
 		if(item.customFields.length > 0){
 			$.each(item.customFields,function(k,field){
 				var row = '<tr><td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>'+ decryptThis(field.label) +' :</td>';
@@ -1094,9 +1086,5 @@ function nl2br (str, is_xhtml) {
 }
 
 function isMobile(){
-	if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
- 		return true;
-    } else{
-    	return false;	
-    }
+	 return !!('ontouchstart' in window);
 }
