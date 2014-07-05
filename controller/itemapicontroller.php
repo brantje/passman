@@ -71,6 +71,7 @@ class ItemApiController extends Controller {
 		$pass = $this->params('pw1');
 		$email = $this->params('email');
 		$url = $this->params('url');
+		$customFields = $this->params('customFields');
 		
 		if(empty($label)){
 			array_push($errors,'Label is mandatory');
@@ -82,9 +83,18 @@ class ItemApiController extends Controller {
 		if(empty($folderCheckResult)){
 			array_push($errors,'Folder not found');
 		}
-	
 		if(empty($errors)){
-			$result['itemid'] = $this->ItemBusinessLayer->create($folderId,$userId,$label,$desc,$pass,$account,$email,$url); 
+			$result['itemid'] = $this->ItemBusinessLayer->create($folderId,$userId,$label,$desc,$pass,$account,$email,$url);
+			if(!empty($customFields)){
+				foreach ($customFields as $key => $field) {
+					if(empty($field['id'])){
+							$field->id = $this->ItemBusinessLayer->createField($field,$userId,$result['itemid']);
+					}
+					else {
+						$field->id = $this->ItemBusinessLayer->updateField($field,$userId,$result['itemid']);
+					}
+				}
+			} 
 		} else {
 			$result['errors'] = $errors;
 		}
@@ -107,7 +117,7 @@ class ItemApiController extends Controller {
 		$pass = $this->params('pw1');
 		$email = $this->params('email');
 		$url = $this->params('url');
-		
+		$customFields = $this->params('customFields');
 		if(empty($label)){
 			array_push($errors,'Label is mandatory');
 		}
@@ -123,6 +133,16 @@ class ItemApiController extends Controller {
 		
 		if(empty($errors)){
 			$result['success'] = $this->ItemBusinessLayer->update($id,$folderId,$userId,$label,$desc,$pass,$account,$email,$url);
+			if(!empty($customFields)){
+				foreach ($customFields as $key => $field) {
+					if(empty($field['id'])){
+							$field->id = $this->ItemBusinessLayer->createField($field,$userId,$id);
+					}
+					else {
+						$field->id = $this->ItemBusinessLayer->updateField($field,$userId,$result['itemid']);
+					}
+				}
+			}
 		} else {
 			$result['errors'] = $errors;
 		}

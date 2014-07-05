@@ -6,6 +6,9 @@
 	padding:0 0;
 	display:inline-block;
 }
+tbody tr:hover, tr:active {
+background: none !important;
+}
 #app-navigation-toggle {
 	z-index:2;
 }
@@ -91,6 +94,9 @@ div#infoContainer {
 	height:190px;
 	overflow:auto;
 }
+td.td_title {
+	padding-right: 15px;
+}
 .icon-paste {
 	background:url(../img/copy.png) no-repeat;
 	background-position:center center;
@@ -139,6 +145,10 @@ div#infoContainer {
 #item_tabs input, #item_tabs textarea {
 	width:95%;
 }
+#item_tabs #customFieldName,#item_tabs #customFieldValue{
+	width:85%;
+}
+
 #item_tabs input[type="checkbox"] {
 	width:30px;
 }
@@ -146,6 +156,7 @@ div#infoContainer {
 	font-size:9px;
 	text-align:center;
 	width:100%;
+	margin-left: 10px;
 }
 #pwTools label {
 	display:inline-block;
@@ -191,6 +202,9 @@ div#passwordStrengthDiv {
 	list-style-indent:inside;
 	margin:0 0 0.5em;
 	padding:1em;
+}
+#existingFields input {
+	width: 120px;
 }
 li.ui-menu-item .description {
 	font-size:13px;

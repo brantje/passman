@@ -65,7 +65,9 @@ class FolderApiController extends Controller {
 			$result['success'] = $this->folderBusinessLayer->update($folderId,$folderTitle,$this->userId,$folderparent,$renewal_period,$min_pw_strength);
 		}
 		else {
-			$result['folderid'] = $this->folderBusinessLayer->create($folderTitle,$this->userId,$folderparent,$renewal_period,$min_pw_strength); 
+			if($folderTitle != ''){
+				$result['folderid'] = $this->folderBusinessLayer->create($folderTitle,$this->userId,$folderparent,$renewal_period,$min_pw_strength);
+			} 
 		}
 		return new JSONResponse($result); 
 	}

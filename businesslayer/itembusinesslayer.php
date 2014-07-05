@@ -27,10 +27,11 @@ class ItemBusinessLayer {
 	public function get($itemId, $userId) {
 		$result = $this -> ItemManager -> get($itemId, $userId);
 		$result['files'] = $this -> ItemManager -> getFiles($itemId, $userId);
+		$result['customFields'] = $this -> ItemManager -> getFields($itemId, $userId);
 		return $result;
 	}
 
-	public function create($folderId, $userId, $label, $desc, $pass, $account, $email, $url) {
+	public function create($folderId, $userId, $label, $desc, $pass, $account, $email, $url,$customFields=array()) {
 		$item = array();
 		$item['folder_id'] = $folderId;
 		$item['user_id'] = $userId;
@@ -64,14 +65,21 @@ class ItemBusinessLayer {
 	public function delete($itemId, $userId) {
 		return $this -> ItemManager -> delete($itemId, $userId);
 	}
-	
-	public function deleteByFolder($folderId,$userId){
-		return $this-> ItemManager -> deleteByFolder($folderId,$userId);
+
+	/**
+	 * Delete all items in a folder
+	 */
+	public function deleteByFolder($folderId, $userId) {
+		return $this -> ItemManager -> deleteByFolder($folderId, $userId);
 	}
-	
+
+	/**
+	 * Add a file to an item
+	 */
 	public function addFileToItem($file) {
 		return $this -> ItemManager -> addFile($file);
 	}
+
 	/**
 	 * Get the files from a item id.
 	 * Without the content
@@ -86,9 +94,25 @@ class ItemBusinessLayer {
 	public function getFile($fileId, $userId) {
 		return $this -> ItemManager -> getFile($fileId, $userId);
 	}
+
+	/**
+	 * Remove a file
+	 */
 	public function deleteFile($fileId, $userId) {
 		return $this -> ItemManager -> deleteFile($fileId, $userId);
 	}
-
+	
+	/**
+	 * Create a field for an item
+	 */
+	 public function createField($field,$userId,$itemId){
+	 	return $this-> ItemManager -> createItemField($field,$userId,$itemId);
+	 }
+	 /**
+	  * Update an field for an item
+	  */
+	 public function updateField($field,$userId,$itemId){
+	 	return $this-> ItemManager -> updateItemField($field,$userId,$itemId);
+	 }
 }
 ?>

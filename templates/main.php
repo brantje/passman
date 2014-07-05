@@ -133,22 +133,26 @@
                     </td>
                 </tr>
                 </tbody></table>
+                <table id="customFieldsTable">
+                	
+                </table>
 		</div>
 	</div>
 </div>
 <div id="editAddItemDialog" style="display: none;">
    <form method="post" name="new_item" id="editNewItem">
-   		<input type="hidden" id="item_id" name="item_id" value=""/>
-   		<input type="hidden" id="folderid" name="folderid" value=""/>
-        <div id="item_tabs">
+   	<input type="hidden" id="item_id" name="item_id" value=""/>
+   	<input type="hidden" id="folderid" name="folderid" value=""/>
+    <div id="item_tabs">
         <ul role="tablist">
             <li><a href="#tabs-01">Definition</a></li>
             <li><a href="#tabs-02">Password &amp; Visibility</a></li>
             <li><a href="#tabs-03">Files &amp; Images</a></li>
+            <li><a href="#tabs-04">Custom fields</a></li>
 
         </ul>
         <div id="tabs-01">
-            <label>Label : </label>
+            <label>Label : </label> 
             <input type="text" name="label" id="label"><br />
             <label>Description : </label>
             <span id="desc_span">
@@ -187,7 +191,7 @@
                 <br /><div id="passwordStrengthDiv"></div>
             </div>
          </div>
-	    </form>
+        </form>
         <div id="tabs-03" >
                 <form enctype="multipart/form-data" id="fileUploader">
 				    <input name="uploadFile" type="file" id="fileInput" multiple="true"/>
@@ -197,11 +201,27 @@
 					</ul>				  
 				  
 				</form>
-            </div>
         </div>
-        <div class="button cancel">Cancel</div>
-        <div class="button save">Save</div>
+        <div id="tabs-04" >
+                <h1>Add field</h1>
+                <table style="width: 100%;" cellpadding="5">
+                	<tr>
+                		<td>
+                			<input name="customFieldName" id="customFieldName" type="text" placeholder="Enter field name"/>
+                		</td>
+                		<td>
+			                <input name="customFieldValue" id="customFieldValue" type="text" placeholder="Enter field value"/>
+                		</td>
+                	</tr>
+                </table>
+                <h1>Existing fields</h1>
+                <table id="existingFields" style="width: 100%;">
+                	
+                </table>
         </div>
+    <div class="button cancel">Cancel</div>
+    <div class="button save">Save</div>
+    </div>
 </div>
   
  <div id="folderSettingsDialog" style="display: none;">

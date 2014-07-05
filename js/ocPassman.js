@@ -66,6 +66,7 @@ jQuery(document).ready(function($) {
 		$('#copyPW').remove();
 		$('#id_pw').html('');
 		$('#id_files').html('');
+		$('#customFieldsTable').html('');
 	});
 	
 	$(document).on('dblclick','#pwList li',function(evt) {
@@ -208,6 +209,35 @@ jQuery(document).ready(function($) {
 			   $('#id_pw').html(starPW);
 	    }
 	});
+		
+	$('#customFieldName').keyup(function(evt){
+		if(evt.keyCode==13 && $(this).val()!=''){
+			$('#customFieldValue').focus();
+		}
+	});
+	$('#customFieldValue').keyup(function(evt){
+		if(evt.keyCode==13 && $(this).val()!=''){
+			$('#existingFields').prepend('<tr class="new" data-cFieldId="0"><td class="fieldName">'+$('#customFieldName').val()+ '</td><td>'+ $('#customFieldValue').val());
+			$('#customFieldValue').val('');
+			$('#customFieldName').val('').focus();
+		}
+	});
+	
+
+	$(document).on('dblclick', '#existingFields tr td', function() {
+		var value = $(this).text();
+		$(this).html('');
+		$('<input></input>').attr({
+			'type' : 'text',
+			'size' : '25',
+			'value' : value
+		}).appendTo($(this)).focus()
+		$(this).find('input').blur(function(){
+			$(this).parent().text($(this).val());
+		});
+		
+	});
+
 	
 	$('#editAddItemDialog .save').click(saveItem);
 	
@@ -226,8 +256,7 @@ jQuery(document).ready(function($) {
 		});
 	});
 	
-	/* Load the folders */
-	loadFolders();
+	
 	
 
 	
@@ -243,6 +272,8 @@ jQuery(document).ready(function($) {
 		setEncKey($.jStorage.get("ENC_KEY"));
 		$('#sessionTimeContainer').show();
 		countLSTTL();
+		/* Load the folders */
+		loadFolders();
 	}
 	$('.lockSession').click(function(){
 		resetStorageKey();
@@ -251,7 +282,7 @@ jQuery(document).ready(function($) {
 	$('.import.link').click(importDialog);
 	 /* Auto complete search */
 
-	$("#searchbox").autocomplete({
+	/*$("#searchbox").autocomplete({
 		source : function(request, response) {
 			$('#Code').val();
 			//clear code value
@@ -272,7 +303,7 @@ jQuery(document).ready(function($) {
 		minLength : 1,
 		select : function(event, ui) {
 			event.preventDefault();
-			/*console.log(ui.item);*/
+			
 			$('#jsTree').jstree("select_node",'#ajson'+ui.item.folderid);
 			setTimeout(function(){
 					$('li[data-id="'+ui.item.id+'"]').addClass('row-active');
@@ -298,7 +329,7 @@ jQuery(document).ready(function($) {
             .data( "item.autocomplete", item )
             .append( "<a><strong>" + item.label + "</strong><br><font class=\"description\">" + line1 + "</font></a>" )
             .appendTo( ul );
-    };
+    };*/
 
 });
 function importDialog(){
@@ -373,6 +404,7 @@ function encryptionKeyDialog(){
 									return false;
 								}
 								$(this).dialog("close");
+								loadFolders();
 								setEncKey($('#ecKey').val());
 								if($('#ecRemember:checked').length > 0){
 									$.jStorage.set("ENC_KEY", $('#ecKey').val());
@@ -654,6 +686,7 @@ function loadFolder(folderId){
 function loadItem(id,rawDesc) {
 	$.get(OC.generateUrl('apps/passman/api/v1/item/' + id), function(data) {
 		$('#id_files').html('');
+		$('#customFieldsTable').html('');
 		var item = data.item;
 		item.description = nl2br(item.description);
 		
@@ -693,7 +726,13 @@ function loadItem(id,rawDesc) {
 			}
 		}); 
 
-		
+		if(item.customFields.length > 0){
+			$.each(item.customFields,function(k,field){
+				var row = '<tr><td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>'+ decryptThis(field.label) +' :</td>';
+                    row +='<td><div id="id_'+field.label+'" style="float:left;">'+ decryptThis(field.value) +'</div></td></tr>'
+				$('#customFieldsTable').append(row);
+			});
+		}
 		var starPW = '';
 		for ( i = 0; i < 12; i++) {
 			starPW += '*';
@@ -745,6 +784,8 @@ function openForm(mapper) {
 			$('#item_tabs').tabs('destroy');
 			$('#complex_attendue').html('<b>Not defined</b>').removeAttr('class');
 			$('#editAddItemDialog .error').remove();
+			$('#existingFields').html('')
+			$('#fileList').html('')
 		}
 	});
 	$('#item_tabs').tabs();
@@ -767,6 +808,13 @@ function openForm(mapper) {
 				var data = this;
 				var filename =  (data.filename.length >= 20) ? data.filename.substring(0, 20)+'...' : data.filename;
 				$('#fileList').append('<li data-filename="' + data.filename + '" data-fileid="'+ data.id +'" class="fileListItem">' + filename + ' (' + humanFileSize(data.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
+			});
+		}
+		if(mapper.customFields){
+			$.each(mapper.customFields,function(k,field){
+				var row = '<tr data-cFieldId='+ field.id +'><td>'+ decryptThis(field.label) +'</td>';
+                    row +='<td>'+decryptThis(field.value)+'</td></tr>'
+					$('#existingFields').append(row)
 			});
 		}
 	}
@@ -795,14 +843,21 @@ function saveItem() {
 	if (formData.label == '') {
 		ERROR = 'A label is mandatory!';
 	}
-
+	var customFields = [];
+	$.each($('#existingFields tr'),function(){
+		var fieldName = $(this).children('td:first').text();
+		var fieldId = ($(this).attr('data-cFieldId')=='0') ? '' : $(this).attr('data-cFieldId');
+		var fieldValue = $(this).children("td:nth-child(2)").text();
+		customFields.push( {id: fieldId, name: encryptThis(fieldName), value: encryptThis(fieldValue)} );
+	});
+	
 	var ignoredEncryptionFields = ['folderid','item_id'];
 	$.each(formData,function(k,v){
-		console.log($.inArray(k,ignoredEncryptionFields));
 		if($.inArray(k,ignoredEncryptionFields)==-1){
 			formData[k] = encryptThis(v);
 		}
 	});
+	formData.customFields = customFields;
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {
@@ -842,7 +897,8 @@ function editItem(itemId) {
 			email : decryptThis(item.email),
 			url : decryptThis(item.url),
 			files : item.files,
-			id_tags : ''
+			id_tags : '',
+			customFields: item.customFields
 		};
 		openForm(edtmapper);
 	});

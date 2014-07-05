@@ -142,10 +142,14 @@ class ItemManager {
 		$query -> bindParam(6, $file['content'], \PDO::PARAM_STR);
 		$query -> bindParam(7, $file['size'], \PDO::PARAM_STR);
 		$result = $query -> execute();
-		$file['id'] = $this -> db -> getInsertId('`*PREFIX*passman_items`');
+		$file['id'] = $this -> db -> getInsertId('`*PREFIX*passman_files`');
 		return $file;
 	}
 
+	/*
+	 * Get the files that belongs to an item
+	 * Without its content
+	 */
 	public function getFiles($itemId, $userId) {
 		$sql = 'SELECT id,item_id,user_id,filename,type,mimetype,size from `*PREFIX*passman_files` WHERE `item_id`=? AND user_id=?';
 		$query = $this -> db -> prepareQuery($sql);
@@ -158,7 +162,11 @@ class ItemManager {
 		}
 		return $files;
 	}
-
+	/** 
+	 * Get a single with its content 
+	 * @param $fileId
+	 * @param $userId
+	 */
 	public function getFile($fileId, $userId) {
 		$sql = 'SELECT * from `*PREFIX*passman_files` WHERE `id`=? AND user_id=?';
 		$query = $this -> db -> prepareQuery($sql);
@@ -167,6 +175,12 @@ class ItemManager {
 		$result = $query -> execute();
 		return $result -> fetchRow();
 	}
+
+	/**
+	 * Delete a files
+	 * @param $fileId
+	 * @param $userId
+	 */
 	public function deleteFile($fileId, $userId) {
 		$sql = 'DELETE FROM `*PREFIX*passman_files` WHERE `id`=? AND user_id=?';
 		$query = $this -> db -> prepareQuery($sql);
@@ -175,5 +189,56 @@ class ItemManager {
 		$result = $query -> execute();
 		return $fileId;
 	}
-
+	
+	
+	/**
+	 * Insert a custom field to an item
+	 */ 
+	public function createItemField($field,$userId,$itemId){
+		$sql = 'INSERT INTO `*PREFIX*passman_custom_fields` (`item_id`,`user_id`,`label`,`value`)';
+		$sql .= ' VALUES (?,?,?,?)';
+		$query = $this -> db -> prepareQuery($sql);
+		$query -> bindParam(1, $itemId, \PDO::PARAM_INT);
+		$query -> bindParam(2, $userId, \PDO::PARAM_INT);
+		$query -> bindParam(3, $field['name'], \PDO::PARAM_STR);
+		$query -> bindParam(4, $field['value'], \PDO::PARAM_STR);
+		$result = $query -> execute();
+		$field['id'] = $this -> db -> getInsertId('`*PREFIX*passman_custom_fields`');
+		return $field;
+	}
+	
+	/**
+	 * Get the custom fields for an item
+	 */
+	public function getFields($itemId, $userId) {
+		$sql = 'SELECT id, label,value from `*PREFIX*passman_custom_fields` WHERE `item_id`=? AND user_id=?';
+		$query = $this -> db -> prepareQuery($sql);
+		$query -> bindParam(1, $itemId, \PDO::PARAM_INT);
+		$query -> bindParam(2, $userId, \PDO::PARAM_INT);
+		$result = $query -> execute();
+		$fields = array();
+		while ($row = $result -> fetchRow()) {
+			$fields[] = $row;
+		}
+		return $fields;
+	}
+	/**
+	 * Update an custom item field
+	 */
+	public function updateItemField($field,$userId,$itemId){
+		$sql = 'UPDATE `*PREFIX*passman_custom_fields` SET `label`=?,value=? WHERE id=? AND user_id=?';
+		$query = $this -> db -> prepareQuery($sql);
+		$query -> bindParam(1, $field['name'], \PDO::PARAM_STR);
+		$query -> bindParam(2, $field['value'], \PDO::PARAM_STR);
+		$query -> bindParam(3, $field['id'], \PDO::PARAM_INT);
+		$query -> bindParam(4, $userId, \PDO::PARAM_INT);
+		$result = $query -> execute();	
+	}
+	
+	/**
+	 * Remove a custom field
+	 */
+	 public function removeItemField($fieldId,$userId){
+	 	
+	 } 
 }
