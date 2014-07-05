@@ -436,14 +436,14 @@ function loadFolders(){
 function generateFolderStructure(){
 	/* Setup menu */
 	$.jstree.defaults.contextmenu.show_at_node = false;
-	
+	var plugins = (isMobile()==false) ? ["contextmenu", "state","dnd"] :["contextmenu", "state"];
 	$('#jsTree').jstree({
 		"core" : {
 			// so that create works
 			"check_callback" : true,
 			'data' : $(document).data('folderStructure'),
 		},
-		"plugins" : ["contextmenu", "dnd","state"],
+		"plugins" : plugins,
 		"contextmenu" : {
 			"items" : function($node) {
 				var tree = $("#jsTree").jstree(true);
@@ -628,7 +628,9 @@ function loadFolder(folderId){
 			$.each(data.items,function(){
 				 var append = '<li data-id='+ this.id +'><div style="display: inline-block;">'+ decryptThis(this.label)+'</div></li>';
 				 $('#pwList').append(append);
-				 makeDragable();
+				if(!isMobile()){
+					makeDragable();
+				} 
 			});
 		}
 		else
@@ -650,7 +652,7 @@ function makeDragable(){
                 $(ui.helper).css("margin-top", event.clientY - $(event.target).offset().top-10);
             }
 	});
-	$('#ajson0 li').droppable({
+	/*$('#ajson0 li').droppable({
       activeClass: "ui-state-default",
       hoverClass: "ui-state-hover",
       drop: function( event, ui ) {
@@ -662,7 +664,7 @@ function makeDragable(){
       		});
       	}
       }
-    });
+    });*/
 }
 
 /**
@@ -1089,4 +1091,12 @@ function showNotification(str) {
 function nl2br (str, is_xhtml) {   
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';    
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
+}
+
+function isMobile(){
+	if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+ 		return true;
+    } else{
+    	return false;	
+    }
 }
