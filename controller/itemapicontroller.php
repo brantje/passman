@@ -83,8 +83,16 @@ class ItemApiController extends Controller {
 		if(empty($folderCheckResult)){
 			array_push($errors,'Folder not found');
 		}
+		
+		if($folderCheckResult['renewal_period'] > 0){
+			 $expiretime = strtotime("+". $folderCheckResult['renewal_period'] ." days");
+		}
+		else {
+			 $expiretime = 0;
+		}
+		
 		if(empty($errors)){
-			$result['itemid'] = $this->ItemBusinessLayer->create($folderId,$userId,$label,$desc,$pass,$account,$email,$url);
+			$result['itemid'] = $this->ItemBusinessLayer->create($folderId,$userId,$label,$desc,$pass,$account,$email,$url,$expiretime);
 			if(!empty($customFields)){
 				foreach ($customFields as $key => $field) {
 					if(empty($field['id'])){
@@ -98,7 +106,6 @@ class ItemApiController extends Controller {
 		} else {
 			$result['errors'] = $errors;
 		}
-		
 		return new JSONResponse($result); 
 	}
 	/**
@@ -124,15 +131,28 @@ class ItemApiController extends Controller {
 		if(!is_numeric($folderId)){
 			array_push($errors,'Folder id is not numeric');
 		}
-		if(empty($this->FolderBusinessLayer->get($folderId))){
+		$folderCheckResult = $this->FolderBusinessLayer->get($folderId,$userId);
+		if(empty($folderCheckResult)){
 			array_push($errors,'Folder not found');
 		}
-		if(empty($this->get($itemId))){
+		$curItem =  $this->ItemBusinessLayer->get($itemId,$this->userId);
+		if(empty($curItem)){
 			array_push($errors,'Item not found');
 		}
-		
+		if($folderCheckResult['renewal_period'] > 0){
+			if($this->params('changedPw')=="true"){
+			 $expiretime = strtotime("+". $folderCheckResult['renewal_period'] ." days");
+			}
+			else {
+				$expiretime = $curItem['expire_time'];
+			}
+		}
+		else {
+			
+			$expiretime = 0;
+		}
 		if(empty($errors)){
-			$result['success'] = $this->ItemBusinessLayer->update($id,$folderId,$userId,$label,$desc,$pass,$account,$email,$url);
+			$result['success'] = $this->ItemBusinessLayer->update($id,$folderId,$userId,$label,$desc,$pass,$account,$email,$url,$expiretime);
 			if(!empty($customFields)){
 				foreach ($customFields as $key => $field) {
 					if(empty($field['id'])){
@@ -146,7 +166,7 @@ class ItemApiController extends Controller {
 		} else {
 			$result['errors'] = $errors;
 		}
-		return new JSONResponse($result); 
+		//return new JSONResponse($result); 
 	}
 
 	/**

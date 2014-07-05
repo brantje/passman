@@ -31,7 +31,7 @@ class ItemBusinessLayer {
 		return $result;
 	}
 
-	public function create($folderId, $userId, $label, $desc, $pass, $account, $email, $url,$customFields=array()) {
+	public function create($folderId, $userId, $label, $desc, $pass, $account, $email, $url,$expireTime) {
 		$item = array();
 		$item['folder_id'] = $folderId;
 		$item['user_id'] = $userId;
@@ -41,10 +41,11 @@ class ItemBusinessLayer {
 		$item['account'] = $account;
 		$item['email'] = $email;
 		$item['url'] = $url;
+		$item['expire_time'] = $expireTime;
 		return $this -> ItemManager -> insert($item);
 	}
 
-	public function update($id, $folderId, $userId, $label, $desc, $pass, $account, $email, $url) {
+	public function update($id, $folderId, $userId, $label, $desc, $pass, $account, $email, $url,$expiretime) {
 		$item = array();
 		$item['id'] = $id;
 		$item['folder_id'] = $folderId;
@@ -55,6 +56,7 @@ class ItemBusinessLayer {
 		$item['account'] = $account;
 		$item['email'] = $email;
 		$item['url'] = $url;
+		$item['expire_time'] = $expiretime;
 		return $this -> ItemManager -> update($item);
 	}
 

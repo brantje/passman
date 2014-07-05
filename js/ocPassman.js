@@ -280,57 +280,6 @@ jQuery(document).ready(function($) {
 		encryptionKeyDialog();
 	});
 	$('.import.link').click(importDialog);
-	 /* Auto complete search */
-
-	/*$("#searchbox").autocomplete({
-		source : function(request, response) {
-			$('#Code').val();
-			//clear code value
-			$.ajax({
-				url : OC.generateUrl('apps/passman/api/v1/item/search/'+$('#searchbox').val()),
-				type : 'GET',
-				contentType : "application/json; charset=utf-8",
-				dataType : 'json', //What kind of Result is expected. (Ex json, xml, etc)
-				success : function(data) {
-					var item = [];
-					$.each(data,function(){
-						item.push(this);
-					});
-					response(item);
-				}
-			});
-		},
-		minLength : 1,
-		select : function(event, ui) {
-			event.preventDefault();
-			
-			$('#jsTree').jstree("select_node",'#ajson'+ui.item.folderid);
-			setTimeout(function(){
-					$('li[data-id="'+ui.item.id+'"]').addClass('row-active');
-					loadItem(ui.item.id);
-					$('#searchbox').val('').blur();
-			},250);
-		},
-		focus : function(event, ui) {
-			event.preventDefault();
-			
-		}
-	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-		var line1 = '';
-		if(item.email && !item.account)
-			line1 = 'Email: '+ item.email+'<br />';
-		if(!item.email && item.account)
-			line1 = 'Account: '+ item.account+'<br />';
-		if(item.description){
-			var desc = (item.description.length >= 15) ? item.description.substring(0, 15)+'...' : item.description;
-			line1 +=  'Description: '+ desc;
-		}
-        return $( "<li></li>" )
-            .data( "item.autocomplete", item )
-            .append( "<a><strong>" + item.label + "</strong><br><font class=\"description\">" + line1 + "</font></a>" )
-            .appendTo( ul );
-    };*/
-
 });
 function importDialog(){
 	
@@ -725,7 +674,7 @@ function loadItem(id,rawDesc) {
 				}
 			}
 		}); 
-
+		
 		if(item.customFields.length > 0){
 			$.each(item.customFields,function(k,field){
 				var row = '<tr><td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>'+ decryptThis(field.label) +' :</td>';
@@ -803,6 +752,7 @@ function openForm(mapper) {
 		if (mapper.pw1) {
 			$('#pw1').change().trigger('keyup.simplePassMeter');
 		}
+		$(document).data('p',mapper.pw1);
 		if(mapper.files){
 			$.each(mapper.files,function(){
 				var data = this;
@@ -858,6 +808,8 @@ function saveItem() {
 		}
 	});
 	formData.customFields = customFields;
+	formData.changedPw = ($(document).data('p') != $('#pw1').val()) ? true : false;
+	console.log(formData);
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {

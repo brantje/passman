@@ -5,6 +5,6 @@
     <description>A password manager for ownCloud</description>
     <licence>agpl</licence>
     <author>Sander Brand</author>
-    <version>0.0.10</version>
+    <version>0.0.12</version>
     <requiremin>7</requiremin>
 </info>

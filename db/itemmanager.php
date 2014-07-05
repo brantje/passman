@@ -66,8 +66,8 @@ class ItemManager {
 	 * Insert item
 	 */
 	public function insert($item) {
-		$sql = 'INSERT INTO `*PREFIX*passman_items` (`user_id`,`folderid`,`label`,`description`,`password`,`account`,`email`,`url`)';
-		$sql .= ' VALUES (?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO `*PREFIX*passman_items` (`user_id`,`folderid`,`label`,`description`,`password`,`account`,`email`,`url`,`expire_time`)';
+		$sql .= ' VALUES (?,?,?,?,?,?,?,?,?)';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $item['user_id'], \PDO::PARAM_INT);
 		$query -> bindParam(2, $item['folder_id'], \PDO::PARAM_INT);
@@ -77,6 +77,8 @@ class ItemManager {
 		$query -> bindParam(6, $item['account'], \PDO::PARAM_STR);
 		$query -> bindParam(7, $item['email'], \PDO::PARAM_STR);
 		$query -> bindParam(8, $item['url'], \PDO::PARAM_STR);
+		$query -> bindParam(9, $item['expire_time'], \PDO::PARAM_INT);
+		print_r($item);
 		$result = $query -> execute();
 		return $this -> db -> getInsertId('`*PREFIX*passman_items`');
 
@@ -86,7 +88,7 @@ class ItemManager {
 	 * Update item
 	 */
 	public function update($item) {
-		$sql = 'UPDATE `*PREFIX*passman_items` SET `user_id`=?,folderid=?,`label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=? WHERE id=?';
+		$sql = 'UPDATE `*PREFIX*passman_items` SET `user_id`=?,folderid=?,`label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=? WHERE id=?';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $item['user_id'], \PDO::PARAM_INT);
 		$query -> bindParam(2, $item['folder_id'], \PDO::PARAM_INT);
@@ -96,7 +98,8 @@ class ItemManager {
 		$query -> bindParam(6, $item['account'], \PDO::PARAM_STR);
 		$query -> bindParam(7, $item['email'], \PDO::PARAM_STR);
 		$query -> bindParam(8, $item['url'], \PDO::PARAM_STR);
-		$query -> bindParam(9, $item['id'], \PDO::PARAM_INT);
+		$query -> bindParam(9, $item['expire_time'], \PDO::PARAM_STR);
+		$query -> bindParam(10, $item['id'], \PDO::PARAM_INT);
 		$result = $query -> execute();
 		return $item;
 

@@ -20,7 +20,7 @@
 ?>
 <div id="app">
 	<div id="app-navigation">
-	<div id="jsTree">
+	 <div id="jsTree">
 		
 	  </div>
 	  <div id="app-settings">
@@ -49,31 +49,7 @@
 					<button class="button" id="deleteItem" disabled="disabled">Delete item</button>
 		</div>
 		<div id="pwList">
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
-			<li>Label</li>
+			
 		</div>
 		<div id="infoContainer">
 			<table>
