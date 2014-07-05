@@ -191,6 +191,7 @@ jQuery(document).ready(function($) {
     });
 	
 	$('#fileInput').change(function () {
+	 $('#fileInput').after('<span id="uploading">Uploading...</span>');
 	  addFilesToItem(this.files);
 	});
 	
@@ -773,6 +774,7 @@ function openForm(mapper) {
 			$('#editAddItemDialog .error').remove();
 			$('#existingFields').html('')
 			$('#fileList').html('')
+			$('#fileInput').val('');
 		}
 	});
 	$('#item_tabs').tabs();
@@ -795,7 +797,7 @@ function openForm(mapper) {
 			$.each(mapper.files,function(){
 				var data = this;
 				var filename =  (data.filename.length >= 20) ? data.filename.substring(0, 20)+'...' : data.filename;
-				$('#fileList').append('<li data-filename="' + data.filename + '" data-fileid="'+ data.id +'" class="fileListItem">' + filename + ' (' + humanFileSize(data.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
+				$('#fileList').append('<li data-filename="' + decryptThis(data.filename) + '" data-fileid="'+ data.id +'" class="fileListItem">' + decryptThis(data.filename) + ' (' + humanFileSize(data.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
 			});
 		}
 		if(mapper.customFields){
@@ -917,6 +919,7 @@ function deleteItem(itemId){
 
 function addFilesToItem(files) {
 	var itemId = $('#item_id').val();
+	
 	//Will be changed later
 	//var allowedMimeTypes = ['image/x-icon', 'image/tiff', 'image/svg+xml', 'image/pipeg', 'image/ief', 'image/bmp', 'image/gif', 'image/jpeg', 'application/pkixcmp', 'application/pkix-crl', 'image/jpeg', 'image/png', 'application/pdf', 'application/pkix-cert', 'application/pkixcmp', 'application/x-x509-ca-cert', 'text/html', 'text/plain', 'text/x-vcard', 'application/x-pkcs12', 'application/x-pkcs7-certificates', 'pplication/x-pkcs7-mime', 'application/x-pkcs7-certreqresp', 'application/vnd.ms-powerpoint', 'application/vnd.ms-outlook', 'application/vnd.ms-excel', 'application/postscript', 'application/pkcs10,', 'application/pkix-crl', 'application/msword'];
 	$.each(files, function() {
@@ -940,6 +943,8 @@ function addFilesToItem(files) {
 					//if ($.inArray(mimeType, allowedMimeTypes) !== -1) {
 						$.post(OC.generateUrl('apps/passman/api/v1/item/' + itemId + '/addfile'), postData, function(data) {
 							$('#fileList').append('<li data-filename="' + data.filename + '" data-fileid="'+ data.id +'">' + file.name + ' (' + humanFileSize(file.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
+							$('#uploading').remove();
+							$('#fileInput').val('');
 						});
 					//}
 					//else
@@ -965,14 +970,14 @@ function loadFile(fileId) {
 	$.get(OC.generateUrl('/apps/passman/api/v1/item/file/' + fileId), function(data) {
 		console.log(data);
 		/* Show the image if it is ofcourse */
-		if (data.type.indexOf('image') >= 0) {
+		if (data.type.indexOf('image') >= 0 && data.size < 734003) {
 			var imageData = decryptThis(data.content);
 			$('#fileImg').attr('src', imageData);
 			$('#downloadImage').html('<a href="'+ imageData +'" download="'+ data.filename +'">Save this image</a>');
 			$('#fileImg').load(function() {
 				$('#dialog_files').dialog({
 					width : 'auto',
-					title : data.filename
+					title : decryptThis(data.filename)
 				});
 				var win = $(window);
 				if ($('#fileImg').width() > win.width() || $('#fileImg').height() > win.height()) {
@@ -988,7 +993,7 @@ function loadFile(fileId) {
 			var fileData = decryptThis(data.content);
 			//console.log(fileData);
 			$('<div>Due popup blockers you have to click the below button to download your file.</div>').dialog({
-				title : "Download " + data.filename,
+				title : "Download " + decryptThis(data.filename),
 				content : 'test',
 				buttons : {
 					"Download" : function() {
@@ -997,7 +1002,7 @@ function loadFile(fileId) {
 						var a = document.createElement("a");
 						a.style = "display: none";
 						a.href = uriContent;
-				        a.download = data.filename;
+				        a.download = decryptThis(data.filename);
 				        a.click();
 				        window.URL.revokeObjectURL(url);
 						$(this).remove();

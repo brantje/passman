@@ -173,8 +173,17 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	public function moveitem($itemId,$folderId){
-		
-		return new JSONResponse($this->ItemBusinessLayer->moveItem($itemId,$folderId,$this->userId));
+		$errors = array();
+		$curItem =  $this->ItemBusinessLayer->get($itemId,$this->userId);
+		if(empty($curItem)){
+			array_push($errors,'Item not found');
+		}
+		if(empty($errors)){
+			$result = $this->ItemBusinessLayer->moveItem($itemId,$folderId,$this->userId);
+		} else {
+			$result['errors'] = $errors;
+		}
+		return new JSONResponse($result);
 	}
 	/**
 	 * @NoAdminRequired
@@ -207,6 +216,7 @@ class ItemApiController extends Controller {
 		if(empty($this->FolderBusinessLayer->get($folderId))){
 			array_push($errors,'Folder not found');
 		}
+		
 		if(empty($errors)){
 			$result['deleted']	=$this->ItemBusinessLayer->deleteByFolder($folderId,$this->userId);
 		}else {
@@ -232,6 +242,7 @@ class ItemApiController extends Controller {
 	 */
 	public function addfile($itemId){
 		//echo $itemId;
+		$errors = array();
 		$file = array();
 		$file['item_id'] = $this->params('item_id');
 		$file['filename'] = $this->params('filename');
@@ -240,8 +251,15 @@ class ItemApiController extends Controller {
 		$file['size'] = $this->params('size');
 		$file['content'] = $this->params('content');
 		$file['user_id'] = $this->userId;
-		//print_r($this->request);
-		return new JSONResponse($this->ItemBusinessLayer->addFileToItem($file));  
+		if(empty($this->get($itemId))){
+			array_push($errors,'Item not found');
+		}
+		if(empty($errors)){
+			$result = $this->ItemBusinessLayer->addFileToItem($file);	
+		} else {
+		 	$result['errors'] = $error;
+		}
+		return new JSONResponse($result);  
 	}
 	
 	/**
