@@ -1,9 +1,12 @@
+#app-navigation li {
+	width: auto;
+}
 #app-navigation li > a {
 	display: initial;
-	width: 100%;
+	width: auto;
 	line-height: 25px;
 	height: 26px;
-	padding: 0 0;
+	padding: 0 20px 0px 0px;
 	display: inline-block;
 	
 }
@@ -19,6 +22,10 @@ tbody tr:hover, tr:active {
 #ocPassman {
 	height: 100%;
 	width: 100%;
+}
+div#topContent {
+	background: #f8f8f8;
+	height: 35px;
 }
 #menu ul {
 	margin-left: 1.3em;
@@ -37,16 +44,16 @@ tbody tr:hover, tr:active {
 	height: 25px !important;
 	width: 25px !important;
 }
+li.ui-state-default{
+	border: none !important;
+}
 .ui-state-default i.jstree-themeicon {
 	background: url('../img/folder-open.png') !important;
+	border: none !important;
 }
-.ui-state-default{
+#menu .ui-state-default{
 	border: none;
 	background: lightblue;
-}
-.ui-state-default:hover{
-	border: none;
-	background:lightblue;
 }
 /*
  #menu li {
@@ -77,7 +84,7 @@ div#ocpContent {
 #pwList {
 	margin-left: 1px;
 	overflow: auto;
-	margin-top: 10px;
+	/*margin-top: 10px;*/
 }
 #pwList li {
 	list-style: none;
@@ -92,15 +99,16 @@ div#ocpContent {
 	background-repeat: no-repeat;
 	background-position: 3px 6px;
 }
-.ui-draggable-dragging {
+li.ui-draggable-dragging {
 	padding-left: 20px;
 	background-image: url('../img/key.png');
 	background-repeat: no-repeat;
 	background-position: 13px 6px;
 	list-style: none;
-	padding: 5px 30px 5px 30px;
+	padding: 5px 30px 5px 60px;
 	margin-left:30px;
-	background-color: #c9c9c9;
+	background-color: #f0f0f0;
+	border: 1px solid black;
 }
 #pwList li:hover {
 	background: #f0f0f0;

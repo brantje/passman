@@ -79,6 +79,7 @@ jQuery(document).ready(function($) {
 		$('#id_pw').html('');
 		$('#id_files').html('');
 		$('#customFieldsTable').html('');
+		$('#id_expires').html('');
 	});
 	
 	$(document).on('dblclick','#pwList li',function(evt) {
@@ -706,6 +707,9 @@ function loadItem(id,rawDesc) {
 				}
 			}); 
 		}
+		if(item.expire_time != 0){
+			$('#id_expires').html(formatDate(item.expire_time));
+		}
 		if(item.customFields.length > 0){
 			$.each(item.customFields,function(k,field){
 				var row = '<tr><td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>'+ decryptThis(field.label) +' :</td>';
@@ -713,6 +717,7 @@ function loadItem(id,rawDesc) {
 				$('#customFieldsTable').append(row);
 			});
 		}
+		
 		var starPW = '';
 		for ( i = 0; i < 12; i++) {
 			starPW += '*';
@@ -754,9 +759,11 @@ function getRating(str){
 
 function openForm(mapper) {
 	var folderPwStrength = getRating(selectedFolder.min_pw_strength);
+	var dTitle = (mapper.label) ? 'Edit '+mapper.label : 'Add new item';
 	$('#complex_attendue').html('<b>' + folderPwStrength.text + '</b>');
 	$('#editAddItemDialog').dialog({
-		"width" : ($(document).width() > 425) ? 425 : $(document).width() - 10,
+		title: dTitle,
+        "width" : ($(document).width() > 425) ? 'auto' : $(document).width() - 10,
 		close : function(event, ui) {
 			$(this).dialog('destroy');
 			document.getElementById("editNewItem").reset();
@@ -1078,7 +1085,19 @@ function showNotification(str) {
 		OC.Notification.hide();
 	},3000);
 }
-
+function formatDate(datestr){
+	var dateformat = ($.jStorage.get("date_format")) ? $.jStorage.get("date_format") : 'default';
+	switch(dateformat){
+		case "default":
+			return new Date(datestr).toLocaleString();
+		break;
+		
+		default:
+			console.log()
+			return date(dateformat,new Date(datestr));
+		break;
+	}
+}
 
 function nl2br (str, is_xhtml) {   
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';    

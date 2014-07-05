@@ -15,6 +15,7 @@
 \OCP\Util::addscript('passman', 'zeroClipboard/zeroClipboard');
 
 \OCP\Util::addStyle('passman', 'ocPassman');
+\OCP\Util::addscript('passman', 'date');
 \OCP\Util::addscript('passman', 'ocPassman');
 
 ?>
@@ -28,6 +29,7 @@
 				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
 			</div>
 			<div id="app-settings-content">
+					<p class="settings link">Settings</p>
 					<p class="import link">Import data</p>
 					<div id="sessionTimeContainer" style="display: none;">
 						<h2>Session time</h2>
@@ -69,6 +71,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>Expires :</td>
+                    <td>
+                        <div id="id_expires" style="display:inline;"></div>
+                    </td>
+                </tr>
+                <tr>
                     <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>Account :</td>
                     <td>
                         <div id="id_login" style="float:left;"></div>
@@ -97,12 +105,6 @@
                     </td>
                 </tr>
 
-                <tr style="display: none;">
-                    <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>Tags :</td>
-                    <td>
-                        <div id="id_tags" style="display:inline;"></div>
-                    </td>
-                </tr>
                 </tbody></table>
                 <table id="customFieldsTable">
                 	
