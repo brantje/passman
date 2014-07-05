@@ -119,6 +119,7 @@
    <form method="post" name="new_item" id="editNewItem">
    	<input type="hidden" id="item_id" name="item_id" value=""/>
    	<input type="hidden" id="folderid" name="folderid" value=""/>
+   	<input type="hidden" id="expire_time" name="expire_time" value=""/>
     <div id="item_tabs">
         <ul role="tablist">
             <li><a href="#tabs-01">Definition</a></li>

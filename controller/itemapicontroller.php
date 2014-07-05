@@ -85,7 +85,7 @@ class ItemApiController extends Controller {
 		}
 		
 		if($folderCheckResult['renewal_period'] > 0){
-			 $expiretime = strtotime("+". $folderCheckResult['renewal_period'] ." days");
+			 $expiretime = date("c",strtotime("+". $folderCheckResult['renewal_period'] ." days"));
 		}
 		else {
 			 $expiretime = 0;
@@ -141,7 +141,7 @@ class ItemApiController extends Controller {
 		}
 		if($folderCheckResult['renewal_period'] > 0){
 			if($this->params('changedPw')=="true"){
-			 $expiretime = strtotime("+". $folderCheckResult['renewal_period'] ." days");
+			 $expiretime = date("c",strtotime("+". $folderCheckResult['renewal_period'] ." days"));
 			}
 			else {
 				$expiretime = $curItem['expire_time'];
@@ -166,9 +166,16 @@ class ItemApiController extends Controller {
 		} else {
 			$result['errors'] = $errors;
 		}
-		//return new JSONResponse($result); 
+		return new JSONResponse($result); 
 	}
 
+	/**
+	 * @NoAdminRequired
+	 */
+	public function moveitem($itemId,$folderId){
+		
+		return new JSONResponse($this->ItemBusinessLayer->moveItem($itemId,$folderId,$this->userId));
+	}
 	/**
 	 * @NoAdminRequired
 	 */

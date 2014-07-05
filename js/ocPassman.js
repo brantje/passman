@@ -1,24 +1,36 @@
-/**
- * @TODO recover deleted items
- */
-$.fn.serializeObject = function()
-{
-    var o = {};
-    var a = this.serializeArray();
-    $.each(a, function() {
-        if (o[this.name] !== undefined) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push(this.value || '');
-        } else {
-            o[this.name] = this.value || '';
-        }
-    });
-    return o;
+$.fn.serializeObject = function() {
+	var o = {};
+	var a = this.serializeArray();
+	$.each(a, function() {
+		if (o[this.name] !== undefined) {
+			if (!o[this.name].push) {
+				o[this.name] = [o[this.name]];
+			}
+			o[this.name].push(this.value || '');
+		} else {
+			o[this.name] = this.value || '';
+		}
+	});
+	return o;
 };
 
+if (!Date.prototype.toISOString) {( function() {
 
+			function pad(number) {
+				var r = String(number);
+				if (r.length === 1) {
+					r = '0' + r;
+				}
+				return r;
+			}
+
+
+			Date.prototype.toISOString = function() {
+				return this.getUTCFullYear() + '-' + pad(this.getUTCMonth() + 1) + '-' + pad(this.getUTCDate()) + 'T' + pad(this.getUTCHours()) + ':' + pad(this.getUTCMinutes()) + ':' + pad(this.getUTCSeconds()) + '.' + String((this.getUTCMilliseconds() / 1000).toFixed(3)).slice(2, 5) + 'Z';
+			};
+
+		}() );
+}
 
 
 jQuery(document).ready(function($) {
@@ -431,7 +443,7 @@ function generateFolderStructure(){
 			"check_callback" : true,
 			'data' : $(document).data('folderStructure'),
 		},
-		"plugins" : ["contextmenu", "state", "dnd"],
+		"plugins" : ["contextmenu", "dnd","state"],
 		"contextmenu" : {
 			"items" : function($node) {
 				var tree = $("#jsTree").jstree(true);
@@ -497,9 +509,9 @@ function generateFolderStructure(){
 			path += '<div class="' + classes + '" data-dir="' + $(dir).attr('id') + '"><a>' + v2 + '</a></div>';
 		});
 		$('#crumbs').html(path);
-		loadFolder($(dir).attr('id').replace('ajson', ''));
+		loadFolder(data.node.id.replace('ajson', ''));
 		$('#pwList').click();
-	}).bind('loaded.jstree', function(evt) {
+		}).bind('loaded.jstree', function(evt) {
 		$('#jsTree').jstree('open_node', $('#ajson0'));
 		$('#jsTree').bind("move_node.jstree", function(event, object) {
 			/**
@@ -515,7 +527,7 @@ function generateFolderStructure(){
 		$("#jsTree").jstree("select_node", '#' + $(this).attr('data-dir')).trigger("select_node.jstree");
 	}); 
 
-	loadFolder(0);
+	//loadFolder(0);
 }
 
 function getFolderById(id){
@@ -616,6 +628,7 @@ function loadFolder(folderId){
 			$.each(data.items,function(){
 				 var append = '<li data-id='+ this.id +'><div style="display: inline-block;">'+ decryptThis(this.label)+'</div></li>';
 				 $('#pwList').append(append);
+				 makeDragable();
 			});
 		}
 		else
@@ -626,12 +639,36 @@ function loadFolder(folderId){
 		selectedFolder = getFolderById(folderId);
 	});
 }
+
+function makeDragable(){
+	$('#pwList li').draggable({
+		helper: 'clone',
+		appendTo: 'body',
+		revert: "invalid",
+		 start: function (event, ui) {
+                $(ui.helper).css("margin-left", event.clientX - $(event.target).offset().left+10);
+                $(ui.helper).css("margin-top", event.clientY - $(event.target).offset().top-10);
+            }
+	});
+	$('#ajson0 li').droppable({
+      activeClass: "ui-state-default",
+      hoverClass: "ui-state-hover",
+      drop: function( event, ui ) {
+      	if(event.type=="drop"){
+      		var itemId = $(ui.draggable[0]).attr('data-id');
+      		var targetFolder = event.target.id.replace('ajson','').trim()
+      		$.post(OC.generateUrl('apps/passman/api/v1/item/move/'+itemId+'/'+ targetFolder),{},function(d){
+      			$('li[data-id="'+itemId+'"]').remove();
+      		});
+      	}
+      }
+    });
+}
+
 /**
  * Load an item
  * @param {int} id
  */
-
-
 function loadItem(id,rawDesc) {
 	$.get(OC.generateUrl('apps/passman/api/v1/item/' + id), function(data) {
 		$('#id_files').html('');
@@ -809,7 +846,14 @@ function saveItem() {
 	});
 	formData.customFields = customFields;
 	formData.changedPw = ($(document).data('p') != $('#pw1').val()) ? true : false;
-	console.log(formData);
+	if($('#expire_time').val() != ''){
+		if(selectedFolder.renewal_period > 0 && $('#pw1').val()==0){
+			var expireTime = new Date($('#expire_time').val());
+			if(expireTime < new Date() && formData.changedPw==false){
+				ERROR = 'The password is expired, you must renew it before you can save';
+			}
+		}
+	}
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {
@@ -849,6 +893,7 @@ function editItem(itemId) {
 			email : decryptThis(item.email),
 			url : decryptThis(item.url),
 			files : item.files,
+			expire_time: item.expire_time,
 			id_tags : '',
 			customFields: item.customFields
 		};

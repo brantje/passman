@@ -38,6 +38,18 @@ class ItemManager {
 	}
 
 	/**
+	 * Move an item to another folder
+	 */
+	public function moveItem($itemId,$folderId,$userId){
+		$sql = 'UPDATE `*PREFIX*passman_items` SET folderid=? where id=? and user_id=?';
+		$query = $this -> db -> prepareQuery($sql);
+		$query -> bindParam(1, $folderId, \PDO::PARAM_INT);
+		$query -> bindParam(2, $itemId, \PDO::PARAM_INT);
+		$query -> bindParam(3, $userId, \PDO::PARAM_STR);
+		$result = $query -> execute();
+		return array('success'=>'true');
+	}
+	/**
 	 * List items in a folder
 	 */
 	public function search($itemName, $userId) {
@@ -78,7 +90,6 @@ class ItemManager {
 		$query -> bindParam(7, $item['email'], \PDO::PARAM_STR);
 		$query -> bindParam(8, $item['url'], \PDO::PARAM_STR);
 		$query -> bindParam(9, $item['expire_time'], \PDO::PARAM_INT);
-		print_r($item);
 		$result = $query -> execute();
 		return $this -> db -> getInsertId('`*PREFIX*passman_items`');
 

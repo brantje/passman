@@ -59,6 +59,10 @@ class ItemBusinessLayer {
 		$item['expire_time'] = $expiretime;
 		return $this -> ItemManager -> update($item);
 	}
+	
+	public function moveItem($itemId,$folderId,$userId){
+		return $this -> ItemManager -> moveItem($itemId,$folderId,$userId);
+	}
 
 	public function search($itemName, $userId) {
 		return $this -> ItemManager -> search($itemName, $userId);
