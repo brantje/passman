@@ -362,7 +362,7 @@ function encryptionKeyDialog(){
 						draggable: false, resizable: false,closeOnEscape: false,
 						modal: true,
 						open: function(event, ui) { 
-							$(".ui-dialog-titlebar-close").hide(); 
+							//$(".ui-dialog-titlebar-close").hide(); 
 						},
 						buttons: { "Ok": function() {
 								if($('#ecKey').val()==''){

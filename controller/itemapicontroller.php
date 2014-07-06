@@ -197,7 +197,8 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	public function delete($itemId) {
-		if(empty($this->get($itemId))){
+		$findItem = $this->get($itemId);
+		if(empty($findItem)){
 			array_push($errors,'Item not found');
 		}
 		if(empty($errors)){
