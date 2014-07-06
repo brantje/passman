@@ -10,6 +10,9 @@
 	display: inline-block;
 	
 }
+.ui-widget-overlay.ui-front {
+	top: 45px;
+}
 tbody tr:hover, tr:active {
 	background: none !important;
 }

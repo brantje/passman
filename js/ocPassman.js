@@ -359,7 +359,7 @@ function countLSTTL() {
 
 function encryptionKeyDialog(){
 	$('#encryptionKeyDialog').dialog({
-						draggable: false, resizable: false,
+						draggable: false, resizable: false,closeOnEscape: false,
 						modal: true,
 						open: function(event, ui) { 
 							$(".ui-dialog-titlebar-close").hide(); 

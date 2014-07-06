@@ -36,7 +36,7 @@ class PageController extends Controller {
      * @NoCSRFRequired
      */
     public function index() {
-    	$conf= 1;//\OCP\CONFIG::getUserValue( \OCP\User::getUser() , 'firstpassmanrun' , 'show' , 1 );
+    	$conf= \OCP\CONFIG::getUserValue( \OCP\User::getUser() , 'firstpassmanrun' , 'show' , 1 );
 		if($conf==1){
 			\OCP\Util::addscript('passman', 'firstrun');
 		}

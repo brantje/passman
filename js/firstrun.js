@@ -13,7 +13,7 @@ $(document).ready(function(){
 		firstrun += '<fieldset><legend>Last few things...</legend>'
 		firstrun += 'In the next screen you will be asked to enter your encryption key.<br />This key will be used to encrypt all information.<br /><strong>This key is private and therefore is never send to the server</strong>'
 		firstrun += '</fieldset></div></div>'
-		$(firstrun).dialog({width: 420, modal: true,draggable: false, resizable: false});
+		$(firstrun).dialog({width: 420, modal: true,draggable: false, resizable: false,closeOnEscape: false});
 		$('#firstRun').parent().find('.ui-dialog-buttonpane').remove();
 		$('#firstRun').parent().find('.ui-dialog-titlebar-close').remove();
 		$('#fieldsetContainer').formToWizard();
