@@ -36,7 +36,7 @@ class PageController extends Controller {
      * @NoCSRFRequired
      */
     public function index() {
-    	$conf=\OCP\CONFIG::getUserValue( \OCP\User::getUser() , 'firstpassmanrun' , 'show' , 1 );
+    	$conf= 1;//\OCP\CONFIG::getUserValue( \OCP\User::getUser() , 'firstpassmanrun' , 'show' , 1 );
 		if($conf==1){
 			\OCP\Util::addscript('passman', 'firstrun');
 		}
@@ -45,10 +45,9 @@ class PageController extends Controller {
     }
 	/**
 	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 */
-	public function settings() {
-        $params = array('user' => $this->userId);
-        return new TemplateResponse('passman', 'settings', $params);  // templates/settings.php
+	public function disablefirstrun() {
+        \OCP\Config::setUserValue( \OCP\User::getUser(), 'firstpassmanrun', 'show', 0 );
+		echo "Succes!";
     }
 }

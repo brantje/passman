@@ -275,19 +275,21 @@ jQuery(document).ready(function($) {
 
 	
 	/**
-	 * Request the user encryption key (if it is not found)
+	 * Request the user encryption key (if it is not found), and the first run wizard is not shown.
 	 */
-	var ls = $.jStorage.get("ENC_KEY");
-	if(!ls || !$.jStorage.storageAvailable()){
-	    encryptionKeyDialog();
-	}
-	else
-	{
-		setEncKey($.jStorage.get("ENC_KEY"));
-		$('#sessionTimeContainer').show();
-		countLSTTL();
-		/* Load the folders */
-		loadFolders();
+	if(typeof firstRun === 'undefined'){
+		var ls = $.jStorage.get("ENC_KEY");
+		if(!ls || !$.jStorage.storageAvailable()){
+		    encryptionKeyDialog();
+		}
+		else
+		{
+			setEncKey($.jStorage.get("ENC_KEY"));
+			$('#sessionTimeContainer').show();
+			countLSTTL();
+			/* Load the folders */
+			loadFolders();
+		}
 	}
 	$('.lockSession').click(function(){
 		resetStorageKey();
@@ -357,6 +359,7 @@ function countLSTTL() {
 
 function encryptionKeyDialog(){
 	$('#encryptionKeyDialog').dialog({
+						draggable: false, resizable: false
 						modal: true,
 						open: function(event, ui) { 
 							$(".ui-dialog-titlebar-close").hide(); 

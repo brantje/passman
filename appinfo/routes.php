@@ -28,8 +28,7 @@ $application->registerRoutes($this, array(
 
 'routes' => array(
 	array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
-	array('name' => 'page#settings', 'url' => '/settings', 'verb' => 'GET'),
-	array('name' => 'page#update_settings', 'url' => '/settings', 'verb' => 'POST'),
+	array('name' => 'page#disablefirstrun', 'url' => '/disablefirstrun', 'verb' => 'GET'),
 
 	
 	
