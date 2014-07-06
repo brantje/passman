@@ -197,7 +197,7 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	public function delete($itemId) {
-		$findItem = $this->get($itemId);
+		$findItem = $this->ItemBusinessLayer->get($itemId);
 		if(empty($findItem)){
 			array_push($errors,'Item not found');
 		}
@@ -223,6 +223,7 @@ class ItemApiController extends Controller {
 		}else {
 			$result['errors'] = $errors;
 		}
+		return new JSONResponse($result);
 	}
 	
 	/**
