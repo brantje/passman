@@ -364,11 +364,7 @@ function encryptionKeyDialog(){
 						open: function(event, ui) { 
 							$(".ui-dialog-titlebar-close").hide(); 
 						},
-						buttons: { 
-							"Cancel": function(){
-								$(this).dialog('destroy').remove();	
-							},
-							"Ok": function() { 
+						buttons: { "Ok": function() {
 								if($('#ecKey').val()==''){
 									showNotification("Encryption key can't be empty!");
 									return false;
@@ -388,7 +384,7 @@ function encryptionKeyDialog(){
 							    $('#ecKey').val('');
 							    $('#ecRemember').removeAttr('checked');
 							    $('#rememberTime').val('15');
-							}
+							} 
 						}
 				});
 					
