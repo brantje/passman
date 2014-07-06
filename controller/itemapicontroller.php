@@ -115,6 +115,7 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	public function update($itemId) {
+		$errors = array();
 		$id = (int) $itemId;
 		$userId = $this->userId;
 		$label = $this->params('label');
@@ -197,6 +198,7 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	public function delete($itemId) {
+		$errors = array();
 		$findItem = $this->ItemBusinessLayer->get($itemId);
 		if(empty($findItem)){
 			array_push($errors,'Item not found');
@@ -214,7 +216,9 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	public function deleteByFolderId($folderId){
-		if(empty($this->FolderBusinessLayer->get($folderId))){
+		$errors = array();
+		$checkFolder = $this->FolderBusinessLayer->get($folderId);
+		if(empty($checkFolder)){
 			array_push($errors,'Folder not found');
 		}
 		
@@ -253,7 +257,9 @@ class ItemApiController extends Controller {
 		$file['size'] = $this->params('size');
 		$file['content'] = $this->params('content');
 		$file['user_id'] = $this->userId;
-		if(empty($this->get($itemId))){
+		
+		$checkId = $this->get($itemId);
+		if(empty($checkId)){
 			array_push($errors,'Item not found');
 		}
 		if(empty($errors)){
