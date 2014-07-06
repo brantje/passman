@@ -29,6 +29,7 @@
 				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
 			</div>
 			<div id="app-settings-content">
+					<?php p($_['firstpassmanrun']); ?>
 					<p class="settings link">Settings</p>
 					<p class="import link">Import data</p>
 					<div id="sessionTimeContainer" style="display: none;">

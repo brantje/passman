@@ -14,7 +14,7 @@ namespace OCA\Passman\Controller;
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Controller;
-
+use \OCP\CONFIG;
 class PageController extends Controller {
 
     private $userId;
@@ -36,8 +36,11 @@ class PageController extends Controller {
      * @NoCSRFRequired
      */
     public function index() {
-        $params = array('user' => $this->userId);
-		/* Added function that loads users folders */
+    	$conf=\OCP\CONFIG::getUserValue( \OCP\User::getUser() , 'firstpassmanrun' , 'show' , 1 );
+		if($conf==1){
+			\OCP\Util::addscript('passman', 'firstrun');
+		}
+        $params = array('user' => $this->userId,'firstpassmanrun',$conf);
         return new TemplateResponse('passman', 'main', $params);  // templates/main.php
     }
 	/**
