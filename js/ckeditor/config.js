@@ -4,8 +4,8 @@
  */
 
 CKEDITOR.editorConfig = function( config ) {
-	
-	config.removePlugins = 'elementspath'; 
+	config.height = '150px';
+	config.removePlugins = 'elementspath';
 	config.resize_enabled = false;
 	config.toolbar = [
 		['Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat','-','BulletedList','NumberedList','Table' ]

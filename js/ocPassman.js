@@ -279,7 +279,52 @@ jQuery(document).ready(function($) {
 		});
 	});
 	
-	
+
+	$("#searchbox").autocomplete({
+		source : function(request, response) {
+			$('#Code').val();
+			//clear code value
+			$.ajax({
+				url : OC.generateUrl('apps/passman/api/v1/item/search/' + $('#searchbox').val()),
+				type : 'GET',
+				contentType : "application/json; charset=utf-8",
+				dataType : 'json', //What kind of Result is expected. (Ex json, xml, etc)
+				success : function(data) {
+					var item = [];
+					$.each(data, function() {
+						item.push(this)
+					})
+					response(item);
+				}
+			})
+		},
+		minLength : 1,
+		select : function(event, ui) {
+			event.preventDefault();
+			console.log(ui.item);
+			$('#jsTree').jstree("select_node", '#ajson' + ui.item.folderid);
+			setTimeout(function() {
+				$('li[data-id="' + ui.item.id + '"]').addClass('row-active');
+				loadItem(ui.item.id);
+				$('#searchbox').val('').blur();
+			}, 250);
+		},
+		focus : function(event, ui) {
+			event.preventDefault();
+
+		}
+	}).data("ui-autocomplete")._renderItem = function(ul, item) {
+		var line1 = '';
+		if (item.email && !item.account)
+			line1 = 'Email: ' + decryptThis(item.email) + '<br />';
+		if (!item.email && item.account)
+			line1 = 'Account: ' + decryptThis(item.account) + '<br />';
+		if (item.description) {
+			var desc = (decryptThis(item.description).length >= 15) ? decryptThis(item.description).substring(0, 15) + '...' : decryptThis(item.description);
+			line1 += 'Description: ' + desc;
+		}
+		return $("<li></li>").data("item.autocomplete", item).append("<a><strong>" + item.label + "</strong><br><font class=\"description\">" + line1 + "</font></a>").appendTo(ul);
+	}; 
 	
 
 	
@@ -632,7 +677,7 @@ function loadFolder(folderId){
 		$('#itemsLoading').remove();
 		if(data.items.length != 0){
 			$.each(data.items,function(){
-				 var append = '<li data-id='+ this.id +'><div style="display: inline-block;">'+ decryptThis(this.label)+'</div></li>';
+				 var append = '<li data-id='+ this.id +'><div style="display: inline-block;">'+ this.label +'</div></li>';
 				 $('#pwList').append(append);
 				if(!isMobile()){
 					makeDragable();
@@ -687,7 +732,7 @@ function loadItem(id,rawDesc) {
 		
 		
 		var mapper = {
-			id_label :  decryptThis(item.label),
+			id_label :  item.label,
 			id_desc : item.description,
 			hid_pw : item.password,
 			id_login : decryptThis(item.account),
@@ -865,7 +910,7 @@ function saveItem() {
 		customFields.push( {id: fieldId, name: encryptThis(fieldName), value: encryptThis(fieldValue)} );
 	});
 	
-	var ignoredEncryptionFields = ['folderid','item_id'];
+	var ignoredEncryptionFields = ['folderid','item_id','label'];
 	$.each(formData,function(k,v){
 		if($.inArray(k,ignoredEncryptionFields)==-1){
 			formData[k] = encryptThis(v);
@@ -884,12 +929,12 @@ function saveItem() {
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {
-				$('#pwList li[data-id=' + data.success.id + ']').html('<div style="display: inline-block;">'+ decryptThis(data.success.label) +'</div>');
+				$('#pwList li[data-id=' + data.success.id + ']').html('<div style="display: inline-block;">'+ data.success.label +'</div>');
 				loadItem(data.success.id);
 				$('#showPW').remove();
 				$('#copyPW').remove();
 			} else {
-				var append = '<li data-id=' + data.itemid + '><div style="display: inline-block;">' + decryptThis(formData.label) + '</div></li>';
+				var append = '<li data-id=' + data.itemid + '><div style="display: inline-block;">' + formData.label + '</div></li>';
 				if($('#pwList').text()!='Folder is empty'){
 					$('#pwList').append(append);
 				}else{
@@ -912,7 +957,7 @@ function editItem(itemId) {
 		var edtmapper = {
 			item_id : item.id,
 			folderid : item.folderid,
-			label : decryptThis(item.label),
+			label : item.label,
 			desc : decryptThis(item.description),
 			pw1 : item.password,
 			pw2 : item.password,

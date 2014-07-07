@@ -159,7 +159,7 @@ function importLastPassItems(){
 		var folder = findLastPassFolderByName(v[5])
 		postData = {
 
-			'label' : encryptThis(label),
+			'label' : label,
 			'folderid' : folder.id,
 			'desc' : encryptThis(desc),
 			'account' : encryptThis(username),

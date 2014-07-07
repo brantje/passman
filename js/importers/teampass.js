@@ -142,7 +142,7 @@ function importTeampassItems() {
 		if (ImportToFolder) {
 			postData = {
 
-				'label' : encryptThis(this.label),
+				'label' : this.label,
 				'folderid' : ImportToFolder.id,
 				'desc' : encryptThis(this.description),
 				'account' : encryptThis(this.login),
