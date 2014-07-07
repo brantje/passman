@@ -40,7 +40,7 @@ class PageController extends Controller {
 		if($conf==1){
 			\OCP\Util::addscript('passman', 'firstrun');
 		}
-        $params = array('user' => $this->userId,'firstpassmanrun',$conf);
+        $params = array('user' => $this->userId);
         return new TemplateResponse('passman', 'main', $params);  // templates/main.php
     }
 	/**

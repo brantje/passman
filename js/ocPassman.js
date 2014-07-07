@@ -673,13 +673,13 @@ function loadItem(id,rawDesc) {
 		$('#id_files').html('');
 		$('#customFieldsTable').html('');
 		var item = data.item;
-		item.description = nl2br(item.description);
+		item.description = nl2br(decryptThis(item.description));
 		
 		
 		
 		var mapper = {
 			id_label :  decryptThis(item.label),
-			id_desc : decryptThis(item.description),
+			id_desc : item.description,
 			hid_pw : item.password,
 			id_login : decryptThis(item.account),
 			id_email : decryptThis(item.email),
