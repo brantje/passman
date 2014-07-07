@@ -299,6 +299,9 @@ jQuery(document).ready(function($) {
 			})
 		},
 		minLength : 1,
+		open: function(){
+			$('.ui-autocomplete').css('max-width', '220px');
+		},
 		select : function(event, ui) {
 			event.preventDefault();
 			 $("#jsTree").jstree("deselect_all");
@@ -309,8 +312,8 @@ jQuery(document).ready(function($) {
 				$('#jsTree').jstree("select_node", '#ajson' + ui.item.folderid);
 				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.folderid).offset().top+'px' })
 				setTimeout(function() {
-					$('li[data-id="' + ui.item.id + '"]').addClass('row-active');
-					loadItem(ui.item.id);
+					$('li[data-id="' + ui.item.id + '"]').click() //addClass('row-active');
+					//loadItem(ui.item.id);
 					$('#searchbox').val('').blur();
 				}, 250);
 			}
@@ -336,6 +339,9 @@ jQuery(document).ready(function($) {
 				var desc = (decryptThis(item.description).length >= 15) ? decryptThis(item.description).substring(0, 15) + '...' : decryptThis(item.description);
 				line1 += 'Description: ' + desc;
 			}
+		}
+		if(item.foldername){
+			line1 += (line1=='') ? 'Folder: '+ item.foldername : '<br />Folder:'+ item.foldername;
 		}
 		 
 		var icon = (item.folderid==null) ? 'folder-icon' : 'icon-lock';
@@ -958,12 +964,12 @@ function saveItem() {
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {
-				$('#pwList li[data-id=' + data.success.id + ']').html('<div style="display: inline-block;">'+ data.success.label +'</div>');
+				$('#pwList li[data-id=' + data.success.id + ']').html('<span class="icon-lock icon"></span><div style="display: inline-block;">'+ data.success.label +'</div>');
 				loadItem(data.success.id);
 				$('#showPW').remove();
 				$('#copyPW').remove();
 			} else {
-				var append = '<li data-id=' + data.itemid + '><div style="display: inline-block;">' + formData.label + '</div></li>';
+				var append = '<li data-id=' + data.itemid + '><span class="icon-lock icon"></span><div style="display: inline-block;">' + formData.label + '</div></li>';
 				if($('#pwList').text()!='Folder is empty'){
 					$('#pwList').append(append);
 				}else{

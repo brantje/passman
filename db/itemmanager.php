@@ -53,9 +53,9 @@ class ItemManager {
 	 * List items in a folder
 	 */
 	public function search($itemName, $userId) {
-		$sql = 'SELECT id,label,folderid,description,account,email FROM `*PREFIX*passman_items` WHERE `label` LIKE ? AND `user_id` = ?';
-		$sql .= ' UNION ';
-		$sql .= 'SELECT id as folderid, title as label, null as description, null as account, null as email,null as id FROM `oc_passman_folders` WHERE `title` LIKE ? AND `user_id` = ? ORDER BY folderid asc;';
+		$sql = 'SELECT i.id,i.label,i.folderid,i.description,i.account,i.email,f.title as foldername FROM `oc_passman_items` as i inner join `oc_passman_folders` as f on i.folderid=f.id WHERE `label` LIKE ? AND `i`.`user_id` = ?;';
+		$sql .= ' UNION '; 
+		$sql .= 'SELECT id as folderid, title as label, null as description, null as account, null as email,null as id null as foldername FROM `*PREFIX*passman_folders` WHERE `title` LIKE ? AND `user_id` = ? ORDER BY folderid asc;';
 		$result = $this -> db -> prepareQuery($sql) -> execute(array('%'.$itemName . '%', $userId,'%'.$itemName . '%', $userId));
 		$rows = array(); 
 		while ($row = $result -> fetchRow()) {
