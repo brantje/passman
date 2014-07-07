@@ -4,7 +4,7 @@
  */
 
 CKEDITOR.editorConfig = function( config ) {
-	config.enterMode = CKEDITOR.ENTER_BR;
+	
 	config.removePlugins = 'elementspath'; 
 	config.resize_enabled = false;
 	config.toolbar = [
