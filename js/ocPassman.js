@@ -307,7 +307,7 @@ jQuery(document).ready(function($) {
 			if(ui.item.folderid!=null){
 				$('#jsTree').jstree('open_node', getMenuParents(ui.item.folderid))
 				$('#jsTree').jstree("select_node", '#ajson' + ui.item.folderid);
-				//$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.folderid).offset().top+'px' })
+				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.folderid).offset().top+'px' })
 				setTimeout(function() {
 					$('li[data-id="' + ui.item.id + '"]').addClass('row-active');
 					loadItem(ui.item.id);
@@ -318,7 +318,7 @@ jQuery(document).ready(function($) {
 			{
 				$('#jsTree').jstree('open_node', getMenuParents(ui.item.id))
 				$('#jsTree').jstree("select_node", '#ajson' + ui.item.id);
-				//$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.id).offset().top+'px' })
+				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.id).offset().top+'px' })
 			}
 		},
 		focus : function(event, ui) {
