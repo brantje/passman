@@ -682,7 +682,7 @@ function loadItem(id,rawDesc) {
 		$('#id_files').html('');
 		$('#customFieldsTable').html('');
 		var item = data.item;
-		item.description = nl2br(decryptThis(item.description));
+		item.description = decryptThis(item.description);
 		
 		
 		
@@ -817,10 +817,10 @@ function openForm(mapper) {
 				$('#fileList').append('<li data-filename="' + decryptThis(data.filename) + '" data-fileid="'+ data.id +'" class="fileListItem">' + decryptThis(data.filename) + ' (' + humanFileSize(data.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
 			});
 		}
+		CKEDITOR.replace( 'desc' );
 		if(mapper.desc){
-			
+				CKEDITOR.instances.desc.setData(mapper.desc);
 		}
-			CKEDITOR.replace( 'desc' );
 		
 		if(mapper.customFields){
 			$.each(mapper.customFields,function(k,field){
@@ -837,7 +837,6 @@ function openForm(mapper) {
 function saveItem() {
 	formData = $('#editNewItem').serializeObject();
 	formData.desc = CKEDITOR.instances.desc.getData()
-	console.log(formData.desc);
 	$('#editAddItemDialog .error').remove();
 	var ERROR = false;
 	var createUrl = OC.generateUrl('apps/passman/api/v1/item');
