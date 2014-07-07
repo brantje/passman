@@ -301,13 +301,13 @@ jQuery(document).ready(function($) {
 		minLength : 1,
 		select : function(event, ui) {
 			event.preventDefault();
-			console.log(ui.item);
 			 $("#jsTree").jstree("deselect_all");
 			
+			/* Get tree structure */
 			if(ui.item.folderid!=null){
-				console.log('we have item id');
+				$('#jsTree').jstree('open_node', getMenuParents(ui.item.folderid))
 				$('#jsTree').jstree("select_node", '#ajson' + ui.item.folderid);
-				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.folderid).offset().top+'px' })
+				//$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.folderid).offset().top+'px' })
 				setTimeout(function() {
 					$('li[data-id="' + ui.item.id + '"]').addClass('row-active');
 					loadItem(ui.item.id);
@@ -316,8 +316,9 @@ jQuery(document).ready(function($) {
 			}
 			else
 			{
+				$('#jsTree').jstree('open_node', getMenuParents(ui.item.id))
 				$('#jsTree').jstree("select_node", '#ajson' + ui.item.id);
-				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.id).offset().top+'px' })
+				//$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.id).offset().top+'px' })
 			}
 		},
 		focus : function(event, ui) {
@@ -511,12 +512,13 @@ function loadFolders(){
 function generateFolderStructure(){
 	/* Setup menu */
 	$.jstree.defaults.contextmenu.show_at_node = false;
-	var plugins = (isMobile()==false) ? ["contextmenu", "state","dnd"] :["contextmenu", "state"];
+	var plugins = (isMobile()==false) ? ["contextmenu", "state","dnd","ui"] :["contextmenu", "state","ui"];
 	$('#jsTree').jstree({
 		"core" : {
 			// so that create works
 			"check_callback" : true,
 			'data' : $(document).data('folderStructure'),
+			 "selected_parent_open": true,
 		},
 		"plugins" : plugins,
 		"contextmenu" : {
@@ -573,7 +575,6 @@ function generateFolderStructure(){
 			generateFolderStructure();
 		});
 	}).bind("select_node.jstree", function(event, data) {
-		
 		var id = data.node.id.replace('ajson', '');
 		
 		loadFolder(id);
@@ -597,8 +598,20 @@ function generateFolderStructure(){
 	//loadFolder(0);
 }
 
+function getMenuParents(firstParentId,current){
+	var current = current || [];
+	p = getFolderById(firstParentId);
+	if(p.id!=undefined){
+		current.unshift('#'+p.id);
+	}
+	if(typeof p.parent != "undefined"){
+		return getMenuParents(p.parent,current);
+	}
+	return current;
+}
+
 function getFolderById(id){
-	var folder;
+	var folder = {};
 	
 	$.each($(document).data('folderStructure'),function(){
 		if(id==this.id || (id.toString().replace('ajson','') == this.id.toString().replace('ajson','')))
