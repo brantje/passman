@@ -279,7 +279,7 @@ jQuery(document).ready(function($) {
 		});
 	});
 	
-
+	$('#searchbox').prop('autocomplete','off');
 	$("#searchbox").autocomplete({
 		source : function(request, response) {
 			$('#Code').val();
@@ -302,12 +302,23 @@ jQuery(document).ready(function($) {
 		select : function(event, ui) {
 			event.preventDefault();
 			console.log(ui.item);
-			$('#jsTree').jstree("select_node", '#ajson' + ui.item.folderid);
-			setTimeout(function() {
-				$('li[data-id="' + ui.item.id + '"]').addClass('row-active');
-				loadItem(ui.item.id);
-				$('#searchbox').val('').blur();
-			}, 250);
+			 $("#jsTree").jstree("deselect_all");
+			
+			if(ui.item.folderid!=null){
+				console.log('we have item id');
+				$('#jsTree').jstree("select_node", '#ajson' + ui.item.folderid);
+				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.folderid).offset().top+'px' })
+				setTimeout(function() {
+					$('li[data-id="' + ui.item.id + '"]').addClass('row-active');
+					loadItem(ui.item.id);
+					$('#searchbox').val('').blur();
+				}, 250);
+			}
+			else
+			{
+				$('#jsTree').jstree("select_node", '#ajson' + ui.item.id);
+				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.id).offset().top+'px' })
+			}
 		},
 		focus : function(event, ui) {
 			event.preventDefault();
@@ -320,10 +331,15 @@ jQuery(document).ready(function($) {
 		if (!item.email && item.account)
 			line1 = 'Account: ' + decryptThis(item.account) + '<br />';
 		if (item.description) {
-			var desc = (decryptThis(item.description).length >= 15) ? decryptThis(item.description).substring(0, 15) + '...' : decryptThis(item.description);
-			line1 += 'Description: ' + desc;
+			if(decryptThis(item.description).length > 0){
+				var desc = (decryptThis(item.description).length >= 15) ? decryptThis(item.description).substring(0, 15) + '...' : decryptThis(item.description);
+				line1 += 'Description: ' + desc;
+			}
 		}
-		return $("<li></li>").data("item.autocomplete", item).append("<a><strong>" + item.label + "</strong><br><font class=\"description\">" + line1 + "</font></a>").appendTo(ul);
+		 
+		var icon = (item.folderid==null) ? 'folder-icon' : 'icon-lock';
+		
+		return $("<li></li>").data("item.autocomplete", item).append("<a><span class=\""+ icon + " icon\"></span><strong>" + item.label + "</strong><br><font class=\"description\">" + line1 + "</font></a>").appendTo(ul);
 	}; 
 	
 
@@ -677,7 +693,7 @@ function loadFolder(folderId){
 		$('#itemsLoading').remove();
 		if(data.items.length != 0){
 			$.each(data.items,function(){
-				 var append = '<li data-id='+ this.id +'><div style="display: inline-block;">'+ this.label +'</div></li>';
+				 var append = '<li data-id='+ this.id +'><span class="icon-lock icon"></span><div style="display: inline-block;">'+ this.label +'</div></li>';
 				 $('#pwList').append(append);
 				if(!isMobile()){
 					makeDragable();

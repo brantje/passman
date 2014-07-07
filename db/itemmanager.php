@@ -54,10 +54,12 @@ class ItemManager {
 	 */
 	public function search($itemName, $userId) {
 		$sql = 'SELECT id,label,folderid,description,account,email FROM `*PREFIX*passman_items` WHERE `label` LIKE ? AND `user_id` = ?';
-		$result = $this -> db -> prepareQuery($sql) -> execute(array($itemName . '%', $userId));
-		$rows = array();
+		$sql .= ' UNION ';
+		$sql .= 'SELECT id as folderid, title as label, null as description, null as account, null as email,null as id FROM `oc_passman_folders` WHERE `title` LIKE ? AND `user_id` = ? ORDER BY folderid asc;';
+		$result = $this -> db -> prepareQuery($sql) -> execute(array($itemName . '%', $userId,$itemName . '%', $userId));
+		$rows = array(); 
 		while ($row = $result -> fetchRow()) {
-			$rows[$row['id']] = $row;
+			$rows[] = $row;
 		}
 		return $rows;
 	}

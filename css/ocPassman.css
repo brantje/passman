@@ -96,20 +96,22 @@ div#ocpContent {
 	cursor: pointer;
 	line-height: 30px;
 }
-#pwList li div {
+#pwList li span{
+	float:left;
 	padding-left: 20px;
-	background-image: url('../img/key.png');
+	/*background-image: url('../img/key.png'); */
 	background-repeat: no-repeat;
 	background-position: 3px 6px;
+	margin-left: 5px;
+}
+#pwList li div{
+	float:left;
 }
 li.ui-draggable-dragging {
 	padding-left: 20px;
-	background-image: url('../img/key.png');
-	background-repeat: no-repeat;
-	background-position: 13px 6px;
 	list-style: none;
-	padding: 5px 30px 5px 60px;
-	margin-left:30px;
+	padding: 5px 10px 5px 10px;
+	margin-left:10px;
 	background-color: #f0f0f0;
 	border: 1px solid black;
 }
@@ -358,7 +360,17 @@ input.jstree-rename-input {
 #makeWizard:hover {
 	background-color: #000;
 }
+
+
+.folder-icon {
+background-image: url('../../../core/img/filetypes/folder.svg') !important;
+background-position: center center;
+background-size: contain;
+height: 20px !important;
+width: 20px !important;
+}
  
+
 legend {
 	font-size: 18px;
 	margin: 0px;
