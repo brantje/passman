@@ -191,9 +191,7 @@ function findImportFolderByName(name) {
 	return foundFolder;
 }
 
-String.prototype.trim = function() {
-	return this.replace(/^\s+|\s+$/g, "");
-};
+
 Array.prototype.clean = function(deleteValue) {
 	for (var i = 0; i < this.length; i++) {
 		if (this[i] == deleteValue) {

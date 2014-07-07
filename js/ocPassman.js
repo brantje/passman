@@ -31,6 +31,9 @@ if (!Date.prototype.toISOString) {( function() {
 
 		}() );
 }
+String.prototype.trim = function() {
+	return this.replace(/^\s+|\s+$/g, "");
+}; 
 
 
 jQuery(document).ready(function($) {
@@ -236,7 +239,13 @@ jQuery(document).ready(function($) {
 			$('#customFieldName').val('').focus();
 		}
 	});
-	
+	$('#addCField').click(function(evt){
+		if($('#customFieldValue').val().trim() != '' && $('#customFieldName').val().trim() != ''){
+			$('#existingFields').prepend('<tr class="new" data-cFieldId="0"><td class="fieldName">'+$('#customFieldName').val()+ '</td><td>'+ $('#customFieldValue').val());
+		}
+		$('#customFieldValue').val('');
+		$('#customFieldName').val('').focus();
+	});
 
 	$(document).on('dblclick', '#existingFields tr td', function() {
 		var value = $(this).text();
@@ -769,6 +778,10 @@ function openForm(mapper) {
 		title: dTitle,
         "width" : ($(document).width() > 425) ? 'auto' : $(document).width() - 10,
 		close : function(event, ui) {
+			for(name in CKEDITOR.instances)
+			{
+				CKEDITOR.instances[name].destroy();
+			}
 			$(this).dialog('destroy');
 			document.getElementById("editNewItem").reset();
 			$('#pw1').trigger('keyup.simplePassMeter');
@@ -778,6 +791,7 @@ function openForm(mapper) {
 			$('#existingFields').html('')
 			$('#fileList').html('')
 			$('#fileInput').val('');
+			//CKEDITOR.instances.desc.destroy()
 		}
 	});
 	$('#item_tabs').tabs();
@@ -803,6 +817,11 @@ function openForm(mapper) {
 				$('#fileList').append('<li data-filename="' + decryptThis(data.filename) + '" data-fileid="'+ data.id +'" class="fileListItem">' + decryptThis(data.filename) + ' (' + humanFileSize(data.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
 			});
 		}
+		if(mapper.desc){
+			
+		}
+			CKEDITOR.replace( 'desc' );
+		
 		if(mapper.customFields){
 			$.each(mapper.customFields,function(k,field){
 				var row = '<tr data-cFieldId='+ field.id +'><td>'+ decryptThis(field.label) +'</td>';
@@ -811,11 +830,14 @@ function openForm(mapper) {
 			});
 		}
 	}
+	
 
 }; 
 
 function saveItem() {
 	formData = $('#editNewItem').serializeObject();
+	formData.desc = CKEDITOR.instances.desc.getData()
+	console.log(formData.desc);
 	$('#editAddItemDialog .error').remove();
 	var ERROR = false;
 	var createUrl = OC.generateUrl('apps/passman/api/v1/item');

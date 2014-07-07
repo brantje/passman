@@ -1,6 +1,7 @@
 <?php
 \OCP\Util::addStyle('passman', 'jstree-theme/style');
 \OCP\Util::addscript('passman', 'jstree.min');
+\OCP\Util::addscript('passman', 'ckeditor/ckeditor');
 
 \OCP\Util::addStyle('passman', 'simplePassMeter/simplePassMeter');
 \OCP\Util::addscript('passman', 'jquery.simplePassMeter.min');
@@ -186,6 +187,7 @@
                 		<td>
 			                <input name="customFieldValue" id="customFieldValue" type="text" placeholder="Enter field value"/>
                 		</td>
+                		<td class="addCFieldRow"><span id="addCField" class="icon-add icon"></span></td>
                 	</tr>
                 </table>
                 <h1>Existing fields</h1>
