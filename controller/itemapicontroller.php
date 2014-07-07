@@ -24,7 +24,7 @@ class ItemApiController extends Controller {
 	private $FolderBusinessLayer;
 	public $request; 
 	
-    public function __construct($appName, IRequest $request,  ItemBusinessLayer $ItemBusinessLayer,$userId,FolderBusinessLayer $FolderBusinessLayer){
+    public function __construct($appName, IRequest $request,  ItemBusinessLayer $ItemBusinessLayer,$userId,$FolderBusinessLayer){
         parent::__construct($appName, $request);
         $this->userId = $userId;
 		$this->ItemBusinessLayer = $ItemBusinessLayer;
