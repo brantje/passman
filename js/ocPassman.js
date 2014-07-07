@@ -37,15 +37,7 @@ String.prototype.trim = function() {
 
 
 jQuery(document).ready(function($) {
-
-	/*
-	 * Stop all snap.js timers
-	 */
-	var highestTimeoutId = setTimeout(";");
-	for (var i = 0; i < highestTimeoutId; i++) {
-		clearTimeout(i);
-	}
-	Snap = null;
+	
 	
 	containerHeight = $('#app-content').height();
 	containerWidth = $('#app-content').width();
@@ -336,8 +328,9 @@ jQuery(document).ready(function($) {
 			line1 = 'Account: ' + decryptThis(item.account) + '<br />';
 		if (item.description) {
 			if(decryptThis(item.description).length > 0){
-				var desc = (decryptThis(item.description).length >= 15) ? decryptThis(item.description).substring(0, 15) + '...' : decryptThis(item.description);
-				line1 += 'Description: ' + desc;
+				item.description = $('<div>'+ decryptThis(item.description) +'</div>').text().trim();
+				var desc = (item.description.length >= 15) ? item.description.substring(0, 15) + '...' : item.description;
+				line1 += 'Description: ' + desc
 			}
 		}
 		if(item.foldername){
@@ -1081,7 +1074,14 @@ function loadFile(fileId) {
 			$('#fileImg').load(function() {
 				$('#dialog_files').dialog({
 					width : 'auto',
-					title : decryptThis(data.filename)
+					title : decryptThis(data.filename),
+					buttons: {
+						"Close": function(){
+							$(this).dialog('destroy');
+							$('#fileImg').attr('src', '');
+							$('#downloadImage').html('');
+						}
+					}
 				});
 				var win = $(window);
 				if ($('#fileImg').width() > win.width() || $('#fileImg').height() > win.height()) {
