@@ -11,7 +11,6 @@
 
 namespace OCA\Passman\AppInfo;
 
-
 \OCP\App::addNavigationEntry(array(
     // the string under which your app will be referenced in owncloud
     'id' => 'passman',
@@ -31,3 +30,5 @@ namespace OCA\Passman\AppInfo;
     // navigation or on the settings page of your app
     'name' => \OC_L10N::get('Passwords')->t('Passwords')
 ));
+
+\OCP\Backgroundjob::addRegularTask('\OCA\Passman\Cron\PasswordExpire','run'); 
