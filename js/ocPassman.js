@@ -37,8 +37,6 @@ String.prototype.trim = function() {
 
 
 jQuery(document).ready(function($) {
-	
-	
 	containerHeight = $('#app-content').height();
 	containerWidth = $('#app-content').width();
 	$('#pwList').height(containerHeight - $('#infoContainer').height() - 85);
@@ -1067,7 +1065,7 @@ function loadFile(fileId) {
 	$.get(OC.generateUrl('/apps/passman/api/v1/item/file/' + fileId), function(data) {
 		console.log(data);
 		/* Show the image if it is ofcourse */
-		if (data.type.indexOf('image') >= 0 && data.size < 734003) {
+		if (data.type.indexOf('image') >= 0 && data.size < 4194304) {
 			var imageData = decryptThis(data.content);
 			$('#fileImg').attr('src', imageData);
 			$('#downloadImage').html('<a href="'+ imageData +'" download="'+ data.filename +'">Save this image</a>');
@@ -1216,3 +1214,4 @@ function nl2br (str, is_xhtml) {
 function isMobile(){
 	 return !!('ontouchstart' in window);
 }
+

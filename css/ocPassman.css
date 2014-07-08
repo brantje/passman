@@ -383,5 +383,6 @@ legend {
 @media (max-width: 768px) {
 	div#topContent {
 		margin-left: 30px;
+		height: 44px;
 	}
 }
