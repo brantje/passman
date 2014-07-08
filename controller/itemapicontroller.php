@@ -40,6 +40,7 @@ class ItemApiController extends Controller {
      *          basically the only required method to add this exemption, don't
      *          add it to any other method if you don't exactly know what it does
      * @NoAdminRequired
+	 * @CORS
      */
 	public function index($folderId) {
 		$result['items'] = $this->ItemBusinessLayer->listItems($folderId,$this->userId); 
