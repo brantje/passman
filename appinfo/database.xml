@@ -231,13 +231,11 @@
 			</field>
 			<field>
 				<name>label</name>
-				<type>text</type>
-				<notnull>true</notnull>
-				<length>255</length>
+				<type>clob</type>
 			</field>
 			<field>
 				<name>value</name>
-				<type>text</type>
+				<type>clob</type>
 			</field>
 			<field>
 				<name>clicktoshow</name>
