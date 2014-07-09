@@ -23,7 +23,8 @@ function importTeamPassDialog() {
 		$('<div id="teampassPopup"><p>First follow the instructions <a href="https://github.com/brantje/passman/wiki/Import-teampass" target="_blank" class="link">here</a><input type="file" id="importFile"/>').dialog({
 			buttons : {
 				"Import" : function() {
-					importTeamPass();
+					$('#teampassPopup').html('Importing... this may take a while')
+					setTimeout(importTeamPass,1000);
 				},
 				"Cancel" : function() {
 					$(this).dialog("close");
@@ -41,6 +42,7 @@ function importTeamPassDialog() {
 function importTeamPass() {
 
 	$(document).data('importFolders', [])
+	
 	importTeamPassFolders();
 
 	//clean up
@@ -138,17 +140,17 @@ function importTeampassItems() {
 	$.each(teampassData.items, function() {
 		var ImportToFolder = (this.folder_title) ? findImportFolderByName(this.folder_title.toString().trim()) : null;
 		var createUrl = OC.generateUrl('apps/passman/api/v1/item');
-		var encPw = (this.pw) ? Aes.Ctr.encrypt(this.pw, getEncKey(), 256) : null;
+		var encPw = (this.pw) ? encryptThis(this.pw) : '';
 		if (ImportToFolder) {
 			postData = {
 
 				'label' : this.label,
 				'folderid' : ImportToFolder.id,
-				'desc' : encryptThis(this.description),
-				'account' : encryptThis(this.login),
+				'desc' : encryptThis( (this.description) ? this.description : ''),
+				'account' : encryptThis( (this.login) ? this.login : ''),
 				'pw1' : encPw,
-				'email' : encryptThis(this.email),
-				'url' : encryptThis(this.url)
+				'email' : encryptThis( (this.email) ? this.email : ''),
+				'url' : encryptThis((this.url) ? this.url : '')
 			}
 			$.ajax({
 				async : false,
