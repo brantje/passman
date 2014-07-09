@@ -486,11 +486,27 @@ function resetStorageKey(){
 /**
  * Test function to test encryption/decryption
  */
-function testEnc(a){
+function testEnc(a,test){
+	if(typeof test === 'undefined'){
+		test = false;
+	}
 	var input = a;
 	console.log('Input: '+ input)
-	var e = encryptThis(input);
-	console.log('Decryption result: '+ decryptThis(e));
+	var e = encryptThis(input,test);
+	console.log('Decryption result: '+ decryptThis(e,test));
+}
+
+/**
+ * Generate salt
+ */
+function generateSalt(len){
+	var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    for( var i=0; i < len; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
 }
 /**
  * Encrypt a string with the algorithm
@@ -500,18 +516,33 @@ function encryptThis(str) {
 	var encryptedString = str;
 	var encryptionKey = getEncKey();
 
+	var randVal = Math.round(10 + (Math.random() * (99 - 10)));
+	//Amount of rounds aes decrypt is called
+
+	/**
+	 * Generate random string
+	 */
+	var salt =generateSalt(randVal);
+	encryptionKey = salt + encryptionKey;
+
+	/**
+	 * Loop a few times
+	 */
 	for ( i = 0; i < 5; i++) {
 		encryptedString = Aes.Ctr.encrypt(encryptedString, encryptionKey, 256);
 	}
-	//encryptedString = randVal + randText + encryptedString;
+	encryptedString = Base64.encode(randVal + salt + encryptedString);
 	return encryptedString;
 }
-
 /**
  * Decrypt a string with the algorithm
  */
 function decryptThis(str){
-	var decryptionKey  = getEncKey();
+	encryptedString = Base64.decode(str);
+	var randVal = encryptedString.substr(0,2)*1;
+	var salt = encryptedString.substr(2,randVal);
+	var	str = encryptedString.substr( (randVal+2) );
+	var decryptionKey = salt+getEncKey();
 	var decryptedString = str;
 	for(i=0; i < 5;i++){
 		decryptedString = Aes.Ctr.decrypt(decryptedString,decryptionKey,256); 

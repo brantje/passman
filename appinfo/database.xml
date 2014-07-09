@@ -168,19 +168,15 @@
 			</field>
 			<field>
 				<name>account</name>
-				<type>text</type>
-				<length>255</length>
+				<type>clob</type>
 			</field>
 			<field>
 				<name>email</name>
-				<type>text</type>
-				<length>255</length>
+				<type>clob</type>
 			</field>
 			<field>
 				<name>url</name>
-				<type>text</type>
-				<notnull>true</notnull>
-				<length>64</length>
+				<type>clob</type>
 			</field>
 			<field>
 				<name>expire_time</name>
