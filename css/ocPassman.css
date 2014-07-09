@@ -10,6 +10,9 @@
 	display: inline-block;
 	
 }
+#searchresults{
+	display: none;
+}
 .ui-widget-overlay.ui-front {
 	top: 45px;
 }
