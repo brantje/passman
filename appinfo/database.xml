@@ -88,9 +88,7 @@
 			</field>
 			<field>
 				<name>filename</name>
-				<type>text</type>
-				<notnull>true</notnull>
-				<length>255</length>
+				<type>clob</type>
 			</field>
 			<field>
 				<name>type</name>
