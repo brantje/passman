@@ -501,7 +501,7 @@ function testEnc(a,test){
  */
 function generateSalt(len){
 	var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~`!@#$%^&*()_+-={}[]:\";'<>?,./|\\";
 
     for( var i=0; i < len; i++ )
         text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -516,8 +516,8 @@ function encryptThis(str) {
 	var encryptedString = str;
 	var encryptionKey = getEncKey();
 
-	var randVal = Math.round(10 + (Math.random() * (99 - 10)));
-	//Amount of rounds aes decrypt is called
+	var randVal = Math.round(110 + (Math.random() * (999 - 110)));
+	//String length
 
 	/**
 	 * Generate random string
@@ -539,9 +539,9 @@ function encryptThis(str) {
  */
 function decryptThis(str){
 	encryptedString = Base64.decode(str);
-	var randVal = encryptedString.substr(0,2)*1;
-	var salt = encryptedString.substr(2,randVal);
-	var	str = encryptedString.substr( (randVal+2) );
+	var randVal = encryptedString.substr(0,3)*1;
+	var salt = encryptedString.substr(3,randVal);
+	var	str = encryptedString.substr( (randVal+3) );
 	var decryptionKey = salt+getEncKey();
 	var decryptedString = str;
 	for(i=0; i < 5;i++){
