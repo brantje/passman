@@ -244,7 +244,7 @@ jQuery(document).ready(function($) {
 			'type' : 'text',
 			'size' : '25',
 			'value' : value
-		}).appendTo($(this)).focus()
+		}).appendTo($(this)).focus();
 		$(this).find('input').blur(function(){
 			$(this).parent().text($(this).val());
 		});
@@ -281,12 +281,16 @@ jQuery(document).ready(function($) {
 				dataType : 'json', //What kind of Result is expected. (Ex json, xml, etc)
 				success : function(data) {
 					var item = [];
+					if(data.length > 0)
 					$.each(data, function() {
-						item.push(this)
-					})
+						item.push(this);
+					});
+					else{
+						item.push({label: 'no results'});
+					}
 					response(item);
 				}
-			})
+			});
 		},
 		minLength : 1,
 		open: function(){
@@ -298,48 +302,55 @@ jQuery(document).ready(function($) {
 			
 			/* Get tree structure */
 			if(ui.item.folderid!=null){
-				$('#jsTree').jstree('open_node', getMenuParents(ui.item.folderid))
+				$('#jsTree').jstree('open_node', getMenuParents(ui.item.folderid));
 				$('#jsTree').jstree("select_node", '#ajson' + ui.item.folderid);
-				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.folderid).offset().top+'px' })
+				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.folderid).offset().top+'px' });
 				setTimeout(function() {
-					$('li[data-id="' + ui.item.id + '"]').click() //addClass('row-active');
+					$('li[data-id="' + ui.item.id + '"]').click(); //addClass('row-active');
 					//loadItem(ui.item.id);
 					$('#searchbox').val('').blur();
 				}, 250);
 			}
 			else
 			{
-				$('#jsTree').jstree('open_node', getMenuParents(ui.item.id))
+				$('#jsTree').jstree('open_node', getMenuParents(ui.item.id));
 				$('#jsTree').jstree("select_node", '#ajson' + ui.item.id);
-				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.id).offset().top+'px' })
+				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.id).offset().top+'px' });
+				$('#searchbox').val('').blur();
 			}
 		},
 		focus : function(event, ui) {
 			event.preventDefault();
 
 		}
-	}).data("ui-autocomplete")._renderItem = function(ul, item) {
+	}).
+	data("ui-autocomplete")._renderItem = function(ul, item) {
 		var line1 = '';
-		if (item.email && !item.account)
-			line1 = 'Email: ' + decryptThis(item.email) + '<br />';
-		if (!item.email && item.account)
-			line1 = 'Account: ' + decryptThis(item.account) + '<br />';
-		if (item.description) {
-			if(decryptThis(item.description).length > 0){
-				item.description = $('<div>'+ decryptThis(item.description) +'</div>').text().trim();
-				var desc = (item.description.length >= 15) ? item.description.substring(0, 15) + '...' : item.description;
-				line1 += 'Description: ' + desc
+		if (item.id) {
+			if (item.email && !item.account)
+				line1 = 'Email: ' + decryptThis(item.email) + '<br />';
+			if (!item.email && item.account)
+				line1 = 'Account: ' + decryptThis(item.account) + '<br />';
+			if (item.description) {
+				if (decryptThis(item.description).length > 0) {
+					item.description = $('<div>' + decryptThis(item.description) + '</div>').text().trim();
+					var desc = (item.description.length >= 15) ? item.description.substring(0, 15) + '...' : item.description;
+					line1 += 'Description: ' + desc;
+				}
 			}
+			if (item.foldername) {
+				line1 += (line1 == '') ? 'Folder: ' + item.foldername : '<br />Folder:' + item.foldername;
+			}
+
+			var icon = (item.folderid == null) ? 'folder-icon' : 'icon-lock';
+			var txt = "<span class=\"" + icon + " icon\"></span><strong>" + item.label + "</strong><br><font class=\"description\">" + line1 + "</font>";
+		} else {
+			var icon = 'no-result';
+			var txt = item.label;
 		}
-		if(item.foldername){
-			line1 += (line1=='') ? 'Folder: '+ item.foldername : '<br />Folder:'+ item.foldername;
-		}
-		 
-		var icon = (item.folderid==null) ? 'folder-icon' : 'icon-lock';
-		
-		return $("<li></li>").data("item.autocomplete", item).append("<a><span class=\""+ icon + " icon\"></span><strong>" + item.label + "</strong><br><font class=\"description\">" + line1 + "</font></a>").appendTo(ul);
-	}; 
-	
+		return $("<li></li>").data("item.autocomplete", item).append("<a>"+ txt + "</a>").appendTo(ul);
+	};
+
 
 	
 	/**
@@ -491,7 +502,7 @@ function testEnc(a,test){
 		test = false;
 	}
 	var input = a;
-	console.log('Input: '+ input)
+	console.log('Input: '+ input);
 	var e = encryptThis(input,test);
 	console.log('Decryption result: '+ decryptThis(e,test));
 }
@@ -791,7 +802,7 @@ function makeDragable(){
       drop: function( event, ui ) {
       	if(event.type=="drop"){
       		var itemId = $(ui.draggable[0]).attr('data-id');
-      		var targetFolder = event.target.id.replace('ajson','').trim()
+      		var targetFolder = event.target.id.replace('ajson','').trim();
       		$.post(OC.generateUrl('apps/passman/api/v1/item/move/'+itemId+'/'+ targetFolder),{},function(d){
       			$('li[data-id="'+itemId+'"]').remove();
       		});
@@ -853,7 +864,7 @@ function loadItem(id,rawDesc) {
 		if(item.customFields.length > 0){
 			$.each(item.customFields,function(k,field){
 				var row = '<tr><td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>'+ decryptThis(field.label) +' :</td>';
-                    row +='<td><div id="id_'+field.label+'" style="float:left;">'+ decryptThis(field.value) +'</div></td></tr>'
+                    row +='<td><div id="id_'+field.label+'" style="float:left;">'+ decryptThis(field.value) +'</div></td></tr>';
 				$('#customFieldsTable').append(row);
 			});
 		}
@@ -915,8 +926,8 @@ function openForm(mapper) {
 			$('#item_tabs').tabs('destroy');
 			$('#complex_attendue').html('<b>Not defined</b>').removeAttr('class');
 			$('#editAddItemDialog .error').remove();
-			$('#existingFields').html('')
-			$('#fileList').html('')
+			$('#existingFields').html('');
+			$('#fileList').html('');
 			$('#fileInput').val('');
 			//CKEDITOR.instances.desc.destroy()
 		}
@@ -952,8 +963,8 @@ function openForm(mapper) {
 		if(mapper.customFields){
 			$.each(mapper.customFields,function(k,field){
 				var row = '<tr data-cFieldId='+ field.id +'><td>'+ decryptThis(field.label) +'</td>';
-                    row +='<td>'+decryptThis(field.value)+'</td></tr>'
-					$('#existingFields').append(row)
+                    row +='<td>'+decryptThis(field.value)+'</td></tr>';
+					$('#existingFields').append(row);
 			});
 		}
 	}
@@ -963,7 +974,7 @@ function openForm(mapper) {
 
 function saveItem() {
 	formData = $('#editNewItem').serializeObject();
-	formData.desc = CKEDITOR.instances.desc.getData()
+	formData.desc = CKEDITOR.instances.desc.getData();
 	$('#editAddItemDialog .error').remove();
 	var ERROR = false;
 	var createUrl = OC.generateUrl('apps/passman/api/v1/item');
@@ -1256,7 +1267,6 @@ function formatDate(datestr){
 		break;
 		
 		default:
-			console.log()
 			return date(dateformat,new Date(datestr));
 		break;
 	}
