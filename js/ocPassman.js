@@ -511,7 +511,6 @@ function encryptThis(str) {
  * Decrypt a string with the algorithm
  */
 function decryptThis(str){
-	//str = Base64.decode(str);
 	var decryptionKey  = getEncKey();
 	var decryptedString = str;
 	for(i=0; i < 5;i++){
