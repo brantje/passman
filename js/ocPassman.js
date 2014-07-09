@@ -244,7 +244,7 @@ jQuery(document).ready(function($) {
 			'type' : 'text',
 			'size' : '25',
 			'value' : value
-		}).appendTo($(this)).focus()
+		}).appendTo($(this)).focus();
 		$(this).find('input').blur(function(){
 			$(this).parent().text($(this).val());
 		});
@@ -282,11 +282,11 @@ jQuery(document).ready(function($) {
 				success : function(data) {
 					var item = [];
 					$.each(data, function() {
-						item.push(this)
-					})
+						item.push(this);
+					});
 					response(item);
 				}
-			})
+			});
 		},
 		minLength : 1,
 		open: function(){
@@ -298,20 +298,20 @@ jQuery(document).ready(function($) {
 			
 			/* Get tree structure */
 			if(ui.item.folderid!=null){
-				$('#jsTree').jstree('open_node', getMenuParents(ui.item.folderid))
+				$('#jsTree').jstree('open_node', getMenuParents(ui.item.folderid));
 				$('#jsTree').jstree("select_node", '#ajson' + ui.item.folderid);
-				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.folderid).offset().top+'px' })
+				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.folderid).offset().top+'px' });
 				setTimeout(function() {
-					$('li[data-id="' + ui.item.id + '"]').click() //addClass('row-active');
+					$('li[data-id="' + ui.item.id + '"]').click(); //addClass('row-active');
 					//loadItem(ui.item.id);
 					$('#searchbox').val('').blur();
 				}, 250);
 			}
 			else
 			{
-				$('#jsTree').jstree('open_node', getMenuParents(ui.item.id))
+				$('#jsTree').jstree('open_node', getMenuParents(ui.item.id));
 				$('#jsTree').jstree("select_node", '#ajson' + ui.item.id);
-				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.id).offset().top+'px' })
+				$('#app-navigation').animate({ scrollTop: $('#ajson' + ui.item.id).offset().top+'px' });
 			}
 		},
 		focus : function(event, ui) {
@@ -328,7 +328,7 @@ jQuery(document).ready(function($) {
 			if(decryptThis(item.description).length > 0){
 				item.description = $('<div>'+ decryptThis(item.description) +'</div>').text().trim();
 				var desc = (item.description.length >= 15) ? item.description.substring(0, 15) + '...' : item.description;
-				line1 += 'Description: ' + desc
+				line1 += 'Description: ' + desc;
 			}
 		}
 		if(item.foldername){
@@ -482,18 +482,59 @@ function resetStorageKey(){
 	$.jStorage.deleteKey("ENC_KEY");
 	$(document).data('ENC_KEY');
 }
+
 /**
  * Encrypt a string with the algorithm
  */
-function encryptThis(str){
-	return Aes.Ctr.encrypt(str,getEncKey(),256);
+
+function encryptThis(str) {
+	var encryptedString = str;
+	var encryptionKey = getEncKey();
+
+	var randVal = Math.round(10 + (Math.random() * (99 - 10)));
+	//Amount of rounds aes decrypt is called
+
+	/**
+	 * Generate random string
+	 */
+	var possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	var randText = '';
+
+	for (var i = 0; i < randVal; i++) {
+		randText += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
+	}
+
+	/**
+	 * Append the random text to the encryption key
+	 */
+	encryptionKey = randText + encryptionKey;
+	
+	/**
+	 * Loop a few times
+	 */
+	for ( i = 0; i < 5; i++) {
+		encryptedString = Aes.Ctr.encrypt(encryptedString, encryptionKey, 256);
+	}
+	encryptedString = Base64.encode(randVal + randText + encryptedString);
+	return encryptedString;
 }
+
 /**
  * Decrypt a string with the algorithm
  */
 function decryptThis(str){
-	return Aes.Ctr.decrypt(str, getEncKey(), 256);
+	encryptedString = Base64.decode(str);
+	var randVal = encryptedString.substr(0,2)*1;
+	var randText = encryptedString.substr(2,randVal);
+	var	str = encryptedString.substr( (randVal+2) );
+	var decryptionKey = randText+getEncKey();
+	var decryptedString = str;
+	for(i=0; i < 5;i++){
+		decryptedString = Aes.Ctr.decrypt(decryptedString,decryptionKey,256); 
+	}
+	return decryptedString;
 }
+
 function loadFolders(){
 	$.getJSON(OC.generateUrl('apps/passman/api/v1/folders')).success(function(data) { 
 		var folders = [{'id': 'ajson0','parent': '#','text': 'Root'}];
@@ -735,7 +776,7 @@ function makeDragable(){
       drop: function( event, ui ) {
       	if(event.type=="drop"){
       		var itemId = $(ui.draggable[0]).attr('data-id');
-      		var targetFolder = event.target.id.replace('ajson','').trim()
+      		var targetFolder = event.target.id.replace('ajson','').trim();
       		$.post(OC.generateUrl('apps/passman/api/v1/item/move/'+itemId+'/'+ targetFolder),{},function(d){
       			$('li[data-id="'+itemId+'"]').remove();
       		});
@@ -797,7 +838,7 @@ function loadItem(id,rawDesc) {
 		if(item.customFields.length > 0){
 			$.each(item.customFields,function(k,field){
 				var row = '<tr><td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>'+ decryptThis(field.label) +' :</td>';
-                    row +='<td><div id="id_'+field.label+'" style="float:left;">'+ decryptThis(field.value) +'</div></td></tr>'
+                    row +='<td><div id="id_'+field.label+'" style="float:left;">'+ decryptThis(field.value) +'</div></td></tr>';
 				$('#customFieldsTable').append(row);
 			});
 		}
@@ -859,8 +900,8 @@ function openForm(mapper) {
 			$('#item_tabs').tabs('destroy');
 			$('#complex_attendue').html('<b>Not defined</b>').removeAttr('class');
 			$('#editAddItemDialog .error').remove();
-			$('#existingFields').html('')
-			$('#fileList').html('')
+			$('#existingFields').html('');
+			$('#fileList').html('');
 			$('#fileInput').val('');
 			//CKEDITOR.instances.desc.destroy()
 		}
@@ -896,8 +937,8 @@ function openForm(mapper) {
 		if(mapper.customFields){
 			$.each(mapper.customFields,function(k,field){
 				var row = '<tr data-cFieldId='+ field.id +'><td>'+ decryptThis(field.label) +'</td>';
-                    row +='<td>'+decryptThis(field.value)+'</td></tr>'
-					$('#existingFields').append(row)
+                    row +='<td>'+decryptThis(field.value)+'</td></tr>';
+					$('#existingFields').append(row);
 			});
 		}
 	}
@@ -907,7 +948,7 @@ function openForm(mapper) {
 
 function saveItem() {
 	formData = $('#editNewItem').serializeObject();
-	formData.desc = CKEDITOR.instances.desc.getData()
+	formData.desc = CKEDITOR.instances.desc.getData();
 	$('#editAddItemDialog .error').remove();
 	var ERROR = false;
 	var createUrl = OC.generateUrl('apps/passman/api/v1/item');
@@ -1200,7 +1241,6 @@ function formatDate(datestr){
 		break;
 		
 		default:
-			console.log()
 			return date(dateformat,new Date(datestr));
 		break;
 	}
