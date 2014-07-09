@@ -500,25 +500,6 @@ function encryptThis(str) {
 	var encryptedString = str;
 	var encryptionKey = getEncKey();
 
-	/**
-	 * Generate random string
-	 */
-	//var possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	//var randText = '';
-	//var randVal = Math.round(10 + (Math.random() * (99 - 10)));
-	//
-	//for (var i = 0; i < randVal; i++) {
-	//	randText += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
-	//}
-
-	/**
-	 * Append the random text to the encryption key
-	 */
-	//encryptionKey = randText + encryptionKey;
-	
-	/**
-	 * Loop a few times
-	 */
 	for ( i = 0; i < 5; i++) {
 		encryptedString = Aes.Ctr.encrypt(encryptedString, encryptionKey, 256);
 	}
@@ -532,12 +513,6 @@ function encryptThis(str) {
 function decryptThis(str){
 	//str = Base64.decode(str);
 	var decryptionKey  = getEncKey();
-	var encryptedString = str;
-	/*var randVal = encryptedString.substr(0,2)*1;
-	var randText = encryptedString.substr(2,randVal);
-	console.log(randVal,randText);
-	var	str = encryptedString.substr( (randVal+2) );
-	decryptionKey = randText+decryptionKey; */
 	var decryptedString = str;
 	for(i=0; i < 5;i++){
 		decryptedString = Aes.Ctr.decrypt(decryptedString,decryptionKey,256); 
