@@ -11,7 +11,7 @@
 	
 }
 #searchresults{
-	display: none;
+	display: none !important;
 }
 .ui-widget-overlay.ui-front {
 	top: 45px;
