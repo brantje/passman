@@ -375,6 +375,7 @@ jQuery(document).ready(function($) {
 		encryptionKeyDialog();
 	});
 	$('.import.link').click(importDialog);
+	$('.settings.link').click(showSettings);
 });
 function importDialog(){
 	
@@ -1219,6 +1220,26 @@ function deleteFile(fileId){
 	});
 }
 
+function showSettings(){
+	var html = '<div>';
+		html += 'Date format: <br />';
+		html += '<input id="df" type="text" value="'+ $.jStorage.get("date_format") +'">';
+		html += '</div>';
+		
+		$(html).dialog({
+			title: "Settings",
+			buttons:{
+				"Save": function(){
+					$(this).dialog('destroy').remove();
+					$.jStorage.set("date_format",$('#df').val());
+				},
+				"Cancel": function(){
+					$(this).dialog('destroy').remove();
+				}
+			}	
+		})
+}
+
 /* General functions */
 
 /**
@@ -1259,6 +1280,7 @@ function showNotification(str) {
 		OC.Notification.hide();
 	},3000);
 }
+
 function formatDate(datestr){
 	var dateformat = ($.jStorage.get("date_format")) ? $.jStorage.get("date_format") : 'default';
 	switch(dateformat){
