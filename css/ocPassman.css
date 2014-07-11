@@ -29,6 +29,10 @@ tbody tr:hover, tr:active {
 	height: 100%;
 	width: 100%;
 }
+#rootMessage{
+	width: 400px;
+	margin: 0 auto;
+}
 div#topContent {
 	background: #f8f8f8;
 	height: 35px;

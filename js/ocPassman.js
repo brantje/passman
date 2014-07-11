@@ -766,6 +766,7 @@ function loadFolder(folderId){
 		$('#addItem').attr('disabled','disabled');
 		$('#addItem').attr('disabled','disabled');
 	}
+	if(folderId!=0){
 	$('#pwList').html('<span id="itemsLoading" class="icon-loading icon" style="height: 32px; width: 32px; margin-left: 10px;"></span>');
 	$.get(OC.generateUrl('apps/passman/api/v1/items/'+folderId),function(data){
 		$('#itemsLoading').remove();
@@ -785,6 +786,20 @@ function loadFolder(folderId){
 		
 		selectedFolder = getFolderById(folderId);
 	});
+	}
+	else
+	{
+		/**
+		 * load dashboard?
+		 */
+		var http = location.protocol;
+		var slashes = http.concat("//");
+		var host = slashes.concat(window.location.hostname);
+		var complete = host+location.pathname;
+		var bookmarklet = "<a class=\"button\" href=\"javascript:(function(){var a=window,b=document,c=encodeURIComponent,e=c(document.title),d=a.open('"+ complete +"add?url='+c(b.location)+'&title='+e,'bkmk_popup','left='+((a.screenX||a.screenLeft)+10)+',top='+((a.screenY||a.screenTop)+10)+',height=685px,width=550px,resizable=1,alwaysRaised=1');a.setTimeout(function(){d.focus()},300);})();\">Save in passman</a>";
+		bookmarklet = "<div id=\"rootMessage\"><div class=\"bkm_hint\">Drag this to your browser bookmarks and click it, when you want to save username / password quickly:</div><br>"+ bookmarklet +"<p></p>";
+		$('#pwList').html(bookmarklet);
+	}
 }
 
 function makeDragable(){
@@ -1027,6 +1042,7 @@ function saveItem() {
 				loadItem(data.success.id);
 				$('#showPW').remove();
 				$('#copyPW').remove();
+				$(document).data('p','');
 			} else {
 				var append = '<li data-id=' + data.itemid + '><span class="icon-lock icon"></span><div style="display: inline-block;">' + formData.label + '</div></li>';
 				if($('#pwList').text()!='Folder is empty'){

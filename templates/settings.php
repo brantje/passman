@@ -1,4 +1,0 @@
-<div>
-Settings
-
-</div>
