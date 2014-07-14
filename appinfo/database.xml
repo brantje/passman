@@ -121,7 +121,7 @@
 				</field>
 			</index>
 			<index>
-				<name>item_id_index</name>
+				<name>item_file_id_index</name>
 				<field>
 					<name>item_id</name>
 				</field>
