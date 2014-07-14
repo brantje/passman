@@ -56,7 +56,7 @@
 				</field>
 			</index>
 			<index>
-				<name>item_user_id_index</name>
+				<name>folder_user_id_index</name>
 				<field>
 					<name>user_id</name>
 				</field>
