@@ -56,7 +56,7 @@
 				</field>
 			</index>
 			<index>
-				<name>item_user_id_index</name>
+				<name>folder_user_id_index</name>
 				<field>
 					<name>user_id</name>
 				</field>
@@ -109,19 +109,19 @@
 				<type>blob</type>
 			</field>
 			<index>
-				<name>item_file_id_index</name>
+				<name>file_id_index</name>
 				<field>
 					<name>id</name>
 				</field>
 			</index>
 			<index>
-				<name>item_file_uid_index</name>
+				<name>file_uid_index</name>
 				<field>
 					<name>user_id</name>
 				</field>
 			</index>
 			<index>
-				<name>item_id_index</name>
+				<name>file_item_id_index</name>
 				<field>
 					<name>item_id</name>
 				</field>
