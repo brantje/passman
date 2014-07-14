@@ -1,6 +1,9 @@
 # Passman
 Place this app in **owncloud/apps/**
 
+#Repos
+master = development
+stable7 = Stable for ownCloud 7
 #What is this?
 Passman is a password manager for owncloud.
 It features client side password encryption with aes.
@@ -13,7 +16,6 @@ It features client side password encryption with aes.
 - Password generator with strength indicator
 - Abillity to add files to an item (usefull for qr codes, serials, ssl keys etc).
 - File uploading, files will be encrypted and then uploaded
-- Custom fields with items
 
 #Screenshots
 ![Image](http://puu.sh/9NZUY/18d04fcb48.png)
@@ -28,6 +30,7 @@ If you want to help, git clone this repo, make your changes and send a PR.
 #Todo (not in order of importance)
  - Bug fixes
  - Translations
+ - Check in the backend if folderid exists
  - Firefox / chrome sync
  - Mobile sync??
  
@@ -39,8 +42,6 @@ If you want to help, git clone this repo, make your changes and send a PR.
 #What does not work
 - Api
 - Sync
-
-
 ## Running tests
 After [Installing PHPUnit](http://phpunit.de/getting-started.html) run:
 
