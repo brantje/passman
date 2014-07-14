@@ -1,11 +1,11 @@
 $(document).ready(function() {
-	if ($(document).data('importers')) {
+/*	if ($(document).data('importers')) {
 		var importers = $(document).data('importers');
 		importers.push(['Keepass 2', 'importKeepass2Dialog'])
 	} else {
 		var importer = [['Keepass 2', 'importKeepass2Dialog']];
 		$(document).data('importers', importer);
-	}
+	}*/
 })
 var keypassData = '"Group Tree","Account","Login Name","Password","Web Site","Comments"\n"General\\Network","Server 1","Root","password1","",""\n"General\\Network","server 2","root","password2","",""\n"General","Test 1 key","","owrfm6fqjs2cpWbMgvkY","",""'
 
