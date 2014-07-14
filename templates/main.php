@@ -217,7 +217,7 @@
 <div id="encryptionKeyDialog" style="display: none;">
 	<p>Enter your encryption key.<br />If this if the first time you use Passman, this key will be used for encryption your passwords</p>
 	<input type="password" id="ecKey" style="width: 150px;" /><br />
-	<input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember">Remeber this key for</label> 
+	<input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember">Remember this key for</label> 
 	<select id="rememberTime">
 		<option value="15">15 Minutes</option>
 		<option value="15">30 Minutes</option>
