@@ -22,6 +22,7 @@
 
 \OCP\Util::addStyle('passman', 'ocPassman');
 \OCP\Util::addscript('passman', 'date');
+\OCP\Util::addscript('passman', 'scrollIntoView');
 \OCP\Util::addscript('passman', 'ocPassman');
 
 ?>

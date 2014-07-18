@@ -332,8 +332,10 @@ jQuery(document).ready(function($) {
 			/* Get tree structure */
 				$("#searchTags").tagit("removeAll");
 				setTimeout(function(){
-					$('#pwList').animate({ scrollTop: $('li[data-id="' + ui.item.id+'"]').offset().top+'px' });
+					//$('#pwList').animate({ scrollTop: $('li[data-id="' + ui.item.id+'"]').position().top-50 +'px' });
+					$('li[data-id="' + ui.item.id+'"]').scrollintoview({duration: "slow"})
 					$('li[data-id="' + ui.item.id+'"]').click();
+					$("#searchbox").val('').blur();
 				},250);
 				
 			
@@ -709,6 +711,8 @@ function loadItems(){
 		var url = OC.generateUrl('apps/passman/api/v1/items/getdeleted');
 		tags = $("#searchTags").tagit("assignedTags").clean('is:Deleted').join(',');
 		$('#addItem').attr('disabled','disabled');
+		$('#editItem').attr('disabled','disabled');
+		$('#deleteItem').attr('disabled','disabled');
 		$('#restoreItem').show();
 	}
 	else
