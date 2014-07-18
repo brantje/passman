@@ -33,16 +33,18 @@ $application->registerRoutes($this, array(
 
 	
 	
-	array('name' => 'folder_api#index', 'url' => '/api/v1/folders', 'verb' => 'GET'),
-	array('name' => 'folder_api#update', 'url' => '/api/v1/folders/{folderId}', 'verb' => 'POST'),
-	array('name' => 'folder_api#delete', 'url' => '/api/v1/folders/{folderId}', 'verb' => 'DELETE'),
-
-	array('name' => 'item_api#index', 'url' => '/api/v1/items/{folderId}', 'verb' => 'GET'),
+	array('name' => 'tag#search', 'url' => '/api/v1/tags/search', 'verb' => 'GET'),
+	array('name' => 'tag#load', 'url' => '/api/v1/tag/load', 'verb' => 'GET'),
+	array('name' => 'tag#update', 'url' => '/api/v1/tag/update', 'verb' => 'POST'),
+	
+	array('name' => 'item_api#getbytag', 'url' => '/api/v1/getbytags', 'verb' => 'GET'),
+	array('name' => 'item_api#getdeleted', 'url' => '/api/v1/items/getdeleted', 'verb' => 'GET'),
+	array('name' => 'item_api#index', 'url' => '/api/v1/items', 'verb' => 'GET'),
 	array('name' => 'item_api#get', 'url' => '/api/v1/item/{itemId}', 'verb' => 'GET'),
 	array('name' => 'item_api#create', 'url' => '/api/v1/item', 'verb' => 'POST'),
 	array('name' => 'item_api#update', 'url' => '/api/v1/item/{itemId}', 'verb' => 'POST'),
-	array('name' => 'item_api#delete', 'url' => '/api/v1/item/{itemId}', 'verb' => 'DELETE'),
-	array('name' => 'item_api#moveitem', 'url' => '/api/v1/item/move/{itemId}/{folderId}', 'verb' => 'POST'),
+	array('name' => 'item_api#delete', 'url' => '/api/v1/item/delete/{id}', 'verb' => 'GET'),
+	array('name' => 'item_api#restore', 'url' => '/api/v1/item/restore/{id}', 'verb' => 'GET'),
 	array('name' => 'item_api#search', 'url' => '/api/v1/item/search/{itemName}', 'verb' => 'GET'),
 
 	array('name' => 'item_api#addfile', 'url' => '/api/v1/item/{itemId}/addfile', 'verb' => 'POST'),

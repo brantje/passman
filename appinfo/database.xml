@@ -5,13 +5,12 @@
 	<overwrite>true</overwrite>
 	<charset>utf8</charset>
 	<table>
-		<name>*dbprefix*passman_folders</name>
+		<name>*dbprefix*passman_tags</name>
 		<declaration>
 			<field>
-				<name>id</name>
+				<name>tag_id</name>
 				<type>integer</type>
 				<default>0</default>
-				<notnull>true</notnull>
 				<autoincrement>1</autoincrement>
 				<length>41</length>
 			</field>
@@ -22,27 +21,109 @@
 				<length>64</length>
 			</field>
 			<field>
-				<name>title</name>
+				<name>tag_label</name>
 				<type>text</type>
 				<notnull>true</notnull>
-				<length>100</length>
-			</field>
-			<field>
-				<name>parent_id</name>
-				<type>integer</type>
+				<length>64</length>
 			</field>
 			<field>
 				<name>renewal_period</name>
 				<type>integer</type>
+				<default>0</default>
 			</field>
 			<field>
 				<name>min_pw_strength</name>
 				<type>integer</type>
+				<default>0</default>
+			</field>
+			<index>
+				<name>items_tags_tag_id</name>
+				<field>
+					<name>tag_id</name>
+				</field>
+			</index>
+			<index>
+				<name>items_tags_user_id</name>
+				<field>
+					<name>user_id</name>
+				</field>
+			</index>
+		</declaration>
+	</table>	
+	<table>
+		<name>*dbprefix*passman_items_tags_xref</name>
+		<declaration>
+			<field>
+				<name>tag_id</name>
+				<type>integer</type>
+
 			</field>
 			<field>
-				<name>deleted</name>
+				<name>item_id</name>
+				<type>integer</type>
+				<length>64</length>
+			</field>
+			<index>
+				<name>items_tags_xref_tag_id</name>
+				<field>
+					<name>tag_id</name>
+				</field>
+			</index>
+			<index>
+				<name>items_tags_xref_item_id</name>
+				<field>
+					<name>item_id</name>
+				</field>
+			</index>
+		</declaration>
+	</table>
+	<table>
+		<name>*dbprefix*passman_items</name>
+		<declaration>
+			<field>
+				<name>id</name>
 				<type>integer</type>
 				<default>0</default>
+				<autoincrement>1</autoincrement>
+				<length>41</length>
+			</field>
+			<field>
+				<name>user_id</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>64</length>
+			</field>
+			<field>
+				<name>label</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>255</length>
+			</field>
+			<field>
+				<name>description</name>
+				<type>clob</type>
+			</field>
+			<field>
+				<name>password</name>
+				<type>clob</type>
+			</field>
+			<field>
+				<name>account</name>
+				<type>clob</type>
+			</field>
+			<field>
+				<name>email</name>
+				<type>clob</type>
+			</field>
+			<field>
+				<name>url</name>
+				<type>clob</type>
+			</field>
+			<field>
+				<name>expire_time</name>
+				<type>text</type>
+				<default>0</default>
+				<length>50</length>
 			</field>
 			<field>
 				<name>delete_date</name>
@@ -50,20 +131,19 @@
 				<default>0</default>
 			</field>
 			<index>
-				<name>folder_id_index</name>
+				<name>item_id_index</name>
 				<field>
 					<name>id</name>
 				</field>
 			</index>
 			<index>
-				<name>folder_user_id_index</name>
+				<name>item_user_id_index</name>
 				<field>
 					<name>user_id</name>
 				</field>
 			</index>
 		</declaration>
-	</table>
-	
+	</table>	
 	<table>
 		<name>*dbprefix*passman_files</name>
 		<declaration>
@@ -124,85 +204,6 @@
 				<name>file_item_id_index</name>
 				<field>
 					<name>item_id</name>
-				</field>
-			</index>
-		</declaration>
-	</table>
-	<table>
-		<name>*dbprefix*passman_items</name>
-		<declaration>
-			<field>
-				<name>id</name>
-				<type>integer</type>
-				<default>0</default>
-				<autoincrement>1</autoincrement>
-				<length>41</length>
-			</field>
-			<field>
-				<name>folderid</name>
-				<type>integer</type>
-				<default>0</default>
-				<length>41</length>
-			</field>
-			<field>
-				<name>user_id</name>
-				<type>text</type>
-				<notnull>true</notnull>
-				<length>64</length>
-			</field>
-			<field>
-				<name>label</name>
-				<type>text</type>
-				<notnull>true</notnull>
-				<length>255</length>
-			</field>
-			<field>
-				<name>description</name>
-				<type>clob</type>
-			</field>
-			<field>
-				<name>password</name>
-				<type>clob</type>
-			</field>
-			<field>
-				<name>account</name>
-				<type>clob</type>
-			</field>
-			<field>
-				<name>email</name>
-				<type>clob</type>
-			</field>
-			<field>
-				<name>url</name>
-				<type>clob</type>
-			</field>
-			<field>
-				<name>expire_time</name>
-				<type>text</type>
-				<default>0</default>
-				<length>50</length>
-			</field>
-			<field>
-				<name>delete_date</name>
-				<type>integer</type>
-				<default>0</default>
-			</field>
-			<index>
-				<name>item_id_index</name>
-				<field>
-					<name>id</name>
-				</field>
-			</index>
-			<index>
-				<name>item_folderid_index</name>
-				<field>
-					<name>folderid</name>
-				</field>
-			</index>
-			<index>
-				<name>item_user_id_index</name>
-				<field>
-					<name>user_id</name>
 				</field>
 			</index>
 		</declaration>

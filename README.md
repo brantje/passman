@@ -9,8 +9,8 @@ Passman is a password manager for owncloud.
 It features client side password encryption with aes.
 
 #Features
-- Add items in a folder
-- Folder tree
+- Add tags to an item
+- Tag cloud
 - Client side aes password encryption
 - Option to remember the encryption key in the localstorage.
 - Password generator with strength indicator

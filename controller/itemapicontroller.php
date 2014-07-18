@@ -21,15 +21,15 @@ use \OCP\AppFramework\Http\JSONResponse;
 class ItemApiController extends Controller {
     private $userId;
 	private $ItemBusinessLayer;
-	private $FolderBusinessLayer;
+	private $tagBusinessLayer;
 	public $request; 
 	
-    public function __construct($appName, IRequest $request,  ItemBusinessLayer $ItemBusinessLayer,$userId,$FolderBusinessLayer){
+    public function __construct($appName, IRequest $request,  ItemBusinessLayer $ItemBusinessLayer,$userId,$tagBusinessLayer){
         parent::__construct($appName, $request);
         $this->userId = $userId;
 		$this->ItemBusinessLayer = $ItemBusinessLayer;
+		$this->tagBusinessLayer = $tagBusinessLayer;
 		$this->request = $request;
-		$this->FolderBusinessLayer = $FolderBusinessLayer;
     }
 
 
@@ -40,18 +40,44 @@ class ItemApiController extends Controller {
      *          basically the only required method to add this exemption, don't
      *          add it to any other method if you don't exactly know what it does
      * @NoAdminRequired
-	 * @CORS
      */
-	public function index($folderId) {
-		$result['items'] = $this->ItemBusinessLayer->listItems($folderId,$this->userId); 
+	public function index() {
+		$result['items'] = $this->ItemBusinessLayer->listItems($this->userId); 
 		return new JSONResponse($result);
 	}
-     /**
+
+    /**
+     * CAUTION: the @Stuff turn off security checks, for this page no admin is
+     *          required and no CSRF check. If you don't know what CSRF is, read
+     *          it up in the docs or you might create a security hole. This is
+     *          basically the only required method to add this exemption, don't
+     *          add it to any other method if you don't exactly know what it does
+     * @NoAdminRequired
+     */
+	public function getdeleted() {
+		$tags = $this->params('tags');
+		$tags = (empty($tags)) ? false : $tags;
+		$result['items'] = $this->ItemBusinessLayer->getByTag($tags,$this->userId,true); 
+		return new JSONResponse($result);
+	}
+    
+	 /**
 	 * @NoAdminRequired
      */
      public function get($itemId) {
-     	$itemId = (int) $itemId;
+     	$itemId = $this->params('id');
 		$result['item'] = $this->ItemBusinessLayer->get($itemId,$this->userId); 
+		
+		return new JSONResponse($result);
+	}
+	 /**
+	 * @NoAdminRequired
+     */
+     public function getbytag($itemId) {
+     	$itemId = $this->params('id');
+     	$tags = $this->params('tags');
+		$tags = (empty($tags)) ? false : $tags;
+		$result['items'] = $this->ItemBusinessLayer->getByTag($tags,$this->userId,false); 
 		
 		return new JSONResponse($result);
 	}
@@ -66,34 +92,23 @@ class ItemApiController extends Controller {
 		$errors = array();
 		$userId = $this->userId;
 		$label = $this->params('label');
-		$folderId = $this->params('folderid');
 		$desc = $this->params('desc');
 		$account = $this->params('account');
 		$pass = $this->params('pw1');
 		$email = $this->params('email');
 		$url = $this->params('url');
 		$customFields = $this->params('customFields');
+		$tags = explode(',',$this->params('tags'));
+    	$expiretime = 0;
 		
 		if(empty($label)){
 			array_push($errors,'Label is mandatory');
 		}
-		if(!is_numeric($folderId)){
-			array_push($errors,'Folder id is not numeric');
-		}
-		$folderCheckResult = $this->FolderBusinessLayer->get($folderId,$userId);
-		if(empty($folderCheckResult)){
-			array_push($errors,'Folder not found');
-		}
 		
-		if($folderCheckResult['renewal_period'] > 0){
-			 $expiretime = date("c",strtotime("+". $folderCheckResult['renewal_period'] ." days"));
-		}
-		else {
-			 $expiretime = 0;
-		}
 		
+				
 		if(empty($errors)){
-			$result['itemid'] = $this->ItemBusinessLayer->create($folderId,$userId,$label,$desc,$pass,$account,$email,$url,$expiretime);
+			$result['itemid'] = $this->ItemBusinessLayer->create($userId,$label,$desc,$pass,$account,$email,$url,$expiretime);
 			if(!empty($customFields)){
 				foreach ($customFields as $key => $field) {
 					if(empty($field['id'])){
@@ -101,6 +116,18 @@ class ItemApiController extends Controller {
 					}
 					else {
 						$field->id = $this->ItemBusinessLayer->updateField($field,$userId,$result['itemid']);
+					}
+				}
+			}
+			if(!empty($tags)){
+				$this->tagBusinessLayer->removeTags($id);
+				foreach($tags as $tag){
+					if($this->tagBusinessLayer->search($tag,$userId,true)){
+						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$result['itemid']);
+					}
+					else {
+						$this ->tagBusinessLayer ->create($tag,$userId);
+						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$result['itemid']);
 					}
 				}
 			} 
@@ -117,30 +144,24 @@ class ItemApiController extends Controller {
 	 */
 	public function update($itemId) {
 		$errors = array();
-		$id = (int) $itemId;
+		$id = (int) $this->params('item_id');
 		$userId = $this->userId;
 		$label = $this->params('label');
-		$folderId = $this->params('folderid');
 		$desc = $this->params('desc');
 		$account = $this->params('account');
 		$pass = $this->params('pw1');
 		$email = $this->params('email');
 		$url = $this->params('url');
 		$customFields = $this->params('customFields');
+		$tags = explode(',',$this->params('tags'));
 		if(empty($label)){
 			array_push($errors,'Label is mandatory');
-		}
-		if(!is_numeric($folderId)){
-			array_push($errors,'Folder id is not numeric');
-		}
-		$folderCheckResult = $this->FolderBusinessLayer->get($folderId,$userId);
-		if(empty($folderCheckResult)){
-			array_push($errors,'Folder not found');
 		}
 		$curItem =  $this->ItemBusinessLayer->get($itemId,$this->userId);
 		if(empty($curItem)){
 			array_push($errors,'Item not found');
 		}
+
 		if($folderCheckResult['renewal_period'] > 0){
 			if($this->params('changedPw')=="true"){
 			 $expiretime = date("c",strtotime("+". $folderCheckResult['renewal_period'] ." days"));
@@ -150,11 +171,11 @@ class ItemApiController extends Controller {
 			}
 		}
 		else {
-			
-			$expiretime = 0;
+			$expiretime = ($this->params('expire_time')) ? $this->params('expire_time') : 0;			
 		}
+
 		if(empty($errors)){
-			$result['success'] = $this->ItemBusinessLayer->update($id,$folderId,$userId,$label,$desc,$pass,$account,$email,$url,$expiretime);
+			$result['success'] = $this->ItemBusinessLayer->update($id,$userId,$label,$desc,$pass,$account,$email,$url,$expiretime);
 			if(!empty($customFields)){
 				foreach ($customFields as $key => $field) {
 					if(empty($field['id'])){
@@ -162,6 +183,18 @@ class ItemApiController extends Controller {
 					}
 					else {
 						$field->id = $this->ItemBusinessLayer->updateField($field,$userId,$result['itemid']);
+					}
+				}
+			}
+			if(!empty($tags)){
+				$this->tagBusinessLayer->removeTags($id);
+				foreach($tags as $tag){
+					if($this->tagBusinessLayer->search($tag,$userId,true)){
+						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$id);
+					}
+					else {
+						$this ->tagBusinessLayer ->create($tag,$userId);
+						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$id);
 					}
 				}
 			}
@@ -174,32 +207,17 @@ class ItemApiController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 */
-	public function moveitem($itemId,$folderId){
-		$errors = array();
-		$curItem =  $this->ItemBusinessLayer->get($itemId,$this->userId);
-		if(empty($curItem)){
-			array_push($errors,'Item not found');
-		}
-		if(empty($errors)){
-			$result = $this->ItemBusinessLayer->moveItem($itemId,$folderId,$this->userId);
-		} else {
-			$result['errors'] = $errors;
-		}
-		return new JSONResponse($result);
-	}
-	/**
-	 * @NoAdminRequired
-	 */
 	public function search($itemName) {
-		$deleted['deleted']	=$this->ItemBusinessLayer->search($itemName,$this->userId);
+		$deleted['deleted']	=$this->ItemBusinessLayer->search($this->params('q'),$this->userId);
 		return new JSONResponse($deleted['deleted']); 
 	}
 	
 	/**
 	 * @NoAdminRequired
 	 */
-	public function delete($itemId) {
+	public function delete($id) {
 		$errors = array();
+		$itemId = $this->params('id');
 		$findItem = $this->ItemBusinessLayer->get($itemId);
 		if(empty($findItem)){
 			array_push($errors,'Item not found');
@@ -211,25 +229,24 @@ class ItemApiController extends Controller {
 		}
 		return new JSONResponse($result['deleted']); 
 	}
-
 	/**
-	 * 
 	 * @NoAdminRequired
 	 */
-	public function deleteByFolderId($folderId){
+	public function restore($id) {
 		$errors = array();
-		$checkFolder = $this->FolderBusinessLayer->get($folderId);
-		if(empty($checkFolder)){
-			array_push($errors,'Folder not found');
+		$itemId = $this->params('id');
+		$findItem = $this->ItemBusinessLayer->get($itemId);
+		if(empty($findItem)){
+			array_push($errors,'Item not found');
 		}
-		
 		if(empty($errors)){
-			$result['deleted']	=$this->ItemBusinessLayer->deleteByFolder($folderId,$this->userId);
+			$result['restored']	=$this->ItemBusinessLayer->restore($itemId,$this->userId);
 		}else {
 			$result['errors'] = $errors;
 		}
-		return new JSONResponse($result);
+		return new JSONResponse($result); 
 	}
+
 	
 	/**
 	 * @TODO move the file functions to a seperate class

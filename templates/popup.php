@@ -1,6 +1,9 @@
 <?php
 \OCP\Util::addStyle('passman', 'simplePassMeter/simplePassMeter');
 \OCP\Util::addscript('passman', 'jquery.simplePassMeter.min');
+\OCP\Util::addscript('passman', 'tag-it.min');
+\OCP\Util::addStyle('passman', 'jquery.tagit');
+\OCP\Util::addStyle('passman', 'tagit.ui-zendesk');
 \OCP\Util::addscript('passman', 'encryption');
 \OCP\Util::addscript('passman', 'jsStorage');
 \OCP\Util::addStyle('passman', 'ocPassman');
@@ -61,7 +64,8 @@ print_unescaped('<script> var foldersPlain = ' . $_['foldersPlain'] . '</script>
 			</li>
 
 			<li>
-				<label for="folder">Folder: </label><br /><select id="folder" id="folder" name="folder"></select>Required complexity: <span id="complex_attendue">Very weak</span>  
+				<label for="folder">Tags: </label>
+				<input type="text" id="tags"/>  
 			</li>
 
 			<li>

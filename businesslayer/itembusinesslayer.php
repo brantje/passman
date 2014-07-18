@@ -20,8 +20,8 @@ class ItemBusinessLayer {
 		$this -> ItemManager = $ItemManager;
 	}
 
-	public function listItems($folderId, $userId) {
-		return $this -> ItemManager -> listItems($folderId, $userId);
+	public function listItems($userId,$deleted=false) {
+		return $this -> ItemManager -> listItems($userId);
 	}
 
 	public function get($itemId, $userId) {
@@ -30,10 +30,19 @@ class ItemBusinessLayer {
 		$result['customFields'] = $this -> ItemManager -> getFields($itemId, $userId);
 		return $result;
 	}
+	public function getByTag($tags, $userId,$deleteDate) {
+		$tags = explode(',',$tags);
+		$results = $this -> ItemManager -> getByTag($tags, $userId,$deleteDate);
+		$return = array();
+		foreach($results as $r){
+			$r['tags'] = ($r['tags']!='') ? explode(',',$r['tags']) : null;
+			$return[] = $r;
+		}
+		return $return;
+	}
 
-	public function create($folderId, $userId, $label, $desc, $pass, $account, $email, $url,$expireTime) {
+	public function create($userId, $label, $desc, $pass, $account, $email, $url,$expireTime) {
 		$item = array();
-		$item['folder_id'] = $folderId;
 		$item['user_id'] = $userId;
 		$item['label'] = $label;
 		$item['description'] = $desc;
@@ -45,10 +54,9 @@ class ItemBusinessLayer {
 		return $this -> ItemManager -> insert($item);
 	}
 
-	public function update($id, $folderId, $userId, $label, $desc, $pass, $account, $email, $url,$expiretime) {
+	public function update($id, $userId, $label, $desc, $pass, $account, $email, $url,$expiretime) {
 		$item = array();
 		$item['id'] = $id;
-		$item['folder_id'] = $folderId;
 		$item['user_id'] = $userId;
 		$item['label'] = $label;
 		$item['description'] = $desc;
@@ -59,10 +67,6 @@ class ItemBusinessLayer {
 		$item['expire_time'] = $expiretime;
 		return $this -> ItemManager -> update($item);
 	}
-	
-	public function moveItem($itemId,$folderId,$userId){
-		return $this -> ItemManager -> moveItem($itemId,$folderId,$userId);
-	}
 
 	public function search($itemName, $userId) {
 		return $this -> ItemManager -> search($itemName, $userId);
@@ -70,6 +74,10 @@ class ItemBusinessLayer {
 
 	public function delete($itemId, $userId) {
 		return $this -> ItemManager -> delete($itemId, $userId);
+	}
+	
+	public function restore($itemId, $userId) {
+		return $this -> ItemManager -> restore($itemId, $userId);
 	}
 
 	/**

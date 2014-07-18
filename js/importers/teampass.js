@@ -43,114 +43,26 @@ function importTeamPass() {
 
 	$(document).data('importFolders', [])
 	
-	importTeamPassFolders();
+	importTeampassItems()
 
 	//clean up
 
 }
-
-function importTeamPassFolders() {
-	counter = 0;
-	if (teampassData.folders.length != 0) {
-		$.each(teampassData.folders, function(key) {
-			var folder = this;
-
-			if (folder.parent_id == 0) {
-				var postData = {
-					'folderId' : 'new',
-					'parent' : 0,
-					'title' : folder.title
-				}
-				$.ajax({
-					async : false,
-					type : "POST",
-					url : OC.generateUrl('apps/passman/api/v1/folders/new'),
-					dataType : 'JSON',
-					data : postData,
-					success : function(data) {
-						if (data.folderid) {
-							var folders = $(document).data('importFolders');
-							folders.push({
-								'id' : data.folderid,
-								'parent' : 0,
-								'text' : folder.title,
-								'renewal_period' : 0,
-								'min_pw_strength' : 0
-							})
-							$(document).data('importFolders', folders);
-							console.log('Added ' + folder.title)
-							teampassData.folders[counter] = null;
-						}
-					}
-				});
-
-			} else {
-				if (!findImportFolderByName(folder.name)) {
-					var parentFolder = findImportFolderByName(folder.parent_title);
-					if (parentFolder != '') {
-						var parentId = parentFolder.id;
-						var postData = {
-							'folderId' : 'new',
-							'parent' : parentId,
-							'title' : folder.title
-						}
-						$.ajax({
-							async : false,
-							type : "POST",
-							url : OC.generateUrl('apps/passman/api/v1/folders/new'),
-							dataType : 'JSON',
-							data : postData,
-							success : function(data) {
-								if (data.folderid) {
-									var folders = $(document).data('importFolders');
-									folders.push({
-										'id' : data.folderid,
-										'parent' : parentId,
-										'text' : folder.title,
-										'renewal_period' : 0,
-										'min_pw_strength' : 0
-									})
-									$(document).data('importFolders', folders);
-									console.log('Added ' + folder.title)
-									teampassData.folders[counter] = null;
-								}
-							}
-						});
-
-					}
-				} else {
-					teampassData.folders[counter] = null;
-				}
-			}
-			counter++;
-		});
-		teampassData.folders = teampassData.folders.clean();
-	}
-	console.log(teampassData, teampassData.folders.length);
-	if (teampassData.folders.length != 0) {
-		console.log('Next round!')
-		importTeamPassFolders()
-	} else {
-		//import passes
-		importTeampassItems();
-	}
-}
-
 function importTeampassItems() {
 	$.each(teampassData.items, function() {
-		var ImportToFolder = (this.folder_title) ? findImportFolderByName(this.folder_title.toString().trim()) : null;
+		
 		var createUrl = OC.generateUrl('apps/passman/api/v1/item');
 		var encPw = (this.pw) ? encryptThis(this.pw) : '';
-		if (ImportToFolder) {
+		
 			postData = {
 
 				'label' : this.label,
-				'folderid' : ImportToFolder.id,
 				'desc' : encryptThis( (this.description) ? this.description : ''),
 				'account' : encryptThis( (this.login) ? this.login : ''),
 				'pw1' : encPw,
 				'email' : encryptThis( (this.email) ? this.email : ''),
-				'url' : encryptThis((this.url) ? this.url : '')
+				'url' : encryptThis((this.url) ? this.url : ''),
+				'tags': this.folder_title
 			}
 			$.ajax({
 				async : false,
@@ -162,10 +74,6 @@ function importTeampassItems() {
 					console.log('Added item ' + postData.label)
 				}
 			});
-		} else {
-			console.log('Could not import item', this)
-			console.log('Error folder not found', ImportToFolder)
-		}
 	})
 	$('#teampassPopup').dialog('destroy').remove();
 	$('<div>The import was a success!</div>').dialog({
@@ -176,8 +84,7 @@ function importTeampassItems() {
 				}
 		}
 	});
-	$('#jsTree').jstree('destroy')
-	loadFolders();
+	loadItems();
 	$('#importFile').val('');
 	teampassData = [];
 	$(document).data('importFolders', {})
@@ -194,15 +101,6 @@ function findImportFolderByName(name) {
 }
 
 
-Array.prototype.clean = function(deleteValue) {
-	for (var i = 0; i < this.length; i++) {
-		if (this[i] == deleteValue) {
-			this.splice(i, 1);
-			i--;
-		}
-	}
-	return this;
-};
 
 $(document).ready(function() {
 	if ($(document).data('importers')) {

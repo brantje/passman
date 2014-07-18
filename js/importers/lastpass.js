@@ -8,15 +8,6 @@ $(document).ready(function() {
 	}
 })
 
-Array.prototype.unique = function() {
-    var unique = [];
-    for (var i = 0; i < this.length; i++) {
-        if (unique.indexOf(this[i]) == -1) {
-            unique.push(this[i]);
-        }
-    }
-    return unique;
-};
 
 function processLastPassData(strData,strDelimiter) {
 	strDelimiter = (strDelimiter || ",");
@@ -91,61 +82,9 @@ function importLastPass() {
 	$(document).data('importFolders',[])
 	lastPassData = processLastPassData(lastPassData);
 	console.log(lastPassData[0])
-	lastPassData.shift();
-	
-	var lpFolders = new Array();
-	
-	$.each(lastPassData, function(k, v) {
-		/*
-		 * push the folders in an array
-		 */
-		if(v[5].trim()!=''){
-			lpFolders[k] = v[5];
-	}
-	})
-	lpFolders[lpFolders.length+1] = 'No category'
-	importLastPassFolders(lpFolders.unique().clean(""));		
+	importLastPassItems()	
 }
-function importLastPassFolders(f){
-	
-	$.each(f,function(k,v){
-		if(v==""){
-		 v = 'No category'
-		}
-		var postData = {
-					'folderId' : 'new',
-					'parent' : 0,
-					'title' : v
-				}
-					
-				 $.ajax({
-					async : false,
-					type : "POST",
-					url : OC.generateUrl('apps/passman/api/v1/folders/new'),
-					dataType : 'JSON',
-					data : postData,
-					success : function(data) {
-						if (data.folderid) {
-							var folders = $(document).data('importFolders');
-							folders.push({
-								'id' : data.folderid,
-								'parent' : 0,
-								'text' : postData.title,
-								'renewal_period' : 0,
-								'min_pw_strength' : 0
-							})
-							$(document).data('importFolders', folders);
-							console.log('Added ' + postData.title)
-							if(k==f.length-1){
-								importLastPassItems()
-							}
-						}
-					}
-				});
-				
-		
-	})
-}
+
 function importLastPassItems(){
 	$.each(lastPassData,function(k,v){
 		var url = v[0];
@@ -153,14 +92,10 @@ function importLastPassItems(){
 		var password = v[2];
 		var desc = v[3];
 		var label = v[4];
-		if(v[5]==''){
-			v = 'No category';
-		}
-		var folder = findLastPassFolderByName(v[5])
 		postData = {
 
 			'label' : label,
-			'folderid' : folder.id,
+			'tags' :v[5],
 			'desc' : encryptThis(desc),
 			'account' : encryptThis(username),
 			'pw1' : encryptThis(password),
@@ -185,8 +120,7 @@ function importLastPassItems(){
 	})
 }
 function lpImportDone(){
-	$('#jsTree').jstree('destroy')
-	loadFolders();
+	loadItems();
 	$('#lastPassPopup').dialog('destroy').remove();
 	$('<div>The import was a success!</div>').dialog({
 		title: "LastPass import",

@@ -1,7 +1,12 @@
 <?php
 \OCP\Util::addStyle('passman', 'jstree-theme/style');
 \OCP\Util::addscript('passman', 'jstree.min');
+
 \OCP\Util::addscript('passman', 'ckeditor/ckeditor');
+
+\OCP\Util::addscript('passman', 'tag-it.min');
+\OCP\Util::addStyle('passman', 'jquery.tagit');
+\OCP\Util::addStyle('passman', 'tagit.ui-zendesk');
 
 \OCP\Util::addStyle('passman', 'simplePassMeter/simplePassMeter');
 \OCP\Util::addscript('passman', 'jquery.simplePassMeter.min');
@@ -22,9 +27,15 @@
 ?>
 <div id="app">
 	<div id="app-navigation">
-	 <div id="jsTree">
-		
-	  </div>
+	 <div id="searchTagContainer">
+	 	<input type="text" id="searchTags" />
+	 <span>Related Tags</span>
+	 </div>
+	 <ul id="tagList">
+	 	
+	 </ul>
+	  <div data-id="trashbin" class="nav-trashbin"><i class="icon-delete icon"></i><a href="#">Deleted passwords</a></div>
+	 
 	  <div id="app-settings">
 			<div id="app-settings-header">
 				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
@@ -45,6 +56,7 @@
 					<button class="button " id="addItem" disabled="disabled">Create item</button>
 					<button class="button" id="editItem" disabled="disabled">Edit item</button>
 					<button class="button" id="deleteItem" disabled="disabled">Delete item</button>
+					<button class="button" id="restoreItem" disabled="disabled">Restore item</button>
 		</div>
 		<div id="pwList">
 			
@@ -128,30 +140,32 @@
         </ul>
         <div id="tabs-01">
             <label>Label : </label> 
-            <input type="text" name="label" id="label"><br />
+            <input type="text" name="label" id="label" autocomplete="off"><br />
             <label>Description : </label>
             <span id="desc_span">
-                <textarea rows="5" name="desc" id="desc"></textarea>
+                <textarea rows="4" name="desc" id="desc"></textarea>
             </span>
             <br>
             <label for="item_login" class="label_cpm">Login (if needed) : </label>
-            <input type="text" name="account" id="account">
+            <input type="text" name="account" id="account" autocomplete="off">
             <label for="" class="label_cpm">Email : </label>
-            <input type="text" name="email" id="email">
+            <input type="text" name="email" id="email" autocomplete="off">
             <label for="" class="label_cpm">URL : </label>
-            <input type="text" name="url" id="url">
+            <input type="text" name="url" id="url" autocomplete="off">
+            <label for="item_login" class="label_cpm">Tags : </label>
+            <input type="text" name="tags" id="tags" autocomplete="off">
         </div>
         <div id="tabs-02">
-            <div>
+          	<div>
                 <label>Required complexity</label>
-                <span id="complex_attendue"><b>Not defined</b></span>
+                <span id="complex_attendue">Not defined</span>
             </div>
             <label class="label_cpm">Password :</label>
-            <input type="password" id="pw1" name="pw1">
+            <input type="password" id="pw1" name="pw1" autocomplete="off">
             <label for="" class="label_cpm">Confirm :</label>
-            <input type="password" name="pw2" id="pw2" >
-            <label for="" class="label_cpm">Override required complexity : </label>
-            <input type="checkbox" id="override">
+            <input type="password" name="pw2" id="pw2" autocomplete="off">
+            <!--label for="" class="label_cpm">Override required complexity : </label>
+            <input type="checkbox" id="override"-->
 			<div id="pwTools">
                 <span id="custom_pw">
                     <input type="checkbox" id="pw_numerics" checked="checked"><label for="pw_numerics">123</label>
@@ -200,18 +214,18 @@
     </div>
 </div>
   
- <div id="folderSettingsDialog" style="display: none;">
- 	<form id="folderSettings">
- 	<input type="hidden" name="folderId"  id="folderId"/>
+ <div id="tagSettingsDialog" style="display: none;">
+ 	<form id="tagSettings">
+ 	<input type="hidden" name="tag_id"  id="tag_id"/>
+ 	<label for="edit_folder_complexity" class="label_cpm">Label: </label><br />
+ 	<input type="text" name="tag_label" id="tag_label" /><br />
  	<label for="edit_folder_complexity" class="label_cpm">Required complexity: </label><br />
     <select id="min_pw_strength" name="min_pw_strength">
                 <option value="">---</option><option value="0">Very weak</option><option value="25">Weak</option><option value="50">Medium</option><option value="60">Strong</option><option value="70">Very strong</option><option value="80">Heavy</option><option value="90">Very heavy</option>
     </select><br />
-    <label for="renewal_period" class="label_cpm">Renewal period (days): </label>
+    <label for="renewal_period" class="label_cpm">Renewal period (days): </label><br />
     <input type="text" name="renewal_period" id="renewal_period" >
     </form>
-    <div class="button cancel">Cancel</div>
-    <div class="button save">Save</div>
  </div> 
 
 <div id="encryptionKeyDialog" style="display: none;">

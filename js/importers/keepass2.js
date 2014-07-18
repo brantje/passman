@@ -1,11 +1,13 @@
 $(document).ready(function() {
-/*	if ($(document).data('importers')) {
+	if ($(document).data('importers')) {
 		var importers = $(document).data('importers');
-		importers.push(['Keepass 2', 'importKeepass2Dialog'])
+		importers.push(['Keepass 2.x', 'importKeepass2Dialog'])
+		importers.push(['Keepass 1.x', 'importKeepass2Dialog'])
 	} else {
-		var importer = [['Keepass 2', 'importKeepass2Dialog']];
+		var importer = [['Keepass 2.x', 'importKeepass2Dialog']];
+		var importer = [['Keepass 1.x', 'importKeepass2Dialog']];
 		$(document).data('importers', importer);
-	}*/
+	}
 })
 var keypassData = '"Group Tree","Account","Login Name","Password","Web Site","Comments"\n"General\\Network","Server 1","Root","password1","",""\n"General\\Network","server 2","root","password2","",""\n"General","Test 1 key","","owrfm6fqjs2cpWbMgvkY","",""'
 
@@ -49,7 +51,7 @@ function importKeepass2Dialog() {
 	// Check for the various File API support.
 	if (window.File && window.FileReader && window.FileList && window.Blob) {
 
-		$('<div><p><a href="https://github.com/brantje/passman/wiki/Import-keepass" target="_blank" class="link">Read here how to export your keepass db</a><input type="file" id="importFile"/>').dialog({
+		$('<div id="keepassDialog"><p><a href="https://github.com/brantje/passman/wiki/Import-keepass" target="_blank" class="link">Read here how to export your keepass db</a><input type="file" id="importFile"/>').dialog({
 			buttons : {
 				"Import" : function() {
 					importKeePass2();
@@ -72,25 +74,43 @@ function importKeePass2() {
 	var rows = processData(keypassData);
 	
 	$.each(rows, function(k, v) {
-		console.log(v)
 		folder = v['group-tree']
-		var folderArray = folder.split("\\");
-		var folderLevel = 0;
-		for ( i = 0; i < folderArray.length; i++) {
-			//parentName = (i > 0) findKeeypassImportFolderByName(folderArray[i-1]);
-			if(parentName==''){
-				
-			}
-			
+		var tags = folder.replace('\\',',');
+		var postData = {
+
+			'label' : v.account,
+			'tags' : tags,
+			'desc' : encryptThis(v['comments']),
+			'account' : encryptThis(v['login-name']),
+			'pw1' : encryptThis(v['password']),
+			'email' : encryptThis(''),
+			'url' : encryptThis(v['web-site'])
 		}
+		var createUrl = OC.generateUrl('apps/passman/api/v1/item');
+		$.ajax({
+			async : false,
+			type : "POST",
+			url : createUrl,
+			dataType : 'JSON',
+			data : postData,
+			success : function(data) {
+				console.log('Added item ' + postData.label)
+				if(k==rows.length-1){
+					KPImportDone();
+				}
+			}
+		});
 	})
 }
-
-function findKeeypassImportFolderByName(name) {
-	var foundFolder = '';
-	$.each($(document).data('importFolders'), function() {
-		if (this.title.indexOf(name) > -1)
-			foundFolder = this;
-	})
-	return foundFolder;
+function KPImportDone(){
+	loadItems();
+	$('#keepassDialog').dialog('destroy').remove();
+	$('<div>The import was a success!</div>').dialog({
+		title: "Keepass import",
+		buttons : {
+				"close": function(){
+					$(this).dialog('destroy').remove();
+				}
+		}
+	});
 }

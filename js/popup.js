@@ -18,9 +18,6 @@ $.fn.serializeObject = function() {
 };
 
 $(document).ready(function() {
-	$(document).data('passwordScore',0)
-	var menu = makeOptionMenu(folder);
-	$('#folder').html(menu);
 
 	$('#custom_pw').buttonset();
 	$('#pwTools').tooltip();
@@ -103,22 +100,7 @@ $(document).ready(function() {
 
 	setTimeout(function() {
 		$('#slideshow').remove();
-	}, 600)
-
-	 getRating = function(str){
-		var scoreInfo;
-		 $.each(passwordRatings,function(k,v){
-		 	if(str >= this.minScore)
-		 		scoreInfo = this;
-		 });
-		return scoreInfo;
-	}
-	$('#folder').change(function(){
-		var folderSettings = getFolderById($(this).val());
-		var requiredStrength = getRating(folderSettings.min_pw_strength);
-		$('#complex_attendue').html(requiredStrength.text)
-	})
-	
+	}, 600);
 
 	$(document).on('click', '#save', function(e) {
 		var ERROR = '';
@@ -128,19 +110,18 @@ $(document).ready(function() {
 		var folderSettings = getFolderById(formData.folderid);
 		console.log(formData, folderSettings);
 
-		var passwordStrength = $(document).data('passwordScore');
-		var requiredStrength = getRating(folderSettings.min_pw_strength);
-		if (passwordStrength < requiredStrength.minScore && $('#override:checked').length == 0) {
-			ERROR = 'Password complexity is not fulfilled!';
-		}
+		/*var passwordStrength = $(document).data('passwordScore');
+		 var requiredStrength = getRating(folderSettings.min_pw_strength);
+		 if (passwordStrength < requiredStrength.minScore && $('#override:checked').length == 0) {
+		 ERROR = 'Password complexity is not fulfilled!';
+		 }*/
 		if (formData.pw1 != formData.pw2) {
 			ERROR = 'Passwords do not match!';
 		}
 		if (formData.label == '') {
 			ERROR = 'A label is mandatory!';
 		}
-		console.log(ERROR);
-		
+
 		var ignoredEncryptionFields = ['folderid', 'item_id', 'label'];
 		$.each(formData, function(k, v) {
 			if ($.inArray(k, ignoredEncryptionFields) == -1) {
@@ -154,111 +135,106 @@ $(document).ready(function() {
 				console.log(data)
 				window.close()
 			})
-	   } else {
-	   	alert(ERROR);
-	   }  
-	   
+		} else {
+			alert(ERROR);
+		}
+
 	})
 
-	
-	
-	
-	
-	
+	$('#tags').tagit({
+		allowSpaces : true,
+		autocomplete : {
+			source : function(request, response) {
+				$.ajax({
+					url : OC.generateUrl('apps/passman/api/v1/tags/search'),
+					dataType : "json",
+					data : {
+						k : request.term
+					},
+					success : function(data) {
+						response($.map(data, function(item) {
+							return {
+								label : item,
+								value : item
+							};
+						}));
+					}
+				});
+			}
+		}
+	});
+
 	var ls = $.jStorage.get("ENC_KEY");
-	if(!ls || !$.jStorage.storageAvailable()){
-	    encryptionKeyDialog();
-	}
-	else
-	{
+	if (!ls || !$.jStorage.storageAvailable()) {
+		encryptionKeyDialog();
+	} else {
 		setEncKey($.jStorage.get("ENC_KEY"));
 	}
 
 })
-
-function encryptionKeyDialog(){
+function encryptionKeyDialog() {
 	$('#encryptionKeyDialog').dialog({
-						draggable: false, resizable: false,closeOnEscape: false,
-						modal: true,
-						open: function(event, ui) { 
-							//$(".ui-dialog-titlebar-close").hide(); 
-						},
-						buttons: { "Ok": function() {
-								if($('#ecKey').val()==''){
-									return false;
-								}
-								$(this).dialog("close");
-								setEncKey($('#ecKey').val());
-								if($('#ecRemember:checked').length > 0){
-									$.jStorage.set("ENC_KEY", $('#ecKey').val());
-									if($('#rememberTime').val() != 'forever'){
-										var time = $('#rememberTime').val()*60*1000;
-										$.jStorage.setTTL("ENC_KEY", time);
-									}
-								}
-							    $('#ecKey').val('');
-							    $('#ecRemember').removeAttr('checked');
-							    $('#rememberTime').val('15');
-							} 
-						}
-				});
-					
-	 $('#ecKey').keypress(function(event) { 
-	 	if(event.keyCode==13){
-	 		$('.ui-dialog-buttonpane button').click();
-	 	}
-	 	
-	 });
-	 
-	 $('#rememberTime').change(function(){
-	 	$('#ecRemember').attr('checked','checked');
-	 });
-}
-
-function makeOptionMenu(arr) {
-	var option = '';
-	$.each(arr, function(k, v) {
-		var spaces = '-'.repeat(v.level);
-		if (v.children) {
-			option += '<option value="' + v.id + '">' + spaces + v.title + '</option>';
-			option += makeOptionMenu(v.children);
-
-		} else {
-			option += '<option value="' + v.id + '">' + spaces + v.title + '</option>';
+		draggable : false,
+		resizable : false,
+		closeOnEscape : false,
+		modal : true,
+		open : function(event, ui) {
+			//$(".ui-dialog-titlebar-close").hide();
+		},
+		buttons : {
+			"Ok" : function() {
+				if ($('#ecKey').val() == '') {
+					return false;
+				}
+				$(this).dialog("close");
+				setEncKey($('#ecKey').val());
+				if ($('#ecRemember:checked').length > 0) {
+					$.jStorage.set("ENC_KEY", $('#ecKey').val());
+					if ($('#rememberTime').val() != 'forever') {
+						var time = $('#rememberTime').val() * 60 * 1000;
+						$.jStorage.setTTL("ENC_KEY", time);
+					}
+				}
+				$('#ecKey').val('');
+				$('#ecRemember').removeAttr('checked');
+				$('#rememberTime').val('15');
+			}
 		}
-})
-	return option;
-}
-
-function getFolderById(id){
-	var folder = {};
-	
-	$.each(foldersPlain,function(){
-		if(id==this.id)
-			folder = this;
 	});
-	return folder;
-}
-function setEncKey(key){
-	$(document).data('ENC_KEY',key);
+
+	$('#ecKey').keypress(function(event) {
+		if (event.keyCode == 13) {
+			$('.ui-dialog-buttonpane button').click();
+		}
+
+	});
+
+	$('#rememberTime').change(function() {
+		$('#ecRemember').attr('checked', 'checked');
+	});
 }
 
-function getEncKey(){
+function setEncKey(key) {
+	$(document).data('ENC_KEY', key);
+}
+
+function getEncKey() {
 	return $(document).data('ENC_KEY');
 }
 
 /**
  * Generate salt
  */
-function generateSalt(len){
+function generateSalt(len) {
 	var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~`!@#$%^&*()_+-={}[]:\";'<>?,./|\\";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~`!@#$%^&*()_+-={}[]:\";'<>?,./|\\";
 
-    for( var i=0; i < len; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
+	for (var i = 0; i < len; i++)
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
 
-    return text;
+	return text;
 }
+
 /**
  * Encrypt a string with the algorithm
  */
@@ -273,7 +249,7 @@ function encryptThis(str) {
 	/**
 	 * Generate random string
 	 */
-	var salt =generateSalt(randVal);
+	var salt = generateSalt(randVal);
 	encryptionKey = salt + encryptionKey;
 
 	/**

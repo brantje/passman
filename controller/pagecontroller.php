@@ -19,12 +19,10 @@ class PageController extends Controller {
 
     private $userId;
 	private $itemBusinessLayer;
-	private $folderBusinessLayer;
 
-    public function __construct($appName, IRequest $request, $userId,$FolderBusinessLayer,$ItemBusinessLayer){
+    public function __construct($appName, IRequest $request, $userId,$ItemBusinessLayer){
         parent::__construct($appName, $request);
         $this->userId = $userId;
-		$this->folderBusinessLayer = $FolderBusinessLayer;
 		$this->itemBusinessLayer = $ItemBusinessLayer;
     }
 
@@ -60,27 +58,11 @@ class PageController extends Controller {
      * @NoCSRFRequired
      */
 	public function popup(){
-		$folders = $this->folderBusinessLayer->getAll($this->userId);
-		$foldersHierarchical = $this->buildHierarchicalOptionMenu($folders);
+		$folders = array();
+		$foldersHierarchical = array();
 		$url = ($this->params('url')) ? $this->params('url') : '';
 		$label = ($this->params('title')) ? $this->params('title') : '';
 		$params = array('folders'=>json_encode($foldersHierarchical),'foldersPlain'=>json_encode($folders),'url'=>$url,'label'=>$label,'f');
 		return new TemplateResponse('passman', 'popup', $params); 
-	}
-	
-	private function buildHierarchicalOptionMenu($elements, $parentId = 0,$level=-1){
-		$branch = array();
-		$level++;
-   		foreach ($elements as $element) {
-			$element['level'] = $level;
-        	if ($element['parent_id'] == $parentId) {
-	            $children = $this->buildHierarchicalOptionMenu($elements, $element['id'],$level);
-	            if ($children) {
-	                $element['children'] = $children;
-	            }
-	            $branch[] = $element;
-        	}
-    	}
-	 return $branch;		
 	}
 }

@@ -17,9 +17,9 @@ use \OCP\AppFramework\App;
 
 use \OCA\Passman\Controller\PageController;
 
-use \OCA\Passman\Controller\FolderApiController;
-use \OCA\Passman\BusinessLayer\FolderBusinessLayer;
-use \OCA\Passman\Db\FolderManager;
+use \OCA\Passman\Controller\TagController;
+use \OCA\Passman\BusinessLayer\TagBusinessLayer;
+use \OCA\Passman\Db\TagManager;
 
 use \OCA\Passman\Controller\ItemApiController;
 use \OCA\Passman\BusinessLayer\ItemBusinessLayer;
@@ -41,27 +41,26 @@ class Application extends App {
 				$c->query('AppName'), 
 				$c->query('Request'),
 				$c->query('UserId'),
-				$c->query('FolderBusinessLayer'),
 				$c->query('ItemBusinessLayer')
 			);
 		});
 
-		$container->registerService('FolderApiController', function($c) {
-			return new FolderApiController(
-				$c->query('AppName'), 
-				$c->query('Request'),
-				$c->query('FolderBusinessLayer'),
-				$c->query('UserId'),
-				$c->query('ItemBusinessLayer')
-			);
-		});
 		$container->registerService('ItemApiController', function($c) {
 			return new ItemApiController(
 				$c->query('AppName'), 
 				$c->query('Request'),
 				$c->query('ItemBusinessLayer'),
 				$c->query('UserId'),
-				$c->query('FolderBusinessLayer')
+				$c->query('TagBusinessLayer')
+			);
+		});
+		
+		$container->registerService('TagController', function($c) {
+			return new TagController(
+				$c->query('AppName'), 
+				$c->query('Request'),
+				$c->query('TagBusinessLayer'),
+				$c->query('UserId')
 			);
 		});
 		
@@ -69,11 +68,6 @@ class Application extends App {
 		/**
 		* Business Layer
 		*/
-		$container->registerService('FolderBusinessLayer', function($c) {
-			return new FolderBusinessLayer(
-				$c->query('FolderManager')
-			);
-		});
 		
 		$container->registerService('ItemBusinessLayer', function($c) {
 			return new ItemBusinessLayer(
@@ -81,16 +75,22 @@ class Application extends App {
 			);
 		});
 		
+		$container->registerService('TagBusinessLayer', function($c) {
+			return new TagBusinessLayer(
+				$c->query('TagManager')
+			);
+		});
+		
 		/**
 		 * Mappers
 		 */
-		$container->registerService('FolderManager', function($c) {
-			return new FolderManager(
+		$container->registerService('ItemManager', function($c) {
+			return new ItemManager(
 				$c->query('ServerContainer')->getDb()
 			);
 		});
-		$container->registerService('ItemManager', function($c) {
-			return new ItemManager(
+		$container->registerService('TagManager', function($c) {
+			return new TagManager(
 				$c->query('ServerContainer')->getDb()
 			);
 		});

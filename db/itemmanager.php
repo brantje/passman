@@ -24,11 +24,10 @@ class ItemManager {
 	/**
 	 * List items in a folder
 	 */
-	public function listItems($folderId, $userId) {
-		$sql = 'SELECT id,label,folderid FROM `*PREFIX*passman_items` WHERE `folderid`= ? AND `user_id` = ?';
+	public function listItems($userId) {
+		$sql = 'SELECT id,label FROM `*PREFIX*passman_items` WHERE `user_id` = ?';
 		$query = $this -> db -> prepareQuery($sql);
-		$query -> bindParam(1, $folderId, \PDO::PARAM_INT);
-		$query -> bindParam(2, $userId, \PDO::PARAM_INT);
+		$query -> bindParam(1, $userId, \PDO::PARAM_INT); 
 		$result = $query -> execute();
 		$rows = array();
 		while ($row = $result -> fetchRow()) {
@@ -38,25 +37,12 @@ class ItemManager {
 	}
 
 	/**
-	 * Move an item to another folder
-	 */
-	public function moveItem($itemId,$folderId,$userId){
-		$sql = 'UPDATE `*PREFIX*passman_items` SET folderid=? where id=? and user_id=?';
-		$query = $this -> db -> prepareQuery($sql);
-		$query -> bindParam(1, $folderId, \PDO::PARAM_INT);
-		$query -> bindParam(2, $itemId, \PDO::PARAM_INT);
-		$query -> bindParam(3, $userId, \PDO::PARAM_STR);
-		$result = $query -> execute();
-		return array('success'=>'true');
-	}
-	/**
 	 * List items in a folder
 	 */
 	public function search($itemName, $userId) {
-		$sql = 'SELECT i.id,i.label,i.folderid,i.description,i.account,i.email,f.title as foldername FROM `oc_passman_items` as i inner join `oc_passman_folders` as f on i.folderid=f.id WHERE `label` LIKE ? AND `i`.`user_id` = ?';
-		$sql .= ' UNION '; 
-		$sql .= 'SELECT id as folderid, title as label, null as description, null as account, null as email,null as id, null as foldername FROM `*PREFIX*passman_folders` WHERE `title` LIKE ? AND `user_id` = ? ORDER BY folderid asc;';
-		$result = $this -> db -> prepareQuery($sql) -> execute(array('%'.$itemName . '%', $userId,'%'.$itemName . '%', $userId));
+		$sql = 'SELECT  * FROM `*PREFIX*passman_items`'; 
+		$sql .= 'WHERE label COLLATE UTF8_GENERAL_CI LIKE  ? and user_id=? AND delete_date=0';
+		$result = $this -> db -> prepareQuery($sql) -> execute(array('%'.$itemName . '%', $userId));
 		$rows = array(); 
 		while ($row = $result -> fetchRow()) {
 			$rows[] = $row;
@@ -68,7 +54,10 @@ class ItemManager {
 	 * Get A single item
 	 */
 	public function get($itemId, $userId) {
-		$sql = 'SELECT * FROM `*PREFIX*passman_items` WHERE `id`= ? AND `user_id` = ?';
+		$sql = 'SELECT  item.*, GROUP_CONCAT(distinct tags.tag_label) AS tags FROM `*PREFIX*passman_items` AS item '; 
+		$sql .= 'LEFT JOIN `*PREFIX*passman_items_tags_xref` AS xref ON xref.item_id = item.id ';
+		$sql .= 'LEFT JOIN `*PREFIX*passman_tags` AS tags ON tags.tag_id = xref.tag_id ';
+		$sql .= 'WHERE item.id = ? and item.user_id=?';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $itemId, \PDO::PARAM_INT);
 		$query -> bindParam(2, $userId, \PDO::PARAM_STR);
@@ -77,21 +66,50 @@ class ItemManager {
 	}
 
 	/**
+	 * Get items by tag
+	 */
+	public function getByTag($tags, $userId,$deleted) {
+		$userId = array($userId);	
+		$isparam = ($deleted==false) ? '=' : '!=';
+		$sql = 'SELECT  item.id, item.label,item.user_id, item.delete_date,GROUP_CONCAT(distinct tags.tag_label) AS tags FROM `*PREFIX*passman_items` AS item '; 
+		$sql .= 'LEFT JOIN `*PREFIX*passman_items_tags_xref` AS xref ON xref.item_id = item.id ';
+		$sql .= 'LEFT JOIN `*PREFIX*passman_tags` AS tags ON tags.tag_id = xref.tag_id ';
+		$sql .= 'WHERE item.user_id=? AND delete_date '. $isparam .'0';
+		$sql .= ' GROUP BY item.id ';
+		if(count($tags) > 0 && $tags[0] !=''){
+			$sql .= 'HAVING ';
+			foreach($tags as $i=>$tag){
+				$and = ($i==0) ? '' : 'AND ';
+				$sql .= $and .' tags like ?';
+				$tags[$i] = '%'. $tag .'%';
+			}
+		}
+		else
+		{
+			$tags = array();
+		}
+		$sql .= ' ORDER BY item.label ASC, tags.tag_label ASC';
+		$query = $this -> db -> prepareQuery($sql);
+		$params = array_merge($userId, $tags);
+		$results = $query-> execute($params)->fetchAll();
+		return $results;
+	}
+
+	/**
 	 * Insert item
 	 */
 	public function insert($item) {
-		$sql = 'INSERT INTO `*PREFIX*passman_items` (`user_id`,`folderid`,`label`,`description`,`password`,`account`,`email`,`url`,`expire_time`)';
-		$sql .= ' VALUES (?,?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO `*PREFIX*passman_items` (`user_id`,`label`,`description`,`password`,`account`,`email`,`url`,`expire_time`)';
+		$sql .= ' VALUES (?,?,?,?,?,?,?,?)';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $item['user_id'], \PDO::PARAM_INT);
-		$query -> bindParam(2, $item['folder_id'], \PDO::PARAM_INT);
-		$query -> bindParam(3, $item['label'], \PDO::PARAM_STR);
-		$query -> bindParam(4, $item['description'], \PDO::PARAM_STR);
-		$query -> bindParam(5, $item['password'], \PDO::PARAM_STR);
-		$query -> bindParam(6, $item['account'], \PDO::PARAM_STR);
-		$query -> bindParam(7, $item['email'], \PDO::PARAM_STR);
-		$query -> bindParam(8, $item['url'], \PDO::PARAM_STR);
-		$query -> bindParam(9, $item['expire_time'], \PDO::PARAM_INT);
+		$query -> bindParam(2, $item['label'], \PDO::PARAM_STR);
+		$query -> bindParam(3, $item['description'], \PDO::PARAM_STR);
+		$query -> bindParam(4, $item['password'], \PDO::PARAM_STR);
+		$query -> bindParam(5, $item['account'], \PDO::PARAM_STR);
+		$query -> bindParam(6, $item['email'], \PDO::PARAM_STR);
+		$query -> bindParam(7, $item['url'], \PDO::PARAM_STR);
+		$query -> bindParam(8, $item['expire_time'], \PDO::PARAM_INT);
 		$result = $query -> execute();
 		return $this -> db -> getInsertId('`*PREFIX*passman_items`');
 
@@ -101,18 +119,17 @@ class ItemManager {
 	 * Update item
 	 */
 	public function update($item) {
-		$sql = 'UPDATE `*PREFIX*passman_items` SET `user_id`=?,folderid=?,`label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=? WHERE id=?';
+		$sql = 'UPDATE `*PREFIX*passman_items` SET `user_id`=?,`label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=? WHERE id=?';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $item['user_id'], \PDO::PARAM_INT);
-		$query -> bindParam(2, $item['folder_id'], \PDO::PARAM_INT);
-		$query -> bindParam(3, $item['label'], \PDO::PARAM_STR);
-		$query -> bindParam(4, $item['description'], \PDO::PARAM_STR);
-		$query -> bindParam(5, $item['password'], \PDO::PARAM_STR);
-		$query -> bindParam(6, $item['account'], \PDO::PARAM_STR);
-		$query -> bindParam(7, $item['email'], \PDO::PARAM_STR);
-		$query -> bindParam(8, $item['url'], \PDO::PARAM_STR);
-		$query -> bindParam(9, $item['expire_time'], \PDO::PARAM_STR);
-		$query -> bindParam(10, $item['id'], \PDO::PARAM_INT);
+		$query -> bindParam(2, $item['label'], \PDO::PARAM_STR);
+		$query -> bindParam(3, $item['description'], \PDO::PARAM_STR);
+		$query -> bindParam(4, $item['password'], \PDO::PARAM_STR);
+		$query -> bindParam(5, $item['account'], \PDO::PARAM_STR);
+		$query -> bindParam(6, $item['email'], \PDO::PARAM_STR);
+		$query -> bindParam(7, $item['url'], \PDO::PARAM_STR);
+		$query -> bindParam(8, $item['expire_time'], \PDO::PARAM_STR);
+		$query -> bindParam(9, $item['id'], \PDO::PARAM_INT);
 		$result = $query -> execute();
 		return $item;
 
@@ -122,25 +139,25 @@ class ItemManager {
 	 * Delete item
 	 */
 	public function delete($itemId, $userId) {
-		$sql = 'DELETE FROM `*PREFIX*passman_items` WHERE `id`=? AND user_id=?';
+		$sql = 'UPDATE `*PREFIX*passman_items` set `delete_date`= ? WHERE `id`=? AND user_id=?';
+		$query = $this -> db -> prepareQuery($sql);
+		$query -> bindParam(1, time(), \PDO::PARAM_INT);
+		$query -> bindParam(2, $itemId, \PDO::PARAM_INT);
+		$query -> bindParam(3, $userId, \PDO::PARAM_STR);
+		$result = $query -> execute();
+		return array('deleted' => $itemId);
+	}
+
+	/**
+	 * Restore item
+	 */
+	public function restore($itemId, $userId) {
+		$sql = 'UPDATE `*PREFIX*passman_items` set `delete_date`= 0 WHERE `id`=? AND user_id=?';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $itemId, \PDO::PARAM_INT);
 		$query -> bindParam(2, $userId, \PDO::PARAM_STR);
 		$result = $query -> execute();
-		return array('deleted' => $itemId);
-	}
-	/**
-	 * Delete items by folder id
-	 */
-	public function deleteByFolder($folderId, $userId) {
-		$sql = 'DELETE FROM `*PREFIX*passman_items` WHERE `folderid`=? AND user_id=?';
-		$query = $this -> db -> prepareQuery($sql);
-		$query -> bindParam(1, $folderId, \PDO::PARAM_INT);
-		$query -> bindParam(2, $userId, \PDO::PARAM_STR);
-		$result = $query -> execute();
-		print_r($folderId);
-		print_r($userId);
-		return array('deleted' => 'success');
+		return array($itemId);
 	}
 
 	/**
