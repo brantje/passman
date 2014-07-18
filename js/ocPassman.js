@@ -472,6 +472,7 @@ jQuery(document).ready(function($) {
 						formData.tag = $('#tagSettings').serializeObject();
 						$.post(OC.generateUrl('apps/passman/api/v1/tag/update'),formData,function(d){
 							 $('#tagSettingsDialog').dialog( "close" );
+							 $('li.tag').find(':contains('+tagValue+')').text(formData.tag.tag_label);
 						});
 					},
 					"Cancel": function(){
