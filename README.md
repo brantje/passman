@@ -2,7 +2,7 @@
 Place this app in **owncloud/apps/**
 
 #Repos
-master = development
+master = development   
 stable7 = Stable for ownCloud 7
 #What is this?
 Passman is a password manager for owncloud.
