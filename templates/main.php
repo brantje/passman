@@ -164,8 +164,8 @@
             <input type="password" id="pw1" name="pw1" autocomplete="off">
             <label for="" class="label_cpm">Confirm :</label>
             <input type="password" name="pw2" id="pw2" autocomplete="off">
-            <!--label for="" class="label_cpm">Override required complexity : </label>
-            <input type="checkbox" id="override"-->
+            <label for="" class="label_cpm">Override required complexity : </label>
+            <input type="checkbox" id="override">
 			<div id="pwTools">
                 <span id="custom_pw">
                     <input type="checkbox" id="pw_numerics" checked="checked"><label for="pw_numerics">123</label>

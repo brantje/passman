@@ -53,7 +53,12 @@ String.prototype.trim = function() {
 	return this.replace(/^\s+|\s+$/g, "");
 }; 
 
-
+Date.prototype.addDays = function(days)
+{
+    var dat = new Date(this.valueOf());
+    dat.setDate(dat.getDate() + days);
+    return dat;
+}
 jQuery(document).ready(function($) {
 	containerHeight = $('#app-content').height();
 	containerWidth = $('#app-content').width();
@@ -806,6 +811,7 @@ function loadItem(id) {
 			}); 
 		}
 		if(item.expire_time != 0){
+			console.log(item.expire_time);
 			$('#id_expires').html(formatDate(item.expire_time));
 		}
 		if(item.customFields.length > 0){
@@ -974,9 +980,10 @@ function saveItem() {
 		}
 	}
 	if(formData.changedPw==true && $(document).data('renewalPeriod') > 0 ){
-		var expireDate = new Date()
-		expireDate.setDate(expireDate.getDate()+$(document).data('renewalPeriod'));
-		formData.expire_time = expireDate.getTime();
+		var from = new Date()
+		var expireDate = new Date();
+		formData.expire_time = expireDate.addDays($(document).data('renewalPeriod')*1);
+		console.log(formData.expire_time)
 	}
 	else{
 		formData.expire_time = 0;
@@ -1205,8 +1212,8 @@ function showSettings(){
 			title: "Settings",
 			buttons:{
 				"Save": function(){
-					$(this).dialog('destroy').remove();
 					$.jStorage.set("date_format",$('#df').val());
+					$(this).dialog('destroy').remove();
 				},
 				"Cancel": function(){
 					$(this).dialog('destroy').remove();
