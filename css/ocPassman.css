@@ -216,7 +216,7 @@ div#ocpContent {
 #pwList li > span:first-child {
 	float: left;
 	padding-left: 20px;
-	background-image: url('../img/key.png');
+/*	background-image: url('../img/key.png');*/
 	background-repeat: no-repeat;
 	background-position: 3px 6px;
 	margin-left: 5px;
