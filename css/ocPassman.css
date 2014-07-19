@@ -33,7 +33,7 @@ tbody tr:hover, tr:active {
 }
 ul#tagList {
 	/*	padding-bottom: 70px;*/
-	margin-top: 85px;
+	
 }
 .tag i {
 	position: absolute;
@@ -43,7 +43,6 @@ ul#tagList {
 }
 #searchTagContainer {
 	padding-top: 15px;
-	position: fixed;
 	top: 45px;
 	z-index: 25;
 	padding-bottom: 15px;
@@ -196,6 +195,9 @@ div#ocpContent {
 	float: left;
 	color: #555;
 }
+#addItem{
+	width: 120px;
+}
 #addItem:disabled, #editItem:disabled, #deleteItem:disabled {
 	display: none;
 }
@@ -211,7 +213,7 @@ div#ocpContent {
 	cursor: pointer;
 	line-height: 30px;
 }
-#pwList li span {
+#pwList li > span:first-child {
 	float: left;
 	padding-left: 20px;
 	background-image: url('../img/key.png');
@@ -223,16 +225,15 @@ div#ocpContent {
 	float: left;
 	cursor: pointer;
 }
-li.ui-draggable-dragging {
-	padding-left: 20px;
-	list-style: none;
-	padding: 5px 10px 5px 10px;
-	margin-left: 10px;
-	background-color: #f0f0f0;
-	border: 1px solid black;
+#pwList li > i {
+margin-right: 10px;
 }
 #pwList li:hover {
 	background: #f0f0f0;
+}
+.rowTools div {
+	display: inline-block;
+	height: 30px;
 }
 div#infoContainer {
 	position: absolute;
@@ -496,7 +497,7 @@ legend {
 
 @media (max-width: 768px) {
 	div#topContent {
-		margin-left: 30px;
+		margin-left: 50px;
 		height: 44px;
 	}
 	#pwList .tag {

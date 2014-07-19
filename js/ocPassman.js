@@ -62,6 +62,7 @@ Date.prototype.addDays = function(days)
 jQuery(document).ready(function($) {
 	containerHeight = $('#app-content').height();
 	containerWidth = $('#app-content').width();
+	notificationTimer = 0;
 	$('#pwList').height(containerHeight - $('#infoContainer').height() - 85);
 	$('#pwList').width(containerWidth - 2);
 
@@ -72,23 +73,38 @@ jQuery(document).ready(function($) {
 		$('#pwList').width(containerWidth - 2);
 	});
 	
+
 	/**
 	 * Bind click to show the item information. Bind hover to show actions
 	 * Bind .action click to handle actions
 	 */
-	$(document).on('click','#pwList li',function(evt) {
-		$('#pwList li').removeClass('row-active');
-		$(this).addClass('row-active');
-		if($("#searchTags").tagit("assignedTags").join(',').indexOf('is:Deleted') < 0){
+	$(document).on('click', '#pwList li', function(evt) {
+		console.log(evt);
+		if (evt.target.nodeName == "LI") {
+			$('#pwList li').removeClass('row-active');
+			$(this).addClass('row-active');
 			loadItem($(this).attr('data-id'));
-			$('#editItem').attr('disabled',false);
-			$('#deleteItem').attr('disabled',false);
-			$("#restoreItem").attr('disabled','disabled');
+			if (isMobile()) {
+				if ($("#searchTags").tagit("assignedTags").join(',').indexOf('is:Deleted') < 0) {
+					$('#editItem').attr('disabled', false);
+					$('#deleteItem').attr('disabled', false);
+					$("#restoreItem").attr('disabled', 'disabled');
+				} else {
+					$("#restoreItem").attr('disabled', false);
+				}
+			}
 		}
-		else{
-			$("#restoreItem").attr('disabled',false);
+		if (evt.target.className == "delete-icon icon") {
+			deleteItem($(this).attr('data-id'));
 		}
-	});
+		if (evt.target.className == "edit-icon icon") {
+			editItem($(this).attr('data-id'));
+		}
+		if (evt.target.className == "icon-history icon") {
+			restoreItem($(this).attr('data-id'));
+		}
+	}); 
+
 	$('#pwList').click(function(){
 		$('#editItem').attr('disabled','disabled');
 		$('#deleteItem').attr('disabled','disabled');
@@ -104,6 +120,27 @@ jQuery(document).ready(function($) {
 		$('#id_expires').html('');
 	});
 	
+	if (!isMobile()) {
+		$(document).on({
+		    mouseenter: function () {
+		    	var tags = 	$("#searchTags").tagit("assignedTags").join(',');
+				if(tags.indexOf('is:Deleted') >= 0){
+		        	$(this).find('i').css('visibility','visible');
+		       	}
+		       	else
+		       	{
+		        	$(this).find('.tag:last').before('<span class="rowTools"> <div><i class="edit-icon icon" title="Edit"></i></div></span>');
+		        	$(this).find('i').css('visibility','visible');
+		        }
+		        
+		    },
+		    mouseleave: function () {
+		        //stuff to do on mouse leave 
+		        $('.rowTools').remove();
+		        $(this).find('i').css('visibility','hidden');
+		    }
+		},"#pwList li");
+	}
 	$(document).on('dblclick','#pwList li',function(evt) {
 		editItem($('.row-active').attr('data-id'));
 	});
@@ -397,19 +434,18 @@ jQuery(document).ready(function($) {
 	}
 	});
 	var saveCurrentTagData = function(evt,ui){
-		 /*$(document).data('minPWStrength',0);
-		 $(document).data('renewalPeriod',0);*/
+		 $(document).data('minPWStrength',0);
+		 $(document).data('renewalPeriod',0);
 		 var tagData = $(document).data('tagsData');
 		 $.each($("#tags").tagit("assignedTags"),function(k,v){
 		 	$.get(OC.generateUrl('apps/passman/api/v1/tag/load'),{'tag': v},function(data){
 		 		if(data.tag.min_pw_strength > $(document).data('minPWStrength')){
-		 			$(document).data('minPWStrength', data.tag.min_pw_strength)
-		 			var r = getRating(data.tag.min_pw_strength)
-		 			console.log(r);
+		 			$(document).data('minPWStrength', data.tag.min_pw_strength);
+		 			var r = getRating(data.tag.min_pw_strength);
 		 			$('#complex_attendue').text(r.text);
 		 		}
 		 		if(data.tag.renewal_period > $(document).data('renewalPeriod')){
-		 			$(document).data('renewalPeriod', data.tag.renewal_period)
+		 			$(document).data('renewalPeriod', data.tag.renewal_period);
 		 		}
 		 	});
 		 });
@@ -452,6 +488,8 @@ jQuery(document).ready(function($) {
 	    }
 	},"#tagList .tag");
 	
+	
+	
 	$(document).on('click','.tag',function(evt){
 		if(evt.target.className != 'icon icon-settings button'){
 			var tagvalue = $(this).find('.value').text();
@@ -485,6 +523,13 @@ jQuery(document).ready(function($) {
 		});
 		
 	});
+	
+	$(document).on('click','.undo',function(){
+		console.log()
+		//data-function="restoreItem" data-arg=
+		window[$(this).attr('data-function')]($(this).attr('data-arg'),true);
+	})
+	
 	/**
 	 * Request the user encryption key (if it is not found), and the first run wizard is not shown.
 	 */
@@ -511,6 +556,8 @@ jQuery(document).ready(function($) {
 		$("#searchTags").tagit("createTag", 'is:Deleted');
 	})
 });
+
+
 function importDialog(){
 	
 	var option ='';
@@ -707,6 +754,7 @@ function decryptThis(str){
  */
 function loadItems(){
 	var tags = 	$("#searchTags").tagit("assignedTags").join(',');
+	var showingDeleted = 0;
 	if(tags.indexOf('is:Deleted') >= 0){
 		var url = OC.generateUrl('apps/passman/api/v1/items/getdeleted');
 		tags = $("#searchTags").tagit("assignedTags").clean('is:Deleted').join(',');
@@ -714,6 +762,7 @@ function loadItems(){
 		$('#editItem').attr('disabled','disabled');
 		$('#deleteItem').attr('disabled','disabled');
 		$('#restoreItem').show();
+		showingDeleted =1;
 	}
 	else
 	{
@@ -734,7 +783,8 @@ function loadItems(){
 				 		itemtags.push(v);
 				 		inlineTags += '<div class="tag"><div class="value">'+ v +'</div></div>';
 				 	});
-					 var append = '<li data-id='+ this.id +'><span class="icon-lock icon"></span><div style="display: inline-block;">'+ this.label +'</div>'+ inlineTags +'</li>';
+				 	 var deleteIcon = (showingDeleted==0) ? '<i class="delete-icon icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>'
+					 var append = '<li data-id='+ this.id +'><span class="icon-lock icon"></span><div style="display: inline-block;">'+ this.label +'</div>'+ deleteIcon +''+ inlineTags  +'</li>';
 					 $('#pwList').append(append);
 				 }
 			});
@@ -869,8 +919,7 @@ function getRating(str){
 function openForm(mapper) {
 	var dTitle = (mapper.label) ? 'Edit '+mapper.label : 'Add new item';
 	$(document).data('tagsData',[]);
-	$(document).data('minPWStrength',0);
-	$(document).data('renewalPeriod',0);
+	
 //	$('#complex_attendue').html('<b>' + folderPwStrength.text + '</b>');
 	$('#editAddItemDialog').dialog({
 		title: dTitle,
@@ -1049,23 +1098,29 @@ function editItem(itemId) {
 
 
 
-function deleteItem(itemId){
+function deleteItem(itemId,undo){
+	undo = (typeof undo === 'undefined') ? false : true;
 	$.ajax({
     url: OC.generateUrl('apps/passman/api/v1/item/delete/'+itemId),
     data:{'id': itemId},
     type: 'GET',
     success: function(data) {
-        $('#pwList li[data-id='+ data.deleted+']').slideUp(function(){$(this).remove();});
+		var label = $('#pwList li[data-id='+ itemId +']').find('div:first').text()
+       	$('#pwList li[data-id='+ data.deleted+']').slideToggle();
+        showNotification(label+' removed. <a href="#" class="undo" data-function="restoreItem" data-arg="'+ itemId +'" style="text-decoration: underline">Undo</a>',20000);
     }
 });
 }
-function restoreItem(itemId){
+function restoreItem(itemId,undo){
+	undo = (typeof undo === 'undefined') ? false : true;
 	$.ajax({
     url: OC.generateUrl('apps/passman/api/v1/item/restore/'+itemId),
     data:{'id': itemId},
     type: 'GET',
     success: function(data) {
-        $('#pwList li[data-id='+ data.restored+']').slideUp(function(){$(this).remove();});
+        var label = $('#pwList li[data-id='+ itemId +']').find('div:first').text()
+        $('#pwList li[data-id='+ data.restored+']').slideToggle();
+       	showNotification(label +' recoverd. <a href="#" class="undo" data-function="deleteItem" data-arg="'+ itemId +'" style="text-decoration: underline">Undo</a>',20000);
     }
 });
 }
@@ -1264,11 +1319,16 @@ function CreateDialog(t,m,okText, cancelText, okCallback, cancelCallback) {
  * @param {Object} str
  */
 
-function showNotification(str) {
-	OC.Notification.show(str);
-	setTimeout(function(){
+function showNotification(str,timeout) {
+	OC.Notification.hide();
+	if(notificationTimer){
+		clearTimeout(notificationTimer);
+	}
+	timeout = (!timeout) ? 3000 : timeout;
+	OC.Notification.showHtml(str);
+	notificationTimer = setTimeout(function(){
 		OC.Notification.hide();
-	},3000);
+	},timeout);
 }
 
 function formatDate(datestr){

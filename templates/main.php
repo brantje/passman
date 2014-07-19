@@ -54,7 +54,7 @@
   	</div>
 	<div id="app-content">
 		<div id="topContent">
-					<button class="button " id="addItem" disabled="disabled">Create item</button>
+					<button class="button " id="addItem" disabled="disabled">Create password</button>
 					<button class="button" id="editItem" disabled="disabled">Edit item</button>
 					<button class="button" id="deleteItem" disabled="disabled">Delete item</button>
 					<button class="button" id="restoreItem" disabled="disabled">Restore item</button>
