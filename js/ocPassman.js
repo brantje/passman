@@ -58,7 +58,7 @@ Date.prototype.addDays = function(days)
     var dat = new Date(this.valueOf());
     dat.setDate(dat.getDate() + days);
     return dat;
-}
+};
 jQuery(document).ready(function($) {
 	containerHeight = $('#app-content').height();
 	containerWidth = $('#app-content').width();
@@ -79,8 +79,7 @@ jQuery(document).ready(function($) {
 	 * Bind .action click to handle actions
 	 */
 	$(document).on('click', '#pwList li', function(evt) {
-		console.log(evt);
-		if (evt.target.nodeName == "LI") {
+		if (evt.target.nodeName == "LI" || evt.target.className=="itemLabel") {
 			$('#pwList li').removeClass('row-active');
 			$(this).addClass('row-active');
 			loadItem($(this).attr('data-id'));
@@ -370,7 +369,7 @@ jQuery(document).ready(function($) {
 				$("#searchTags").tagit("removeAll");
 				setTimeout(function(){
 					//$('#pwList').animate({ scrollTop: $('li[data-id="' + ui.item.id+'"]').position().top-50 +'px' });
-					$('li[data-id="' + ui.item.id+'"]').scrollintoview({duration: "slow"})
+					$('li[data-id="' + ui.item.id+'"]').scrollintoview({duration: "slow"});
 					$('li[data-id="' + ui.item.id+'"]').click();
 					$("#searchbox").val('').blur();
 				},250);
@@ -508,7 +507,7 @@ jQuery(document).ready(function($) {
 				title: 'Settings for tag '+ tagValue,
 				buttons:{
 					"Save": function(){
-						var formData = {}
+						var formData = {};
 						formData.tag = $('#tagSettings').serializeObject();
 						$.post(OC.generateUrl('apps/passman/api/v1/tag/update'),formData,function(d){
 							 $('#tagSettingsDialog').dialog( "close" );
@@ -519,16 +518,14 @@ jQuery(document).ready(function($) {
 						 $( this ).dialog( "close" );
 					}
 				}
-			})
+			});
 		});
 		
 	});
 	
 	$(document).on('click','.undo',function(){
-		console.log()
-		//data-function="restoreItem" data-arg=
 		window[$(this).attr('data-function')]($(this).attr('data-arg'),true);
-	})
+	});
 	
 	/**
 	 * Request the user encryption key (if it is not found), and the first run wizard is not shown.
@@ -554,7 +551,7 @@ jQuery(document).ready(function($) {
 	$('.settings.link').click(showSettings);
 	$('.nav-trashbin').click(function(){
 		$("#searchTags").tagit("createTag", 'is:Deleted');
-	})
+	});
 });
 
 
@@ -783,8 +780,8 @@ function loadItems(){
 				 		itemtags.push(v);
 				 		inlineTags += '<div class="tag"><div class="value">'+ v +'</div></div>';
 				 	});
-				 	 var deleteIcon = (showingDeleted==0) ? '<i class="delete-icon icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>'
-					 var append = '<li data-id='+ this.id +'><span class="icon-lock icon"></span><div style="display: inline-block;">'+ this.label +'</div>'+ deleteIcon +''+ inlineTags  +'</li>';
+				 	 var deleteIcon = (showingDeleted==0) ? '<i class="delete-icon icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>';
+					 var append = '<li data-id='+ this.id +'><span class="icon-lock icon"></span><div style="display: inline-block;" class="itemLabel">'+ this.label +'</div>'+ deleteIcon +''+ inlineTags  +'</li>';
 					 $('#pwList').append(append);
 				 }
 			});
@@ -1037,10 +1034,9 @@ function saveItem() {
 		}
 	}
 	if(formData.changedPw==true && $(document).data('renewalPeriod') > 0 ){
-		var from = new Date()
+		var from = new Date();
 		var expireDate = new Date();
 		formData.expire_time = expireDate.addDays($(document).data('renewalPeriod')*1);
-		console.log(formData.expire_time)
 	}
 	else{
 		formData.expire_time = 0;
@@ -1105,7 +1101,7 @@ function deleteItem(itemId,undo){
     data:{'id': itemId},
     type: 'GET',
     success: function(data) {
-		var label = $('#pwList li[data-id='+ itemId +']').find('div:first').text()
+		var label = $('#pwList li[data-id='+ itemId +']').find('.itemLabel').text();
        	$('#pwList li[data-id='+ data.deleted+']').slideToggle();
         showNotification(label+' removed. <a href="#" class="undo" data-function="restoreItem" data-arg="'+ itemId +'" style="text-decoration: underline">Undo</a>',20000);
     }
@@ -1118,7 +1114,7 @@ function restoreItem(itemId,undo){
     data:{'id': itemId},
     type: 'GET',
     success: function(data) {
-        var label = $('#pwList li[data-id='+ itemId +']').find('div:first').text()
+        var label = $('#pwList li[data-id='+ itemId +']').find('.itemLabel').text();
         $('#pwList li[data-id='+ data.restored+']').slideToggle();
        	showNotification(label +' recoverd. <a href="#" class="undo" data-function="deleteItem" data-arg="'+ itemId +'" style="text-decoration: underline">Undo</a>',20000);
     }
