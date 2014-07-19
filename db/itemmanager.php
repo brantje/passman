@@ -89,6 +89,7 @@ class ItemManager {
 			$tags = array();
 		}
 		$sql .= ' ORDER BY item.label ASC, tags.tag_label ASC';
+		//echo $sql;
 		$query = $this -> db -> prepareQuery($sql);
 		$params = array_merge($userId, $tags);
 		$results = $query-> execute($params)->fetchAll();

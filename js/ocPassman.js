@@ -774,16 +774,17 @@ function loadItems(){
 		var itemtags = [];
 		if(data.items.length != 0){
 			$.each(data.items,function(){
-				 if(this.tags != null){
-				 	var inlineTags = '';
+			 	var inlineTags = '';
+				  if(this.tags != null){
 				 	$.each(this.tags,function(k,v){
 				 		itemtags.push(v);
 				 		inlineTags += '<div class="tag"><div class="value">'+ v +'</div></div>';
 				 	});
-				 	 var deleteIcon = (showingDeleted==0) ? '<i class="delete-icon icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>';
-					 var append = '<li data-id='+ this.id +'><span class="icon-lock icon"></span><div style="display: inline-block;" class="itemLabel">'+ this.label +'</div>'+ deleteIcon +''+ inlineTags  +'</li>';
-					 $('#pwList').append(append);
 				 }
+			 	 var deleteIcon = (showingDeleted==0) ? '<i class="delete-icon icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>';
+				 var append = '<li data-id='+ this.id +'><span class="icon-lock icon"></span><div style="display: inline-block;" class="itemLabel">'+ this.label +'</div>'+ deleteIcon +''+ inlineTags  +'</li>';
+				 $('#pwList').append(append);
+				 
 			});
 			var tagListItems = '';
 			itemtags = itemtags.unique().sort(function(a, b) {
