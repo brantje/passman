@@ -1,3 +1,7 @@
+/**
+ * @TODO [00:26] <AnybodyElse> nearly overall you're missing to sanitize the variables
+   [00:26] <AnybodyElse> e.g. escapeHTML(item.label)
+ */
 $.fn.serializeObject = function() {
 	var o = {};
 	var a = this.serializeArray();
@@ -777,7 +781,7 @@ function loadItems(){
 				  if(this.tags != null){
 				 	$.each(this.tags,function(k,v){
 				 		itemtags.push(v);
-				 		inlineTags += '<div class="tag"><div class="value">'+ v +'</div></div>';
+				 		inlineTags += '<div class="tag"><div class="value">'+ escapeHTML(v) +'</div></div>';
 				 	});
 				 }
 				 var url = decryptThis(this.url);
@@ -788,7 +792,7 @@ function loadItems(){
 					favIcon = '<img src="https://getfavicon.appspot.com/'+ encodedURI +'?defaulticon='+ defaultIcon +'" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;">';
 				 }
 			 	 var deleteIcon = (showingDeleted==0) ? '<i class="delete-icon icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>';
-				 var append = '<li data-id='+ this.id +'>'+ favIcon +'<div style="display: inline-block;" class="itemLabel">'+ this.label +'</div>'+ deleteIcon +''+ inlineTags  +'</li>';
+				 var append = '<li data-id='+ this.id +'>'+ favIcon +'<div style="display: inline-block;" class="itemLabel">'+ escapeHTML(this.label) +'</div>'+ deleteIcon +''+ inlineTags  +'</li>';
 				 $('#pwList').append(append);
 				 
 			});
@@ -836,12 +840,12 @@ function loadItem(id) {
 
 		item.description = decryptThis(item.description);
 		var mapper = {
-			id_label :  item.label,
+			id_label :  escapeHTML(item.label),
 			id_desc : item.description,
 			hid_pw : item.password,
-			id_login : decryptThis(item.account),
-			id_email : decryptThis(item.email),
-			id_url : decryptThis(item.url),
+			id_login : escapeHTML(decryptThis(item.account)),
+			id_email : escapeHTML(decryptThis(item.email)),
+			id_url : escapeHTML(decryptThis(item.url)),
 			files : item.files,
 			id_tags : ''
 		};
@@ -864,19 +868,19 @@ function loadItem(id) {
 							});
 						});
 					} else {
-						$('#' + v).append('<a href="' + mapper[v] + '" target="_blank" class="copy link">[Go to url]</span>');
+						$('#' + v).append('<a href="' + escapeHTML(mapper[v]) + '" target="_blank" class="copy link">[Go to url]</span>');
 					}
 				}
 			}); 
 		}
 		if(item.expire_time != 0){
 			console.log(item.expire_time);
-			$('#id_expires').html(formatDate(item.expire_time));
+			$('#id_expires').html(formatDate(escapeHTML(item.expire_time)));
 		}
 		if(item.customFields.length > 0){
 			$.each(item.customFields,function(k,field){
-				var row = '<tr><td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>'+ decryptThis(field.label) +' :</td>';
-                    row +='<td><div id="id_'+field.label+'" style="float:left;">'+ decryptThis(field.value) +'</div></td></tr>';
+				var row = '<tr><td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>'+ escapeHTML(decryptThis(field.label)) +' :</td>';
+                    row +='<td><div id="id_'+field.label+'" style="float:left;">'+ escapeHTML(decryptThis(field.value)) +'</div></td></tr>';
 				$('#customFieldsTable').append(row);
 			});
 		}
@@ -898,7 +902,7 @@ function loadItem(id) {
 		if(mapper.files){
 			$.each(mapper.files,function(){
 				var icon = (this.type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
-				$('#id_files').append('<span class="link loadFile" data-fileid="'+this.id+'"> <span class="'+ icon +'"></span>'+ decryptThis(this.filename) +' (' + humanFileSize(this.size) + ')' );
+				$('#id_files').append('<span class="link loadFile" data-fileid="'+this.id+'"> <span class="'+ icon +'"></span>'+ escapeHTML(decryptThis(this.filename)) +' (' + escapeHTML(humanFileSize(this.size)) + ')' );
 			});
 		}
 		else
@@ -958,7 +962,7 @@ function openForm(mapper) {
 		}
 		$.each(mapper, function(k, v) {
 			if(v!=null)
-				$('#' + k).val(v.toString().replace(/<br \/>/g,"\n"));
+				$('#' + k).val(escapeHTML(v.toString().replace(/<br \/>/g,"\n")));
 		});
 		if (mapper.pw1) {
 			$('#pw1').change().trigger('keyup.simplePassMeter');
@@ -968,7 +972,7 @@ function openForm(mapper) {
 			$.each(mapper.files,function(){
 				var data = this;
 				var filename =  (data.filename.length >= 20) ? data.filename.substring(0, 20)+'...' : data.filename;
-				$('#fileList').append('<li data-filename="' + decryptThis(data.filename) + '" data-fileid="'+ data.id +'" class="fileListItem">' + decryptThis(data.filename) + ' (' + humanFileSize(data.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
+				$('#fileList').append('<li data-filename="' + decryptThis(data.filename) + '" data-fileid="'+ data.id +'" class="fileListItem">' + escapeHTML(decryptThis(data.filename)) + ' (' + humanFileSize(data.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
 			});
 		}
 		CKEDITOR.replace( 'desc' );
@@ -977,8 +981,8 @@ function openForm(mapper) {
 		
 		if(mapper.customFields){
 			$.each(mapper.customFields,function(k,field){
-				var row = '<tr data-cFieldId='+ field.id +'><td>'+ decryptThis(field.label) +'</td>';
-                    row +='<td>'+decryptThis(field.value)+'</td></tr>';
+				var row = '<tr data-cFieldId='+ field.id +'><td>'+escapeHTML(decryptThis(field.label)) +'</td>';
+                    row +='<td>'+ escapeHTML(decryptThis(field.value))+'</td></tr>';
 					$('#existingFields').append(row);
 			});
 		}
@@ -1051,7 +1055,7 @@ function saveItem() {
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {
-				$('#pwList li[data-id=' + data.success.id + ']').html('<span class="icon-lock icon"></span><div style="display: inline-block;">'+ data.success.label +'</div>');
+				$('#pwList li[data-id=' + data.success.id + ']').html('<span class="icon-lock icon"></span><div style="display: inline-block;">'+escapeHTML(data.success.label) +'</div>');
 				loadItems();
 				loadItem(data.success.id);
 				$('#showPW').remove();
@@ -1059,7 +1063,7 @@ function saveItem() {
 				$("#tags").tagit("removeAll");
 				$(document).data('p','');
 			} else {
-				var append = '<li data-id=' + data.itemid + '><span class="icon-lock icon"></span><div style="display: inline-block;">' + formData.label + '</div></li>';
+				var append = '<li data-id=' + data.itemid + '><span class="icon-lock icon"></span><div style="display: inline-block;">' + escapeHTML(formData.label) + '</div></li>';
 				if($('#pwList').text()!='Folder is empty'){
 					$('#pwList').append(append);
 				}else{
@@ -1153,7 +1157,7 @@ function addFilesToItem(files) {
 					};
 					//if ($.inArray(mimeType, allowedMimeTypes) !== -1) {
 						$.post(OC.generateUrl('apps/passman/api/v1/item/' + itemId + '/addfile'), postData, function(data) {
-							$('#fileList').append('<li data-filename="' + data.filename + '" data-fileid="'+ data.id +'">' + file.name + ' (' + humanFileSize(file.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
+							$('#fileList').append('<li data-filename="' + escapeHTML(data.filename) + '" data-fileid="'+ data.id +'">' + escapeHTML(file.name) + ' (' + humanFileSize(file.size) + ') <span class="icon icon-delete" style="float:right;"></span></li>');
 							$('#uploading').remove();
 							$('#fileInput').val('');
 						});
@@ -1184,7 +1188,7 @@ function loadFile(fileId) {
 		if (data.type.indexOf('image') >= 0 && data.size < 4194304) {
 			var imageData = decryptThis(data.content);
 			$('#fileImg').attr('src', imageData);
-			$('#downloadImage').html('<a href="'+ imageData +'" download="'+ data.filename +'">Save this image</a>');
+			$('#downloadImage').html('<a href="'+ imageData +'" download="'+ escapeHTML(data.filename) +'">Save this image</a>');
 			$('#fileImg').load(function() {
 				$('#dialog_files').dialog({
 					width : 'auto',
@@ -1211,7 +1215,7 @@ function loadFile(fileId) {
 			var fileData = decryptThis(data.content);
 			//console.log(fileData);
 			$('<div>Due popup blockers you have to click the below button to download your file.</div>').dialog({
-				title : "Download " + decryptThis(data.filename),
+				title : "Download " + escapeHTML(decryptThis(data.filename)),
 				content : 'test',
 				buttons : {
 					"Download" : function() {
@@ -1220,7 +1224,7 @@ function loadFile(fileId) {
 						var a = document.createElement("a");
 						a.style = "display: none";
 						a.href = uriContent;
-				        a.download = decryptThis(data.filename);
+				        a.download = escapeHTML(decryptThis(data.filename));
 				        a.click();
 				        window.URL.revokeObjectURL(url);
 						$(this).remove();
