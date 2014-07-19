@@ -743,12 +743,6 @@ function decryptThis(str){
 	return decryptedString;
 }
 
-var getLocation = function(href) {
-    var l = document.createElement("a");
-    l.href = href;
-    return l;
-};
-
 
 /**
  * Load the items 
