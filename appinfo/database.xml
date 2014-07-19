@@ -37,6 +37,12 @@
 				<default>0</default>
 			</field>
 			<index>
+				<name>items_tags_tag_label</name>
+				<field>
+					<name>tag_label</name>
+				</field>
+			</index>
+			<index>
 				<name>items_tags_tag_id</name>
 				<field>
 					<name>tag_id</name>

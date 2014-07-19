@@ -50,6 +50,7 @@ print_unescaped('<script> var foldersPlain = ' . $_['foldersPlain'] . '</script>
                     <input type="checkbox" id="pw_symbols"><label for="pw_symbols">@#&amp;</label>
                     &nbsp;<label for="pw_size">Size : </label>
                     &nbsp;<span ><input type="number" size="2" id="pw_size" value="8" style="font-size:10px;" ></span>
+                    
                 </span>
                 <span class="icon-history icon" title="Generate password"></span>
                 <span class="icon-paste icon" title="Copy password"></span>
@@ -64,7 +65,7 @@ print_unescaped('<script> var foldersPlain = ' . $_['foldersPlain'] . '</script>
 			</li>
 
 			<li>
-				<label for="folder">Tags: </label>
+				<label for="folder">Tags: </label><div style="float: right;">Required complexity: <span id="complex_attendue">Very weak</span></div>
 				<input type="text" id="tags"/>  
 			</li>
 

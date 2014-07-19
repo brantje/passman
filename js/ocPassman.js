@@ -387,8 +387,8 @@ jQuery(document).ready(function($) {
                     success: function( data ) {
                         response($.map( data, function( item ) {
                             return {
-                                label: item,
-                                value: item
+                                label: item.label,
+                                value: item.label
                             };
                         }));
                     }
@@ -397,8 +397,8 @@ jQuery(document).ready(function($) {
 	}
 	});
 	var saveCurrentTagData = function(evt,ui){
-		 $(document).data('minPWStrength',0);
-		 $(document).data('renewalPeriod',0);
+		 /*$(document).data('minPWStrength',0);
+		 $(document).data('renewalPeriod',0);*/
 		 var tagData = $(document).data('tagsData');
 		 $.each($("#tags").tagit("assignedTags"),function(k,v){
 		 	$.get(OC.generateUrl('apps/passman/api/v1/tag/load'),{'tag': v},function(data){
@@ -869,6 +869,8 @@ function getRating(str){
 function openForm(mapper) {
 	var dTitle = (mapper.label) ? 'Edit '+mapper.label : 'Add new item';
 	$(document).data('tagsData',[]);
+	$(document).data('minPWStrength',0);
+	$(document).data('renewalPeriod',0);
 //	$('#complex_attendue').html('<b>' + folderPwStrength.text + '</b>');
 	$('#editAddItemDialog').dialog({
 		title: dTitle,
@@ -887,7 +889,8 @@ function openForm(mapper) {
 			$('#existingFields').html('');
 			$('#fileList').html('');
 			$('#fileInput').val('');
-			$(document).data('minPasswordScore',0);
+			$(document).data('minPWStrength',0);
+		 	$(document).data('renewalPeriod',0);
 			//CKEDITOR.instances.desc.destroy()
 		}
 	});

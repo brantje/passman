@@ -18,7 +18,8 @@ $.fn.serializeObject = function() {
 };
 
 $(document).ready(function() {
-
+	$(document).data('minPWStrength',0);
+	$(document).data('renewalPeriod',0);
 	$('#custom_pw').buttonset();
 	$('#pwTools').tooltip();
 
@@ -129,6 +130,15 @@ $(document).ready(function() {
 			}
 		});
 		formData.customFields = [];
+
+		if ($(document).data('renewalPeriod') > 0) {
+			var from = new Date()
+			var expireDate = new Date();
+			formData.expire_time = expireDate.addDays($(document).data('renewalPeriod') * 1);
+		} else {
+			formData.expire_time = 0;
+		}
+
 		console.log(formData);
 		if (!ERROR) {
 			$.post(createUrl, formData, function(data) {
@@ -140,7 +150,27 @@ $(document).ready(function() {
 		}
 
 	})
-
+	var saveCurrentTagData = function(evt,ui){
+		$(document).data('minPWStrength',0);
+		$(document).data('renewalPeriod',0);
+		 var tagData = $(document).data('tagsData');
+		 $.each($("#tags").tagit("assignedTags"),function(k,v){
+		 	$.get(OC.generateUrl('apps/passman/api/v1/tag/load'),{'tag': v},function(data){
+		 		console.log(data);
+		 		if(data.tag.min_pw_strength*1 > $(document).data('minPWStrength')){
+		 			console.log(data);
+		 			$(document).data('minPWStrength', data.tag.min_pw_strength)
+		 			var r = getRating(data.tag.min_pw_strength)
+		 			console.log(r);
+		 			$('#complex_attendue').text(r.text);
+		 		}
+		 		if(data.tag.renewal_period > $(document).data('renewalPeriod')){
+		 			$(document).data('renewalPeriod', data.tag.renewal_period)
+		 		}
+		 	});
+		 });
+		 
+	};
 	$('#tags').tagit({
 		allowSpaces : true,
 		autocomplete : {
@@ -154,14 +184,16 @@ $(document).ready(function() {
 					success : function(data) {
 						response($.map(data, function(item) {
 							return {
-								label : item,
-								value : item
+								label : item.label,
+								value : item.label
 							};
 						}));
 					}
 				});
 			}
-		}
+		},
+		afterTagAdded: saveCurrentTagData,
+		afterTagRemoved: saveCurrentTagData 
 	});
 
 	var ls = $.jStorage.get("ENC_KEY");
@@ -213,7 +245,14 @@ function encryptionKeyDialog() {
 		$('#ecRemember').attr('checked', 'checked');
 	});
 }
-
+function getRating(str){
+	var scoreInfo;
+	 $.each(passwordRatings,function(k,v){
+	 	if(str >= this.minScore)
+	 		scoreInfo = this;
+	 });
+	return scoreInfo;
+}
 function setEncKey(key) {
 	$(document).data('ENC_KEY', key);
 }
