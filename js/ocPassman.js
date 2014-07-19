@@ -164,7 +164,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	$('#custom_pw').buttonset();
-	$('#pwTools').tooltip();
+	$('body').tooltip();
 
 	$('.icon-toggle').toggle(function() {
 		$("#pw1").attr('type', 'text');
@@ -433,7 +433,7 @@ jQuery(document).ready(function($) {
 	}
 	});
 	var saveCurrentTagData = function(evt,ui){
-		 $(document).data('minPWStrength',0);
+		 $(document).data('minPWStrength',-1);
 		 $(document).data('renewalPeriod',0);
 		 var tagData = $(document).data('tagsData');
 		 $.each($("#tags").tagit("assignedTags"),function(k,v){

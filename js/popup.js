@@ -18,7 +18,7 @@ $.fn.serializeObject = function() {
 };
 
 $(document).ready(function() {
-	$(document).data('minPWStrength',0);
+	$(document).data('minPWStrength',-1);
 	$(document).data('renewalPeriod',0);
 	$('#custom_pw').buttonset();
 	$('#pwTools').tooltip();

@@ -312,6 +312,9 @@ td.td_title {
 	width: 100%;
 	margin-left: 10px;
 }
+#pwTools span{
+	cursor: pointer !important;
+}
 #pwTools label {
 	display: inline-block;
 }
