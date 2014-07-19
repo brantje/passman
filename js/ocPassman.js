@@ -783,7 +783,6 @@ function loadItems(){
 				 var url = decryptThis(this.url);
 				 var favIcon = '<span class="icon-lock icon"></span>';
 				 if(url){
-					 
 					 var encodedURI = encodeURIComponent(url);
 					 var defaultIcon = 'http://home.brantje.com/lock.svg'; //location.protocol+'//'+location.hostname+OC.generateUrl('core/img/actions/lock.svg');
 					favIcon = '<img src="https://getfavicon.appspot.com/'+ encodedURI +'?defaulticon='+ defaultIcon +'" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;">';
