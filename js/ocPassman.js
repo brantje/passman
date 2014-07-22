@@ -437,24 +437,30 @@ jQuery(document).ready(function($) {
         }
 	}
 	});
-	var saveCurrentTagData = function(evt,ui){
-		 $(document).data('minPWStrength',-1);
-		 $(document).data('renewalPeriod',0);
-		 var tagData = $(document).data('tagsData');
-		 $.each($("#tags").tagit("assignedTags"),function(k,v){
-		 	$.get(OC.generateUrl('apps/passman/api/v1/tag/load'),{'tag': v},function(data){
-		 		if(data.tag.min_pw_strength > $(document).data('minPWStrength')){
-		 			$(document).data('minPWStrength', data.tag.min_pw_strength);
-		 			var r = getRating(data.tag.min_pw_strength);
-		 			$('#complex_attendue').text(r.text);
-		 		}
-		 		if(data.tag.renewal_period > $(document).data('renewalPeriod')){
-		 			$(document).data('renewalPeriod', data.tag.renewal_period);
-		 		}
-		 	});
-		 });
-		 
-	};
+	
+	var saveCurrentTagData = function(evt, ui) {
+		$(document).data('minPWStrength', -1);
+		$(document).data('renewalPeriod', 0);
+		var tagData = $(document).data('tagsData');
+		$.each($("#tags").tagit("assignedTags"), function(k, v) {
+			$.get(OC.generateUrl('apps/passman/api/v1/tag/load'), {
+				'tag' : v
+			}, function(data) {
+				if (data.tag) {
+					if(data.tag.min_pw_strength > $(document).data('minPWStrength')) {
+						$(document).data('minPWStrength', data.tag.min_pw_strength);
+						var r = getRating(data.tag.min_pw_strength);
+						$('#complex_attendue').text(r.text);
+					}
+				}
+				if (data.tag.renewal_period > $(document).data('renewalPeriod')) {
+					$(document).data('renewalPeriod', data.tag.renewal_period);
+				}
+			});
+		});
+
+	}; 
+
 	
 	$('#tags').tagit({
 		allowSpaces: true,
@@ -557,6 +563,8 @@ jQuery(document).ready(function($) {
 	$('.nav-trashbin').click(function(){
 		$("#searchTags").tagit("createTag", 'is:Deleted');
 	});
+	
+	
 });
 
 
@@ -919,12 +927,14 @@ function openForm(mapper) {
 	$('#editAddItemDialog').dialog({
 		title: dTitle,
         "width" : ($(document).width() > 425) ? 'auto' : $(document).width() - 10,
-		close : function(event, ui) {
+		beforeClose : function(event, ui) {
+			console.log($("#tags"));
+			$("#tags").tagit("removeAll");
 			for(name in CKEDITOR.instances)
 			{
 				CKEDITOR.instances[name].destroy();
 			}
-			$(this).dialog('destroy');
+			$('#editAddItemDialog').dialog('destroy');
 			document.getElementById("editNewItem").reset();
 			$('#pw1').trigger('keyup.simplePassMeter');
 			$('#item_tabs').tabs('destroy');
@@ -935,6 +945,7 @@ function openForm(mapper) {
 			$('#fileInput').val('');
 			$(document).data('minPWStrength',0);
 		 	$(document).data('renewalPeriod',0);
+		 	
 			//CKEDITOR.instances.desc.destroy()
 		}
 	});
@@ -1039,6 +1050,7 @@ function saveItem() {
 	else{
 		formData.expire_time = 0;
 	}
+	
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			if (data.success) {
@@ -1047,7 +1059,6 @@ function saveItem() {
 				loadItem(data.success.id);
 				$('#showPW').remove();
 				$('#copyPW').remove();
-				$("#tags").tagit("removeAll");
 				$(document).data('p','');
 				setTimeout(function(){
 					$('li[data-id="' + data.success.id+'"]').scrollintoview({duration: "slow"});
