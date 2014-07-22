@@ -25,6 +25,13 @@ use \OCA\Passman\Controller\ItemApiController;
 use \OCA\Passman\BusinessLayer\ItemBusinessLayer;
 use \OCA\Passman\Db\ItemManager;
 
+use \OCA\PassMan\Utility\SimplePieAPIFactory;
+use \OCA\PassMan\Utility\FaviconFetcher;
+
+if(!class_exists('\SimplePie')) {
+	require_once __DIR__ . '/../3rdparty/simplepie/autoloader.php';
+}
+
 class Application extends App {
 
 
@@ -41,7 +48,8 @@ class Application extends App {
 				$c->query('AppName'), 
 				$c->query('Request'),
 				$c->query('UserId'),
-				$c->query('ItemBusinessLayer')
+				$c->query('ItemBusinessLayer'),
+				$c->query('AppStorage')
 			);
 		});
 
@@ -51,7 +59,8 @@ class Application extends App {
 				$c->query('Request'),
 				$c->query('ItemBusinessLayer'),
 				$c->query('UserId'),
-				$c->query('TagBusinessLayer')
+				$c->query('TagBusinessLayer'),
+				$c->query('FaviconFetcher')
 			);
 		});
 		
@@ -95,15 +104,31 @@ class Application extends App {
 			);
 		});
 		
+		$container->registerService('SimplePieAPIFactory', function() {
+			return new SimplePieAPIFactory();
+		});
+
+		$container->registerService('FaviconFetcher', function($c) {
+			return new FaviconFetcher(
+				$c->query('SimplePieAPIFactory')
+			);
+		});
 		/**
 		 * Core
 		 */
 		$container->registerService('UserId', function($c) {
 			return \OCP\User::getUser();
 		});		
+		$container->registerService('UserId', function($c) {
+			return \OCP\User::getUser();
+		});		
 		$container->registerService('Db', function() {
 			return new Db();
 		});
+		
+		 $container->registerService('AppStorage', function($c) {
+            return $c->query('ServerContainer')->getAppFolder();
+        });
 				
 	}
 

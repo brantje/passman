@@ -126,6 +126,10 @@
 				<type>clob</type>
 			</field>
 			<field>
+				<name>favicon</name>
+				<type>clob</type>
+			</field>
+			<field>
 				<name>expire_time</name>
 				<type>text</type>
 				<default>0</default>

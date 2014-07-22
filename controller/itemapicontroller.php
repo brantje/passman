@@ -22,14 +22,17 @@ class ItemApiController extends Controller {
     private $userId;
 	private $ItemBusinessLayer;
 	private $tagBusinessLayer;
+	private $faviconFetcher;
 	public $request; 
 	
-    public function __construct($appName, IRequest $request,  ItemBusinessLayer $ItemBusinessLayer,$userId,$tagBusinessLayer){
+	
+    public function __construct($appName, IRequest $request,  ItemBusinessLayer $ItemBusinessLayer,$userId,$tagBusinessLayer,$faviconFetcher){
         parent::__construct($appName, $request);
         $this->userId = $userId;
 		$this->ItemBusinessLayer = $ItemBusinessLayer;
 		$this->tagBusinessLayer = $tagBusinessLayer;
 		$this->request = $request;
+		$this->faviconFetcher = $faviconFetcher;
     }
 
 
@@ -105,10 +108,10 @@ class ItemApiController extends Controller {
 			array_push($errors,'Label is mandatory');
 		}
 		
-		
+		$favicon = $this->faviconFetcher->fetch($url);
 				
 		if(empty($errors)){
-			$result['itemid'] = $this->ItemBusinessLayer->create($userId,$label,$desc,$pass,$account,$email,$url,$expiretime);
+			$result['itemid'] = $this->ItemBusinessLayer->create($userId,$label,$desc,$pass,$account,$email,$url,$expiretime,$favicon);
 			if(!empty($customFields)){
 				foreach ($customFields as $key => $field) {
 					if(empty($field['id'])){
@@ -154,6 +157,8 @@ class ItemApiController extends Controller {
 		$url = $this->params('url');
 		$customFields = $this->params('customFields');
 		$tags = explode(',',$this->params('tags'));
+		
+		
 		if(empty($label)){
 			array_push($errors,'Label is mandatory');
 		}
@@ -161,7 +166,9 @@ class ItemApiController extends Controller {
 		if(empty($curItem)){
 			array_push($errors,'Item not found');
 		}
-
+		$favicon = $this->faviconFetcher->fetch($url);
+		
+		
 		if($folderCheckResult['renewal_period'] > 0){
 			if($this->params('changedPw')=="true"){
 			 $expiretime = date("c",strtotime("+". $folderCheckResult['renewal_period'] ." days"));
@@ -175,7 +182,7 @@ class ItemApiController extends Controller {
 		}
 
 		if(empty($errors)){
-			$result['success'] = $this->ItemBusinessLayer->update($id,$userId,$label,$desc,$pass,$account,$email,$url,$expiretime);
+			$result['success'] = $this->ItemBusinessLayer->update($id,$userId,$label,$desc,$pass,$account,$email,$url,$expiretime,$favicon);
 			if(!empty($customFields)){
 				foreach ($customFields as $key => $field) {
 					if(empty($field['id'])){

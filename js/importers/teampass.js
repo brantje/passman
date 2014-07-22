@@ -49,7 +49,8 @@ function importTeamPass() {
 
 }
 function importTeampassItems() {
-	$.each(teampassData.items, function() {
+	var count =1 ;
+	$.each(teampassData.items, function(k,v) {
 		
 		var createUrl = OC.generateUrl('apps/passman/api/v1/item');
 		var encPw = (this.pw) ? encryptThis(this.pw) : '';
@@ -61,20 +62,30 @@ function importTeampassItems() {
 				'account' : encryptThis( (this.login) ? this.login : ''),
 				'pw1' : encPw,
 				'email' : encryptThis( (this.email) ? this.email : ''),
-				'url' : encryptThis((this.url) ? this.url : ''),
+				'url' : (this.url) ? this.url : '',
 				'tags': this.folder_title
 			}
 			$.ajax({
-				async : false,
+				async : true,
 				type : "POST",
 				url : createUrl,
 				dataType : 'JSON',
 				data : postData,
 				success : function(data) {
-					console.log('Added item ' + postData.label)
+					var percent = Math.round(count/teampassData.items.length*100)
+					$('#teampassPopup').html(percent+'%...')
+					if(count==teampassData.items.length-1){
+						teampassImportDone()
+					}
+					count++;
 				}
 			});
+		
 	})
+}
+
+
+function teampassImportDone(){
 	$('#teampassPopup').dialog('destroy').remove();
 	$('<div>The import was a success!</div>').dialog({
 		title: "Teampass import",
@@ -89,7 +100,6 @@ function importTeampassItems() {
 	teampassData = [];
 	$(document).data('importFolders', {})
 }
-
 
 function findImportFolderByName(name) {
 	var foundFolder = '';

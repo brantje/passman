@@ -108,9 +108,6 @@ $(document).ready(function() {
 		var formData = $('.pw_desc').serializeObject();
 		formData.folderid = $('#folder').val();
 		var createUrl = OC.generateUrl('apps/passman/api/v1/item');
-		var folderSettings = getFolderById(formData.folderid);
-		console.log(formData, folderSettings);
-
 		/*var passwordStrength = $(document).data('passwordScore');
 		 var requiredStrength = getRating(folderSettings.min_pw_strength);
 		 if (passwordStrength < requiredStrength.minScore && $('#override:checked').length == 0) {
@@ -123,7 +120,7 @@ $(document).ready(function() {
 			ERROR = 'A label is mandatory!';
 		}
 
-		var ignoredEncryptionFields = ['folderid', 'item_id', 'label'];
+		var ignoredEncryptionFields = ['folderid', 'item_id', 'label','url'];
 		$.each(formData, function(k, v) {
 			if ($.inArray(k, ignoredEncryptionFields) == -1) {
 				formData[k] = encryptThis(v);

@@ -41,7 +41,7 @@ class ItemBusinessLayer {
 		return $return;
 	}
 
-	public function create($userId, $label, $desc, $pass, $account, $email, $url,$expireTime) {
+	public function create($userId, $label, $desc, $pass, $account, $email, $url,$expireTime,$favicon) {
 		$item = array();
 		$item['user_id'] = $userId;
 		$item['label'] = $label;
@@ -51,10 +51,12 @@ class ItemBusinessLayer {
 		$item['email'] = $email;
 		$item['url'] = $url;
 		$item['expire_time'] = $expireTime;
+		$item['favicon'] = $favicon;
+		
 		return $this -> ItemManager -> insert($item);
 	}
 
-	public function update($id, $userId, $label, $desc, $pass, $account, $email, $url,$expiretime) {
+	public function update($id, $userId, $label, $desc, $pass, $account, $email, $url,$expiretime,$favicon) {
 		$item = array();
 		$item['id'] = $id;
 		$item['user_id'] = $userId;
@@ -65,6 +67,7 @@ class ItemBusinessLayer {
 		$item['email'] = $email;
 		$item['url'] = $url;
 		$item['expire_time'] = $expiretime;
+		$item['favicon'] = $favicon;
 		return $this -> ItemManager -> update($item);
 	}
 

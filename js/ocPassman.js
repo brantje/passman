@@ -132,7 +132,7 @@ jQuery(document).ready(function($) {
 		       	}
 		       	else
 		       	{
-		        	$(this).find('.tag:last').before('<span class="rowTools"> <div><i class="edit-icon icon" title="Edit"></i></div></span>');
+		        	$(this).find('.itemLabel').after('<span class="rowTools"> <div><i class="edit-icon icon" title="Edit"></i></div></span>');
 		        	$(this).find('i').css('visibility','visible');
 		        }
 		        
@@ -784,12 +784,15 @@ function loadItems(){
 				 		inlineTags += '<div class="tag"><div class="value">'+ escapeHTML(v) +'</div></div>';
 				 	});
 				 }
-				 var url = decryptThis(this.url);
 				 var favIcon = '<span class="icon-lock icon"></span>';
-				 if(url){
-					 var encodedURI = encodeURIComponent(url);
-					 var defaultIcon = 'http://home.brantje.com/lock.svg'; //location.protocol+'//'+location.hostname+OC.generateUrl('core/img/actions/lock.svg');
-					favIcon = '<img src="https://getfavicon.appspot.com/'+ encodedURI +'?defaulticon='+ defaultIcon +'" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;">';
+				 if(this.favicon){
+				 	var favIconLocation = this.favicon;
+				 	if(location.protocol=='https:'){
+				 		
+				 	}
+				 	 favIconLocation = OC.generateUrl('/apps/passman/imageproxy?url='+ this.favicon);
+				 	
+					 favIcon = '<img src="'+ favIconLocation +'" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;">';
 				 }
 			 	 var deleteIcon = (showingDeleted==0) ? '<i class="delete-icon icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>';
 				 var append = '<li data-id='+ this.id +'>'+ favIcon +'<div style="display: inline-block;" class="itemLabel">'+ escapeHTML(this.label) +'</div>'+ deleteIcon +''+ inlineTags  +'</li>';
@@ -845,7 +848,7 @@ function loadItem(id) {
 			hid_pw : item.password,
 			id_login : escapeHTML(decryptThis(item.account)),
 			id_email : escapeHTML(decryptThis(item.email)),
-			id_url : escapeHTML(decryptThis(item.url)),
+			id_url : escapeHTML(item.url),
 			files : item.files,
 			id_tags : ''
 		};
@@ -1028,7 +1031,7 @@ function saveItem() {
 		customFields.push( {id: fieldId, name: encryptThis(fieldName), value: encryptThis(fieldValue)} );
 	});
 	
-	var ignoredEncryptionFields = ['folderid','item_id','label','expire_time'];
+	var ignoredEncryptionFields = ['folderid','item_id','label','expire_time','url'];
 	$.each(formData,function(k,v){
 		if($.inArray(k,ignoredEncryptionFields)==-1){
 			formData[k] = encryptThis(v);
@@ -1062,8 +1065,16 @@ function saveItem() {
 				$('#copyPW').remove();
 				$("#tags").tagit("removeAll");
 				$(document).data('p','');
+				setTimeout(function(){
+					$('li[data-id="' + data.success.id+'"]').scrollintoview({duration: "slow"});
+					$('li[data-id="' + data.success.id+'"]').click()
+				},400);
 			} else {
 				var append = '<li data-id=' + data.itemid + '><span class="icon-lock icon"></span><div style="display: inline-block;">' + escapeHTML(formData.label) + '</div></li>';
+				setTimeout(function(){
+					$('li[data-id="' + data.success.id+'"]').scrollintoview({duration: "slow"});
+					$('li[data-id="' + data.success.id+'"]').click()
+				},400);
 				if($('#pwList').text()!='Folder is empty'){
 					$('#pwList').append(append);
 				}else{
@@ -1092,7 +1103,7 @@ function editItem(itemId) {
 			pw2 : item.password,
 			account : decryptThis(item.account),
 			email : decryptThis(item.email),
-			url : decryptThis(item.url),
+			url : item.url,
 			files : item.files,
 			expire_time: item.expire_time,
 			Tags : item.tags,
