@@ -300,6 +300,7 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
 	 */
 	 public function getfile($fileId){
+	 	$fileId = $this->params('fileid');
 		return new JSONResponse($this->ItemBusinessLayer->getFile($fileId,$this->userId));  
 	}
 	 
@@ -307,6 +308,7 @@ class ItemApiController extends Controller {
 	  * @NoAdminRequired
 	 */ 
 	public function deletefile($fileId){
+		$fileId = $this->params('fileid');
 		return new JSONResponse($this->ItemBusinessLayer->deleteFile($fileId,$this->userId));  
 	}
 	

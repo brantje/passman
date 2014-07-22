@@ -89,8 +89,8 @@ class PageController extends Controller {
 				file_put_contents($name, $f);
 				$image = new \Imagick($isIcon . $name);
 				if ($image -> valid()) {
-					//$image->setImageFormat('png');
-					//header("Content-Type: image/png");
+					$image->setImageFormat('png');
+					header("Content-Type: image/png");
 					header('Cache-Control: max-age=86400, public');
 					
 					//$this->writeFavIcon($md5url, '123456789');
@@ -98,7 +98,8 @@ class PageController extends Controller {
 
 				}
 			} catch(exception $e) {
-				echo $e;
+				header("HTTP/1.1 200 OK");
+				die();
 			}
 			return die();
 		}

@@ -1176,7 +1176,7 @@ function addFilesToItem(files) {
 
 
 function loadFile(fileId) {
-	$.get(OC.generateUrl('/apps/passman/api/v1/item/file/' + fileId), function(data) {
+	$.get(OC.generateUrl('/apps/passman/api/v1/item/file/' + fileId),{'fileid': fileId}, function(data) {
 		console.log(data);
 		/* Show the image if it is ofcourse */
 		if (data.type.indexOf('image') >= 0 && data.size < 4194304) {
@@ -1259,6 +1259,7 @@ function dataURItoBlob(dataURI, ftype) {
 function deleteFile(fileId){
 	$.ajax({
 	    url: OC.generateUrl('apps/passman/api/v1/item/file/'+fileId),
+	    data: {'fileid': fileId},
 	    type: 'DELETE',
 	    success: function(result) {
 	        $('li[data-fileid="'+ fileId+'"]').slideUp();
