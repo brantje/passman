@@ -63,6 +63,7 @@
 			
 		</div>
 		<div id="infoContainer">
+			<div class="loadingItem"><div><span class="icon-loading icon" style="height: 32px; width: 32px; margin-left: 10px;"></span></div></div>
 			<table>
                 <tbody><tr>
                     <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>Label :</td>

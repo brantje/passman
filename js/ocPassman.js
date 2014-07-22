@@ -819,6 +819,7 @@ function loadItems(){
  * @param {int} id
  */
 function loadItem(id) {
+	$('.loadingItem').show();
 	$.get(OC.generateUrl('apps/passman/api/v1/item/' + id),{'id': id}, function(data) {
 		$('#id_files').html('');
 		$('#customFieldsTable').html('');
@@ -867,7 +868,7 @@ function loadItem(id) {
 			$.each(item.customFields,function(k,field){
 				var row = '<tr><td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>'+ escapeHTML(decryptThis(field.label)) +' :</td>';
                     row +='<td><div id="id_'+field.label+'" style="float:left;">'+ escapeHTML(decryptThis(field.value)) +'</div></td></tr>';
-				$('#customFieldsTable').append(row);
+				$('#customFieldsTable').prepend(row);
 			});
 		}
 		
@@ -895,7 +896,7 @@ function loadItem(id) {
 		{
 			$('#id_files').html('');
 		}
-			
+		$('.loadingItem').hide();	
 		
 		return mapper;
 	});
@@ -969,7 +970,7 @@ function openForm(mapper) {
 			$.each(mapper.customFields,function(k,field){
 				var row = '<tr data-cFieldId='+ field.id +'><td>'+escapeHTML(decryptThis(field.label)) +'</td>';
                     row +='<td>'+ escapeHTML(decryptThis(field.value))+'</td></tr>';
-					$('#existingFields').append(row);
+					$('#existingFields').prepend(row);
 			});
 		}
 		if(mapper.Tags !=null){

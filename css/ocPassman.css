@@ -401,6 +401,16 @@ li.ui-menu-item .description {
 	display: inline-block;
 	background-size: cover;
 }
+.loadingItem {
+	display: none;
+	position: absolute;
+	left: 50%;
+	top: 70px;
+}
+.loadingItem > div{
+	position: relative; 
+	left: -50%; 
+}
 li.fileListItem {
 	width: 100%;
 	height: 25px;
