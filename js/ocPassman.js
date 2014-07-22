@@ -928,7 +928,6 @@ function openForm(mapper) {
 		title: dTitle,
         "width" : ($(document).width() > 425) ? 'auto' : $(document).width() - 10,
 		beforeClose : function(event, ui) {
-			console.log($("#tags"));
 			$("#tags").tagit("removeAll");
 			for(name in CKEDITOR.instances)
 			{
