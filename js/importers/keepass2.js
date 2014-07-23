@@ -9,7 +9,6 @@ $(document).ready(function() {
 		$(document).data('importers', importer);
 	}
 })
-var keypassData = '"Group Tree","Account","Login Name","Password","Web Site","Comments"\n"General\\Network","Server 1","Root","password1","",""\n"General\\Network","server 2","root","password2","",""\n"General","Test 1 key","","owrfm6fqjs2cpWbMgvkY","",""'
 
 function processData(allText) {
 	var allTextLines = allText.split(/\r\n|\n/);
@@ -39,7 +38,6 @@ function handleKeyPassFileChange(evt) {
 		r.onload = function(e) {
 			var contents = e.target.result;
 			keypassData = contents;
-			importKeePass2()
 		}
 		r.readAsText(f);
 	} else {
