@@ -446,7 +446,7 @@ jQuery(document).ready(function($) {
 			$.get(OC.generateUrl('apps/passman/api/v1/tag/load'), {
 				'tag' : v
 			}, function(data) {
-				if (data.tag) {
+				if (data) {
 					if(data.tag.min_pw_strength > $(document).data('minPWStrength')) {
 						$(document).data('minPWStrength', data.tag.min_pw_strength);
 						var r = getRating(data.tag.min_pw_strength);
@@ -1119,7 +1119,7 @@ function deleteItem(itemId,undo){
     success: function(data) {
 		var label = $('#pwList li[data-id='+ itemId +']').find('.itemLabel').text();
        	$('#pwList li[data-id='+ data.deleted+']').slideToggle();
-        showNotification(label+' removed. <a href="#" class="undo" data-function="restoreItem" data-arg="'+ itemId +'" style="text-decoration: underline">Undo</a>',20000);
+        showNotification(label+' removed. <a href="#" class="undo" data-function="restoreItem" data-arg="'+ itemId +'" style="text-decoration: underline">Undo</a>',10000);
     }
 });
 }
@@ -1132,7 +1132,7 @@ function restoreItem(itemId,undo){
     success: function(data) {
         var label = $('#pwList li[data-id='+ itemId +']').find('.itemLabel').text();
         $('#pwList li[data-id='+ data.restored+']').slideToggle();
-       	showNotification(label +' recoverd. <a href="#" class="undo" data-function="deleteItem" data-arg="'+ itemId +'" style="text-decoration: underline">Undo</a>',20000);
+       	showNotification(label +' recoverd. <a href="#" class="undo" data-function="deleteItem" data-arg="'+ itemId +'" style="text-decoration: underline">Undo</a>',10000);
     }
 });
 }
