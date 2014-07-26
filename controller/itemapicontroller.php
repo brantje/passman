@@ -167,6 +167,7 @@ class ItemApiController extends Controller {
 			array_push($errors,'Item not found');
 		}
 		$favicon = $this->faviconFetcher->fetch($url);
+		$favicon = (!empty($favicon)) ? $favicon : '';
 		
 		
 		if($folderCheckResult['renewal_period'] > 0){

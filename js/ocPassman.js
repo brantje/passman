@@ -779,9 +779,8 @@ function loadItems(){
 				 if(this.favicon){
 				 	var favIconLocation = this.favicon;
 				 	if(location.protocol=='https:'){
-				 		
+					 	 favIconLocation = OC.generateUrl('/apps/passman/imageproxy?url='+ this.favicon);
 				 	}
-				 	 favIconLocation = OC.generateUrl('/apps/passman/imageproxy?url='+ this.favicon);
 				 	
 					 favIcon = '<img src="'+ favIconLocation +'" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;">';
 				 }
