@@ -1,6 +1,6 @@
 var teampassData = [];
 
-function handleFileChange(evt) {
+function handleFileChange2(evt) {
 	//Retrieve the first (and only!) File from the FileList object
 	var f = evt.target.files[0];
 
@@ -9,6 +9,7 @@ function handleFileChange(evt) {
 		r.onload = function(e) {
 			var contents = e.target.result;
 			teampassData = JSON.parse(contents);
+			console.log(contents);
 		}
 		r.readAsText(f);
 	} else {
@@ -33,7 +34,7 @@ function importTeamPassDialog() {
 			},
 			title : "Import password and folders from teamteampass."
 		})
-		document.getElementById('importFile').addEventListener('change', handleFileChange, false);
+		document.getElementById('importFile').addEventListener('change', handleFileChange2, false);
 	} else {
 		alert('The File APIs are not fully supported by your browser. Therefore an import is not supported');
 	}
@@ -50,6 +51,9 @@ function importTeamPass() {
 }
 function importTeampassItems() {
 	var count =1 ;
+	$('#teampassPopUp').html('<div id="progressbar"></div>');
+	$("#progressbar").progressbar();
+	console.log(teampassData);
 	$.each(teampassData.items, function(k,v) {
 		
 		var createUrl = OC.generateUrl('apps/passman/api/v1/item');
@@ -74,10 +78,10 @@ function importTeampassItems() {
 				success : function(data) {
 					var percent = Math.round(count/teampassData.items.length*100)
 					$('#teampassPopup').html(percent+'%...')
+					count++;
 					if(count==teampassData.items.length-1){
 						teampassImportDone()
 					}
-					count++;
 				}
 			});
 		
