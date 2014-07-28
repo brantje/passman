@@ -786,7 +786,15 @@ function loadItems(){
 				 }
 			 	 var deleteIcon = (showingDeleted==0) ? '<i class="delete-icon icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>';
 				 var append = '<li data-id='+ this.id +'>'+ favIcon +'<div style="display: inline-block;" class="itemLabel">'+ escapeHTML(this.label) +'</div>'+ deleteIcon +''+ inlineTags  +'</li>';
-				 $('#pwList').append(append);
+				try{
+					var username = decryptThis(this.account);
+				 	$('#pwList').append(append);
+				} catch(e){
+					/**
+					 * Wrong master password given, hide the entries
+					 */
+					console.log('Wrong master pw');
+				}
 				 
 			});
 			var tagListItems = '';

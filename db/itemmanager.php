@@ -71,7 +71,7 @@ class ItemManager {
 	public function getByTag($tags, $userId,$deleted) {
 		$userId = array($userId);	
 		$isparam = ($deleted==false) ? '=' : '!=';
-		$sql = 'SELECT  item.id, item.label,item.user_id, item.delete_date, item.favicon, LOWER(GROUP_CONCAT(distinct tags.tag_label)) AS tagForSearch ,GROUP_CONCAT(distinct tags.tag_label) AS tags FROM `*PREFIX*passman_items` AS item '; 
+		$sql = 'SELECT  item.id, item.label,item.user_id, item.account, item.delete_date, item.favicon, LOWER(GROUP_CONCAT(distinct tags.tag_label)) AS tagForSearch ,GROUP_CONCAT(distinct tags.tag_label) AS tags FROM `*PREFIX*passman_items` AS item '; 
 		$sql .= 'LEFT JOIN `*PREFIX*passman_items_tags_xref` AS xref ON xref.item_id = item.id ';
 		$sql .= 'LEFT JOIN `*PREFIX*passman_tags` AS tags ON tags.tag_id = xref.tag_id ';
 		$sql .= 'WHERE item.user_id=? AND delete_date '. $isparam .'0';
