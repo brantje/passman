@@ -1279,7 +1279,7 @@ function deleteFile(fileId){
 
 function showSettings(){
 	var html = '<div>';
-		html += 'Date format: <br />';
+		html += 'Date format (same as the php <a href="http://php.net/date" target="_blank" class="link">date</a> function: <br />';
 		html += '<input id="df" type="text" value="'+ $.jStorage.get("date_format") +'">';
 		html += '</div>';
 		
