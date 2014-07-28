@@ -320,7 +320,10 @@ jQuery(document).ready(function($) {
 
 	});
 
-	$('#editAddItemDialog .save').click(saveItem);
+	$('#editAddItemDialog .save').click(function(){
+		saveItem()
+		$(this).prop('disabled','disabled');
+	});
 
 	$('#folderSettingsDialog .cancel').click(function() {
 		$('#folderSettingsDialog').dialog('close');
@@ -1075,6 +1078,7 @@ function saveItem() {
 
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
+			$('#editAddItemDialog .save').removeAttr('disabled')
 			if (data.success) {
 				$('#pwList li[data-id=' + data.success.id + ']').html('<span class="icon-lock icon"></span><div style="display: inline-block;">' + escapeHTML(data.success.label) + '</div>');
 				loadItems();

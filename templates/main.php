@@ -211,8 +211,8 @@
                 	
                 </table>
         </div>
-    <div class="button cancel">Cancel</div>
-    <div class="button save">Save</div>
+    <button class="button cancel">Cancel</button>
+    <button class="button save">Save</button>
     </div>
 </div>
   

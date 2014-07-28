@@ -197,7 +197,6 @@ div#ocpContent {
 }
 #addItem{
 	width: 120px;
-	white-space: nowrap;
 }
 #addItem:disabled, #editItem:disabled, #deleteItem:disabled {
 	display: none;
@@ -346,7 +345,7 @@ label[for="item_login"] {
 	font-weight: bold;
 }
 .save, .cancel {
-	width: 50px;
+	width: 60px;
 	float: right;
 	text-align: center;
 }
