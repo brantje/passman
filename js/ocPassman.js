@@ -799,7 +799,7 @@ function loadItems() {
 				var favIcon = '<span class="icon-lock icon"></span>';
 				if (this.favicon) {
 					var favIconLocation = this.favicon;
-					if (location.protocol == 'https:') {
+					if (location.protocol == 'http:') {
 						favIconLocation = OC.generateUrl('/apps/passman/imageproxy?url=' + this.favicon);
 					}
 
