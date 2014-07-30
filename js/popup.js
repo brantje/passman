@@ -279,21 +279,18 @@ function encryptThis(str) {
 	var encryptedString = str;
 	var encryptionKey = getEncKey();
 
-	var randVal = Math.round(110 + (Math.random() * (999 - 110)));
-	//String length
+	encryptedString = sjcl.encrypt(encryptionKey, encryptedString)
 
-	/**
-	 * Generate random string
-	 */
-	var salt = generateSalt(randVal);
-	encryptionKey = salt + encryptionKey;
-
-	/**
-	 * Loop a few times
-	 */
-	for ( i = 0; i < 5; i++) {
-		encryptedString = Aes.Ctr.encrypt(encryptedString, encryptionKey, 256);
-	}
-	encryptedString = Base64.encode(randVal + salt + encryptedString);
+	encryptedString = window.btoa(encryptedString);
 	return encryptedString;
+}
+
+/**
+ * Decrypt a string with the algorithm
+ */
+function decryptThis(str) {
+	encryptedString = window.atob(str);
+	var decryptionKey = getEncKey();
+	var decryptedString = sjcl.decrypt(decryptionKey, encryptedString);
+	return decryptedString;
 }
