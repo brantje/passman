@@ -13,7 +13,7 @@ print_unescaped('<script> var folder = ' . $_['folders'] . '</script>');
 print_unescaped('<script> var foldersPlain = ' . $_['foldersPlain'] . '</script>');
 ?>
 
-<form class="addPw">
+<form class="addPw" autocomplete="off">
 
 	<h1>Add a password</h1>
 	<div class="close_btn">
