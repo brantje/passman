@@ -197,6 +197,7 @@ div#ocpContent {
 }
 #addItem{
 	width: 120px;
+	white-space: nowrap; 
 }
 #addItem:disabled, #editItem:disabled, #deleteItem:disabled {
 	display: none;
