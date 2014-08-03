@@ -266,6 +266,7 @@ jQuery(document).ready(function($) {
 
 	$('#editAddItemDialog .cancel').click(function() {
 		$('#editAddItemDialog').dialog('close');
+		return false;
 	});
 
 	$(document).on('click', '#showPW', function() {
@@ -321,8 +322,9 @@ jQuery(document).ready(function($) {
 	});
 
 	$('#editAddItemDialog .save').click(function(){
-		saveItem()
-		$(this).prop('disabled','disabled');
+		saveItem();
+		$(this).removeAttr('disabled');
+		return false;
 	});
 
 	$('#folderSettingsDialog .cancel').click(function() {
