@@ -801,8 +801,7 @@ function loadItems() {
 				var favIcon = '<span class="icon-lock icon"></span>';
 				if (this.favicon) {
 					var favIconLocation = this.favicon;
-					var debug = true;
-					if (location.protocol == 'https:' || debug ==true) {
+					if (location.protocol == 'https:') {
 						var hashedUrl = window.btoa(this.favicon)
 						favIconLocation = OC.generateUrl('/apps/passman/imageproxy/'+ hashedUrl);
 					}
