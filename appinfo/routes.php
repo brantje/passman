@@ -31,7 +31,7 @@ $application->registerRoutes($this, array(
 	array('name' => 'page#disablefirstrun', 'url' => '/disablefirstrun', 'verb' => 'GET'),
 	array('name' => 'page#popup', 'url' => '/add', 'verb' => 'GET'),
 	
-	array('name' => 'page#imageproxy', 'url' => '/imageproxy', 'verb' => 'GET'), 
+	array('name' => 'page#imageproxy', 'url' => '/imageproxy/{hash}', 'verb' => 'GET'), 
 
 	
 	

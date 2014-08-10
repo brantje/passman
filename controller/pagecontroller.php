@@ -72,8 +72,9 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function imageproxy() {
-		$url = $this -> params('url');
+	public function imageproxy($hash) {
+		$hash = array_pop(explode('/', $_SERVER['REQUEST_URI']));
+		$url = base64_decode($hash);
 		if (filter_var($url, FILTER_VALIDATE_URL) === FALSE) {
 			die('Not a valid URL');
 		}

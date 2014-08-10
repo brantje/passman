@@ -801,10 +801,12 @@ function loadItems() {
 				var favIcon = '<span class="icon-lock icon"></span>';
 				if (this.favicon) {
 					var favIconLocation = this.favicon;
-					if (location.protocol == 'https:') {
-						favIconLocation = OC.generateUrl('/apps/passman/imageproxy?url=' + this.favicon);
+					var debug = true;
+					if (location.protocol == 'https:' || debug ==true) {
+						var hashedUrl = window.btoa(this.favicon)
+						favIconLocation = OC.generateUrl('/apps/passman/imageproxy/'+ hashedUrl);
 					}
-
+			
 					favIcon = '<img src="' + favIconLocation + '" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;">';
 				}
 				var deleteIcon = (showingDeleted == 0) ? '<i class="delete-icon icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>';
