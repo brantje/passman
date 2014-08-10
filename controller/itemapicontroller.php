@@ -199,8 +199,7 @@ class ItemApiController extends Controller {
 				foreach($tags as $tag){
 					if($this->tagBusinessLayer->search($tag,$userId,true)){
 						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$id);
-					}
-					else {
+					} else {
 						$this ->tagBusinessLayer ->create($tag,$userId);
 						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$id);
 					}
@@ -218,6 +217,21 @@ class ItemApiController extends Controller {
 	public function search($itemName) {
 		$deleted['deleted']	=$this->ItemBusinessLayer->search($this->params('q'),$this->userId);
 		return new JSONResponse($deleted['deleted']); 
+	}
+
+	/**
+	 * @NoCSRFRequired
+	 * @NoAdminRequired
+	*/
+	public function addtag(){
+		$itemId = (int) $this->params('itemId');
+		$tag = $this->params('tag');
+		
+		$item =  $this->ItemBusinessLayer->get($itemId,$this->userId);
+		$tags = explode(',',$item->tags);
+		if(!in_array($tag,$tags)){
+			$this ->tagBusinessLayer ->linkTagXItem($tag,$this->userId,$itemId);
+		}
 	}
 	
 	/**

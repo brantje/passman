@@ -835,6 +835,7 @@ function loadItems() {
 				}
 			});
 			$('#tagList').html(tagListItems);
+			makeDragable()
 		} else {
 			$('#pwList').html('Folder is empty');
 			var http = location.protocol;
@@ -851,6 +852,40 @@ function loadItems() {
 	 {
 
 	 }*/
+}
+
+function makeDragable(){
+	$('#pwList li').draggable({
+		helper: 'clone',
+		appendTo: 'body',
+		revert: "invalid",
+		 start: function (event, ui) {
+                $(ui.helper).css("margin-left", event.clientX - $(event.target).offset().left+10);
+                $(ui.helper).css("margin-top", event.clientY - $(event.target).offset().top-10);
+            }
+	});
+	$('#tagList li').droppable({
+      activeClass: "ui-state-default",
+      hoverClass: "ui-state-hover",
+      drop: function( event, ui ) {
+      	if(event.type=="drop"){
+      		var itemId = $(ui.draggable[0]).attr('data-id');
+      		var newTag = $(event.target).find('.value').text();
+			console.log(newTag)
+			console.log($('li[data-id="'+ itemId +'"]'));
+			if($('li[data-id="'+ itemId +'"]').find('.value:contains('+newTag+')').length ==0){
+				$('li[data-id="'+ itemId +'"]').append('<div class="tag"><div class="value">'+ newTag +'</div></div>')
+				var data = {'itemId': itemId,'tag': newTag};
+				$.get(OC.generateUrl('apps/passman/api/v1/tag/addtag'),data,function(d){
+				
+				})
+			}
+      	/*	$.post(OC.generateUrl('apps/passman/api/v1/item/move/'+itemId+'/'+ targetFolder),{},function(d){
+      			$('li[data-id="'+itemId+'"]').remove();
+      		}); */
+      	}
+      }
+    });
 }
 
 /**

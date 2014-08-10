@@ -95,12 +95,13 @@ class PageController extends Controller {
 						header("Content-Type: image/png");
 						header('Cache-Control: max-age=86400, public');
 						
-						//$this->writeFavIcon($md5url, '123456789');
+						$this->writeFavIcon($md5url, '123456789');
 						echo $image;
 	
 					}
 				} catch(exception $e) {
 					header("HTTP/1.1 200 OK");
+					echo "test";
 					die();
 				}
 				return die();
@@ -124,8 +125,8 @@ class PageController extends Controller {
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		$tmp = curl_exec($ch);
-		curl_close($ch);
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
 		if ($httpCode == 404) {
 			return false;
 		} else {
