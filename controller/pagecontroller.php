@@ -95,7 +95,7 @@ class PageController extends Controller {
 						header("Content-Type: image/png");
 						header('Cache-Control: max-age=86400, public');
 						
-						$this->writeFavIcon($md5url, '123456789');
+						//$this->writeFavIcon($md5url, '123456789');
 						echo $image;
 	
 					}
