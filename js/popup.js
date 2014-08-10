@@ -153,7 +153,6 @@ $(document).ready(function() {
 		 var tagData = $(document).data('tagsData');
 		 $.each($("#tags").tagit("assignedTags"),function(k,v){
 		 	$.get(OC.generateUrl('apps/passman/api/v1/tag/load'),{'tag': v},function(data){
-			console.log(data);
 		 		if(data != null){
 					if(data.tag.min_pw_strength*1 > $(document).data('minPWStrength')){
 						console.log(data);
