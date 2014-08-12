@@ -1299,6 +1299,7 @@ function loadFile(fileId) {
 						a.style = "display: none";
 						a.href = uriContent;
 						a.download = escapeHTML(decryptThis(data.filename));
+						document.body.appendChild(a);
 						a.click();
 						window.URL.revokeObjectURL(url);
 						$(this).remove();
