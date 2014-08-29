@@ -91,9 +91,15 @@ jQuery(document).ready(function($) {
 					$('#deleteItem').attr('disabled', false);
 					$("#restoreItem").attr('disabled', 'disabled');
 				} else {
-					$("#restoreItem").attr('disabled', false);
+					$("#restoreItem").removeAttr('disabled');
+				}
+			} else {
+				if ($("#searchTags").tagit("assignedTags").join(',').indexOf('is:Deleted') >= 0) {
+					$("#restoreItem").removeAttr('disabled');
 				}
 			}
+			
+			
 		}
 		if (evt.target.className == "delete-icon icon") {
 			deleteItem($(this).attr('data-id'));
