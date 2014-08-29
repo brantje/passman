@@ -1021,8 +1021,11 @@ function openForm(mapper) {
 			$('a[href="#tabs-03"]').hide();
 		}
 		$.each(mapper, function(k, v) {
-			if (v != null)
+			if (v != null && k!='pw1' && k!='pw2'){
 				$('#' + k).val(escapeHTML(v.toString().replace(/<br \/>/g, "\n")));
+			} else {
+				$('#' + k).val(v.toString());
+			}
 		});
 		if (mapper.pw1) {
 			$('#pw1').change().trigger('keyup.simplePassMeter');
