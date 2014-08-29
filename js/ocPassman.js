@@ -1120,6 +1120,7 @@ function saveItem() {
 	if (!ERROR) {
 		$.post(postUrl, formData, function(data) {
 			$('#editAddItemDialog .save').removeAttr('disabled')
+			console.log(data);
 			if (data.success) {
 				$('#pwList li[data-id=' + data.success.id + ']').html('<span class="icon-lock icon"></span><div style="display: inline-block;">' + escapeHTML(data.success.label) + '</div>');
 				loadItems();
@@ -1136,10 +1137,10 @@ function saveItem() {
 			} else {
 				var append = '<li data-id=' + data.itemid + '><span class="icon-lock icon"></span><div style="display: inline-block;">' + escapeHTML(formData.label) + '</div></li>';
 				setTimeout(function() {
-					$('li[data-id="' + data.success.id + '"]').scrollintoview({
+					$('li[data-id="' + data.itemid + '"]').scrollintoview({
 						duration : "slow"
 					});
-					$('li[data-id="' + data.success.id + '"]').click()
+					$('li[data-id="' + data.itemid + '"]').click()
 				}, 400);
 				if ($('#pwList').text() != 'Folder is empty') {
 					$('#pwList').append(append);
