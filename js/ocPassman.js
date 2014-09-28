@@ -752,7 +752,7 @@ function encryptThis(str) {
 	var encryptedString = str;
 	var encryptionKey = getEncKey();
 
-	encryptedString = sjcl.encrypt(encryptionKey, encryptedString)
+//	encryptedString = sjcl.encrypt(encryptionKey, encryptedString)
 
 	encryptedString = window.btoa(encryptedString);
 	return encryptedString;
@@ -762,9 +762,9 @@ function encryptThis(str) {
  * Decrypt a string with the algorithm
  */
 function decryptThis(str) {
-	encryptedString = window.atob(str);
+	var decryptedString = window.atob(str);
 	var decryptionKey = getEncKey();
-	var decryptedString = sjcl.decrypt(decryptionKey, encryptedString);
+//	decryptedString = sjcl.decrypt(decryptionKey, encryptedString);
 	return decryptedString;
 }
 
@@ -1124,6 +1124,8 @@ function saveItem() {
 	}
 
 	if (!ERROR) {
+		console.log(postUrl,formData)
+		return;
 		$.post(postUrl, formData, function(data) {
 			$('#editAddItemDialog .save').removeAttr('disabled')
 			console.log(data);

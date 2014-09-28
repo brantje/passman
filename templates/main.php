@@ -11,7 +11,7 @@
 \OCP\Util::addStyle('passman', 'simplePassMeter/simplePassMeter');
 \OCP\Util::addscript('passman', 'jquery.simplePassMeter.min');
 
-\OCP\Util::addscript('passman', 'encryption');
+\OCP\Util::addscript('passman', 'sjcl');
 \OCP\Util::addscript('passman', 'jsStorage');
 
 \OCP\Util::addscript('passman', 'importers/teampass');
@@ -128,7 +128,7 @@
 	</div>
 </div>
 <div id="editAddItemDialog" style="display: none;">
-   <form method="post" name="new_item" id="editNewItem">
+   <form method="get" name="new_item" id="editNewItem">
    	<input type="hidden" id="item_id" name="item_id" value=""/>
    	<input type="hidden" id="folderid" name="folderid" value=""/>
    	<input type="hidden" id="expire_time" name="expire_time" value=""/>
