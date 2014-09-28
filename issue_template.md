@@ -22,19 +22,6 @@ Tell us what happens instead
 
 **Updated from an older ownCloud or fresh install:**
 
-**List of activated apps:**
-
-**The content of config/config.php:**
-
-```
-Insert your config.php content here
-(Without the database password and passwordsalt)
-```
-
-**Are you using external storage, if yes which one:** local/smb/sftp/...
-
-**Are you using encryption:** yes/no
-
 ### Client configuration
 **Browser:**
 
