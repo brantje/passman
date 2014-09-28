@@ -764,7 +764,7 @@ function encryptThis(str) {
 function decryptThis(str) {
 	var decryptedString = window.atob(str);
 	var decryptionKey = getEncKey();
-	decryptedString = sjcl.decrypt(decryptionKey, encryptedString);
+	decryptedString = sjcl.decrypt(decryptionKey, decryptedString);
 	return decryptedString;
 }
 
@@ -1125,7 +1125,6 @@ function saveItem() {
 
 	if (!ERROR) {
 		console.log(postUrl,formData)
-		return;
 		$.post(postUrl, formData, function(data) {
 			$('#editAddItemDialog .save').removeAttr('disabled')
 			console.log(data);
