@@ -752,7 +752,7 @@ function encryptThis(str) {
 	var encryptedString = str;
 	var encryptionKey = getEncKey();
 
-//	encryptedString = sjcl.encrypt(encryptionKey, encryptedString)
+	encryptedString = sjcl.encrypt(encryptionKey, encryptedString)
 
 	encryptedString = window.btoa(encryptedString);
 	return encryptedString;
@@ -764,7 +764,7 @@ function encryptThis(str) {
 function decryptThis(str) {
 	var decryptedString = window.atob(str);
 	var decryptionKey = getEncKey();
-//	decryptedString = sjcl.decrypt(decryptionKey, encryptedString);
+	decryptedString = sjcl.decrypt(decryptionKey, encryptedString);
 	return decryptedString;
 }
 
