@@ -22,7 +22,7 @@ class TagController extends Controller {
 	private $tagBusinessLayer;
 	
 	
-    public function __construct($appName, IRequest $request,  TagBusinessLayer $tagBusinessLayer,$userId){
+    public function __construct($appName, $request,  $tagBusinessLayer,$userId){
         parent::__construct($appName, $request);
         $this->userId = $userId;
 		$this->tagBusinessLayer = $tagBusinessLayer;

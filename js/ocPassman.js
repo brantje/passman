@@ -101,10 +101,10 @@ jQuery(document).ready(function($) {
 			
 			
 		}
-		if (evt.target.className == "delete-icon icon") {
+		if (evt.target.className == "icon-delete icon") {
 			deleteItem($(this).attr('data-id'));
 		}
-		if (evt.target.className == "edit-icon icon") {
+		if (evt.target.className == "icon-rename icon") {
 			editItem($(this).attr('data-id'));
 		}
 		if (evt.target.className == "icon-history icon") {
@@ -145,7 +145,7 @@ jQuery(document).ready(function($) {
 				if (tags.indexOf('is:Deleted') >= 0) {
 					$(this).find('i').css('visibility', 'visible');
 				} else {
-					$(this).find('.itemLabel').after('<span class="rowTools"> <div><i class="edit-icon icon" title="Edit"></i></div></span>');
+					$(this).find('.itemLabel').after('<span class="rowTools"> <div><i class="icon-rename icon" title="Edit"></i></div></span>');
 					$(this).find('i').css('visibility', 'visible');
 				}
 
@@ -807,14 +807,14 @@ function loadItems() {
 				var favIcon = '<span class="icon-lock icon"></span>';
 				if (this.favicon) {
 					var favIconLocation = this.favicon;
-					if (location.protocol == 'https:') {
+					/*if (location.protocol == 'https:') {
 						var hashedUrl = window.btoa(this.favicon)
 						favIconLocation = OC.generateUrl('/apps/passman/imageproxy/'+ hashedUrl);
-					}
+					}*/
 			
 					favIcon = '<img src="' + favIconLocation + '" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;">';
 				}
-				var deleteIcon = (showingDeleted == 0) ? '<i class="delete-icon icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>';
+				var deleteIcon = (showingDeleted == 0) ? '<i class="icon-delete icon" title="Delete" style="float: right; visibility: hidden;"></i>' : '<i class="icon-history icon" title="Recover" style="float: right; visibility: hidden;"></i>';
 				var append = '<li data-id=' + this.id + '>' + favIcon + '<div style="display: inline-block;" class="itemLabel">' + escapeHTML(this.label) + '</div>' + deleteIcon + '' + inlineTags + '</li>';
 				try {
 					var username = decryptThis(this.account);

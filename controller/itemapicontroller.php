@@ -170,7 +170,7 @@ class ItemApiController extends Controller {
 		$favicon = (!empty($favicon)) ? $favicon : '';
 		
 		
-		if($folderCheckResult['renewal_period'] > 0){
+		/*if($folderCheckResult['renewal_period'] > 0){
 			if($this->params('changedPw')=="true"){
 			 $expiretime = date("c",strtotime("+". $folderCheckResult['renewal_period'] ." days"));
 			}
@@ -180,7 +180,7 @@ class ItemApiController extends Controller {
 		}
 		else {
 			$expiretime = ($this->params('expire_time')) ? $this->params('expire_time') : 0;			
-		}
+		}*/
 
 		if(empty($errors)){
 			$result['success'] = $this->ItemBusinessLayer->update($id,$userId,$label,$desc,$pass,$account,$email,$url,$expiretime,$favicon);
@@ -197,7 +197,7 @@ class ItemApiController extends Controller {
 			if(!empty($tags)){
 				$this->tagBusinessLayer->removeTags($id);
 				foreach($tags as $tag){
-					if($this->tagBusinessLayer->search($tag,$userId,true)){
+					if($tag = $this->tagBusinessLayer->search($tag,$userId,true)){
 						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$id);
 					} else {
 						$this ->tagBusinessLayer ->create($tag,$userId);

@@ -107,12 +107,13 @@ class PageController extends Controller {
 				return die();
 			}
 			else {
-				$image_mime = image_type_to_mime_type(exif_imagetype($file));
-				if($image_mime){
-					header("Content-Type:". $image_mime);
-					header('Cache-Control: max-age=86400, public');
-					echo $f;
-					return die();
+				if($file){$image_mime = image_type_to_mime_type(exif_imagetype($file));
+					if($image_mime){
+						header("Content-Type:". $image_mime);
+						header('Cache-Control: max-age=86400, public');
+						echo $f;
+						return die();
+					}
 				}
 			}
 		}
