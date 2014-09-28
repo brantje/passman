@@ -1452,3 +1452,6 @@ function isMobile() {
 	return !!('ontouchstart' in window);
 }
 
+function t(str){
+	console.log('This function is not in use, please upgrade your app');
+}
