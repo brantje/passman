@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <info>
     <id>passman</id>
-    <name>ocPassman</name>
+    <name>Passman</name>
     <description>A password manager for ownCloud</description>
     <licence>agpl</licence>
     <author>Sander Brand</author>
