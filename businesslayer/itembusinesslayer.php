@@ -53,7 +53,7 @@ class ItemBusinessLayer {
 		$item['url'] = $url;
 		$item['expire_time'] = $expireTime;
 		$item['favicon'] = $favicon;
-		
+		$item['created'] = time();
 		return $this -> ItemManager -> insert($item);
 	}
 

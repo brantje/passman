@@ -943,6 +943,7 @@ function loadItem(id) {
 				}
 			});
 		}
+		console.log(item)
 		if (item.expire_time != 0) {
 			console.log(item.expire_time);
 			$('#id_expires').html(formatDate(escapeHTML(item.expire_time)));
