@@ -483,9 +483,10 @@ jQuery(document).ready(function($) {
 						var r = getRating(data.tag.min_pw_strength);
 						$('#complex_attendue').text(r.text);
 					}
-				}
-				if (data.tag.renewal_period > $(document).data('renewalPeriod')) {
-					$(document).data('renewalPeriod', data.tag.renewal_period);
+				
+					if (data.tag.renewal_period > $(document).data('renewalPeriod')) {
+						$(document).data('renewalPeriod', data.tag.renewal_period);
+					}
 				}
 			});
 		});

@@ -28,6 +28,7 @@ class ItemBusinessLayer {
 		$result = $this -> ItemManager -> get($itemId, $userId);
 		$result['files'] = $this -> ItemManager -> getFiles($itemId, $userId);
 		$result['customFields'] = $this -> ItemManager -> getFields($itemId, $userId);
+		
 		return $result;
 	}
 	public function getByTag($tags, $userId,$deleteDate) {

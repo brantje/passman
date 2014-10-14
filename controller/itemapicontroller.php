@@ -126,11 +126,11 @@ class ItemApiController extends Controller {
 				$this->tagBusinessLayer->removeTags($id);
 				foreach($tags as $tag){
 					if($this->tagBusinessLayer->search($tag,$userId,true)){
-						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$result['itemid']);
+						//$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$result['itemid']);
 					}
 					else {
-						$this ->tagBusinessLayer ->create($tag,$userId);
-						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$result['itemid']);
+						//$this ->tagBusinessLayer ->create($tag,$userId);
+						//$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$result['itemid']);
 					}
 				}
 			} 
@@ -157,7 +157,6 @@ class ItemApiController extends Controller {
 		$url = $this->params('url');
 		$customFields = $this->params('customFields');
 		$tags = explode(',',$this->params('tags'));
-		
 		
 		if(empty($label)){
 			array_push($errors,'Label is mandatory');
@@ -197,7 +196,7 @@ class ItemApiController extends Controller {
 			if(!empty($tags)){
 				$this->tagBusinessLayer->removeTags($id);
 				foreach($tags as $tag){
-					if($tag = $this->tagBusinessLayer->search($tag,$userId,true)){
+					if($tagCheck = $this->tagBusinessLayer->search($tag,$userId,true)){
 						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$id);
 					} else {
 						$this ->tagBusinessLayer ->create($tag,$userId);

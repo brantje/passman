@@ -63,6 +63,7 @@ class ItemManager {
 		$query -> bindParam(2, $userId, \PDO::PARAM_STR);
 		$result = $query -> execute();
 		return $result -> fetchRow();
+		
 	}
 
 	/**
