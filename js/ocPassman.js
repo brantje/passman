@@ -1031,7 +1031,9 @@ function openForm(mapper) {
 			if (v != null && k!='pw1' && k!='pw2'){
 				$('#' + k).val(escapeHTML(v.toString().replace(/<br \/>/g, "\n")));
 			} else {
-				$('#' + k).val(v.toString());
+				if(v){
+					$('#' + k).val(v.toString());
+				}
 			}
 		});
 		if (mapper.pw1) {
