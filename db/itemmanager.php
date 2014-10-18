@@ -63,6 +63,7 @@ class ItemManager {
 		$query -> bindParam(2, $userId, \PDO::PARAM_STR);
 		$result = $query -> execute();
 		return $result -> fetchRow();
+		
 	}
 
 	/**
@@ -71,7 +72,7 @@ class ItemManager {
 	public function getByTag($tags, $userId,$deleted) {
 		$userId = array($userId);	
 		$isparam = ($deleted==false) ? '=' : '!=';
-		$sql = 'SELECT  item.id, item.label,item.user_id, item.delete_date, item.favicon, LOWER(GROUP_CONCAT(distinct tags.tag_label)) AS tagForSearch ,GROUP_CONCAT(distinct tags.tag_label) AS tags FROM `*PREFIX*passman_items` AS item '; 
+		$sql = 'SELECT  item.id, item.label,item.user_id, item.account, item.delete_date, item.favicon, LOWER(GROUP_CONCAT(distinct tags.tag_label)) AS tagForSearch ,GROUP_CONCAT(distinct tags.tag_label) AS tags FROM `*PREFIX*passman_items` AS item '; 
 		$sql .= 'LEFT JOIN `*PREFIX*passman_items_tags_xref` AS xref ON xref.item_id = item.id ';
 		$sql .= 'LEFT JOIN `*PREFIX*passman_tags` AS tags ON tags.tag_id = xref.tag_id ';
 		$sql .= 'WHERE item.user_id=? AND delete_date '. $isparam .'0';
@@ -100,8 +101,8 @@ class ItemManager {
 	 * Insert item
 	 */
 	public function insert($item) {
-		$sql = 'INSERT INTO `*PREFIX*passman_items` (`user_id`,`label`,`description`,`password`,`account`,`email`,`url`,`expire_time`,favicon)';
-		$sql .= ' VALUES (?,?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO `*PREFIX*passman_items` (`user_id`,`label`,`description`,`password`,`account`,`email`,`url`,`expire_time`,`favicon`,`created`)';
+		$sql .= ' VALUES (?,?,?,?,?,?,?,?,?,?)';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $item['user_id'], \PDO::PARAM_INT);
 		$query -> bindParam(2, $item['label'], \PDO::PARAM_STR);
@@ -112,6 +113,7 @@ class ItemManager {
 		$query -> bindParam(7, $item['url'], \PDO::PARAM_STR);
 		$query -> bindParam(8, $item['expire_time'], \PDO::PARAM_INT);
 		$query -> bindParam(9, $item['favicon'], \PDO::PARAM_STR);
+		$query -> bindParam(10, $item['created'], \PDO::PARAM_STR);
 		$result = $query -> execute();
 		return $this -> db -> getInsertId('`*PREFIX*passman_items`');
 

@@ -135,7 +135,7 @@ $(document).ready(function() {
 		} else {
 			formData.expire_time = 0;
 		}
-
+		formData.tags = $("#tags").tagit("assignedTags").join(',');
 		console.log(formData);
 		if (!ERROR) {
 			$.post(createUrl, formData, function(data) {
@@ -153,17 +153,18 @@ $(document).ready(function() {
 		 var tagData = $(document).data('tagsData');
 		 $.each($("#tags").tagit("assignedTags"),function(k,v){
 		 	$.get(OC.generateUrl('apps/passman/api/v1/tag/load'),{'tag': v},function(data){
-		 		console.log(data);
-		 		if(data.tag.min_pw_strength*1 > $(document).data('minPWStrength')){
-		 			console.log(data);
-		 			$(document).data('minPWStrength', data.tag.min_pw_strength)
-		 			var r = getRating(data.tag.min_pw_strength)
-		 			console.log(r);
-		 			$('#complex_attendue').text(r.text);
-		 		}
-		 		if(data.tag.renewal_period > $(document).data('renewalPeriod')){
-		 			$(document).data('renewalPeriod', data.tag.renewal_period)
-		 		}
+		 		if(data != null){
+					if(data.tag.min_pw_strength*1 > $(document).data('minPWStrength')){
+						console.log(data);
+						$(document).data('minPWStrength', data.tag.min_pw_strength)
+						var r = getRating(data.tag.min_pw_strength)
+						console.log(r);
+						$('#complex_attendue').text(r.text);
+					}
+					if(data.tag.renewal_period > $(document).data('renewalPeriod')){
+						$(document).data('renewalPeriod', data.tag.renewal_period)
+					}
+				}
 		 	});
 		 });
 		 
@@ -279,21 +280,18 @@ function encryptThis(str) {
 	var encryptedString = str;
 	var encryptionKey = getEncKey();
 
-	var randVal = Math.round(110 + (Math.random() * (999 - 110)));
-	//String length
+	encryptedString = sjcl.encrypt(encryptionKey, encryptedString)
 
-	/**
-	 * Generate random string
-	 */
-	var salt = generateSalt(randVal);
-	encryptionKey = salt + encryptionKey;
-
-	/**
-	 * Loop a few times
-	 */
-	for ( i = 0; i < 5; i++) {
-		encryptedString = Aes.Ctr.encrypt(encryptedString, encryptionKey, 256);
-	}
-	encryptedString = Base64.encode(randVal + salt + encryptedString);
+	encryptedString = window.btoa(encryptedString);
 	return encryptedString;
+}
+
+/**
+ * Decrypt a string with the algorithm
+ */
+function decryptThis(str) {
+	encryptedString = window.atob(str);
+	var decryptionKey = getEncKey();
+	var decryptedString = sjcl.decrypt(decryptionKey, encryptedString);
+	return decryptedString;
 }

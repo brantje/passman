@@ -80,6 +80,9 @@ ul#tagList {
  margin: 5px;
  cursor: pointer;
  }*/
+ 
+ 
+ 
 #tagList .tag {
 	height: 50px;
 	width: 250px;
@@ -88,6 +91,12 @@ ul#tagList {
 	cursor: pointer;
 	padding-left: 12px;
 	background-color: #f8f8f8;
+}
+#tagList .ui-state-hover {
+border: 1px solid #ddd;
+background: #c9c9c9;
+font-weight: bold;
+color: #333;
 }
 #pwList .tag {
 	-moz-border-radius: 6px;
@@ -197,6 +206,7 @@ div#ocpContent {
 }
 #addItem{
 	width: 120px;
+	white-space: nowrap; 
 }
 #addItem:disabled, #editItem:disabled, #deleteItem:disabled {
 	display: none;
@@ -216,7 +226,7 @@ div#ocpContent {
 #pwList li > span:first-child {
 	float: left;
 	padding-left: 20px;
-/*	background-image: url('../img/key.png');*/
+	background-image: url('../img/lock.svg');
 	background-repeat: no-repeat;
 	background-position: 3px 6px;
 	margin-left: 5px;
@@ -224,6 +234,44 @@ div#ocpContent {
 #pwList li div {
 	float: left;
 	cursor: pointer;
+}
+
+li.ui-draggable-dragging {
+	padding-left: 20px;
+	list-style: none;
+	padding: 5px 10px 5px 10px;
+	margin-left:10px;
+	background-color: #fff;
+	border: 1px solid black;
+	width: auto;
+	display: block;
+}
+li.ui-draggable-dragging span:first-child {
+	float: left;
+	padding-left: 20px;
+	background-image: url('../img/lock.svg');
+	background-repeat: no-repeat;
+	background-position: 3px 6px;
+}
+li.ui-draggable-dragging .tag {
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	-webkit-border-radius: 11px;
+	border: 1px solid rgba(239, 239, 239, 1.0);
+	background: none;
+	background-color: rgba(239, 239, 239, 1.0) !important;
+	width: auto !important;
+	font-weight: normal;
+	float: right;
+	padding: 0px 8px 0px 8px;
+	margin: 0 4px;
+	cursor: pointer;
+	line-height: 21px;
+	line-height: 19px;
+	margin-top: 4px;
+}
+li.ui-draggable-dragging .delete-icon{
+display: none !important;
 }
 #pwList li > i {
 margin-right: 10px;
@@ -345,7 +393,7 @@ label[for="item_login"] {
 	font-weight: bold;
 }
 .save, .cancel {
-	width: 50px;
+	width: 60px;
 	float: right;
 	text-align: center;
 }

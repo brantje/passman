@@ -13,7 +13,7 @@ print_unescaped('<script> var folder = ' . $_['folders'] . '</script>');
 print_unescaped('<script> var foldersPlain = ' . $_['foldersPlain'] . '</script>');
 ?>
 
-<form class="addPw">
+<form class="addPw" autocomplete="off">
 
 	<h1>Add a password</h1>
 	<div class="close_btn">
@@ -34,15 +34,15 @@ print_unescaped('<script> var foldersPlain = ' . $_['foldersPlain'] . '</script>
 			</li>
 			<li>
 				<label for="account">Account: </label>
-				<input type="text" name="account" class="account"	placeholder="Account" />
+				<input type="text" name="account" class="account"	placeholder="Account" autocomplete="off" />
 			</li>
 			<li>
 				<label for="email">Email: </label>
-				<input type="text" name="email" class="email"	placeholder="e-mail" />
+				<input type="text" name="email" class="email"	placeholder="e-mail" autocomplete="off" />
 			</li>
 			<li>
 				<label for="url">Password: </label>
-				<input type="password" name="pw1" id="pw1"/><br />
+				<input type="password" name="pw1" id="pw1" autocomplete="off"/><br />
 				<div id="pwTools">
                 <span id="custom_pw">
                     <input type="checkbox" id="pw_numerics" checked="checked"><label for="pw_numerics">123</label>
@@ -59,7 +59,7 @@ print_unescaped('<script> var foldersPlain = ' . $_['foldersPlain'] . '</script>
 			</li>
 			<li>
 				<label for="url">Repeat password: </label>
-				<input type="password" name="pw2"  id="pw2"/>
+				<input type="password" name="pw2"  id="pw2" autocomplete="off"/>
 				
 				<div id="passwordStrengthDiv"></div>
 			</li>

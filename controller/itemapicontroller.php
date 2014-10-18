@@ -123,7 +123,7 @@ class ItemApiController extends Controller {
 				}
 			}
 			if(!empty($tags)){
-				$this->tagBusinessLayer->removeTags($id);
+				//$this->tagBusinessLayer->removeTags($id);
 				foreach($tags as $tag){
 					if($this->tagBusinessLayer->search($tag,$userId,true)){
 						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$result['itemid']);
@@ -158,7 +158,6 @@ class ItemApiController extends Controller {
 		$customFields = $this->params('customFields');
 		$tags = explode(',',$this->params('tags'));
 		
-		
 		if(empty($label)){
 			array_push($errors,'Label is mandatory');
 		}
@@ -167,9 +166,10 @@ class ItemApiController extends Controller {
 			array_push($errors,'Item not found');
 		}
 		$favicon = $this->faviconFetcher->fetch($url);
+		$favicon = (!empty($favicon)) ? $favicon : '';
 		
 		
-		if($folderCheckResult['renewal_period'] > 0){
+		/*if($folderCheckResult['renewal_period'] > 0){
 			if($this->params('changedPw')=="true"){
 			 $expiretime = date("c",strtotime("+". $folderCheckResult['renewal_period'] ." days"));
 			}
@@ -179,7 +179,7 @@ class ItemApiController extends Controller {
 		}
 		else {
 			$expiretime = ($this->params('expire_time')) ? $this->params('expire_time') : 0;			
-		}
+		}*/
 
 		if(empty($errors)){
 			$result['success'] = $this->ItemBusinessLayer->update($id,$userId,$label,$desc,$pass,$account,$email,$url,$expiretime,$favicon);
@@ -196,10 +196,9 @@ class ItemApiController extends Controller {
 			if(!empty($tags)){
 				$this->tagBusinessLayer->removeTags($id);
 				foreach($tags as $tag){
-					if($this->tagBusinessLayer->search($tag,$userId,true)){
+					if($tagCheck = $this->tagBusinessLayer->search($tag,$userId,true)){
 						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$id);
-					}
-					else {
+					} else {
 						$this ->tagBusinessLayer ->create($tag,$userId);
 						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$id);
 					}
@@ -217,6 +216,21 @@ class ItemApiController extends Controller {
 	public function search($itemName) {
 		$deleted['deleted']	=$this->ItemBusinessLayer->search($this->params('q'),$this->userId);
 		return new JSONResponse($deleted['deleted']); 
+	}
+
+	/**
+	 * @NoCSRFRequired
+	 * @NoAdminRequired
+	*/
+	public function addtag(){
+		$itemId = (int) $this->params('itemId');
+		$tag = $this->params('tag');
+		
+		$item =  $this->ItemBusinessLayer->get($itemId,$this->userId);
+		$tags = explode(',',$item->tags);
+		if(!in_array($tag,$tags)){
+			$this ->tagBusinessLayer ->linkTagXItem($tag,$this->userId,$itemId);
+		}
 	}
 	
 	/**

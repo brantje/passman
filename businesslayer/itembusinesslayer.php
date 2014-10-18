@@ -28,6 +28,7 @@ class ItemBusinessLayer {
 		$result = $this -> ItemManager -> get($itemId, $userId);
 		$result['files'] = $this -> ItemManager -> getFiles($itemId, $userId);
 		$result['customFields'] = $this -> ItemManager -> getFields($itemId, $userId);
+		
 		return $result;
 	}
 	public function getByTag($tags, $userId,$deleteDate) {
@@ -52,7 +53,7 @@ class ItemBusinessLayer {
 		$item['url'] = $url;
 		$item['expire_time'] = $expireTime;
 		$item['favicon'] = $favicon;
-		
+		$item['created'] = time();
 		return $this -> ItemManager -> insert($item);
 	}
 

@@ -17,7 +17,7 @@ use \OCA\Passman\Utility\Config;
 
 class TagBusinessLayer {
 	private $tagManager;
-	public function __construct(TagManager $tagManager){
+	public function __construct($tagManager){
 		$this->tagManager = $tagManager;
 	}
 	

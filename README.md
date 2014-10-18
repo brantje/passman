@@ -8,6 +8,9 @@ stable7 = Stable for ownCloud 7
 Passman is a password manager for owncloud.
 It features client side password encryption with aes.
 
+#Issues
+Report issue's using the template: https://github.com/brantje/passman/blob/master/issue_template.md
+
 #Features
 - Add tags to an item
 - Tag cloud

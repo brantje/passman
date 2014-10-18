@@ -72,8 +72,9 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function imageproxy() {
-		$url = $this -> params('url');
+	public function imageproxy($hash) {
+		$hash = array_pop(explode('/', $_SERVER['REQUEST_URI']));
+		$url = base64_decode($hash);
 		if (filter_var($url, FILTER_VALIDATE_URL) === FALSE) {
 			die('Not a valid URL');
 		}
@@ -83,25 +84,38 @@ class PageController extends Controller {
 			//echo $this->getFavIcon($md5Url);
 		} else {
 			$f = $this -> getURL($url);
-			try {
-				$isIcon = (strpos($url, '.ico') !== false) ? 'ico:' : '';
-				$name = tempnam('/tmp', "imageProxy");
-				file_put_contents($name, $f);
-				$image = new \Imagick($isIcon . $name);
-				if ($image -> valid()) {
-					$image->setImageFormat('png');
-					header("Content-Type: image/png");
-					header('Cache-Control: max-age=86400, public');
-					
-					//$this->writeFavIcon($md5url, '123456789');
-					echo $image;
-
+			$name = tempnam('/tmp', "imageProxy");
+			file_put_contents($name, $f);
+			if( extension_loaded('imagick') || class_exists("Imagick") ){
+				try {
+					$isIcon = (strpos($url, '.ico') !== false) ? 'ico:' : '';
+					$image = new \Imagick($isIcon . $name);
+					if ($image -> valid()) {
+						$image->setImageFormat('png');
+						header("Content-Type: image/png");
+						header('Cache-Control: max-age=86400, public');
+						
+						//$this->writeFavIcon($md5url, '123456789');
+						echo $image;
+	
+					}
+				} catch(exception $e) {
+					header("HTTP/1.1 200 OK");
+					echo "test";
+					die();
 				}
-			} catch(exception $e) {
-				header("HTTP/1.1 200 OK");
-				die();
+				return die();
 			}
-			return die();
+			else {
+				if($file){$image_mime = image_type_to_mime_type(exif_imagetype($file));
+					if($image_mime){
+						header("Content-Type:". $image_mime);
+						header('Cache-Control: max-age=86400, public');
+						echo $f;
+						return die();
+					}
+				}
+			}
 		}
 	}
 
@@ -112,8 +126,8 @@ class PageController extends Controller {
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		$tmp = curl_exec($ch);
-		curl_close($ch);
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
 		if ($httpCode == 404) {
 			return false;
 		} else {

@@ -24,9 +24,8 @@ class FaviconFetcher {
 	 * the file object contains logic in its constructor which makes it
 	 * impossible to inject and test
 	 */
-	public function __construct(SimplePieAPIFactory $apiFactory, Config $config) {
+	public function __construct(SimplePieAPIFactory $apiFactory) {
 		$this->apiFactory = $apiFactory;
-		$this->config = $config;
 	}
 
 
