@@ -1,6 +1,7 @@
 var app = angular.module('passman', ['ngResource','ngTagsInput','ngClipboard','LocalStorageModule']).config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
 }]);
+
 app.factory('ItemService', ['$http', function($http) {
    return{
     getItems : function(tags) {
@@ -34,24 +35,24 @@ app.controller('appCtrl', function($scope,ItemService,localStorageService) {
 	 			}
 	 		}
 	   	});
-   }
+  };
    //$scope.loadItems([]);
    
-   $scope.$watch("selectedTags",function(v){
-   	if(!$scope.encryptionKey){
-   		return;
-   	}
-   	
-   	var tmp = [];
-   	for (name in v) {
-   		tmp.push(v[name].text)
-   	}
-   	$scope.loadItems(tmp);
-   },true);
+    $scope.$watch("selectedTags",function(v){
+      if(!$scope.encryptionKey){
+       return;
+      }
+     	
+      var tmp = [];
+      for (name in v) {
+        tmp.push(v[name].text)
+      }
+     	$scope.loadItems(tmp);
+    },true);
    
    	$scope.selectTag = function(tag){
 		$scope.selectedTags.push({text: tag})
-	}
+	};
 	
 
 	$scope.decryptThis = function(encryptedData){
@@ -80,7 +81,7 @@ app.controller('appCtrl', function($scope,ItemService,localStorageService) {
 	
 	$scope.setEncryptionKey = function(key){
 		$scope.encryptionKey = key;
-	}
+	};
 	
 	$scope.showEncryptionKeyDialog = function(){
 		$('#encryptionKeyDialog').dialog({
@@ -101,7 +102,7 @@ app.controller('appCtrl', function($scope,ItemService,localStorageService) {
 					$scope.setEncryptionKey($('#ecKey').val());
 					$scope.loadItems([]);
 					if ($('#ecRemember:checked').length > 0) {
-						localStorageService.set('encryptionKey', $('#ecKey').val());
+						localStorageService.set('encryptionKey',  window.btoa($('#ecKey').val()));
 						/*if ($('#rememberTime').val() != 'forever') {
 							var time = $('#rememberTime').val() * 60 * 1000;
 							$.jStorage.setTTL("ENC_KEY", time);
@@ -116,7 +117,7 @@ app.controller('appCtrl', function($scope,ItemService,localStorageService) {
 				}
 			}
 		});
-	}
+	};
 	
 	/**
 	 *Onload -> Check if localstorage has key if not show dialog 
@@ -124,8 +125,7 @@ app.controller('appCtrl', function($scope,ItemService,localStorageService) {
 	if(!localStorageService.get('encryptionKey')){
 		$scope.showEncryptionKeyDialog();
 	} else {
-		$scope.setEncryptionKey(localStorageService.get('encryptionKey'));
-		$scope.loadItems([]);
+		$scope.setEncryptionKey(window.atob(localStorageService.get('encryptionKey')));
 	}
 	
 });
@@ -140,19 +140,22 @@ app.controller('contentCtrl', function($scope,$sce) {
   
   $scope.showItem = function(item){
   	var encryptedFields = ['account','email','password','description'];
-  	for(var i=0;i< encryptedFields.length;i++){
-  		item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
-  	}
-  	for(var i=0;i < item.customFields.length;i++){
-  		item.customFields[i].label = $scope.decryptThis(item.customFields[i].label);
-  		item.customFields[i].value = $scope.decryptThis(item.customFields[i].value);
-  	}
-  	for(var i=0;i < item.files.length;i++){
-  		item.files[i].filename = $scope.decryptThis(item.files[i].filename);
-  		item.files[i].size = OC.Util.humanFileSize(item.files[i].size);
-  		item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
-  	}
+  	if(!item.decrypted){
+	  	for(var i=0;i< encryptedFields.length;i++){
+	  		item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
+	  	}
+	  	for(var i=0;i < item.customFields.length;i++){
+	  		item.customFields[i].label = $scope.decryptThis(item.customFields[i].label);
+	  		item.customFields[i].value = $scope.decryptThis(item.customFields[i].value);
+	  	}
+	  	for(var i=0;i < item.files.length;i++){
+	  		item.files[i].filename = $scope.decryptThis(item.files[i].filename);
+	  		item.files[i].size = OC.Util.humanFileSize(item.files[i].size);
+	  		item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
+	  	}
+	}
   	item.description = $sce.trustAsHtml(item.description);
+  	item.decrypted = true;
   	$scope.currentItem = item;
   }
   

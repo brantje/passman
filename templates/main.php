@@ -2,9 +2,9 @@
 \OCP\Util::addscript('passman', 'sjcl');
 \OCP\Util::addscript('passman', 'angular.min');
 \OCP\Util::addscript('passman', 'tagsInput.min');
-\OCP\Util::addscript('passman', '/bower_components/ng-clip/dest/ng-clip.min');
-\OCP\Util::addscript('passman', '/bower_components/zeroclipboard/dist/ZeroClipboard.min');
-\OCP\Util::addscript('passman', '/bower_components/angular-local-storage/dist/angular-local-storage.min');
+\OCP\Util::addscript('passman', 'bower_components/ng-clip/dest/ng-clip.min');
+\OCP\Util::addscript('passman', 'bower_components/zeroclipboard/dist/ZeroClipboard.min');
+\OCP\Util::addscript('passman', 'bower_components/angular-local-storage/dist/angular-local-storage.min');
 \OCP\Util::addscript('passman', 'app');
 
 \OCP\Util::addStyle('passman', 'ocPassman');
@@ -32,7 +32,7 @@
 							<!--button class="button" id="restoreItem">Restore item</button-->
 				</div>
 				<ul id="pwList">
-					<li ng-repeat="item in items" ng-mouseover="mouseOver = true" ng-mouseleave="mouseOver = false" ng-click="showItem(item)">
+					<li ng-repeat="item in items | orderBy: 'item.label'" ng-mouseover="mouseOver = true" ng-mouseleave="mouseOver = false" ng-click="showItem(item)">
 					<img ng-src="{{item.favicon}}" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" ng-if="item.favicon">
 					<img style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" ng-src="{{noFavIcon}}" ng-if="!item.favicon">
 					<div style="display: inline-block;" class="itemLabel">{{item.label}}</div>
@@ -116,7 +116,7 @@
 				</div>
     	  </div>
     </div>
-<div id="encryptionKeyDialog" style="display: none;">
+	<div id="encryptionKeyDialog" style="display: none;">
 	<p>Enter your encryption key.<br />If this if the first time you use Passman, this key will be used for encryption your passwords</p>
 	<input type="password" id="ecKey" style="width: 150px;" /><br />
 	<input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember">Remember this key</label> 
@@ -131,5 +131,5 @@
 		<option value="43200">30 Days</option>
 	</select-->
 	
-</div>
+	</div>
 </div>
