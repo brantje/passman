@@ -1,16 +1,5 @@
 <?php
-\OCP\Util::addStyle('passman', 'simplePassMeter/simplePassMeter');
-\OCP\Util::addscript('passman', 'jquery.simplePassMeter.min');
-\OCP\Util::addscript('passman', 'tag-it.min');
-\OCP\Util::addStyle('passman', 'jquery.tagit');
-\OCP\Util::addStyle('passman', 'tagit.ui-zendesk');
-\OCP\Util::addscript('passman', 'encryption');
-\OCP\Util::addscript('passman', 'jsStorage');
-\OCP\Util::addStyle('passman', 'ocPassman');
-\OCP\Util::addStyle('passman', 'popup');
-\OCP\Util::addScript('passman', 'popup');
-print_unescaped('<script> var folder = ' . $_['folders'] . '</script>');
-print_unescaped('<script> var foldersPlain = ' . $_['foldersPlain'] . '</script>');
+
 ?>
 
 <form class="addPw" autocomplete="off">
