@@ -36,6 +36,9 @@ class TagBusinessLayer {
 	public function removeTags($itemId){
 		$this->tagManager->removeTags($itemId);
 	}
+	public function loadAll($userId){
+		return $this->tagManager->loadAll($userId);
+	}
 	public function load($tag,$userId){
 		return $this->tagManager->load($tag,$userId);
 	}

@@ -36,6 +36,14 @@ class TagController extends Controller {
 		$response = $this->tagBusinessLayer->search($tag,$this->userId);
 		return new JSONResponse($response); 
 	}
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function loadall(){
+		$response = $this->tagBusinessLayer->loadAll($this->userId);
+		return new JSONResponse($response); 
+	}
 	
 	public function load(){
 		$tag = $this->params('tag');

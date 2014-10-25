@@ -29,7 +29,7 @@ class TagManager {
 		$result = $this -> db -> prepareQuery($sql) -> execute(array($userId,$tag));
 		$rows = array();
 		while ($row = $result -> fetchRow()) {
-			$rows[$row['id']] = array('label'=>$row['label'],'renewal_period'=>$row['renewal_period'],'min_pw_strength'=>$row['min_pw_strength']);
+			$rows[] = array('text'=>$row['label'],'renewal_period'=>$row['renewal_period'],'min_pw_strength'=>$row['min_pw_strength']);
 		}
 		return $rows;
 	}
@@ -58,6 +58,17 @@ class TagManager {
 		$query -> bindParam(1, $itemId, \PDO::PARAM_INT);
 		$result = $query -> execute();
 	}
+	public function loadAll($userId){
+		$sql = 'SELECT `t`.`tag_label` as `text` from `*PREFIX*passman_tags` t where user_id=?';
+		$query = $this -> db -> prepareQuery($sql);
+		$query -> bindParam(1, $userId, \PDO::PARAM_STR);
+		$result = $query->execute();
+		$tags = array();
+		while ($row = $result -> fetchRow()) {
+			$tags[] = $row;
+		}
+		return $tags;
+	} 
 	public function load($tag,$userId){
 		$sql = 'SELECT * from `*PREFIX*passman_tags` where tag_label=? and user_id=?';
 		$query = $this -> db -> prepareQuery($sql);

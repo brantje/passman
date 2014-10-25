@@ -36,6 +36,7 @@ $application->registerRoutes($this, array(
 	
 	
 	array('name' => 'tag#search', 'url' => '/api/v1/tags/search', 'verb' => 'GET'),
+	array('name' => 'tag#loadall', 'url' => '/api/v1/tags/list', 'verb' => 'GET'),
 	array('name' => 'tag#load', 'url' => '/api/v1/tag/load', 'verb' => 'GET'),
 	array('name' => 'tag#update', 'url' => '/api/v1/tag/update', 'verb' => 'POST'),
 	

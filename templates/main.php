@@ -16,7 +16,7 @@
   	<div id="app-navigation" ng-controller="navigationCtrl">
   		<div id="searchTagContainer">
 	 	 <tags-input ng-model="selectedTags" removeTagSymbol="x">
-	 	 	  
+	 	 	   <auto-complete source="loadTags($query)" min-length="1"></auto-complete>
 	 	 </tags-input>
 		 <span>Related Tags</span>
 	 	</div>

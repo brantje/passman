@@ -130,9 +130,11 @@ app.controller('appCtrl', function($scope,ItemService,localStorageService) {
 	
 });
 
-app.controller('navigationCtrl', function($scope) {
+app.controller('navigationCtrl', function($scope,$http) {
 	console.log('navigationCtrl');
-   
+	$scope.loadTags = function(query) {
+            return $http.get(OC.generateUrl('apps/passman/api/v1/tags/search?k='+ query));
+    };   
 });
 
 app.controller('contentCtrl', function($scope,$sce) {
@@ -154,7 +156,8 @@ app.controller('contentCtrl', function($scope,$sce) {
 	  		item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
 	  	}
 	}
-  	item.description = $sce.trustAsHtml(item.description);
+	
+  	item.description = $sce.trustAsHtml('<span>'+item.description+'</span>');
   	item.decrypted = true;
   	$scope.currentItem = item;
   }
