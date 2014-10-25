@@ -80,8 +80,12 @@ class ItemApiController extends Controller {
      	$itemId = $this->params('id');
      	$tags = $this->params('tags');
 		$tags = (empty($tags)) ? false : $tags;
-		$result['items'] = $this->ItemBusinessLayer->getByTag($tags,$this->userId,false); 
-		
+		$r = $this->ItemBusinessLayer->getByTag($tags,$this->userId,false); 
+		$result['items'] = array();
+		foreach($r as $item){
+			$item = $this->ItemBusinessLayer->get($item['id'],$this->userId);
+			array_push($result['items'],$item);
+		}
 		return new JSONResponse($result);
 	}
 
