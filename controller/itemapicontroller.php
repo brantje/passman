@@ -11,6 +11,7 @@
 
 namespace OCA\Passman\Controller;
 
+use \OCA\Passman\BusinessLayer\TagBusinessLayer;
 use \OCA\Passman\BusinessLayer\ItemBusinessLayer;
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
@@ -75,7 +76,8 @@ class ItemApiController extends Controller {
 	}
 	 /**
 	 * @NoAdminRequired
-     */
+   * 
+   */
      public function getbytag($itemId) {
      	$itemId = $this->params('id');
      	$tags = $this->params('tags');
@@ -98,26 +100,30 @@ class ItemApiController extends Controller {
 	public function create() {
 		$errors = array();
 		$userId = $this->userId;
-		$label = $this->params('label');
-		$desc = $this->params('desc');
-		$account = $this->params('account');
-		$pass = $this->params('pw1');
-		$email = $this->params('email');
-		$url = $this->params('url');
-		$customFields = $this->params('customFields');
-		$tags = explode(',',$this->params('tags'));
-    	$expiretime = 0;
+    $item['account'] = $this->params('account');
+    $item['created'] = $this->params('created');
+    $item['description'] = $this->params('description');
+    $item['email'] = $this->params('email');
+    $item['favicon'] = $this->params('favicon');
+    $item['label'] = $this->params('label');
+    $item['password'] = $this->params('password');
+    $item['expire_time'] = ($this->params('expire_time')) ? $this->params('expire_time') : 0;
+    $item['user_id'] = $this->userId;
+    $item['url'] = $this->params('url');
+    $tags = $this->params('tags');
+    $customFields = $this->params('customFields');
 		
-		if(empty($label)){
+		if(empty($item['label'])){
 			array_push($errors,'Label is mandatory');
 		}
-		
-		$favicon = $this->faviconFetcher->fetch($url);
-				
+		if(empty($favicon)){
+		  $favicon = $this->faviconFetcher->fetch($url);
+    }		
 		if(empty($errors)){
-			$result['itemid'] = $this->ItemBusinessLayer->create($userId,$label,$desc,$pass,$account,$email,$url,$expiretime,$favicon);
+			$result['itemid'] = $this->ItemBusinessLayer->create($item);
 			if(!empty($customFields)){
 				foreach ($customFields as $key => $field) {
+				  print_r(field);
 					if(empty($field['id'])){
 							$field->id = $this->ItemBusinessLayer->createField($field,$userId,$result['itemid']);
 					}
@@ -129,88 +135,86 @@ class ItemApiController extends Controller {
 			if(!empty($tags)){
 				//$this->tagBusinessLayer->removeTags($id);
 				foreach($tags as $tag){
-					if($this->tagBusinessLayer->search($tag,$userId,true)){
-						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$result['itemid']);
+					if($this->tagBusinessLayer->search($tag['text'],$userId,true)){
+						$this ->tagBusinessLayer ->linkTagXItem($tag['text'],$userId,$result['itemid']);
 					}
 					else {
-						$this ->tagBusinessLayer ->create($tag,$userId);
-						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$result['itemid']);
+						$this ->tagBusinessLayer ->create($tag['text'],$userId);
+						$this ->tagBusinessLayer ->linkTagXItem($tag['text'],$userId,$result['itemid']);
 					}
 				}
 			} 
 		} else {
 			$result['errors'] = $errors;
 		}
-		return new JSONResponse($result); 
+    $item['id'] = $result['itemid'];
+		return new JSONResponse($item);
 	}
 	/**
 	 * Update to create and edit items 
 	 * @param Folder ID 
 	 *
 	 * @NoAdminRequired
+   * @NoCSRFRequired
 	 */
 	public function update($itemId) {
 		$errors = array();
-		$id = (int) $this->params('item_id');
-		$userId = $this->userId;
-		$label = $this->params('label');
-		$desc = $this->params('desc');
-		$account = $this->params('account');
-		$pass = $this->params('pw1');
-		$email = $this->params('email');
-		$url = $this->params('url');
-		$customFields = $this->params('customFields');
-		$tags = explode(',',$this->params('tags'));
-		
-		if(empty($label)){
-			array_push($errors,'Label is mandatory');
-		}
-		$curItem =  $this->ItemBusinessLayer->get($itemId,$this->userId);
-		if(empty($curItem)){
-			array_push($errors,'Item not found');
-		}
-		$favicon = $this->faviconFetcher->fetch($url);
-		$favicon = (!empty($favicon)) ? $favicon : '';
-		
-		
-		/*if($folderCheckResult['renewal_period'] > 0){
-			if($this->params('changedPw')=="true"){
-			 $expiretime = date("c",strtotime("+". $folderCheckResult['renewal_period'] ." days"));
-			}
-			else {
-				$expiretime = $curItem['expire_time'];
-			}
-		}
-		else {
-			$expiretime = ($this->params('expire_time')) ? $this->params('expire_time') : 0;			
-		}*/
+    
+    $item = array();
+    $item['id'] = $this->params('id');
+    $item['account'] = $this->params('account');
+    $item['created'] = $this->params('created');
+    
+    $item['description'] = $this->params('description');
+    $item['email'] = $this->params('email');
+    $item['favicon'] = $this->params('favicon');
+    $item['label'] = $this->params('label');
+    $item['password'] = $this->params('password');
+    $item['expire_time'] = $this->params('expire_time');
+    $item['user_id'] = $this->params('user_id');
+    $item['url'] = $this->params('url');
+    $tags = $this->params('tags');
+    $customFields = $this->params('customFields');
+    if(empty($label)){
+      array_push($item['label'],'Label is mandatory');
+    }
+    
+    $curItem =  $this->ItemBusinessLayer->get($itemId,$this->userId);
+    if(empty($curItem)){
+      array_push($errors,'Item not found');
+    }
+    if(empty($item['favicon'])){
+      $favicon = $this->faviconFetcher->fetch($url);
+      $favicon = (!empty($favicon)) ? $favicon : '';
+    }
+    if(empty($errors)){
+      $result['success'] = $this->ItemBusinessLayer->update($item);
+      if(!empty($customFields)){
 
-		if(empty($errors)){
-			$result['success'] = $this->ItemBusinessLayer->update($id,$userId,$label,$desc,$pass,$account,$email,$url,$expiretime,$favicon);
-			if(!empty($customFields)){
-				foreach ($customFields as $key => $field) {
-					if(empty($field['id'])){
-							$field->id = $this->ItemBusinessLayer->createField($field,$userId,$id);
-					}
-					else {
-						$field->id = $this->ItemBusinessLayer->updateField($field,$userId,$result['itemid']);
-					}
-				}
-			}
-			if(!empty($tags)){
-				$this->tagBusinessLayer->removeTags($id);
-				foreach($tags as $tag){
-					if($tagCheck = $this->tagBusinessLayer->search($tag,$userId,true)){
-						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$id);
-					} else {
-						$this ->tagBusinessLayer ->create($tag,$userId);
-						$this ->tagBusinessLayer ->linkTagXItem($tag,$userId,$id);
-					}
-				}
-			}
-		} else {
-			$result['errors'] = $errors;
-		}
+        foreach ($customFields as $key => $field) {
+          if(empty($field['id'])){
+              $field->id = $this->ItemBusinessLayer->createField($field,$this->userId,$item['id']);
+          }
+          else {
+              $field->id = $this->ItemBusinessLayer->updateField($field,$this->userId,$item['id']);
+          }
+        }
+      }
+      if(!empty($tags)){
+        $this->tagBusinessLayer->removeTags($id);
+        foreach($tags as $tag){
+          $r = $this->tagBusinessLayer->search($tag['text'],$this->userId);  
+          if($r){
+            $this ->tagBusinessLayer ->linkTagXItem($tag['text'],$this->userId,$item['id']);
+          } else {
+            $this ->tagBusinessLayer ->create($tag['text'],$this->userId);
+            $this ->tagBusinessLayer ->linkTagXItem($tag['text'],$this->userId,$item['id']);
+          }
+        }
+      }
+    } else {
+      $result['errors'] = $errors;
+    }
 		return new JSONResponse($result); 
 	}
 

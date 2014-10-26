@@ -29,7 +29,7 @@ class TagManager {
 		$result = $this -> db -> prepareQuery($sql) -> execute(array($userId,$tag));
 		$rows = array();
 		while ($row = $result -> fetchRow()) {
-			$rows[] = array('text'=>$row['label'],'renewal_period'=>$row['renewal_period'],'min_pw_strength'=>$row['min_pw_strength']);
+			$rows[] = array('id'=>$row['id'],'text'=>$row['label'],'renewal_period'=>$row['renewal_period'],'min_pw_strength'=>$row['min_pw_strength']);
 		}
 		return $rows;
 	}

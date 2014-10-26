@@ -30,8 +30,8 @@ class TagBusinessLayer {
 	}
 	
 	public function linkTagXItem($tag,$userId,$itemId){
-		$tagId = key($this->tagManager->search($tag,$userId,true));
-		$this->tagManager->linkTagXItem($tagId,$itemId);
+		$tag = $this->tagManager->search($tag,$userId,true);
+		$this->tagManager->linkTagXItem($tag[0]['id'],$itemId);
 	}
 	public function removeTags($itemId){
 		$this->tagManager->removeTags($itemId);

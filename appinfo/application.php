@@ -80,7 +80,8 @@ class Application extends App {
 		
 		$container->registerService('ItemBusinessLayer', function($c) {
 			return new ItemBusinessLayer(
-				$c->query('ItemManager')
+				$c->query('ItemManager'),
+				$c->query('TagBusinessLayer')
 			);
 		});
 		

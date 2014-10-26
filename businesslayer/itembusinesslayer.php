@@ -16,8 +16,10 @@ use \OCA\Passman\Utility\Config;
 
 class ItemBusinessLayer {
 	private $ItemManager;
-	public function __construct($ItemManager) {
+  private $TagBusinessLayer;
+	public function __construct($ItemManager,$TagBusinessLayer) {
 		$this -> ItemManager = $ItemManager;
+    $this -> TagBusinessLayer = $TagBusinessLayer;
 	}
 
 	public function listItems($userId,$deleted=false) {
@@ -26,10 +28,15 @@ class ItemBusinessLayer {
 
 	public function get($itemId, $userId) {
 		$result = $this -> ItemManager -> get($itemId, $userId);
-		$result['tags'] = ($result['tags']!='') ? explode(',',$result['tags']) : null;
+		$tgs = ($result['tags']!='') ? explode(',',$result['tags']) : null;
+    $tags = array();
+    foreach($tgs as $curTag){
+      $tag = $this->TagBusinessLayer->search($curTag,$userId,true);
+      $tags[]= $tag[0];
+    }
+    $result['tags'] = $tags;
 		$result['files'] = $this -> ItemManager -> getFiles($itemId, $userId);
 		$result['customFields'] = $this -> ItemManager -> getFields($itemId, $userId);
-		
 		return $result;
 	}
 	public function getByTag($tags, $userId,$deleteDate) {
@@ -43,33 +50,12 @@ class ItemBusinessLayer {
 		return $return;
 	}
 
-	public function create($userId, $label, $desc, $pass, $account, $email, $url,$expireTime,$favicon) {
-		$item = array();
-		$item['user_id'] = $userId;
-		$item['label'] = $label;
-		$item['description'] = $desc;
-		$item['password'] = $pass;
-		$item['account'] = $account;
-		$item['email'] = $email;
-		$item['url'] = $url;
-		$item['expire_time'] = $expireTime;
-		$item['favicon'] = $favicon;
+	public function create($item) {
 		$item['created'] = time();
 		return $this -> ItemManager -> insert($item);
 	}
 
-	public function update($id, $userId, $label, $desc, $pass, $account, $email, $url,$expiretime,$favicon) {
-		$item = array();
-		$item['id'] = $id;
-		$item['user_id'] = $userId;
-		$item['label'] = $label;
-		$item['description'] = $desc;
-		$item['password'] = $pass;
-		$item['account'] = $account;
-		$item['email'] = $email;
-		$item['url'] = $url;
-		$item['expire_time'] = $expiretime;
-		$item['favicon'] = $favicon;
+	public function update($item) {
 		return $this -> ItemManager -> update($item);
 	}
 

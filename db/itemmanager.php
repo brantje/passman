@@ -123,7 +123,7 @@ class ItemManager {
 	 * Update item
 	 */
 	public function update($item) {
-		$sql = 'UPDATE `*PREFIX*passman_items` SET `user_id`=?,`label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=?,favicon=? WHERE id=?';
+	  $sql = 'UPDATE `*PREFIX*passman_items` SET `user_id`=?,`label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=?,favicon=? WHERE id=?';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $item['user_id'], \PDO::PARAM_INT);
 		$query -> bindParam(2, $item['label'], \PDO::PARAM_STR);
@@ -137,7 +137,6 @@ class ItemManager {
 		$query -> bindParam(10, $item['id'], \PDO::PARAM_INT);
 		$result = $query -> execute();
 		return $item;
-
 	}
 
 	/**
@@ -238,7 +237,7 @@ class ItemManager {
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $itemId, \PDO::PARAM_INT);
 		$query -> bindParam(2, $userId, \PDO::PARAM_INT);
-		$query -> bindParam(3, $field['name'], \PDO::PARAM_STR);
+		$query -> bindParam(3, $field['label'], \PDO::PARAM_STR);
 		$query -> bindParam(4, $field['value'], \PDO::PARAM_STR);
 		$result = $query -> execute();
 		$field['id'] = $this -> db -> getInsertId('`*PREFIX*passman_custom_fields`');
@@ -258,6 +257,7 @@ class ItemManager {
 		while ($row = $result -> fetchRow()) {
 			$fields[] = $row;
 		}
+    
 		return $fields;
 	}
 	/**
@@ -266,7 +266,7 @@ class ItemManager {
 	public function updateItemField($field,$userId,$itemId){
 		$sql = 'UPDATE `*PREFIX*passman_custom_fields` SET `label`=?,value=? WHERE id=? AND user_id=?';
 		$query = $this -> db -> prepareQuery($sql);
-		$query -> bindParam(1, $field['name'], \PDO::PARAM_STR);
+		$query -> bindParam(1, $field['label'], \PDO::PARAM_STR);
 		$query -> bindParam(2, $field['value'], \PDO::PARAM_STR);
 		$query -> bindParam(3, $field['id'], \PDO::PARAM_INT);
 		$query -> bindParam(4, $userId, \PDO::PARAM_INT);

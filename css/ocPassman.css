@@ -353,6 +353,9 @@ td.td_title {
 #item_tabs input, #item_tabs textarea {
 	width: 95%;
 }
+#item_tabs input[type="password"]{
+  width: 70% !important;
+}
 #item_tabs #customFieldName, #item_tabs #customFieldValue {
 	width: 85%;
 }
@@ -361,10 +364,13 @@ td.td_title {
 	width: 30px;
 }
 #pwTools {
-	font-size: 9px;
-	text-align: center;
-	width: 100%;
-	margin-left: 10px;
+  text-align: left;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ccc;
+  /* width: 230px; */
+  margin: 0 auto;
+  font-size: 12px;
 }
 #pwTools span{
 	cursor: pointer !important;
@@ -394,14 +400,19 @@ label[for="item_login"] {
 #showPW {
 	margin-left: 10px;
 }
-#complex_attendue {
-	color: #D04806;
-	font-weight: bold;
+
+.pwPreview {
+width: 72%;
+display: inline-block;
+height: 26px;
+padding-left: 7px;
 }
+
 .save, .cancel {
 	width: 60px;
 	float: right;
 	text-align: center;
+	margin-top:30px;
 }
 #fileList li {
 	height: 24px;
