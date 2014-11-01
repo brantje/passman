@@ -243,8 +243,23 @@ td.td_title {
   background:#333;*/
   text-decoration:none;
 }
-.editMenu a:hover{
-
+#pwTools {
+  text-align: left;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ccc;
+  /* width: 230px; */
+  margin: 0 auto;
+  font-size: 12px;
+}
+#pwTools span{
+  cursor: pointer !important;
+}
+#pwTools label {
+  display: inline-block;
+}
+#pwTools input {
+  width: 30px;
 }
 
 /*--- DROPDOWN ---*/
@@ -357,6 +372,15 @@ td.td_title {
   /* width: 230px; */
   margin: 0 auto;
   font-size: 12px;
+}
+#pwTools span{
+ cursor: pointer !important;
+}
+#pwTools label {
+ display: inline-block;
+}
+#pwTools input {
+ width: 30px;
 }
 .icon {
 	height: 24px;

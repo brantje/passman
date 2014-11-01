@@ -110,7 +110,7 @@ function($http) {
 app.controller('appCtrl', function($scope, ItemService, localStorageService,$http) {
   console.log('appCtrl');
   $scope.items = [];
-  $scope.showingDeletedItems = [];
+  $scope.showingDeletedItems = false;
   $scope.tags = [];
   $scope.selectedTags = []
   $scope.noFavIcon = OC.imagePath('passman', 'lock.svg');
@@ -410,7 +410,6 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
   $scope.copied = function(what) {
     OC.Notification.showTimeout('Copied ' + what.toLowerCase() + ' to clipboard');
   };
-  
   $scope.addItem = function(){
     $scope.currentItem = {
       account: '',
@@ -443,7 +442,7 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
   };
 });
 
-app.controller('addEditItemCtrl', function($scope, ItemService) {
+app.controller('addEditItemCtrl', function($scope,ItemService) {
   console.log('addEditItemCtrl');
   $scope.pwFieldVisible = false;
   $scope.newCustomfield = {clicktoshow: 0};
@@ -462,6 +461,10 @@ app.controller('addEditItemCtrl', function($scope, ItemService) {
     reqevery: true
   }
   
+  $scope.$watch('$parent.currentItem',function(n){
+
+    $scope.currentItem = n;
+  },true);
   
   $scope.$watch('currentItem.password',function(newVal){
     if(typeof zxcvbn != 'function'){
