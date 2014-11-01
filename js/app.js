@@ -460,10 +460,12 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
     ambig: false,
     reqevery: true
   }
-  
+  /** The binding is fucked up...*/
   $scope.$watch('$parent.currentItem',function(n){
-
     $scope.currentItem = n;
+  },true);
+  $scope.$watch('currentItem',function(n){
+    $scope.$parent.currentItem = n;
   },true);
   
   $scope.$watch('currentItem.password',function(newVal){
