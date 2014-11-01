@@ -44,12 +44,24 @@ class ItemBusinessLayer {
 		$results = $this -> ItemManager -> getByTag($tags, $userId,$deleteDate);
 		$return = array();
 		foreach($results as $r){
-			$r['tags'] = ($r['tags']!='') ? explode(',',$r['tags']) : null;
-			$return[] = $r;
+		  $result = $this -> ItemManager -> get($r['id'], $userId);
+      $tgs = ($result['tags']!='') ? explode(',',$result['tags']) : null;
+      $tags = array();
+      foreach($tgs as $curTag){
+        $tag = $this->TagBusinessLayer->search($curTag,$userId,true);
+        $tags[]= $tag[0];
+      }
+      $result['tags'] = $tags;
+      $result['files'] = $this -> ItemManager -> getFiles($result['id'], $userId);
+      $result['customFields'] = $this -> ItemManager -> getFields($result['id'], $userId);
+
+			$return[] = $result;
 		}
 		return $return;
 	}
-
+  public function getItemFields($itemId,$userId){
+    return $this -> ItemManager -> getFiles($itemId, $userId);
+  }
 	public function create($item) {
 		$item['created'] = time();
 		return $this -> ItemManager -> insert($item);
@@ -66,6 +78,7 @@ class ItemBusinessLayer {
 	public function delete($itemId, $userId) {
 		return $this -> ItemManager -> delete($itemId, $userId);
 	}
+  
 	
 	public function restore($itemId, $userId) {
 		return $this -> ItemManager -> restore($itemId, $userId);
@@ -119,5 +132,9 @@ class ItemBusinessLayer {
 	 public function updateField($field,$userId,$itemId){
 	 	return $this-> ItemManager -> updateItemField($field,$userId,$itemId);
 	 }
+   
+   public function deleteField($itemId, $userId) {
+    return $this -> ItemManager -> removeItemField($itemId, $userId);
+  }
 }
 ?>

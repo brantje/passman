@@ -123,7 +123,7 @@ class ItemManager {
 	 * Update item
 	 */
 	public function update($item) {
-	  $sql = 'UPDATE `*PREFIX*passman_items` SET `user_id`=?,`label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=?,favicon=? WHERE id=?';
+	  $sql = 'UPDATE `*PREFIX*passman_items` SET `user_id`=?,`label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=?,favicon=?,delete_date=? WHERE id=?';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $item['user_id'], \PDO::PARAM_INT);
 		$query -> bindParam(2, $item['label'], \PDO::PARAM_STR);
@@ -134,7 +134,8 @@ class ItemManager {
 		$query -> bindParam(7, $item['url'], \PDO::PARAM_STR);
 		$query -> bindParam(8, $item['expire_time'], \PDO::PARAM_STR);
 		$query -> bindParam(9, $item['favicon'], \PDO::PARAM_STR);
-		$query -> bindParam(10, $item['id'], \PDO::PARAM_INT);
+		$query -> bindParam(10, $item['delete_date'], \PDO::PARAM_STR);
+		$query -> bindParam(11, $item['id'], \PDO::PARAM_INT);
 		$result = $query -> execute();
 		return $item;
 	}
@@ -143,11 +144,10 @@ class ItemManager {
 	 * Delete item
 	 */
 	public function delete($itemId, $userId) {
-		$sql = 'UPDATE `*PREFIX*passman_items` set `delete_date`= ? WHERE `id`=? AND user_id=?';
+		$sql = 'DELETE FROM `*PREFIX*passman_items` WHERE `id`=? AND user_id=?';
 		$query = $this -> db -> prepareQuery($sql);
-		$query -> bindParam(1, time(), \PDO::PARAM_INT);
-		$query -> bindParam(2, $itemId, \PDO::PARAM_INT);
-		$query -> bindParam(3, $userId, \PDO::PARAM_STR);
+		$query -> bindParam(1, $itemId, \PDO::PARAM_INT);
+		$query -> bindParam(2, $userId, \PDO::PARAM_STR);
 		$result = $query -> execute();
 		return array('deleted' => $itemId);
 	}
@@ -232,13 +232,14 @@ class ItemManager {
 	 * Insert a custom field to an item
 	 */ 
 	public function createItemField($field,$userId,$itemId){
-		$sql = 'INSERT INTO `*PREFIX*passman_custom_fields` (`item_id`,`user_id`,`label`,`value`)';
-		$sql .= ' VALUES (?,?,?,?)';
+		$sql = 'INSERT INTO `*PREFIX*passman_custom_fields` (`item_id`,`user_id`,`label`,`value`,`clicktoshow`)';
+		$sql .= ' VALUES (?,?,?,?,?)';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $itemId, \PDO::PARAM_INT);
 		$query -> bindParam(2, $userId, \PDO::PARAM_INT);
 		$query -> bindParam(3, $field['label'], \PDO::PARAM_STR);
 		$query -> bindParam(4, $field['value'], \PDO::PARAM_STR);
+		$query -> bindParam(5, $field['clicktoshow'], \PDO::PARAM_STR);
 		$result = $query -> execute();
 		$field['id'] = $this -> db -> getInsertId('`*PREFIX*passman_custom_fields`');
 		return $field;
@@ -248,7 +249,7 @@ class ItemManager {
 	 * Get the custom fields for an item
 	 */
 	public function getFields($itemId, $userId) {
-		$sql = 'SELECT id, label,value from `*PREFIX*passman_custom_fields` WHERE `item_id`=? AND user_id=?';
+		$sql = 'SELECT * from `*PREFIX*passman_custom_fields` WHERE `item_id`=? AND user_id=?';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $itemId, \PDO::PARAM_INT);
 		$query -> bindParam(2, $userId, \PDO::PARAM_INT);
@@ -257,19 +258,19 @@ class ItemManager {
 		while ($row = $result -> fetchRow()) {
 			$fields[] = $row;
 		}
-    
 		return $fields;
 	}
 	/**
 	 * Update an custom item field
 	 */
 	public function updateItemField($field,$userId,$itemId){
-		$sql = 'UPDATE `*PREFIX*passman_custom_fields` SET `label`=?,value=? WHERE id=? AND user_id=?';
+		$sql = 'UPDATE `*PREFIX*passman_custom_fields` SET `label`=?,value=?,`clicktoshow`=? WHERE id=? AND user_id=?';
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $field['label'], \PDO::PARAM_STR);
 		$query -> bindParam(2, $field['value'], \PDO::PARAM_STR);
-		$query -> bindParam(3, $field['id'], \PDO::PARAM_INT);
-		$query -> bindParam(4, $userId, \PDO::PARAM_INT);
+		$query -> bindParam(3, $field['clicktoshow'], \PDO::PARAM_STR);
+		$query -> bindParam(4, $field['id'], \PDO::PARAM_INT);
+		$query -> bindParam(5, $userId, \PDO::PARAM_INT);
 		$result = $query -> execute();	
 	}
 	
@@ -277,6 +278,10 @@ class ItemManager {
 	 * Remove a custom field
 	 */
 	 public function removeItemField($fieldId,$userId){
-	 	
+	 	$sql = 'DELETE FROM `*PREFIX*passman_custom_fields` WHERE `id`=? AND user_id=?';
+    $query = $this -> db -> prepareQuery($sql);
+    $query -> bindParam(1, $fieldId, \PDO::PARAM_INT);
+    $query -> bindParam(2, $userId, \PDO::PARAM_INT);
+    $result = $query -> execute();
 	 } 
 }

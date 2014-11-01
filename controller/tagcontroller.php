@@ -34,6 +34,9 @@ class TagController extends Controller {
 	public function search() {
 		$tag = $this->params('k');
 		$response = $this->tagBusinessLayer->search($tag,$this->userId);
+    $d = new \stdClass();
+    $d->text = 'is:Deleted';
+    $response[]=$d;
 		return new JSONResponse($response); 
 	}
 	/**
@@ -48,12 +51,17 @@ class TagController extends Controller {
 	public function load(){
 		$tag = $this->params('tag');
 		if($this->tagBusinessLayer->search($tag,$this->userId,true)){
-			$response['tag'] = $this->tagBusinessLayer->load($tag,$this->userId);
+			$response = $this->tagBusinessLayer->load($tag,$this->userId);
 		}
 		return new JSONResponse($response); 
 	}
 	public function update(){
-		$tag = $this->params('tag');
+		$tag = array();
+    $tag['min_pw_strength'] = $this->params('min_pw_strength');
+    $tag['renewal_period'] = $this->params('renewal_period');
+    $tag['tag_id'] = $this->params('tag_id');
+    $tag['tag_label'] = $this->params('tag_label');
+
 		$response['tag'] = $this->tagBusinessLayer->update($tag,$this->userId);
 		
 		return new JSONResponse($response); 

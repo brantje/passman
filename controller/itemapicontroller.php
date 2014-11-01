@@ -78,16 +78,12 @@ class ItemApiController extends Controller {
 	 * @NoAdminRequired
    * 
    */
-     public function getbytag($itemId) {
+  public function getbytag($itemId) {
      	$itemId = $this->params('id');
      	$tags = $this->params('tags');
 		$tags = (empty($tags)) ? false : $tags;
-		$r = $this->ItemBusinessLayer->getByTag($tags,$this->userId,false); 
-		$result['items'] = array();
-		foreach($r as $item){
-			$item = $this->ItemBusinessLayer->get($item['id'],$this->userId);
-			array_push($result['items'],$item);
-		}
+		$result['items'] = $this->ItemBusinessLayer->getByTag($tags,$this->userId,false); 
+		
 		return new JSONResponse($result);
 	}
 
@@ -123,7 +119,6 @@ class ItemApiController extends Controller {
 			$result['itemid'] = $this->ItemBusinessLayer->create($item);
 			if(!empty($customFields)){
 				foreach ($customFields as $key => $field) {
-				  print_r(field);
 					if(empty($field['id'])){
 							$field->id = $this->ItemBusinessLayer->createField($field,$userId,$result['itemid']);
 					}
@@ -172,6 +167,7 @@ class ItemApiController extends Controller {
     $item['password'] = $this->params('password');
     $item['expire_time'] = $this->params('expire_time');
     $item['user_id'] = $this->params('user_id');
+    $item['delete_date'] = ($this->params('delete_date')) ? $this->params('delete_date') : 0;
     $item['url'] = $this->params('url');
     $tags = $this->params('tags');
     $customFields = $this->params('customFields');
@@ -188,9 +184,9 @@ class ItemApiController extends Controller {
       $favicon = (!empty($favicon)) ? $favicon : '';
     }
     if(empty($errors)){
-      $result['success'] = $this->ItemBusinessLayer->update($item);
+    
       if(!empty($customFields)){
-
+         $customFieldsInDB = $this->ItemBusinessLayer->getItemFields($item['id'],$this->userId);
         foreach ($customFields as $key => $field) {
           if(empty($field['id'])){
               $field->id = $this->ItemBusinessLayer->createField($field,$this->userId,$item['id']);
@@ -212,6 +208,7 @@ class ItemApiController extends Controller {
           }
         }
       }
+      $result['success'] = $this->ItemBusinessLayer->update($item);
     } else {
       $result['errors'] = $errors;
     }
@@ -256,6 +253,16 @@ class ItemApiController extends Controller {
 		}else {
 			$result['errors'] = $errors;
 		}
+		return new JSONResponse($result['deleted']); 
+	}
+  
+	/**
+	 * @NoAdminRequired
+	 */
+	public function deletefield($id) {
+		$errors = array();
+		$findItem = $this->ItemBusinessLayer->deleteField($id,$this->userId);
+
 		return new JSONResponse($result['deleted']); 
 	}
 	/**
@@ -321,17 +328,15 @@ class ItemApiController extends Controller {
 	 * GetFile get a single file and his content
 	 * @NoAdminRequired
 	 */
-	 public function getfile($fileId){
-	 	$fileId = $this->params('fileid');
-		return new JSONResponse($this->ItemBusinessLayer->getFile($fileId,$this->userId));  
+	 public function getfile($id){
+		return new JSONResponse($this->ItemBusinessLayer->getFile($id,$this->userId));  
 	}
 	 
 	/**
 	  * @NoAdminRequired
 	 */ 
-	public function deletefile($fileId){
-		$fileId = $this->params('fileid');
-		return new JSONResponse($this->ItemBusinessLayer->deleteFile($fileId,$this->userId));  
+	public function deletefile($id){
+		return new JSONResponse($this->ItemBusinessLayer->deleteFile($id,$this->userId));  
 	}
 	
 

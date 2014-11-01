@@ -78,7 +78,7 @@ tags-input .tags .input {
 	float: left;
 	height: 26px;
 	font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
-	width: auto !important;
+
 }
 tags-input .tags .input.invalid-tag {
 	color: red

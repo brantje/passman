@@ -38,7 +38,7 @@ $application->registerRoutes($this, array(
 	array('name' => 'tag#search', 'url' => '/api/v1/tags/search', 'verb' => 'GET'),
 	array('name' => 'tag#loadall', 'url' => '/api/v1/tags/list', 'verb' => 'GET'),
 	array('name' => 'tag#load', 'url' => '/api/v1/tag/load', 'verb' => 'GET'),
-	array('name' => 'tag#update', 'url' => '/api/v1/tag/update', 'verb' => 'POST'),
+	array('name' => 'tag#update', 'url' => '/api/v1/tag/update', 'verb' => 'PATCH'),
 	
 	array('name' => 'item_api#getbytag', 'url' => '/api/v1/getbytags', 'verb' => 'GET'),
 	array('name' => 'item_api#getdeleted', 'url' => '/api/v1/items/getdeleted', 'verb' => 'GET'),
@@ -46,14 +46,16 @@ $application->registerRoutes($this, array(
 	array('name' => 'item_api#get', 'url' => '/api/v1/item/{itemId}', 'verb' => 'GET'),
 	array('name' => 'item_api#create', 'url' => '/api/v1/item', 'verb' => 'PUT'),
 	array('name' => 'item_api#update', 'url' => '/api/v1/item/{itemId}', 'verb' => 'PATCH'),
-	array('name' => 'item_api#delete', 'url' => '/api/v1/item/delete/{id}', 'verb' => 'GET'),
+	array('name' => 'item_api#delete', 'url' => '/api/v1/item/delete/{id}', 'verb' => 'DELETE'),
 	array('name' => 'item_api#restore', 'url' => '/api/v1/item/restore/{id}', 'verb' => 'GET'),
 	array('name' => 'item_api#search', 'url' => '/api/v1/item/search/{itemName}', 'verb' => 'GET'),
 	
 	array('name' => 'item_api#addtag', 'url' => '/api/v1/tag/addtag', 'verb' => 'GET'),
 
-	array('name' => 'item_api#addfile', 'url' => '/api/v1/item/{itemId}/addfile', 'verb' => 'POST'),
-	array('name' => 'item_api#getfile', 'url' => '/api/v1/item/file/{fileId}', 'verb' => 'GET'),
-	array('name' => 'item_api#deletefile', 'url' => '/api/v1/item/file/{fileId}', 'verb' => 'DELETE'),
+  array('name' => 'item_api#deletefield', 'url' => '/api/v1/item/field/delete/{id}', 'verb' => 'DELETE'),
+
+	array('name' => 'item_api#addfile', 'url' => '/api/v1/item/{itemId}/addfile', 'verb' => 'PUT'),
+	array('name' => 'item_api#getfile', 'url' => '/api/v1/item/file/{id}', 'verb' => 'GET'),
+	array('name' => 'item_api#deletefile', 'url' => '/api/v1/item/file/{id}', 'verb' => 'DELETE'),
 	
 )));
