@@ -39,7 +39,22 @@
           <input type="text" ng-model="tagProps.renewal_period">
         </form>
       </div> 
-      
+          <div class="nav-trashbin" ng-click="selectTag('is:Deleted')"><i class="icon-delete icon"></i><a href="#">Deleted passwords</a></div>
+   
+    <div id="app-settings">
+      <div id="app-settings-header">
+        <button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
+      </div>
+      <div id="app-settings-content">
+          <p class="settings link">Settings</p>
+          <p class="import link">Import data</p>
+          <div id="sessionTimeContainer" style="display: none;">
+            <h2>Session time</h2>
+            <em>Your session will expire in:<br /><span id="sessionExpire"></span></em>
+          </div>
+          <p><a class="link" ng-click="lockSession()">Lock session</a></p>
+      </div>
+    </div>
     </div>
     <div id="app-content" ng-controller="contentCtrl">
         <div id="topContent">
@@ -83,7 +98,7 @@
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>
                    <span t="'Description'"></span> :</td>
                 <td>
-                  <pre style="display: inline-block;">{{currentItem.description}}</pre>
+                   <div ng-bind-html="currentItem.description | to_trusted"></div>
                   <a clip-copy="currentItem.description" clip-click="copied('description')" class="link">[Copy]</a>
                 </td>
               </tr>
@@ -126,7 +141,7 @@
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float:left; margin-right:.3em;">&nbsp;</span>
                    <span t="'Files & Images'"></span> :</td>
                 <td>
-                  <span ng-repeat="file in currentItem.files" class="link loadFile" ng-click="loadFile(file)"><span ng-class="file.icon"></span>{{file.filename}}  {{file.size}}
+                  <span ng-repeat="file in currentItem.files" class="link loadFile" ng-click="loadFile(file)"><span ng-class="file.icon"></span>{{file.filename}}  ({{file.size | bytes}})
                 </td>
               </tr>
               <tr ng-show="currentItem.customFields.length > 0" ng-repeat="custom in currentItem.customFields">
@@ -190,7 +205,10 @@
                     <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password" autocomplete="off">
                     <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}} <a clip-copy="currentItem.password" clip-click="copied('password')" class="link">[Copy]</a></span>
                     <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
-                    <div ng-show="currentPWInfo"><span t="'Current password score:'"></span> {{currentPWInfo.entropy}}</div>
+                    <div ng-show="currentPWInfo">
+                      <span t="'Current password score:'"></span> {{currentPWInfo.entropy}}<br />
+                      <span t="'Crack time:'"></span> {{currentPWInfo.crack_time | secondstohuman}}
+                    </div>
                     <label for="" class="label_cpm" t="'Confirm'"></label>
                     <input type="password" ng-model="currentItem.passwordConfirm" autocomplete="off">
                     
@@ -209,7 +227,8 @@
                          <button class="button"ng-show="generatedPW!=''" ng-click="usePw()" t="'Use password'"></button>
                         <div ng-show="generatedPW"><span t="'Generated password:'"></span> <br />{{generatedPW}}</div>
                         <br />
-                        <b ng-show="generatedPW"><span t="'Generated password score'"></span>: {{pwInfo.entropy}}</b>
+                        <b ng-show="generatedPW"><span t="'Generated password score'"></span>: {{pwInfo.entropy}}</b><br />
+                        <b ng-show="generatedPW"><span t="'Crack time'"></span>: {{pwInfo.crack_time | secondstohuman}}</b>
                     </div>
                  </div>
                 </form>
@@ -219,7 +238,7 @@
                     <input type="file"  fileread="uploadQueue" item="currentItem"/>
                   <h2 t="'Files'">:</h2>
                   <ul id="fileList">
-                    <li ng-repeat="file in currentItem.files" class="fileListItem">{{file.filename}} ({{file.size}}) <span class="icon icon-delete" style="float:right;" ng-click="deleteFile(file)"></span></li>
+                    <li ng-repeat="file in currentItem.files" class="fileListItem">{{file.filename}} ({{file.size | bytes}}) <span class="icon icon-delete" style="float:right;" ng-click="deleteFile(file)"></span></li>
                   </ul>         
                   
                 </form>

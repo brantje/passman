@@ -106,8 +106,8 @@ color: #333;
 .nav-trashbin {
 	height: 50px;
 	position: fixed;
-	bottom: 45px;
-	width: 241px;
+  bottom: 43px;
+  width: 250px;
 	vertical-align: middle;
 	padding-top: 15px;
 	cursor: pointer;
@@ -511,3 +511,51 @@ li.fileListItem .icon-delete {
 .vis-hidden{
      visibility: hidden;
   }
+/*First run wizard */
+
+.prev, .next {
+
+  padding: 5px 10px;
+  color: #fff;
+  text-decoration: none;
+}
+.prev:hover, .next:hover {
+
+  text-decoration: none;
+}
+.prev {
+  float: left;
+}
+.next {
+  float: right;
+}
+#steps {
+  list-style: none;
+  width: 100%;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+}
+#steps li {
+  font-size: 24px;
+  float: left;
+  padding: 10px;
+  color: #b0b1b3;
+}
+#steps li span {
+  font-size: 11px;
+  display: block;
+}
+#steps li.current {
+  color: #000;
+}
+#makeWizard {
+  background-color: #b0232a;
+  color: #fff;
+  padding: 5px 10px;
+  text-decoration: none;
+  font-size: 18px;
+}
+#makeWizard:hover {
+  background-color: #000;
+}  

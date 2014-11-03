@@ -242,6 +242,14 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
     return $http.get(OC.generateUrl('apps/passman/api/v1/tags/search?k=' + query));
   };
   
+  /* 
+   * Lock session
+   */
+  $scope.lockSession = function(){
+    $scope.showEncryptionKeyDialog();
+    localStorageService.set('encryptionKey','');
+    $scope.items = [];
+  }
   /**
    *Onload -> Check if localstorage has key if not show dialog
    */
@@ -282,9 +290,9 @@ app.controller('navigationCtrl', function($scope,TagService) {
 
 app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
   console.log('contentCtrl');
-  $scope.currentItem = false;
+  $scope.currentItem = {};
   $scope.showItem = function(rawItem) {
-    var item = angular.copy(rawItem);
+    var item = rawItem;
     var encryptedFields = ['account', 'email', 'password', 'description'];
     if (!item.decrypted) {
       for (var i = 0; i < encryptedFields.length; i++) {
@@ -298,12 +306,11 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
       }
       for (var i = 0; i < item.files.length; i++) {
         item.files[i].filename = $scope.decryptThis(item.files[i].filename);
-        item.files[i].size = OC.Util.humanFileSize(item.files[i].size);
+        item.files[i].size = item.files[i].size;
         item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
       }
     }
 
-    //item.description = $sce.trustAsHtml(item.description);
     item.decrypted = true;
     $scope.currentItem = item;
     $scope.currentItem.passwordConfirm = item.password;
@@ -460,13 +467,13 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
     ambig: false,
     reqevery: true
   }
-  /** The binding is fucked up...*/
+  /** The binding is fucked up...
   $scope.$watch('$parent.currentItem',function(n){
     $scope.currentItem = n;
   },true);
   $scope.$watch('currentItem',function(n){
     $scope.$parent.currentItem = n;
-  },true);
+  },true);*/
   
   $scope.$watch('currentItem.password',function(newVal){
     if(typeof zxcvbn != 'function'){
@@ -541,9 +548,9 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
   }
   
   $scope.saveItem = function(item){
-    item.passwordConfirm = (!item.passwordConfirm) ? "" : item.passwordConfirm;
     $scope.errors = [];
     var saveThis = angular.copy(item);
+    var unEncryptedItem = angular.copy(saveThis);
     var encryptedFields = ['account', 'email', 'password', 'description'];
     for (var i = 0; i < encryptedFields.length; i++) {
       if(encryptedFields[i]=='description'){
@@ -576,6 +583,7 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
           if(data.success){
             $scope.errors = [];
             $scope.closeDialog();
+            $scope.$parent.currentItem = unEncryptedItem;
           }
         });
       } else {
@@ -614,6 +622,11 @@ function($compile, $tooltip) {
           scope.hSText = 'Show';
         }
       }
+      scope.$watch('pw',function(n,o){
+        if(scope.pwVisible){
+          scope.curPW = scope.pw;
+        }
+      })
     }
   }
 }]);
@@ -634,7 +647,7 @@ function($compile, $tooltip) {
           element.html(c);
           scope.isInput = true;
         }
-      })
+      });
     }
   }
 }]);
@@ -695,7 +708,7 @@ function(ItemService) {
                 var icon = (data.type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
                 scope.currentItem.files.push({
                     filename: scope.decryptThis(data.filename),
-                    size: OC.Util.humanFileSize(file.size), 
+                    size: file.size, 
                     icon: icon,
                     id: data.id,
                     item_id: data.item_id,
@@ -711,6 +724,34 @@ function(ItemService) {
     }
   }
 }]); 
+
+app.filter('secondstohuman', function() {
+  return function(seconds) {
+    seconds = Math.floor(seconds)
+    var numyears = Math.floor(seconds / 31536000);
+    var numdays = Math.floor((seconds % 31536000) / 86400); 
+    var numhours = Math.floor(((seconds % 31536000) % 86400) / 3600);
+    var numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
+    var numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
+    return numyears + " years " +  numdays + " days " + numhours + " hours " + numminutes + " minutes " + numseconds + " seconds";
+  }
+});
+
+app.filter('bytes', function() {
+  return function(bytes, precision) {
+    if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
+    if (typeof precision === 'undefined') precision = 1;
+    var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+      number = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+  }
+});
+
+app.filter('to_trusted', ['$sce', function($sce){
+        return function(text) {
+            return $sce.trustAsHtml(text);
+        };
+}]);
 
 angular.module('offClick',[]).directive('offClick', ['$document', function ($document) {
         
