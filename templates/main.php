@@ -12,6 +12,7 @@
 \OCP\Util::addStyle('passman', 'ocPassman');
 \OCP\Util::addStyle('passman', 'ng-tags-input.min');
 
+
 ?>
 <div ng-app="passman" id="app" ng-controller="appCtrl">
     <div id="app-navigation" ng-controller="navigationCtrl">
@@ -46,7 +47,7 @@
         <button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
       </div>
       <div id="app-settings-content">
-          <p class="settings link">Settings</p>
+          <p class="link" ng-click="showSettings();">Settings</p>
           <p class="import link">Import data</p>
           <div id="sessionTimeContainer" style="display: none;">
             <h2>Session time</h2>
@@ -73,7 +74,7 @@
                 <ul ng-if="!showingDeletedItems">
                   <li><a ng-click="editItem(item)" t="'Edit'"></a></li>
                   <li><a ng-click="deleteItem(item,true )" t="'Delete'"></a></li>
-                  <li><a t="'Share'" ng-click="shareItem(item)"></a></li>
+                  <li><a t="'Share'"></a></li>
                 </ul>
                 <ul ng-if="showingDeletedItems">
                   <li><a ng-click="recoverItem(item)" t="'Restore'"></a></li>
@@ -98,15 +99,15 @@
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>
                    <span t="'Description'"></span> :</td>
                 <td>
-                   <div ng-bind-html="currentItem.description| decrypt | to_trusted"></div>
-                  <a clip-copy="currentItem.description | decrypt" clip-click="copied('description')" class="link">[Copy]</a>
+                   <div ng-bind-html="currentItem.description | to_trusted"></div>
+                  <a clip-copy="currentItem.description" clip-click="copied('description')" class="link">[Copy]</a>
                 </td>
               </tr>
               <tr ng-show="currentItem.password">
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>
                    <span t="'Password'"></span> :</td>
                 <td>
-                  <span pw="currentItem.password | decrypt" toggle-text-stars></span>  <a clip-copy="currentItem.password" clip-click="copied('password')" class="link">[Copy]</a>
+                  <span pw="currentItem.password" toggle-text-stars></span>  <a clip-copy="currentItem.password" clip-click="copied('password')" class="link">[Copy]</a>
                 </td>
               </tr>
               <tr ng-show="currentItem.expire_time!=0 && currentItem.expire_time">
@@ -120,14 +121,14 @@
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>
                    <span t="'Account'"></span> :</td>
                 <td>
-                  {{currentItem.account| decrypt}} <a clip-copy="currentItem.account| decrypt" clip-click="copied('account')" class="link">[Copy]</a>
+                  {{currentItem.account}} <a clip-copy="currentItem.account" clip-click="copied('account')" class="link">[Copy]</a>
                 </td>
               </tr>
               <tr ng-show="currentItem.email">
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>
                    <span t="'Email'"></span> :</td>
                 <td>
-                  {{currentItem.email| decrypt}} <a clip-copy="currentItem.email | decrypt" clip-click="copied('E-mail')" class="link">[Copy]</a>
+                  {{currentItem.email}} <a clip-copy="currentItem.email" clip-click="copied('E-mail')" class="link">[Copy]</a>
                 </td>
               </tr>
               <tr ng-show="currentItem.url">
@@ -141,18 +142,18 @@
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float:left; margin-right:.3em;">&nbsp;</span>
                    <span t="'Files & Images'"></span> :</td>
                 <td>
-                  <span ng-repeat="file in currentItem.files" class="link loadFile" ng-click="loadFile(file)"><span ng-class="file.icon"></span>{{file.filename | decrypt}}  ({{file.size | bytes}})
+                  <span ng-repeat="file in currentItem.files" class="link loadFile" ng-click="loadFile(file)"><span ng-class="file.icon"></span>{{file.filename}}  ({{file.size | bytes}})
                 </td>
               </tr>
               <tr ng-show="currentItem.customFields.length > 0" ng-repeat="custom in currentItem.customFields">
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float:left; margin-right:.3em;">&nbsp;</span>
-                  {{custom.label | decrypt}} :</td>
+                  {{custom.label}} :</td>
                 <td>
                   <span ng-if="custom.clicktoshow==0">
-                    {{custom.value | decrypt}} <a clip-copy="custom.value | decrypt" clip-click="copied(custom.label | decrypt)" class="link">[Copy]</a>
+                    {{custom.value}} <a clip-copy="custom.value" clip-click="copied(custom.label)" class="link">[Copy]</a>
                   </span>
                   <span ng-if="custom.clicktoshow==1">
-                   <span pw="custom.value | decrypt" toggle-text-stars></span> <a clip-copy="custom.value | decrypt" clip-click="copied(custom.label | decrypt)" class="link">[Copy]</a>
+                   <span pw="custom.value" toggle-text-stars></span> <a clip-copy="custom.value" clip-click="copied(custom.label)" class="link">[Copy]</a>
                   </span>
                 </td>
               </tr>
@@ -261,7 +262,7 @@
                         </tr>
                         </table>
                         <hr class="blue">
-                        <h1>Existing fields</h1>
+                        <h1 _="'Existing fields'"></h1>
                         <table style="width: 100%;" ng-show="currentItem.customFields.length > 0">
                           <thead>
                               <tr>
@@ -294,6 +295,40 @@
               <img id="fileImg" /><br />
               <span id="downloadImage"></span>
           </div>
+          <div ng-controller="settingsCtrl" id="settingsDialog" style="display: none;">
+                    <div id="settingTabs">
+                      <ul>
+                        <li><a href="#tabs-1">Nunc tincidunt</a></li>
+                        <li><a href="#tabs-2">Proin dolor</a></li>
+                        <li><a href="#tabs-3">Password strength check</a></li>
+                      </ul>
+                      <div id="tabs-1">
+                        <h2>Content heading 1</h2>
+                        <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+                      </div>
+                      <div id="tabs-2">
+                        <h2>Content heading 2</h2>
+                        <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+                      </div>
+                      <div id="tabs-3">
+                        <p t="'Here you can indentify weak passwords, we will list the items. List all password with a rating less than'"></p> <input type="text" ng-model="settings.PSC.minStrength" />
+                        <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
+                        <hr>
+                        <table ng-table="tableParams" class="table" style="width: 100%;">
+                          <tr>
+                            <td t="'Label'"></td>
+                            <td t="'Score'"></td>
+                            <td t="'Password'"></td>
+                          </tr>
+                          <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
+                              <td>{{item.label}}</td>
+                              <td>{{item.score}}</td>
+                              <td><span pw="item.password" toggle-text-stars></span> <a ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a></td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
         </div> <!-- End contentCtrl --> 
     </div> <!-- End appCtrl -->
   <div id="encryptionKeyDialog" style="display: none;">

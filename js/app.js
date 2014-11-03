@@ -176,7 +176,7 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
 
   $window.decryptThis =  $scope.decryptThis = function(encryptedData,encKey) {
     var decryptedString = window.atob(encryptedData);
-    var encKey = (encKey) ? encKey : $window.c;
+    var encKey = (encKey) ? encKey : $scope.encryptionKey;
     try {
       decryptedString = sjcl.decrypt(encKey, decryptedString);
     } catch(e) {
@@ -189,7 +189,7 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
 
   $scope.encryptThis = $scope.encryptThis = function(str,encKey) {
     var encryptedString = str;
-    var encKey = (encKey) ? encKey : $window.c;
+    var encKey = (encKey) ? encKey : $scope.encryptionKey;
     try {
       encryptedString = sjcl.encrypt(encKey, encryptedString)
     } catch(e) {
@@ -201,9 +201,19 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
   };
 
   $scope.setEncryptionKey = function(key) {
-    $window.c = key;
+    $scope.encryptionKey = key;
   };
-
+  
+  $scope.showSettings = function(){
+    $( "#settingTabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+    $( "#settingTabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+    $('#settingsDialog').dialog({
+      modal : true,
+      width: '750px',
+      height: 445,
+      position:{ my: "center center", at: "center", of: window }
+    });
+  }
   $scope.showEncryptionKeyDialog = function() {
     $('#encryptionKeyDialog').dialog({
       draggable : false,
@@ -294,8 +304,9 @@ app.controller('navigationCtrl', function($scope,TagService) {
 app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
   console.log('contentCtrl');
   $scope.currentItem = {};
-  $scope.showItem = function(item) {
-    /*var encryptedFields = ['account', 'email', 'password', 'description'];
+  $scope.showItem = function(rawItem) {
+    var item = rawItem;
+    var encryptedFields = ['account', 'email', 'password', 'description'];
     if (!item.decrypted) {
       for (var i = 0; i < encryptedFields.length; i++) {
         if(item[encryptedFields[i]]){
@@ -313,7 +324,7 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
       }
     }
 
-    item.decrypted = true;*/
+    item.decrypted = true;
     $scope.currentItem = item;
     $scope.currentItem.passwordConfirm = item.password;
     $scope.requiredPWStrength = 0;
@@ -350,7 +361,6 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
         item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
       }
     }
-    console.log(item)
   }
 
   $scope.deleteItem = function(item, softDelete) {
@@ -465,6 +475,8 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
   }
   
   $scope.editItem = function(item) {
+    console.log(item)
+    $scope.currentItem = item;
     $sce.trustAsHtml($scope.currentItem.description);
     $('#editAddItemDialog').dialog({
       title : 'Edit item',
@@ -472,6 +484,7 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
     });
   };
 });
+
 
 app.controller('addEditItemCtrl', function($scope,ItemService) {
   console.log('addEditItemCtrl');
@@ -523,6 +536,7 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
     $('#editAddItemDialog').dialog('close');
     $scope.generatedPW = '';
     $scope.currentPWInfo = {};
+    $scope.errors = [];
   }
   $scope.generatePW = function(){
     $scope.generatedPW = generatePassword($scope.pwSettings.length, $scope.pwSettings.upper, $scope.pwSettings.lower, $scope.pwSettings.digits, $scope.pwSettings.special, $scope.pwSettings.mindigits, $scope.pwSettings.ambig, $scope.pwSettings.reqevery);
@@ -654,6 +668,34 @@ function($compile, $tooltip) {
     }
   }
 }]);
+
+app.controller('settingsCtrl', function($scope) {
+  $scope.settings = {
+    PSC:{
+      minStrength: 40,
+      weakItemList: []
+    }
+  };
+  
+  $scope.checkPasswords = function(){
+    $scope.settings.PSC.weakItemList = [];
+    for(var i=0; i < $scope.items.length;i++){
+      var tmp = angular.copy($scope.items[i]);
+      var pwd = zxcvbn($scope.decryptThis(tmp.password));
+      if(pwd.entropy < $scope.settings.PSC.minStrength){
+         tmp.score = pwd.entropy; 
+         tmp.password = pwd.password
+         tmp.originalItem = $scope.items[i];
+         if(tmp.password!=''){
+          $scope.settings.PSC.weakItemList.push(tmp);
+         }
+      }
+    }
+  };
+ 
+   
+});
+
 app.directive('clickForInput', ['$compile',
 function($compile, $tooltip) {
   return {
@@ -777,7 +819,7 @@ app.filter('to_trusted', ['$sce', function($sce){
             return $sce.trustAsHtml(text);
         };
 }]);
-
+/*
 app.filter('decrypt', ['$window', function($window){
         return function(text) {
             if(!text){
@@ -785,7 +827,7 @@ app.filter('decrypt', ['$window', function($window){
             }
             return decryptThis(text,$window.c);
         };
-}]);
+}]);*/
 
 
 
