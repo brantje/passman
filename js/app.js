@@ -107,7 +107,7 @@ function($http) {
   }
 }]);
 
-app.controller('appCtrl', function($scope, ItemService, localStorageService,$http) {
+app.controller('appCtrl', function($scope, ItemService, localStorageService,$http,$window) {
   console.log('appCtrl');
   $scope.items = [];
   $scope.showingDeletedItems = false;
@@ -174,10 +174,11 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
     })
   };
 
-  $scope.decryptThis = function(encryptedData) {
+  $window.decryptThis =  $scope.decryptThis = function(encryptedData,encKey) {
     var decryptedString = window.atob(encryptedData);
+    var encKey = (encKey) ? encKey : $window.c;
     try {
-      decryptedString = sjcl.decrypt($scope.encryptionKey, decryptedString);
+      decryptedString = sjcl.decrypt(encKey, decryptedString);
     } catch(e) {
       console.log('Invalid key!');
       decryptedString = '';
@@ -186,10 +187,11 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
     return decryptedString;
   };
 
-  $scope.encryptThis = function(str) {
+  $scope.encryptThis = $scope.encryptThis = function(str,encKey) {
     var encryptedString = str;
+    var encKey = (encKey) ? encKey : $window.c;
     try {
-      encryptedString = sjcl.encrypt($scope.encryptionKey, encryptedString)
+      encryptedString = sjcl.encrypt(encKey, encryptedString)
     } catch(e) {
       console.log('Invalid key!',e);
       encryptedString = '';
@@ -199,7 +201,7 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
   };
 
   $scope.setEncryptionKey = function(key) {
-    $scope.encryptionKey = key;
+    $window.c = key;
   };
 
   $scope.showEncryptionKeyDialog = function() {
@@ -257,6 +259,7 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
     $scope.showEncryptionKeyDialog();
   } else {
     $scope.setEncryptionKey(window.atob(localStorageService.get('encryptionKey')));
+    $scope.loadItems([]);
   }
 
   $('#item_tabs').tabs();
@@ -291,9 +294,8 @@ app.controller('navigationCtrl', function($scope,TagService) {
 app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
   console.log('contentCtrl');
   $scope.currentItem = {};
-  $scope.showItem = function(rawItem) {
-    var item = rawItem;
-    var encryptedFields = ['account', 'email', 'password', 'description'];
+  $scope.showItem = function(item) {
+    /*var encryptedFields = ['account', 'email', 'password', 'description'];
     if (!item.decrypted) {
       for (var i = 0; i < encryptedFields.length; i++) {
         if(item[encryptedFields[i]]){
@@ -311,7 +313,7 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
       }
     }
 
-    item.decrypted = true;
+    item.decrypted = true;*/
     $scope.currentItem = item;
     $scope.currentItem.passwordConfirm = item.password;
     $scope.requiredPWStrength = 0;
@@ -327,6 +329,28 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
         }
       });
       OC.Notification.showTimeout('<div>'+ item.label +' recoverd</div>');
+  }
+
+  $scope.shareItem = function(rawItem){
+    var item = angular.copy(rawItem);
+    var encryptedFields = ['account', 'email', 'password', 'description'];
+    if (!item.decrypted) {
+      for (var i = 0; i < encryptedFields.length; i++) {
+        if(item[encryptedFields[i]]){
+          item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
+        }
+      }
+      for (var i = 0; i < item.customFields.length; i++) {
+       item.customFields[i].label = $scope.decryptThis(item.customFields[i].label);
+       item.customFields[i].value = $scope.decryptThis(item.customFields[i].value);
+      }
+      for (var i = 0; i < item.files.length; i++) {
+        item.files[i].filename = $scope.decryptThis(item.files[i].filename);
+        item.files[i].size = item.files[i].size;
+        item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
+      }
+    }
+    console.log(item)
   }
 
   $scope.deleteItem = function(item, softDelete) {
@@ -651,6 +675,7 @@ function($compile, $tooltip) {
     }
   }
 }]);
+
 app.directive('t', ['$compile',
 function($compile, $tooltip) {
   return {
@@ -752,6 +777,17 @@ app.filter('to_trusted', ['$sce', function($sce){
             return $sce.trustAsHtml(text);
         };
 }]);
+
+app.filter('decrypt', ['$window', function($window){
+        return function(text) {
+            if(!text){
+              return;
+            }
+            return decryptThis(text,$window.c);
+        };
+}]);
+
+
 
 angular.module('offClick',[]).directive('offClick', ['$document', function ($document) {
         

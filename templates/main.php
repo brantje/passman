@@ -73,7 +73,7 @@
                 <ul ng-if="!showingDeletedItems">
                   <li><a ng-click="editItem(item)" t="'Edit'"></a></li>
                   <li><a ng-click="deleteItem(item,true )" t="'Delete'"></a></li>
-                  <li><a t="'Share'"></a></li>
+                  <li><a t="'Share'" ng-click="shareItem(item)"></a></li>
                 </ul>
                 <ul ng-if="showingDeletedItems">
                   <li><a ng-click="recoverItem(item)" t="'Restore'"></a></li>
@@ -98,15 +98,15 @@
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>
                    <span t="'Description'"></span> :</td>
                 <td>
-                   <div ng-bind-html="currentItem.description | to_trusted"></div>
-                  <a clip-copy="currentItem.description" clip-click="copied('description')" class="link">[Copy]</a>
+                   <div ng-bind-html="currentItem.description| decrypt | to_trusted"></div>
+                  <a clip-copy="currentItem.description | decrypt" clip-click="copied('description')" class="link">[Copy]</a>
                 </td>
               </tr>
               <tr ng-show="currentItem.password">
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>
                    <span t="'Password'"></span> :</td>
                 <td>
-                  <span pw="currentItem.password" toggle-text-stars></span>  <a clip-copy="currentItem.password" clip-click="copied('password')" class="link">[Copy]</a>
+                  <span pw="currentItem.password | decrypt" toggle-text-stars></span>  <a clip-copy="currentItem.password" clip-click="copied('password')" class="link">[Copy]</a>
                 </td>
               </tr>
               <tr ng-show="currentItem.expire_time!=0 && currentItem.expire_time">
@@ -120,14 +120,14 @@
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>
                    <span t="'Account'"></span> :</td>
                 <td>
-                  {{currentItem.account}} <a clip-copy="currentItem.account" clip-click="copied('account')" class="link">[Copy]</a>
+                  {{currentItem.account| decrypt}} <a clip-copy="currentItem.account| decrypt" clip-click="copied('account')" class="link">[Copy]</a>
                 </td>
               </tr>
               <tr ng-show="currentItem.email">
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float: left; margin-right: .3em;">&nbsp;</span>
                    <span t="'Email'"></span> :</td>
                 <td>
-                  {{currentItem.email}} <a clip-copy="currentItem.email" clip-click="copied('E-mail')" class="link">[Copy]</a>
+                  {{currentItem.email| decrypt}} <a clip-copy="currentItem.email | decrypt" clip-click="copied('E-mail')" class="link">[Copy]</a>
                 </td>
               </tr>
               <tr ng-show="currentItem.url">
@@ -141,18 +141,18 @@
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float:left; margin-right:.3em;">&nbsp;</span>
                    <span t="'Files & Images'"></span> :</td>
                 <td>
-                  <span ng-repeat="file in currentItem.files" class="link loadFile" ng-click="loadFile(file)"><span ng-class="file.icon"></span>{{file.filename}}  ({{file.size | bytes}})
+                  <span ng-repeat="file in currentItem.files" class="link loadFile" ng-click="loadFile(file)"><span ng-class="file.icon"></span>{{file.filename | decrypt}}  ({{file.size | bytes}})
                 </td>
               </tr>
               <tr ng-show="currentItem.customFields.length > 0" ng-repeat="custom in currentItem.customFields">
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float:left; margin-right:.3em;">&nbsp;</span>
-                  {{custom.label}} :</td>
+                  {{custom.label | decrypt}} :</td>
                 <td>
                   <span ng-if="custom.clicktoshow==0">
-                    {{custom.value}} <a clip-copy="custom.value" clip-click="copied(custom.label)" class="link">[Copy]</a>
+                    {{custom.value | decrypt}} <a clip-copy="custom.value | decrypt" clip-click="copied(custom.label | decrypt)" class="link">[Copy]</a>
                   </span>
                   <span ng-if="custom.clicktoshow==1">
-                   <span pw="custom.value" toggle-text-stars></span> <a clip-copy="custom.value" clip-click="copied(custom.label)" class="link">[Copy]</a>
+                   <span pw="custom.value | decrypt" toggle-text-stars></span> <a clip-copy="custom.value | decrypt" clip-click="copied(custom.label | decrypt)" class="link">[Copy]</a>
                   </span>
                 </td>
               </tr>
