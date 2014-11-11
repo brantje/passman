@@ -7,6 +7,7 @@
 \OCP\Util::addscript('passman', 'jstorage');
 \OCP\Util::addscript('passman', 'bower_components/zxcvbn/zxcvbn-async'); 
 \OCP\Util::addscript('passman', 'pwgen');
+\OCP\Util::addscript('passman', 'ng-click-select');
 \OCP\Util::addscript('passman', 'app');
 \OCP\Util::addscript('passman', 'app.directive');
 \OCP\Util::addscript('passman', 'app.filter');
@@ -76,7 +77,7 @@
                 <ul ng-if="!showingDeletedItems">
                   <li><a ng-click="editItem(item)"><?php p($l->t('Edit')); ?></a></li>
                   <li><a ng-click="deleteItem(item,true )"><?php p($l->t('Delete')); ?></a></li>
-                  <li><a><?php p($l->t('Share')); ?></a></li>
+                  <li><a ng-click="shareItem(item)"><?php p($l->t('Share')); ?></a></li>
                 </ul>
                 <ul ng-if="showingDeletedItems">
                   <li><a ng-click="recoverItem(item)"><?php p($l->t('Restore')); ?></a></li>
@@ -144,7 +145,7 @@
                 <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e" style="float:left; margin-right:.3em;">&nbsp;</span>
                    <span><?php p($l->t('Files & Images')); ?></span> :</td>
                 <td>
-                  <span ng-repeat="file in currentItem.files" class="link loadFile" ng-click="loadFile(file)"><span ng-class="file.icon"></span>{{file.filename}}  ({{file.size | bytes}}) 
+                  <span ng-repeat="file in currentItem.files" class="link loadFile" ng-click="loadFile(file)"><span ng-class="file.icon"></span>{{file.filename}}  ({{file.size | bytes}})</span> 
                 </td>
               </tr>
               <tr ng-show="currentItem.customFields.length > 0" ng-repeat="custom in currentItem.customFields">
@@ -266,7 +267,7 @@
                         </tr>
                         </table>
                         <hr class="blue">
-                        <h1Existing fields'"></h1>
+                        <h1>><?php p($l->t('Existing fields')); ?></h1>
                         <table style="width: 100%;" ng-show="currentItem.customFields.length > 0">
                           <thead>
                               <tr>
@@ -332,7 +333,21 @@
                         </table>
                       </div>
                     </div>
-                  </div>
+          </div>
+          <!--- Start sharing -->
+          <div id="shareDialog" ng-controller="shareCtrl" style="display: none;">
+            <?php p($l->t('Enter the users / groups you want to share the password with')); ?>
+            <tags-input ng-model="selectedTags" removeTagSymbol="x" replace-spaces-with-dashes="false" min-length="1">
+               <auto-complete source="loadUserAndGroups($query)" min-length="1"></auto-complete>
+           </tags-input>
+           <label><input type="checkbox" ng-model="shareSettings.allowShareLink" ng-click="createShareUrl()"/><?php p($l->t('Create share link')); ?></label>
+           <div ng-show="shareSettings.allowShareLink">
+            Your share link:
+            <input type="text" ng-click-select ng-model="shareSettings.shareUrl" class="shareUrl"/> 
+           </div>
+         </div>
+         <!-- end sharing -->
+         
         </div> <!-- End contentCtrl --> 
     </div> <!-- End appCtrl -->
   <div id="encryptionKeyDialog" style="display: none;">
