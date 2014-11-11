@@ -10,9 +10,14 @@ $(document).ready(function(){
 })
 
 
-var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'LocalStorageModule','offClick']).config(['$httpProvider',
+var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard','offClick']).config(['$httpProvider',
 function($httpProvider) {
   $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
+}]);
+app.factory('ItemService', [function(){
+  return{
+    
+  }
 }]);
 
 app.factory('ItemService', ['$http',
@@ -107,18 +112,19 @@ function($http) {
   }
 }]);
 
-app.controller('appCtrl', function($scope, ItemService, localStorageService,$http,$window) {
+app.controller('appCtrl', function($scope, ItemService, $http,$window,$timeout) {
   console.log('appCtrl');
   $scope.items = [];
   $scope.showingDeletedItems = false;
   $scope.tags = [];
   $scope.selectedTags = []
   $scope.noFavIcon = OC.imagePath('passman', 'lock.svg');
+  $scope.sessionExpireTime = 0;
+  var expireNotificationShown = false;
  
   
   $scope.loadItems = function(tags,showDeleted) {
     var idx = tags.indexOf('is:Deleted');
-    console.log(idx)
     if(idx >= 0){
        tags.splice(idx,1);
     }
@@ -176,7 +182,7 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
 
   $window.decryptThis =  $scope.decryptThis = function(encryptedData,encKey) {
     var decryptedString = window.atob(encryptedData);
-    var encKey = (encKey) ? encKey : $scope.encryptionKey;
+    var encKey = (encKey) ? encKey : $scope.getEncryptionKey();
     try {
       decryptedString = sjcl.decrypt(encKey, decryptedString);
     } catch(e) {
@@ -189,7 +195,7 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
 
   $scope.encryptThis = $scope.encryptThis = function(str,encKey) {
     var encryptedString = str;
-    var encKey = (encKey) ? encKey : $scope.encryptionKey;
+    var encKey = (encKey) ? encKey : $scope.getEncryptionKey();
     try {
       encryptedString = sjcl.encrypt(encKey, encryptedString)
     } catch(e) {
@@ -199,7 +205,10 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
     encryptedString = window.btoa(encryptedString);
     return encryptedString;
   };
-
+  $scope.getEncryptionKey = function(){
+    return $scope.encryptionKey;
+  }
+  
   $scope.setEncryptionKey = function(key) {
     $scope.encryptionKey = key;
   };
@@ -233,22 +242,64 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
           $scope.setEncryptionKey($('#ecKey').val());
           $scope.loadItems([]);
           if ($('#ecRemember:checked').length > 0) {
-            localStorageService.set('encryptionKey', window.btoa($('#ecKey').val()));
-            /*if ($('#rememberTime').val() != 'forever') {
+            $.jStorage.set('encryptionKey', window.btoa($('#ecKey').val()));
+            if ($('#rememberTime').val() != 'forever') {
              var time = $('#rememberTime').val() * 60 * 1000;
-             $.jStorage.setTTL("ENC_KEY", time);
-
-             $('#sessionTimeContainer').show();
+             $.jStorage.setTTL("encryptionKey", time);
              countLSTTL();
-             }*/
+             }
           }
           $('#ecKey').val('');
           $('#ecRemember').removeAttr('checked');
-          //$('#rememberTime').val('15');
+          $('#rememberTime').val('15');
         }
       }
     });
   };
+ 
+  
+  var countLSTTL = function() {
+    var time = $.jStorage.getTTL("encryptionKey");
+    time = time / 1000;
+
+    if (time === 0) {
+      $scope.lockSession();
+    }
+    if(time < 300 && expireNotificationShown===false){
+      OC.Notification.showTimeout('Your session expires in 5 minutes');
+      expireNotificationShown = true;
+    }
+
+    seconds = Math.floor(time);
+    var numyears = Math.floor(seconds / 31536000);
+    var numdays = Math.floor((seconds % 31536000) / 86400);
+    var numhours = Math.floor(((seconds % 31536000) % 86400) / 3600);
+    var numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
+    var numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
+
+    var str = "";
+    if (numyears > 0) {
+      str += numyears + " years ";
+    }
+    if (numdays > 0) {
+      str += numdays + " days ";
+    }
+    if(numhours < 10){
+      numhours = "0" + numhours;
+    }
+    if(numminutes < 10){
+      numminutes = "0" + numminutes;
+    }
+    if(numseconds < 10){
+      numseconds = "0" + numseconds;
+    }
+    str += numhours + ":";
+    str += numminutes + ":";
+    str += numseconds + "";
+      
+    $scope.sessionExpireTime = str;
+    $timeout(countLSTTL, 1000);
+  }; 
 
   $scope.loadTags = function(query) {
     return $http.get(OC.generateUrl('apps/passman/api/v1/tags/search?k=' + query));
@@ -259,17 +310,18 @@ app.controller('appCtrl', function($scope, ItemService, localStorageService,$htt
    */
   $scope.lockSession = function(){
     $scope.showEncryptionKeyDialog();
-    localStorageService.set('encryptionKey','');
+    $.jStorage.set('encryptionKey','');
     $scope.items = [];
   }
   /**
    *Onload -> Check if localstorage has key if not show dialog
    */
-  if (!localStorageService.get('encryptionKey')) {
+  if (!$.jStorage.get('encryptionKey')) {
     $scope.showEncryptionKeyDialog();
   } else {
-    $scope.setEncryptionKey(window.atob(localStorageService.get('encryptionKey')));
+    $scope.setEncryptionKey(window.atob( $.jStorage.get('encryptionKey')));
     $scope.loadItems([]);
+    countLSTTL();
   }
 
   $('#item_tabs').tabs();
@@ -304,6 +356,7 @@ app.controller('navigationCtrl', function($scope,TagService) {
 app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
   console.log('contentCtrl');
   $scope.currentItem = {};
+  $scope.editing = false;
   $scope.showItem = function(rawItem) {
     var item = rawItem;
     var encryptedFields = ['account', 'email', 'password', 'description'];
@@ -332,12 +385,12 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
   
   $scope.recoverItem = function(item){
     ItemService.recover(item).success(function() {
-        for (var i = 0; i < $scope.items.length; i++) {
+        /*for (var i = 0; i < $scope.items.length; i++) {
           if ($scope.items[i].id == item.id) {
             var idx = $scope.items.indexOf(item);
             $scope.items.splice(idx, 1)
           }
-        }
+        }*/
       });
       OC.Notification.showTimeout('<div>'+ item.label +' recoverd</div>');
   }
@@ -473,10 +526,10 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
     $scope.editItem({});
     
   }
-  
   $scope.editItem = function(item) {
     console.log(item)
     $scope.currentItem = item;
+    $scope.editing = true;
     $sce.trustAsHtml($scope.currentItem.description);
     $('#editAddItemDialog').dialog({
       title : 'Edit item',
@@ -490,6 +543,7 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
   console.log('addEditItemCtrl');
   $scope.pwFieldVisible = false;
   $scope.newCustomfield = {clicktoshow: 0};
+  $scope.newExpireTime = 0;
   $scope.uploadQueue = {}
   $scope.generatedPW = '';
   $scope.pwInfo = {};
@@ -516,17 +570,37 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
     if(typeof zxcvbn != 'function'){
       return;
     }
+    if(!newVal){
+      return;
+    }
     $scope.currentPWInfo = zxcvbn(newVal);
+    /**
+     *@TODO: Check if password is expired, if so, set expire_time to ""  
+     */
+    var today = new Date().getTime();
+    var itemExpireDate = $scope.currentItem.expire_time*1;
+    if(itemExpireDate < today && $scope.editing){
+      var days = 86400000*$scope.renewal_period;
+      $scope.newExpireTime = today*1+days; 
+    }
   },true);
   
   $scope.$watch('currentItem.tags',function(newVal){
     if(!newVal){
       return;
     }
+    $scope.requiredPWStrength = 0;
+    $scope.renewal_period = 0;
+    
     for(var i=0; i< newVal.length;i++){      var tag = newVal[i];
       if(tag.min_pw_strength){
         if(tag.min_pw_strength >  $scope.requiredPWStrength){
           $scope.requiredPWStrength = tag.min_pw_strength;
+        }
+      }
+      if(tag.renewal_period){
+        if(tag.renewal_period >  $scope.renewal_period){
+          $scope.renewal_period = tag.renewal_period*1;
         }
       }
     }
@@ -536,6 +610,7 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
     $('#editAddItemDialog').dialog('close');
     $scope.generatedPW = '';
     $scope.currentPWInfo = {};
+    $scope.editing = false;
     $scope.errors = [];
   }
   $scope.generatePW = function(){
@@ -613,15 +688,17 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
     if($scope.requiredPWStrength > $scope.currentPWInfo.entropy){
       $scope.errors.push("Minimal password score not met")
     } 
-    
+    saveThis.expire_time = $scope.newExpireTime;
     if($scope.errors.length==0){
       delete saveThis.passwordConfirm;
       if(saveThis.id){
         ItemService.update(saveThis).success(function(data){
           if(data.success){
             $scope.errors = [];
-            $scope.closeDialog();
+            console.log(data)
+            unEncryptedItem.expire_time = data.success.expire_time;
             $scope.$parent.currentItem = unEncryptedItem;
+            $scope.closeDialog();
           }
         });
       } else {
@@ -633,41 +710,6 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
     }
   }
 });
-
-app.directive('toggleTextStars', ['$compile',
-function($compile, $tooltip) {
-  return {
-    restrict : 'A',
-    transclude : false,
-    scope : {
-      pw : '='
-    },
-    link : function(scope, element, attrs, ngModelCtrl) {
-      scope.curPW = '******';
-      scope.hSText = 'Show';
-      var el = angular.element('<span>{{curPW}} <span ng-click="togglePW()" class="link">[{{hSText}}]</span></span>');
-      element.html($compile(el)(scope));
-      scope.pwVisible = false;
-
-      scope.togglePW = function() {
-        if (!scope.pwVisible) {
-          scope.curPW = scope.pw;
-          scope.pwVisible = true;
-          scope.hSText = 'Hide';
-        } else {
-          scope.curPW = '******';
-          scope.pwVisible = false;
-          scope.hSText = 'Show';
-        }
-      }
-      scope.$watch('pw',function(n,o){
-        if(scope.pwVisible){
-          scope.curPW = scope.pw;
-        }
-      })
-    }
-  }
-}]);
 
 app.controller('settingsCtrl', function($scope) {
   $scope.settings = {
@@ -692,194 +734,11 @@ app.controller('settingsCtrl', function($scope) {
       }
     }
   };
- 
-   
+  
 });
 
-app.directive('clickForInput', ['$compile',
-function($compile, $tooltip) {
-  return {
-    restrict : 'A',
-    transclude : false,
-    scope : {
-      value : '='
-    },
-    link : function(scope, element, attrs, ngModelCtrl) {
-      element.html(scope.value)
-      element.on('click',function(){
-        if(!scope.isInput){
-          var ele = angular.element('<input type="text" ng-model="value" value="'+ scope.value +'">');
-          var c = $compile(ele)(scope);
-          element.html(c);
-          scope.isInput = true;
-        }
-      });
-    }
-  }
-}]);
-
-app.directive('t', ['$compile',
-function($compile, $tooltip) {
-  return {
-    restrict : 'A',
-    transclude : false,
-    scope : {
-      value : '=t'
-    },
-    link : function(scope, element, attrs, ngModelCtrl) {
-      element.html(scope.value);
-      
-    }
-  }
-}]);
-app.directive('fallbackSrc', function () {
-  var fallbackSrc = {
-    scope:{
-      fallbackSrc: '=fallbackSrc'
-    },
-    link: function postLink(scope, iElement, iAttrs) {
-      iElement.bind('error', function() {
-        angular.element(this).attr("src", scope.fallbackSrc);
-      });
-    }
-   }
-   return fallbackSrc;
-});
-
-app.directive("fileread", ['ItemService',
-function(ItemService) {
-  return {
-    scope : true,
-    link : function(scope, element, attributes) {
-      element.bind("change", function(changeEvent) {
-        var reader = new FileReader();
-        file = changeEvent.target.files[0]
-        reader.readAsDataURL(changeEvent.target.files[0]);
-         
-        reader.onloadend = (function(file) {
-          return function(evt) {
-            if (file.size < 20971520) {
-              var dataURL = evt.target.result;
-              var mimeType = dataURL.split(",")[0].split(":")[1].split(";")[0];
-              var encryptedFile = scope.encryptThis(dataURL);
-              var postData = {
-                item_id : scope.currentItem.id,
-                filename : scope.encryptThis(file.name),
-                type : file.type,
-                mimetype : mimeType,
-                size : file.size,
-                content : encryptedFile
-              };
-              console.log(postData)
-              ItemService.uploadFile(postData).success(function(data){
-                var icon = (data.type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
-                scope.currentItem.files.push({
-                    filename: scope.decryptThis(data.filename),
-                    size: file.size, 
-                    icon: icon,
-                    id: data.id,
-                    item_id: data.item_id,
-                });
-                element.value = '';
-              });
-            } else {
-                angular.element('#fileList').append('<li>' + file.name + ' Can\'t upload max file size: ' + OC.Util.humanFileSize(20971520) + '</li>');
-            }
-          };
-        })(file);
-      });
-    }
-  }
-}]); 
-
-app.filter('secondstohuman', function() {
-  return function(seconds) {
-    seconds = Math.floor(seconds)
-    var numyears = Math.floor(seconds / 31536000);
-    var numdays = Math.floor((seconds % 31536000) / 86400); 
-    var numhours = Math.floor(((seconds % 31536000) % 86400) / 3600);
-    var numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
-    var numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
-    return numyears + " years " +  numdays + " days " + numhours + " hours " + numminutes + " minutes " + numseconds + " seconds";
-  }
-});
-
-app.filter('bytes', function() {
-  return function(bytes, precision) {
-    if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
-    if (typeof precision === 'undefined') precision = 1;
-    var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
-      number = Math.floor(Math.log(bytes) / Math.log(1024));
-    return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
-  }
-});
-
-app.filter('to_trusted', ['$sce', function($sce){
-        return function(text) {
-            return $sce.trustAsHtml(text);
-        };
-}]);
-/*
-app.filter('decrypt', ['$window', function($window){
-        return function(text) {
-            if(!text){
-              return;
-            }
-            return decryptThis(text,$window.c);
-        };
-}]);*/
 
 
-
-angular.module('offClick',[]).directive('offClick', ['$document', function ($document) {
-        
-    function targetInFilter(target,filter){
-        if(!target || !filter) return false;
-        var elms = angular.element(filter);
-        var elmsLen = elms.length;
-        for (var i = 0; i< elmsLen; ++i)
-            if(elms[i].contains(target)) return true;
-        return false;
-    }
-    
-    return {
-        restrict: 'A',
-        scope: {
-            offClick: '&',
-            offClickIf: '&'
-        },
-        link: function (scope, elm, attr) {
-
-            if (attr.offClickIf) {
-                scope.$watch(scope.offClickIf, function (newVal, oldVal) {
-                        if (newVal && !oldVal) {
-                            $document.on('click', handler);
-                        } else if(!newVal){
-                            $document.off('click', handler);
-                        }
-                    }
-                );
-            } else {
-                $document.on('click', handler);
-            }
-
-            scope.$on('$destroy', function() {
-                $document.off('click', handler);
-            });
-
-            function handler(event) {
-                // This filters out artificial click events. Example: If you hit enter on a form to submit it, an
-                // artificial click event gets triggered on the form's submit button.
-                if (event.pageX == 0 && event.pageY == 0) return;
-                
-                var target = event.target || event.srcElement;
-                if (!(elm[0].contains(target) || targetInFilter(target, attr.offClickFilter))) {
-                    scope.$apply(scope.offClick());
-                }
-            }
-        }
-    };
-}]);
 
 /***
  *Extend the OC Notification
@@ -918,4 +777,13 @@ function dataURItoBlob(dataURI, ftype) {
   });
 
   return URL.createObjectURL(bb);
+}
+
+
+/* Check if t function exists if not, create it to prevent errors */
+if(null === t){
+  function t(app,string){
+    console.log('Fuck, l10n failed to load','App: '+ app,'String: '+ string);
+    return string;
+  }
 }

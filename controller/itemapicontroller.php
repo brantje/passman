@@ -130,7 +130,8 @@ class ItemApiController extends Controller {
 			if(!empty($tags)){
 				//$this->tagBusinessLayer->removeTags($id);
 				foreach($tags as $tag){
-					if($this->tagBusinessLayer->search($tag['text'],$userId,true)){
+				  $t = $this->tagBusinessLayer->search($tag['text'],$userId,true);
+					if($t){
 						$this ->tagBusinessLayer ->linkTagXItem($tag['text'],$userId,$result['itemid']);
 					}
 					else {
@@ -171,6 +172,7 @@ class ItemApiController extends Controller {
     $item['url'] = $this->params('url');
     $tags = $this->params('tags');
     $customFields = $this->params('customFields');
+    $maxRenewalPeriod = 0;
     if(empty($label)){
       array_push($item['label'],'Label is mandatory');
     }
@@ -202,11 +204,17 @@ class ItemApiController extends Controller {
           $r = $this->tagBusinessLayer->search($tag['text'],$this->userId);  
           if($r){
             $this ->tagBusinessLayer ->linkTagXItem($tag['text'],$this->userId,$item['id']);
+              if($r[0]['renewal_period'] > $maxRenewalPeriod){
+                $maxRenewalPeriod = $r[0]['renewal_period'];
+              }
           } else {
             $this ->tagBusinessLayer ->create($tag['text'],$this->userId);
             $this ->tagBusinessLayer ->linkTagXItem($tag['text'],$this->userId,$item['id']);
           }
         }
+      }
+      if($maxRenewalPeriod > 0 && ($item['expire_time']=="" || $item['expire_time']=="0")){
+        $item['expire_time'] = strtotime("+". $maxRenewalPeriod ." days")*1000;
       }
       $result['success'] = $this->ItemBusinessLayer->update($item);
     } else {
