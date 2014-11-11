@@ -73,6 +73,14 @@ class Application extends App {
 			);
 		});
 		
+                $container->registerService("ShareController", function($c){
+                    return new ShareController(
+                        $c->query('AppName'),
+                        $c->query('Request'),
+                        $c->query('UserId'),
+                        $c->query('UserGroups')
+                    );
+                });
 		 
 		/**
 		* Business Layer
@@ -120,14 +128,18 @@ class Application extends App {
 		$container->registerService('UserId', function($c) {
 			return \OCP\User::getUser();
 		});		
-
+                
+                $container->registerService('UserGroups', function($c){
+                    return $c->query('GroupManager')->getUserGroups($c->query('UserId'));
+                });
+                
 		$container->registerService('Db', function() {
 			return new Db();
 		});
 		
 		 $container->registerService('AppStorage', function($c) {
-            return $c->query('ServerContainer')->getAppFolder();
-        });
+                    return $c->query('ServerContainer')->getAppFolder();
+                });
 				
 	}
 
