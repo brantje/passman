@@ -120,9 +120,7 @@ class Application extends App {
 		$container->registerService('UserId', function($c) {
 			return \OCP\User::getUser();
 		});		
-		$container->registerService('UserId', function($c) {
-			return \OCP\User::getUser();
-		});		
+
 		$container->registerService('Db', function() {
 			return new Db();
 		});
