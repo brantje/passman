@@ -505,7 +505,7 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
     OC.Notification.showTimeout('Copied ' + what.toLowerCase() + ' to clipboard');
   };
   $scope.addItem = function(){
-    $scope.currentItem = {
+   var newItem = {
       account: '',
       created: '',
       customFields: [],
@@ -523,7 +523,7 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
     };
     
     $scope.requiredPWStrength = 0;
-    $scope.editItem({});
+    $scope.editItem(newItem);
     
   }
   $scope.editItem = function(item) {

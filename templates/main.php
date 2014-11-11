@@ -266,7 +266,7 @@
                         </tr>
                         </table>
                         <hr class="blue">
-                        <h1Existing fields'"></h1>
+                        <h1>><?php p($l->t('Existing fields')); ?></h1>
                         <table style="width: 100%;" ng-show="currentItem.customFields.length > 0">
                           <thead>
                               <tr>
