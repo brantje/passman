@@ -10,13 +10,20 @@ $(document).ready(function(){
 })
 
 
-var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard','offClick']).config(['$httpProvider',
+var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard','offClick','ngClickSelect']).config(['$httpProvider',
 function($httpProvider) {
   $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
 }]);
-app.factory('ItemService', [function(){
+app.factory('shareService', ['$http',function($http){
   return{
-    
+    shareItem : function(item) {
+      var queryUrl = OC.generateUrl('apps/passman/api/v1/sharing/share');
+      return $http({
+        url : queryUrl,
+        method : 'PUT',
+        data: item        
+      })
+    },
   }
 }]);
 
@@ -320,7 +327,7 @@ app.controller('appCtrl', function($scope, ItemService, $http,$window,$timeout) 
     $scope.showEncryptionKeyDialog();
   } else {
     $scope.setEncryptionKey(window.atob( $.jStorage.get('encryptionKey')));
-    $scope.loadItems([]);
+   //$scope.loadItems([]);
     countLSTTL();
   }
 
@@ -395,25 +402,8 @@ app.controller('contentCtrl', function($scope, $sce,$compile,ItemService) {
       OC.Notification.showTimeout('<div>'+ item.label +' recoverd</div>');
   }
 
-  $scope.shareItem = function(rawItem){
-    var item = angular.copy(rawItem);
-    var encryptedFields = ['account', 'email', 'password', 'description'];
-    if (!item.decrypted) {
-      for (var i = 0; i < encryptedFields.length; i++) {
-        if(item[encryptedFields[i]]){
-          item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
-        }
-      }
-      for (var i = 0; i < item.customFields.length; i++) {
-       item.customFields[i].label = $scope.decryptThis(item.customFields[i].label);
-       item.customFields[i].value = $scope.decryptThis(item.customFields[i].value);
-      }
-      for (var i = 0; i < item.files.length; i++) {
-        item.files[i].filename = $scope.decryptThis(item.files[i].filename);
-        item.files[i].size = item.files[i].size;
-        item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
-      }
-    }
+  $scope.shareItem = function(item){
+    $scope.$broadcast('shareItem',item);
   }
 
   $scope.deleteItem = function(item, softDelete) {
@@ -574,9 +564,6 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
       return;
     }
     $scope.currentPWInfo = zxcvbn(newVal);
-    /**
-     *@TODO: Check if password is expired, if so, set expire_time to ""  
-     */
     var today = new Date().getTime();
     var itemExpireDate = $scope.currentItem.expire_time*1;
     if(itemExpireDate < today && $scope.editing){
@@ -711,7 +698,7 @@ app.controller('addEditItemCtrl', function($scope,ItemService) {
   }
 });
 
-app.controller('settingsCtrl', function($scope) {
+app.controller('settingsCtrl', function($scope,shareService) {
   $scope.settings = {
     PSC:{
       minStrength: 40,
@@ -735,6 +722,90 @@ app.controller('settingsCtrl', function($scope) {
     }
   };
   
+});
+
+app.controller('shareCtrl', function($scope,$http,shareService) {
+  $scope.shareSettings = {allowShareLink: false};
+  $scope.loadUserAndGroups = function($query) {
+    /* Enter the url where we get the search results for $query
+     * As example i entered apps/passman/api/v1/sharing/search?k=
+     */
+    return $http.get(OC.generateUrl('apps/passman/api/v1/sharing/search?k=' + query));
+  };
+  
+  $scope.createShareUrl = function(){
+    if(!$scope.shareSettings.allowShareLink){
+      $scope.shareSettings.allowShareLink = true;
+    }
+    if($scope.shareSettings.allowShareLink === true){
+      /**
+       *Share url generation here 
+       */
+      $scope.shareSettings.shareUrl = generatePassword(24);
+    }
+  };
+  /**
+   *Catch the shareItem event 
+   */
+  $scope.$on('shareItem', function(event, data) {
+    shareItem(data);
+  });
+
+  /*
+   * The function used for sharing
+   */
+  var shareItem = function(rawItem) {
+    var item = angular.copy(rawItem);
+    var encryptedFields = ['account', 'email', 'password', 'description'];
+    if (!item.decrypted) {
+      for (var i = 0; i < encryptedFields.length; i++) {
+        if (item[encryptedFields[i]]) {
+          item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
+        }
+      }
+      for (var i = 0; i < item.customFields.length; i++) {
+        item.customFields[i].label = $scope.decryptThis(item.customFields[i].label);
+        item.customFields[i].value = $scope.decryptThis(item.customFields[i].value);
+      }
+      for (var i = 0; i < item.files.length; i++) {
+        item.files[i].filename = $scope.decryptThis(item.files[i].filename);
+        item.files[i].size = item.files[i].size;
+        item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
+      }
+    }
+    /*
+     * item now contain a unencrypted item (= password)
+     */
+    console.log('Share this item:', item);
+    $scope.sharingItem = item;
+    /**
+     *Show the sharing dialog 
+     */
+    $('#shareDialog').dialog({
+      title : 'Share ' + item.label,
+      close : function(event, ui) {
+        $scope.sharingItem = {allowShareLink: false};
+         $scope.shareSettings = {};
+      },
+      buttons: {
+        "Share": function(){
+          $scope.createSharedItem();
+        }    
+      }
+    });
+    
+    $scope.createSharedItem = function(){
+      var item = angular.copy($scope.sharingItem);
+      /** Do all special encryption etc here */
+     
+     
+     /** And then share it */
+     shareService.shareItem(item).success(function(data){
+       /** Data contains the response from server */
+      console.log(data)
+     });
+    };
+  };
 });
 
 
