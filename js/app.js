@@ -725,12 +725,13 @@ app.controller('settingsCtrl', function($scope,shareService) {
 });
 
 app.controller('shareCtrl', function($scope,$http,shareService) {
-  $scope.shareSettings = {allowShareLink: false};
+  $scope.shareSettings = {allowShareLink: false, shareWith:[]};
   $scope.loadUserAndGroups = function($query) {
     /* Enter the url where we get the search results for $query
      * As example i entered apps/passman/api/v1/sharing/search?k=
      */
-    return $http.get(OC.generateUrl('apps/passman/api/v1/sharing/search?k=' + query));
+    console.log($query)
+    return $http.get(OC.generateUrl('apps/passman/api/v1/sharing/search?k=' + $query));
   };
   
   $scope.createShareUrl = function(){
@@ -850,7 +851,7 @@ function dataURItoBlob(dataURI, ftype) {
   return URL.createObjectURL(bb);
 }
 
-
+var t = function(){};
 /* Check if t function exists if not, create it to prevent errors */
 if(null === t){
   function t(app,string){

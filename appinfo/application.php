@@ -25,6 +25,9 @@ use \OCA\Passman\Controller\ItemApiController;
 use \OCA\Passman\BusinessLayer\ItemBusinessLayer;
 use \OCA\Passman\Db\ItemManager;
 
+use \OCA\Passman\Controller\ShareController;
+use \OCA\Passman\Db\ShareManager;
+
 use \OCA\PassMan\Utility\SimplePieAPIFactory;
 use \OCA\PassMan\Utility\FaviconFetcher;
 
@@ -72,6 +75,17 @@ class Application extends App {
 				$c->query('UserId')
 			);
 		});
+    
+		$container->registerService('ShareController', function($c) {
+			return new ShareController(
+				$c->query('AppName'), 
+        $c->query('Request'),
+        $c->query('ItemBusinessLayer'),
+        $c->query('UserId'),
+        $c->query('TagBusinessLayer'),
+        $c->query('ShareManager')
+			);
+		});
 		
 		 
 		/**
@@ -104,6 +118,12 @@ class Application extends App {
 				$c->query('ServerContainer')->getDb()
 			);
 		});
+    
+		$container->registerService('ShareManager', function($c) {
+			return new TagManager(
+				$c->query('ServerContainer')->getDb()
+			);
+		});
 		
 		$container->registerService('SimplePieAPIFactory', function() {
 			return new SimplePieAPIFactory();
@@ -127,7 +147,7 @@ class Application extends App {
 		
 		 $container->registerService('AppStorage', function($c) {
             return $c->query('ServerContainer')->getAppFolder();
-        });
+    });
 				
 	}
 

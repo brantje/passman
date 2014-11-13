@@ -337,14 +337,27 @@
           <!--- Start sharing -->
           <div id="shareDialog" ng-controller="shareCtrl" style="display: none;">
             <?php p($l->t('Enter the users / groups you want to share the password with')); ?>
-            <tags-input ng-model="selectedTags" removeTagSymbol="x" replace-spaces-with-dashes="false" min-length="1">
-               <auto-complete source="loadUserAndGroups($query)" min-length="1"></auto-complete>
+            <tags-input ng-model="shareSettings.shareWith"  removeTagSymbol="x" replace-spaces-with-dashes="false" min-length="1">
+               <auto-complete source="loadUserAndGroups($query)" min-length="1" max-results-to-show="6"></auto-complete>
            </tags-input>
            <label><input type="checkbox" ng-model="shareSettings.allowShareLink" ng-click="createShareUrl()"/><?php p($l->t('Create share link')); ?></label>
            <div ng-show="shareSettings.allowShareLink">
-            Your share link:
-            <input type="text" ng-click-select ng-model="shareSettings.shareUrl" class="shareUrl"/> 
+              Your share link:
+              {{shareSettings}}
+              <input type="text" ng-click-select ng-model="shareSettings.shareUrl" class="shareUrl"/> 
            </div>
+            <table width="100%">
+              <th>
+                <tr>
+                  <td>Name</td>
+                  <td>Type</td>
+                </tr>
+              </th>
+              <tr ng-repeat="sharetargets in shareSettings.shareWith">
+                <td>{{sharetargets.text}}</td>
+                <td>{{sharetargets.type}}</td>
+              </tr>
+            </table>
          </div>
          <!-- end sharing -->
          
