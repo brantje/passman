@@ -35,7 +35,7 @@
   </ul>
 
   <!-- TAG Settings dialog here, so it is in the scope of navigationCtrl -->
-  <div id="tagSettingsDialog" style="display: none;">
+  <div id="tagSettingsDialog" style="display: none;" >
     <form id="tagSettings">
       <label for="edit_folder_complexity" class="label_cpm">Label:</label><br />
       <input type="text" ng-model="tagProps.tag_label" /><br />
