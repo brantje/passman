@@ -418,8 +418,11 @@ width: 72%;
 display: inline-block;
 height: 26px;
 padding-left: 7px;
+padding-top: 8px;
 }
-
+input[name="customFieldName"],input[name="customFieldValue"]{
+  width: 80% !important;
+}
 .save, .cancel {
 	width: 60px;
 	float: right;
@@ -601,11 +604,12 @@ table.table tr td:first-child {
 table.table tr td:nth-child(2) {
   width: 60px;
 }
-.ui-dialog[aria-describedby="shareDialog"] .ui-dialog-titlebar{
+
+.ui-dialog[aria-describedby="shareDialog"] .ui-dialog-titlebar,.ui-dialog[aria-describedby="editAddItemDialog"] .ui-dialog-titlebar{
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
 }
-#shareDialog{
+#shareDialog,#editAddItemDialog{
   overflow: visible !important;
   padding-top: 0px;
 }
@@ -616,11 +620,30 @@ table.table tr td:nth-child(2) {
 }
 .tabHeader > div {
   height: 26px;
-  padding-top: 4px;
+  padding-top: 4px !important;
   cursor: pointer;
+  text-align: center;
 }
 .tabHeader > div.active {
   background: #8aa6c1;
+}
+.formLabel {
+  padding-top: 8px !important;
+}
+#editNewItem input:not(.input):not([type='checkbox']),#editNewItem textarea{
+  width: 100%;
+}
+tags-input{
+  width: auto !important;
+}
+.label_cpm{
+  position: absolute;
+}
+.nopadding{
+  padding: 0px !important;
+}
+.nomargin{
+  margin: 0px !important;
 }
 input.shareUrl {
 display: block;
