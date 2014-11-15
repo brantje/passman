@@ -601,7 +601,27 @@ table.table tr td:first-child {
 table.table tr td:nth-child(2) {
   width: 60px;
 }
-
+.ui-dialog[aria-describedby="shareDialog"] .ui-dialog-titlebar{
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+#shareDialog{
+  overflow: visible !important;
+  padding-top: 0px;
+}
+.tabHeader {
+  height: 30px;
+  border-bottom: 1px solid #c9c9c9;
+  margin-left: -13px !important;
+}
+.tabHeader > div {
+  height: 26px;
+  padding-top: 4px;
+  cursor: pointer;
+}
+.tabHeader > div.active {
+  background: #8aa6c1;
+}
 input.shareUrl {
 display: block;
 width: 96%;

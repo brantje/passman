@@ -11,7 +11,7 @@
 namespace OCA\Passman\Db;
 
 use \OCP\IDb;
-use \OCP\DB\insertid;
+//use \OCP\DB\insertid;
 
 class ItemManager {
   private $userid;
