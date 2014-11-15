@@ -625,7 +625,7 @@ table.table tr td:nth-child(2) {
   text-align: center;
 }
 .tabHeader > div.active {
-  background: #8aa6c1;
+  background: rgba(115, 158, 200, 1);
 }
 .formLabel {
   padding-top: 8px !important;
