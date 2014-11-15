@@ -842,7 +842,7 @@ OC.Notification.showTimeout = function (str, timeout) {
   }, timeout);
 };
 
-
+var t = function () { };
 /* Check if t function exists if not, create it to prevent errors */
 if (null === t) {
   function t (app, string) {
