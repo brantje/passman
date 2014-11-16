@@ -333,6 +333,7 @@
      </div>
       <div class="row">
         <div class="col-xs-11">
+				  Existing files
           <ul id="fileList">
             <li ng-repeat="file in currentItem.files" class="fileListItem">{{file.filename}} ({{file.size | bytes}}) <span
                 class="icon icon-delete" style="float:right;" ng-click="deleteFile(file)"></span></li>
@@ -398,52 +399,51 @@
   <img id="fileImg" /><br />
   <span id="downloadImage"></span>
 </div>
-<div ng-controller="settingsCtrl" id="settingsDialog" style="display: none;">
-  <div id="settingTabs">
-    <ul>
-      <li><a href="#tabs-1">Nunc tincidunt</a></li>
-      <li><a href="#tabs-2">Proin dolor</a></li>
-      <li><a href="#tabs-3">Password strength check</a></li>
-    </ul>
-    <div id="tabs-1">
-      <h2>Content heading 1</h2>
-
-      <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi
-         sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor
-         risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam
-         sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius
-         sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+<div ng-controller="settingsCtrl" id="settingsDialog"  ng-init="tabActive=1" style="display: none;">
+  <div class="">
+    <div class="col-md-12 tabHeader nopadding" ng-class="'tab'+tabActive">
+      <div class="tab1 col-xs-3 col-md-2 nopadding"  ng-click="tabActive=1" ng-class="{'active': tabActive==1}">General</div>
+      <div class="tab2 col-xs-3 col-md-2 nopadding" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">Sharing</div>
+      <div class="tab3 col-xs-3 col-md-2 nopadding" ng-click="tabActive=3" ng-class="{'active': tabActive==3}">Tools</div>
     </div>
-    <div id="tabs-2">
-      <h2>Content heading 2</h2>
+    <div class="col-md-8">
+      <div ng-show="tabActive==1">
+        <h2>Content heading 1</h2>
 
-      <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis
-         scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus
-         eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent
-         in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel
-         metus.
-         Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque
-         pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et
-         purus.</p>
-    </div>
-    <div id="tabs-3">
-      <p>Here you can indentify weak passwords, we will list the items. List all password with a rating less than</p>
-      <input type="text" ng-model="settings.PSC.minStrength" />
-      <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
-      <hr>
-      <table ng-table="tableParams" class="table" style="width: 100%;">
-        <tr>
-          <td>Label</td>
-          <td>Score</td>
-          <td>Password</td>
-        </tr>
-        <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
-          <td>{{item.label}}</td>
-          <td>{{item.score}}</td>
-          <td><span pw="item.password" toggle-text-stars></span> <a
-              ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a></td>
-        </tr>
-      </table>
+        <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi
+          sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor
+          risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam
+          sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius
+          sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+      </div>
+      <div ng-show="tabActive==2">
+        <h2>Content heading 2</h2>
+
+        <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi
+          sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor
+          risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam
+          sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius
+          sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+      </div>
+      <div ng-show="tabActive==3">
+        <p>Here you can indentify weak passwords, we will list the items. List all password with a rating less than</p>
+        <input type="text" ng-model="settings.PSC.minStrength" />
+        <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
+        <hr>
+        <table ng-table="tableParams" class="table" style="width: 100%;">
+          <tr>
+            <td>Label</td>
+            <td>Score</td>
+            <td>Password</td>
+          </tr>
+          <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
+            <td>{{item.label}}</td>
+            <td>{{item.score}}</td>
+            <td><span pw="item.password" toggle-text-stars></span> <a
+                ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a></td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
 </div>

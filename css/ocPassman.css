@@ -605,11 +605,11 @@ table.table tr td:nth-child(2) {
   width: 60px;
 }
 
-.ui-dialog[aria-describedby="shareDialog"] .ui-dialog-titlebar,.ui-dialog[aria-describedby="editAddItemDialog"] .ui-dialog-titlebar{
+.ui-dialog[aria-describedby="shareDialog"] .ui-dialog-titlebar,.ui-dialog[aria-describedby="editAddItemDialog"] .ui-dialog-titlebar,.ui-dialog[aria-describedby="settingsDialog"] .ui-dialog-titlebar{
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
 }
-#shareDialog,#editAddItemDialog{
+#shareDialog,#editAddItemDialog,#settingsDialog{
   overflow: visible !important;
   padding-top: 0px;
 }

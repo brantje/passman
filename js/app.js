@@ -240,11 +240,10 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   };
 
   $scope.showSettings = function () {
-    $("#settingTabs").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
-    $("#settingTabs li").removeClass("ui-corner-top").addClass("ui-corner-left");
     $('#settingsDialog').dialog({
       modal: true,
       width: '750px',
+      title: 'Settings',
       height: 445,
       position: {my: "center center", at: "center", of: window}
     });
