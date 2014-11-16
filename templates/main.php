@@ -213,13 +213,13 @@
     <div ng-repeat="error in errors">{{error}}</div>
   </div>
   <form method="get" name="new_item" id="editNewItem">
-    <div class="row tabHeader" ng-init="tabActive=1">
-      <div class="col-xs-3 nopadding" ng-click="tabActive=1" ng-class="{'active': tabActive==1}">General</div>
-      <div class="col-xs-3 nopadding" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">Password</div>
-      <div class="col-xs-3 nopadding" ng-click="tabActive=3" ng-class="{'active': tabActive==3}"
+    <div class="tabHeader" ng-class="'tab'+tabActive" ng-init="tabActive=1">
+      <div class="col-xs-3 nopadding tab1" ng-click="tabActive=1;" ng-class="{'active': tabActive==1}">General</div>
+      <div class="col-xs-3 nopadding tab2" ng-click="tabActive=2;" ng-class="{'active': tabActive==2}">Password</div>
+      <div class="col-xs-2 nopadding tab3" ng-click="tabActive=3; " ng-class="{'active': tabActive==3}"
            ng-show="currentItem.id">Files
       </div>
-      <div class="col-xs-3 nopadding" ng-click="tabActive=4" ng-class="{'active': tabActive==4}">Custom fields</div>
+      <div class="col-xs-4 nopadding tab4" ng-click="tabActive=4" ng-class="{'active': tabActive==4}">Custom fields</div>
     </div>
     <div class="row nomargin" ng-show="tabActive==1">
       <div class="row">
@@ -449,11 +449,11 @@
 </div>
 <!--- Start sharing -->
 <div id="shareDialog" ng-controller="shareCtrl" style="display: none;" ng-init="tabActive=1">
-  <div class="row tabHeader">
-    <div class="col-xs-4" ng-click="tabActive=1" ng-class="{'active': tabActive==1}">
+  <div class="tabHeader" ng-class="'tab'+tabActive">
+    <div class="col-xs-4 tab1" ng-click="tabActive=1" ng-class="{'active': tabActive==1}">
       Users & Groups
     </div>
-    <div class="col-xs-4" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">
+    <div class="col-xs-4 tab2" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">
       Links
     </div>
   </div>

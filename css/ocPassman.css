@@ -615,8 +615,26 @@ table.table tr td:nth-child(2) {
 }
 .tabHeader {
   height: 30px;
-  border-bottom: 1px solid #c9c9c9;
+/*  border-bottom: 1px solid #c9c9c9;*/
   margin-left: -13px !important;
+  margin-right: -13px !important;
+  margin-bottom: 10px;
+  -moz-transition: border-color 500ms ease-in ;
+  -o-transition: border-color 500ms ease-in ;
+  -ms-transition: border-color 500ms ease-in ;
+  transition: border-color 500ms ease-in ;
+}
+.tabHeader.tab1{
+  border-bottom: 3px solid rgba(115, 200, 176, 1);
+}
+.tabHeader.tab2{
+  border-bottom: 3px solid rgba(45, 171, 153, 1);
+}
+.tabHeader.tab3{
+  border-bottom: 3px solid rgba(93, 138, 197, 1);
+}
+.tabHeader.tab4{
+  border-bottom: 3px solid rgb(121, 137, 197);
 }
 .tabHeader > div {
   height: 26px;
@@ -624,8 +642,25 @@ table.table tr td:nth-child(2) {
   cursor: pointer;
   text-align: center;
 }
+.tabHeader > div.active.tab1{
+  background: rgba(115, 200, 176, 1);
+}
+.tabHeader > div.active.tab2{
+  background: rgba(45, 171, 153, 1);
+}
+.tabHeader > div.active.tab3{
+  background: rgba(93, 138, 197, 1);
+}
+.tabHeader > div.active.tab4{
+  background: rgb(121, 137, 197);
+}
+
 .tabHeader > div.active {
-  background: rgba(115, 158, 200, 1);
+  -webkit-transition: background-color 500ms ease-in ;
+  -moz-transition: background-color 500ms ease-in ;
+  -o-transition: background-color 500ms ease-in ;
+  -ms-transition: background-color 500ms ease-in ;
+  transition: background-color 500ms ease-in ;
 }
 .formLabel {
   padding-top: 8px !important;
@@ -646,6 +681,6 @@ tags-input{
   margin: 0px !important;
 }
 input.shareUrl {
-display: block;
-width: 96%;
+  display: block;
+  width: 96%;
 }
