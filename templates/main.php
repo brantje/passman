@@ -68,7 +68,7 @@
     </div>
   </div>
 </div>
-<div id="app-content" ng-controller="contentCtrl" off-click="currentItem = {}">
+<div id="app-content" ng-controller="contentCtrl">
 <div id="topContent">
   <button class="button" id="addItem" ng-click="addItem()">Add item</button>
   <button class="button" id="editItem" ng-click="editItem(currentItem)"

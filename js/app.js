@@ -403,14 +403,28 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
   };
 
   $scope.recoverItem = function (item) {
-    ItemService.recover(item).success();/*function () {
+    var saveThis = angular.copy(item), encryptedFields = ['account', 'email', 'password', 'description'], i;
+    for (i = 0; i < encryptedFields.length; i++) {
+      saveThis[encryptedFields[i]] = $scope.encryptThis(saveThis[encryptedFields[i]]);
+    }
+    if (saveThis.customFields.length > 0) {
+      for (i = 0; i < saveThis.customFields.length; i++) {
+        saveThis.customFields[i].label = $scope.encryptThis(saveThis.customFields[i].label);
+        saveThis.customFields[i].value = $scope.encryptThis(saveThis.customFields[i].value);
+        saveThis.customFields[i].clicktoshow = (saveThis.customFields[i].clicktoshow) ? 1 : 0;
+      }
+    }
+    if(saveThis.otpsecret) {
+      saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
+    }
+    ItemService.recover(saveThis).success(function () {
       for (var i = 0; i < $scope.items.length; i++) {
        if ($scope.items[i].id == item.id) {
        var idx = $scope.items.indexOf(item);
        $scope.items.splice(idx, 1)
        }
        }
-    }*/
+    });
     OC.Notification.showTimeout('<div>' + item.label + ' recoverd</div>');
   };
 
@@ -421,7 +435,21 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
   $scope.deleteItem = function (item, softDelete) {
     var i, idx;
     if (softDelete) {
-      ItemService.softDestroy(item).success(function () {
+      var saveThis = angular.copy(item), encryptedFields = ['account', 'email', 'password', 'description'], i;
+      for (i = 0; i < encryptedFields.length; i++) {
+        saveThis[encryptedFields[i]] = $scope.encryptThis(saveThis[encryptedFields[i]]);
+      }
+      if (saveThis.customFields.length > 0) {
+        for (i = 0; i < saveThis.customFields.length; i++) {
+          saveThis.customFields[i].label = $scope.encryptThis(saveThis.customFields[i].label);
+          saveThis.customFields[i].value = $scope.encryptThis(saveThis.customFields[i].value);
+          saveThis.customFields[i].clicktoshow = (saveThis.customFields[i].clicktoshow) ? 1 : 0;
+        }
+      }
+      if(saveThis.otpsecret) {
+        saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
+      }
+      ItemService.softDestroy(saveThis).success(function () {
         for (i = 0; i < $scope.items.length; i++) {
           if ($scope.items[i].id === item.id) {
             idx = $scope.items.indexOf(item);
@@ -694,7 +722,6 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     }
     if(saveThis.otpsecret) {
       saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
-      console.log(saveThis)
     }
     /**
      *Field checking
