@@ -171,7 +171,6 @@ div#topContent {
 #pwList {
 	margin-left: 1px;
 	overflow: auto;
-	padding-bottom: 200px;
 	margin-top: 35px;
 }
 #pwList > li {

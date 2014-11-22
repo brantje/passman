@@ -68,7 +68,7 @@
     </div>
   </div>
 </div>
-<div id="app-content" ng-controller="contentCtrl">
+<div id="app-content" ng-controller="contentCtrl" off-click="currentItem = {}">
 <div id="topContent">
   <button class="button" id="addItem" ng-click="addItem()">Add item</button>
   <button class="button" id="editItem" ng-click="editItem(currentItem)"
@@ -78,9 +78,10 @@
           ng-show="currentItem">Delete item
   </button>
 </div>
-<ul id="pwList" off-click="currentItem = {}">
+<ul id="pwList">
   <li ng-repeat="item in items | orderBy: 'label'" ng-mouseover="mouseOver = true"
-      ng-mouseleave="mouseOver = false; toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)">
+      ng-mouseleave="mouseOver = false; toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
+      ng-class="{'row-active': item.id === currentItem.id}">
     <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
          style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
          ng-if="item.favicon">

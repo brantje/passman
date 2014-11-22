@@ -1,19 +1,21 @@
 /**
  *A lil bit of jQuery is needed..
- * For active rows and the search.
  */
 $(document).ready(function () {
-  $(document).on('click', function (e) {
-    if(e.target.parentElement.id=='pwList' && e.target.localName=='li') {
-      $('.row-active').removeClass('row-active');
-      $(e.srcElement).addClass('row-active');
-    }
-    else
-    {
-      $('.row-active').removeClass('row-active');
-    }
-  });
+  /* Resize the pwList */
+  var resizeList = function(){
+    var containerHeight,containerWidth,listHeight;
+    listHeight = $('#pwList').height();
+    containerHeight = $('#app-content').height();
+    containerWidth = $('#app-content').width();
+    console.log(listHeight)
+    $('#pwList').height(containerHeight - $('#infoContainer').height() - 85);
+    $('#pwList').width(containerWidth - 2);
+  }
+  $(window).resize(resizeList);
+  resizeList();
 });
+
 var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
   function ($httpProvider) {
     $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
