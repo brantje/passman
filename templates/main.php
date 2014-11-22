@@ -78,7 +78,7 @@
           ng-show="currentItem">Delete item
   </button>
 </div>
-<ul id="pwList">
+<ul id="pwList" off-click="currentItem = {}">
   <li ng-repeat="item in items | orderBy: 'label'" ng-mouseover="mouseOver = true"
       ng-mouseleave="mouseOver = false; toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)">
     <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
@@ -119,7 +119,7 @@
         {{currentItem.label}} <a clip-copy="currentItem.label" clip-click="copied('label')" class="link">[Copy]</a>
       </td>
     </tr>
-    <tr ng-show="currentItem">
+    <tr ng-show="currentItem.description">
       <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                               style="float: left; margin-right: .3em;">&nbsp;</span>
         <span>Description</span> :
@@ -130,8 +130,7 @@
       </td>
     </tr>
     <tr ng-show="currentItem.account ">
-      <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                              style="float: left; margin-right: .3em;">&nbsp;</span>
+      <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"  style="float: left; margin-right: .3em;">&nbsp;</span>
         <span>Account</span> :
       </td>
       <td>
@@ -159,7 +158,7 @@
          &nbsp;<span otp-generator otpdata="currentItem.otpsecret.secret"></span>
       </td>
     </tr>
-    <tr ng-show="currentItem.expire_time!=0">
+    <tr ng-show="currentItem.expire_time">
       <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                               style="float: left; margin-right: .3em;">&nbsp;</span>
         <span>Expires</span> :

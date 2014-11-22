@@ -3,9 +3,15 @@
  * For active rows and the search.
  */
 $(document).ready(function () {
-  $(document).on('click', '#pwList li', function () {
-    $('.row-active').removeClass('row-active');
-    $(this).addClass('row-active');
+  $(document).on('click', function (e) {
+    if(e.target.parentElement.id=='pwList' && e.target.localName=='li') {
+      $('.row-active').removeClass('row-active');
+      $(e.srcElement).addClass('row-active');
+    }
+    else
+    {
+      $('.row-active').removeClass('row-active');
+    }
   });
 });
 var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
