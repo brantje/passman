@@ -8,6 +8,9 @@
 \OCP\Util::addscript('passman', 'bower_components/zxcvbn/zxcvbn-async');
 \OCP\Util::addscript('passman', 'pwgen');
 \OCP\Util::addscript('passman', 'ng-click-select');
+\OCP\Util::addscript('passman', 'qrReader/llqrcode');
+\OCP\Util::addscript('passman', 'sha');
+\OCP\Util::addscript('passman', 'func');
 \OCP\Util::addscript('passman', 'app');
 \OCP\Util::addscript('passman', 'app.directive');
 \OCP\Util::addscript('passman', 'app.filter');
@@ -126,6 +129,16 @@
         <a clip-copy="currentItem.description" clip-click="copied('description')" class="link">[Copy]</a>
       </td>
     </tr>
+    <tr ng-show="currentItem.account ">
+      <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                              style="float: left; margin-right: .3em;">&nbsp;</span>
+        <span>Account</span> :
+      </td>
+      <td>
+        {{currentItem.account}} <a clip-copy="currentItem.account" clip-click="copied('account')"
+                                   class="link">[Copy]</a>
+      </td>
+    </tr>
     <tr ng-show="currentItem.password ">
       <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                               style="float: left; margin-right: .3em;">&nbsp;</span>
@@ -137,6 +150,18 @@
                                                                      class="link">[Copy]</a>
       </td>
     </tr>
+    <tr ng-if="currentItem.otpsecret ">
+      <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                              style="float: left; margin-right: .3em;">&nbsp;</span>
+        <span>One time password</span> :
+      </td>
+      <td>
+         &nbsp;<span otp-generator otpdata="currentItem.otpsecret.secret"></span>
+        <!--<span pw="currentItem.password" toggle-text-stars></span> <a clip-copy="currentItem.password"
+                                                                     clip-click="copied('password')"
+                                                                     class="link">[Copy]</a> -->
+      </td>
+    </tr>
     <tr ng-show="currentItem.expire_time!=0">
       <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                               style="float: left; margin-right: .3em;">&nbsp;</span>
@@ -146,17 +171,7 @@
         {{currentItem.expire_time | date}}
       </td>
     </tr>
-    <tr ng-show="currentItem.account ">
-      <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                              style="float: left; margin-right: .3em;">&nbsp;</span>
-        <span>Account</span> :
-      </td>
-      <td>
-        {{currentItem.account}} <a clip-copy="currentItem.account" clip-click="copied('account')"
-                                   class="link">[Copy]</a>
-      </td>
-    </tr>
-    <tr ng-show="currentItem.email ">
+     <tr ng-show="currentItem.email ">
       <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                               style="float: left; margin-right: .3em;">&nbsp;</span>
         <span>Email</span> :
@@ -214,12 +229,11 @@
   </div>
   <form method="get" name="new_item" id="editNewItem">
     <div class="tabHeader" ng-class="'tab'+tabActive" ng-init="tabActive=1">
-      <div class="col-xs-3 nopadding tab1" ng-click="tabActive=1;" ng-class="{'active': tabActive==1}">General</div>
-      <div class="col-xs-3 nopadding tab2" ng-click="tabActive=2;" ng-class="{'active': tabActive==2}">Password</div>
-      <div class="col-xs-2 nopadding tab3" ng-click="tabActive=3; " ng-class="{'active': tabActive==3}"
-           ng-show="currentItem.id">Files
-      </div>
-      <div class="col-xs-4 nopadding tab4" ng-click="tabActive=4" ng-class="{'active': tabActive==4}">Custom fields</div>
+      <div class="col-xs-2 nopadding tab1" ng-click="tabActive=1;" ng-class="{'active': tabActive==1}">General</div>
+      <div class="col-xs-2 nopadding tab2" ng-click="tabActive=2;" ng-class="{'active': tabActive==2}">Password</div>
+      <div class="col-xs-2 nopadding tab3" ng-click="tabActive=3; " ng-class="{'active': tabActive==3}" ng-show="currentItem.id">Files</div>
+      <div class="col-xs-3 nopadding tab4" ng-click="tabActive=4" ng-class="{'active': tabActive==4}">Custom fields</div>
+      <div class="col-xs-3 nopadding tab5" ng-click="tabActive=5" ng-class="{'active': tabActive==5}">OTP settings</div>
     </div>
     <div class="row nomargin" ng-show="tabActive==1">
       <div class="row">
@@ -388,6 +402,34 @@
             </tr>
           </table>
         </div>
+      </div>
+    </div>
+    <div class="row nomargin" ng-show="tabActive==5">
+      <div class="col-xs-12">
+        <input type="file" qrread on-read="parseQR(qrdata)"/>
+      </div>
+      <div class="col-sm-4">
+        <img ng-src="{{currentItem.otpsecret.qrCode}}" ng-show="currentItem.otpsecret.qrCode" height="120" width="120">
+      </div>
+      <div class="col-sm-4">
+        <table ng-show="currentItem.otpsecret">
+          <tr ng-show="currentItem.otpsecret.type">
+            <td>Type:</td>
+            <td>{{currentItem.otpsecret.type}}</td>
+          </tr>
+          <tr ng-show="currentItem.otpsecret.label">
+            <td>Label:</td>
+            <td>{{currentItem.otpsecret.label}}</td>
+          </tr>
+          <tr ng-show="currentItem.otpsecret.issuer">
+            <td>Issuer:</td>
+            <td>{{currentItem.otpsecret.issuer}}</td>
+          </tr>
+          <tr ng-show="currentItem.otpsecret.secret">
+            <td>Secret:</td>
+            <td><span pw="currentItem.otpsecret.secret" toggle-text-stars></span> <a clip-copy="currentItem.otpsecret.secret" clip-click="copied('URL')" class="link">[Copy]</a></td>
+          </tr>
+        </table>
       </div>
     </div>
   </form>

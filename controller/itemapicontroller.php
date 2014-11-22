@@ -110,6 +110,7 @@ class ItemApiController extends Controller {
     $item['expire_time'] = ($this->params('expire_time')) ? $this->params('expire_time') : 0;
     $item['user_id'] = $this->userId;
     $item['url'] = $this->params('url');
+    $item['otpsecret'] = $this->params('otpsecret');
     $tags = $this->params('tags');
     $customFields = $this->params('customFields');
 
@@ -164,7 +165,6 @@ class ItemApiController extends Controller {
     $item['id'] = $this->params('id');
     $item['account'] = $this->params('account');
     $item['created'] = $this->params('created');
-
     $item['description'] = $this->params('description');
     $item['email'] = $this->params('email');
     $item['favicon'] = $this->params('favicon');
@@ -174,6 +174,7 @@ class ItemApiController extends Controller {
     $item['user_id'] = $this->params('user_id');
     $item['delete_date'] = ($this->params('delete_date')) ? $this->params('delete_date') : 0;
     $item['url'] = $this->params('url');
+    $item['otpsecret'] = $this->params('otpsecret');
     $tags = $this->params('tags');
     $customFields = $this->params('customFields');
     $maxRenewalPeriod = 0;

@@ -100,8 +100,8 @@ class ItemManager {
    * Insert item
    */
   public function insert($item) {
-    $sql = 'INSERT INTO `*PREFIX*passman_items` (`user_id`,`label`,`description`,`password`,`account`,`email`,`url`,`expire_time`,`favicon`,`created`)';
-    $sql .= ' VALUES (?,?,?,?,?,?,?,?,?,?)';
+    $sql = 'INSERT INTO `*PREFIX*passman_items` (`user_id`,`label`,`description`,`password`,`account`,`email`,`url`,`expire_time`,`favicon`,`created`,`otpsecret`)';
+    $sql .= ' VALUES (?,?,?,?,?,?,?,?,?,?,?)';
     $query = $this->db->prepareQuery($sql);
     $query->bindParam(1, $item['user_id'], \PDO::PARAM_INT);
     $query->bindParam(2, $item['label'], \PDO::PARAM_STR);
@@ -113,6 +113,7 @@ class ItemManager {
     $query->bindParam(8, $item['expire_time'], \PDO::PARAM_INT);
     $query->bindParam(9, $item['favicon'], \PDO::PARAM_STR);
     $query->bindParam(10, $item['created'], \PDO::PARAM_STR);
+    $query->bindParam(11, $item['otpsecret'], \PDO::PARAM_STR);
     $result = $query->execute();
     return $this->db->getInsertId('`*PREFIX*passman_items`');
 
@@ -122,7 +123,7 @@ class ItemManager {
    * Update item
    */
   public function update($item) {
-    $sql = 'UPDATE `*PREFIX*passman_items` SET `user_id`=?,`label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=?,favicon=?,delete_date=? WHERE id=?';
+    $sql = 'UPDATE `*PREFIX*passman_items` SET `user_id`=?,`label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=?,favicon=?,delete_date=?,otpsecret=? WHERE id=?';
     $query = $this->db->prepareQuery($sql);
     $query->bindParam(1, $item['user_id'], \PDO::PARAM_INT);
     $query->bindParam(2, $item['label'], \PDO::PARAM_STR);
@@ -134,7 +135,8 @@ class ItemManager {
     $query->bindParam(8, $item['expire_time'], \PDO::PARAM_STR);
     $query->bindParam(9, $item['favicon'], \PDO::PARAM_STR);
     $query->bindParam(10, $item['delete_date'], \PDO::PARAM_STR);
-    $query->bindParam(11, $item['id'], \PDO::PARAM_INT);
+    $query->bindParam(11, $item['otpsecret'], \PDO::PARAM_STR);
+    $query->bindParam(12, $item['id'], \PDO::PARAM_INT);
     $result = $query->execute();
     return $item;
   }

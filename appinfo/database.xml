@@ -152,15 +152,18 @@
 				<default>0</default>
 				<notnull>true</notnull>
 			</field>
-                        
+			<field>
+				<name>otpsecret</name>
+				<type>clob</type>
+			</field>
                         <!-- Requiered to identify the shared passwords as they store different kind of data -->
-                        <field>
-                            <name>type</name>
-                            <type>integer</type>
-                            <length>3</length>
-                            <default>0</default>
-                            <unsigned>true</unsigned>
-                        </field>
+			<field>
+				<name>type</name>
+				<type>integer</type>
+				<length>3</length>
+				<default>0</default>
+				<unsigned>true</unsigned>
+			</field>
 			<index>
 				<name>item_id_index</name>
 				<field>

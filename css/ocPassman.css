@@ -636,6 +636,10 @@ table.table tr td:nth-child(2) {
 .tabHeader.tab4{
   border-bottom: 3px solid rgb(121, 137, 197);
 }
+.tabHeader.tab5{
+  border-bottom: 3px solid rgb(84, 197, 124);
+}
+
 .tabHeader > div {
   height: 26px;
   padding-top: 4px !important;
@@ -653,6 +657,9 @@ table.table tr td:nth-child(2) {
 }
 .tabHeader > div.active.tab4{
   background: rgb(121, 137, 197);
+}
+.tabHeader > div.active.tab5{
+  background: rgb(84, 197, 124);
 }
 
 .tabHeader > div.active {

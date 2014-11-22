@@ -1,26 +1,3 @@
-function dataURItoBlob (dataURI, ftype) {
-  var byteString, mimeString, ab, ia, bb, i;
-  // convert base64 to raw binary data held in a string
-  // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-  byteString = atob(dataURI.split(',')[1]);
-
-  // separate out the mime component
-  mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-
-  // write the bytes of the string to an ArrayBuffer
-  ab = new ArrayBuffer(byteString.length);
-  ia = new Uint8Array(ab);
-  for (i = 0; i < byteString.length; i++) {
-    ia[i] = byteString.charCodeAt(i);
-  }
-
-  // write the ArrayBuffer to a blob, and you're done
-  bb = new Blob([ab], {
-    type: ftype
-  });
-
-  return URL.createObjectURL(bb);
-};
 /**
  *A lil bit of jQuery is needed..
  * For active rows and the search.
@@ -207,6 +184,15 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
       text: tag
     });
   };
+
+  $scope.encryptObject = function(object){
+    var ec = JSON.stringify(object);
+    return $scope.encryptThis(ec);
+  }
+  $scope.decryptObject = function(str){
+    var s = $scope.decryptThis(str);
+    return  JSON.parse(s);
+  }
 
   $scope.decryptThis = function (encryptedData, encKey) {
     var decryptedString = window.atob(encryptedData), encKey2 = (encKey) ? encKey : $scope.getEncryptionKey();
@@ -399,6 +385,9 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
         item.files[i].filename = $scope.decryptThis(item.files[i].filename);
         item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
       }
+      if(item.otpsecret) {
+        item.otpsecret = $scope.decryptObject(item.otpsecret);
+      }
     }
 
     item.decrypted = true;
@@ -552,6 +541,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   $scope.uploadQueue = {};
   $scope.generatedPW = '';
   $scope.pwInfo = {};
+  $scope.QRCode = {};
   $scope.currentPWInfo = {};
   $scope.pwSettings = {
     length: 12,
@@ -661,6 +651,22 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     });
   };
 
+  $scope.parseQR = function(qrData){
+    //console.log(qrData);
+    var re = /otpauth:\/\/(totp|hotp)\/(.*)\?(secret|issuer)=(.*)&(issuer|secret)=(.*)/, parsedQR,qrInfo;
+    $scope.QRCode.imgData = qrData.image;
+    parsedQR = (qrData.qrData.match(re));
+    qrInfo = {
+      type: parsedQR[1],
+      label: decodeURIComponent(parsedQR[2]),
+      qrCode: qrData.image
+    }
+    qrInfo[parsedQR[3]] = parsedQR[4];
+    qrInfo[parsedQR[5]] = parsedQR[6];
+    console.log($scope.otpInfo);
+    $scope.currentItem.otpsecret = qrInfo;
+
+  }
 
   $scope.usePw = function () {
     $scope.currentItem.password = $scope.generatedPW;
@@ -680,7 +686,10 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
         saveThis.customFields[i].clicktoshow = (saveThis.customFields[i].clicktoshow) ? 1 : 0;
       }
     }
-
+    if(saveThis.otpsecret) {
+      saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
+      console.log(saveThis)
+    }
     /**
      *Field checking
      */
