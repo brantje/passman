@@ -1,5 +1,6 @@
 #app-navigation li {
 	width: auto;
+
 }
 #app-navigation li > a {
 	display: block;
@@ -30,6 +31,10 @@ tbody tr:hover, tr:active {
 }
 #app-navigation {
 	overflow: auto;
+  border-right: 1px solid #868686;
+}
+#app-settings{
+  border-right: 1px solid #868686;
 }
 ul#tagList {
 	/*	padding-bottom: 70px;*/
@@ -110,7 +115,7 @@ color: #333;
 	height: 50px;
 	position: fixed;
   bottom: 43px;
-  width: 250px;
+  width: 249px;
 	vertical-align: middle;
 	padding-top: 15px;
 	cursor: pointer;
@@ -124,6 +129,7 @@ color: #333;
 .nav-trashbin a {
 	position: absolute;
 }
+
 #ocPassman {
 	height: 100%;
 	width: 100%;
@@ -646,6 +652,9 @@ table.table tr td:nth-child(2) {
   cursor: pointer;
   text-align: center;
 }
+.tabHeader > div:not(:first-child){
+  border-left: 0px solid #898989;
+}
 .tabHeader > div.active.tab1{
   background: rgba(115, 200, 176, 1);
 }
@@ -672,8 +681,11 @@ table.table tr td:nth-child(2) {
 .formLabel {
   padding-top: 8px !important;
 }
-#editNewItem input:not(.input):not([type='checkbox']),#editNewItem textarea{
+#editNewItem input:not(.input):not([type='checkbox']):not([type='radio']),#editNewItem textarea{
   width: 100%;
+}
+.otpSecret{
+  width: 40% !important;
 }
 tags-input{
   width: auto !important;
@@ -690,4 +702,9 @@ tags-input{
 input.shareUrl {
   display: block;
   width: 96%;
+}
+.icon-copy{
+  position: relative;
+  top: 4px;
+  left: -15px;
 }

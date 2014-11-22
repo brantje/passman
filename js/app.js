@@ -333,8 +333,6 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
     //$scope.loadItems([]);
     countLSTTL();
   }
-
-//  $('#item_tabs').tabs();
 });
 
 app.controller('navigationCtrl', function ($scope, TagService) {
@@ -527,7 +525,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
     $sce.trustAsHtml($scope.currentItem.description);
     $('#editAddItemDialog').dialog({
       title: 'Edit item',
-      "width": '350px'
+      "width": '360px'
     });
   };
 });

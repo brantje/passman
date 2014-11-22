@@ -157,9 +157,6 @@
       </td>
       <td>
          &nbsp;<span otp-generator otpdata="currentItem.otpsecret.secret"></span>
-        <!--<span pw="currentItem.password" toggle-text-stars></span> <a clip-copy="currentItem.password"
-                                                                     clip-click="copied('password')"
-                                                                     class="link">[Copy]</a> -->
       </td>
     </tr>
     <tr ng-show="currentItem.expire_time!=0">
@@ -277,25 +274,27 @@
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Password</div>
-        <div class="col-xs-6">
+        <div class="col-xs-5">
           <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password"
                  autocomplete="off">
           <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
         </div>
-        <div class="col-xs-2">
+        <div class="col-md-3 nopadding">
+          <span class="icon icon-history" ng-click="generatePW(); usePw();"></span>
           <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
-          <a clip-copy="currentItem.password" clip-click="copied('password')" class="link" ng-show="pwFieldVisible">[Copy]</a>
+          <a clip-copy="currentItem.password" clip-click="copied('password')" class="ui-icon ui-icon-copy pull-right nomargin icon-copy"></a>
         </div>
       </div>
       <div class="row" ng-show="currentPWInfo">
         <div class="col-xs-11">
           <span>Current password score:</span> {{currentPWInfo.entropy}}<br />
-          <span>Crack time:</span> {{currentPWInfo.crack_time | secondstohuman}}
+          <span>Crack time:</span><br>
+          <small>{{currentPWInfo.crack_time | secondstohuman}}</small>
         </div>
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Password (again)</div>
-        <div class="col-xs-6">
+        <div class="col-xs-5">
           <input type="password" ng-model="currentItem.passwordConfirm" autocomplete="off">
         </div>
       </div>
@@ -310,7 +309,9 @@
         </div>
       </div>
       <div class="row">
-        <div id="pwTools">
+        <span ng-click="showPwSettings=true" class="link col-xs-12" ng-show="!showPwSettings">Show password generation settings</span>
+        <span ng-click="showPwSettings=false" class="link col-xs-12" ng-show="showPwSettings">Hide password generation settings</span>
+        <div id="pwTools" ng-show="showPwSettings">
           <span id="custom_pw">
               <span>Password Length</span>
               <input type="number" ng-model="pwSettings.length"  style="width:30px"><br>
@@ -406,8 +407,20 @@
     </div>
     <div class="row nomargin" ng-show="tabActive==5">
       <div class="col-xs-12">
-        <input type="file" qrread on-read="parseQR(qrdata)"/>
+        <div class="col-xs-2 nopadding">
+          OTP type
+         </div>
+        <div class="col-xs-6 nopadding">
+          <input type="radio" name="seletcOTPType" value="image" ng-model="otpType" id="otpImg"><label for="otpImg">Upload an image</label><br />
+          <input type="radio" name="seletcOTPType" value="string" ng-model="otpType" id="otpStr"><label for="otpStr">Set the secret manually</label>
+        </div>
+        <div class="col-xs-12 nopadding">
+          <input type="file" qrread on-read="parseQR(qrdata)" ng-show="otpType==='image'"/>
+          <label ng-show="otpType==='string'">Enter the 2 factor secret <input type="text" ng-model="currentItem.otpsecret.secret" class="otpSecret"/></label>
+        </div>
       </div>
+      <hr>
+      <div class="col-sm-12">Current OTP settings</div>
       <div class="col-sm-4">
         <img ng-src="{{currentItem.otpsecret.qrCode}}" ng-show="currentItem.otpsecret.qrCode" height="120" width="120">
       </div>
