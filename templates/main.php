@@ -279,7 +279,7 @@
                  autocomplete="off">
           <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
         </div>
-        <div class="col-md-3 nopadding">
+        <div class="col-xs-3 col-sm-3 col-md-3 nopadding">
           <span class="icon icon-history" ng-click="generatePW(); usePw();"></span>
           <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
           <a clip-copy="currentItem.password" clip-click="copied('password')" class="ui-icon ui-icon-copy pull-right nomargin icon-copy"></a>
