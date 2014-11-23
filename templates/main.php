@@ -235,7 +235,7 @@
     <div class="row nomargin" ng-show="tabActive==1">
       <div class="row">
         <div class="col-xs-1 formLabel">Label</div>
-        <div class="col-xs-7"><input type="text" ng-model="currentItem.label" autocomplete="off" required></div>
+        <div class="col-xs-7"><input type="text" ng-model="currentItem.label" autocomplete="off" id="labell"required></div>
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Description</div>

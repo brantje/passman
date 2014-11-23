@@ -556,13 +556,24 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
     $scope.editItem(newItem);
 
   };
+  $scope.dinit = false;
   $scope.editItem = function (item) {
     $scope.currentItem = item;
     $scope.editing = true;
     $sce.trustAsHtml($scope.currentItem.description);
     $('#editAddItemDialog').dialog({
       title: 'Edit item',
-      "width": '360px'
+      width: 360,
+      minHeight: 480,
+      height:480,
+      position:['center','top+20'],
+      open: function(event,ui){
+        $('#labell').blur();
+        if(!$scope.dinit){
+          $('.button.cancel').appendTo('.ui-dialog-buttonset');
+          $('.button.save').appendTo('.ui-dialog-buttonset');
+        }
+      }
     });
   };
 });

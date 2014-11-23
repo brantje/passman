@@ -251,6 +251,13 @@ td.td_title {
   background:#333;*/
   text-decoration:none;
 }
+#editAddItemDialog{
+  height: 390px !important;
+}
+div[aria-describedby="editAddItemDialog"] {
+  height: 490px !important;
+  max-height: 490px;
+}
 #pwTools {
   text-align: left;
   background: #fff;
