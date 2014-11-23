@@ -281,7 +281,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
     str += numseconds;
 
     $scope.sessionExpireTime = str;
-    $timeout(countLSTTL, 1000);
+    $scope.ttlTimer = $timeout(countLSTTL, 1000);
   };
 
   $scope.showEncryptionKeyDialog = function () {
@@ -329,6 +329,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.lockSession = function () {
     $scope.showEncryptionKeyDialog();
     $.jStorage.set('encryptionKey', '');
+    $timeout.cancel($scope.ttlTimer);
     $scope.items = [];
   };
   /**
