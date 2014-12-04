@@ -15,13 +15,13 @@ use \OCP\IDb;
 use \OCP\DB\insertid;
 
 class ShareManager {
-    private $userid;
-    private $db;
-    
-    public function __construct($db) {
-            $this -> db = $db;
-    }
-    
-    
+  private $userid;
+  private $db;
+
+  public function __construct($db) {
+    $this->db = $db;
+  }
+
+
 }
 

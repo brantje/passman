@@ -1,5 +1,6 @@
 #app-navigation li {
 	width: auto;
+
 }
 #app-navigation li > a {
 	display: block;
@@ -30,6 +31,10 @@ tbody tr:hover, tr:active {
 }
 #app-navigation {
 	overflow: auto;
+  border-right: 1px solid #868686;
+}
+#app-settings{
+  border-right: 1px solid #868686;
 }
 ul#tagList {
 	/*	padding-bottom: 70px;*/
@@ -110,7 +115,7 @@ color: #333;
 	height: 50px;
 	position: fixed;
   bottom: 43px;
-  width: 250px;
+  width: 249px;
 	vertical-align: middle;
 	padding-top: 15px;
 	cursor: pointer;
@@ -124,6 +129,7 @@ color: #333;
 .nav-trashbin a {
 	position: absolute;
 }
+
 #ocPassman {
 	height: 100%;
 	width: 100%;
@@ -165,7 +171,6 @@ div#topContent {
 #pwList {
 	margin-left: 1px;
 	overflow: auto;
-	padding-bottom: 200px;
 	margin-top: 35px;
 }
 #pwList > li {
@@ -245,6 +250,13 @@ td.td_title {
   color:#fff;
   background:#333;*/
   text-decoration:none;
+}
+#editAddItemDialog{
+  height: 390px !important;
+}
+div[aria-describedby="editAddItemDialog"] {
+  height: 490px !important;
+  max-height: 490px;
 }
 #pwTools {
   text-align: left;
@@ -418,8 +430,11 @@ width: 72%;
 display: inline-block;
 height: 26px;
 padding-left: 7px;
+padding-top: 8px;
 }
-
+input[name="customFieldName"],input[name="customFieldValue"]{
+  width: 80% !important;
+}
 .save, .cancel {
 	width: 60px;
 	float: right;
@@ -602,7 +617,100 @@ table.table tr td:nth-child(2) {
   width: 60px;
 }
 
+.ui-dialog[aria-describedby="shareDialog"] .ui-dialog-titlebar,.ui-dialog[aria-describedby="editAddItemDialog"] .ui-dialog-titlebar,.ui-dialog[aria-describedby="settingsDialog"] .ui-dialog-titlebar{
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+#shareDialog,#editAddItemDialog,#settingsDialog{
+  overflow: visible !important;
+  padding-top: 0px;
+}
+.tabHeader {
+  height: 30px;
+/*  border-bottom: 1px solid #c9c9c9;*/
+  margin-left: -13px !important;
+  margin-right: -13px !important;
+  margin-bottom: 10px;
+  -moz-transition: border-color 500ms ease-in ;
+  -o-transition: border-color 500ms ease-in ;
+  -ms-transition: border-color 500ms ease-in ;
+  transition: border-color 500ms ease-in ;
+}
+.tabHeader.tab1{
+  border-bottom: 3px solid rgba(115, 200, 176, 1);
+}
+.tabHeader.tab2{
+  border-bottom: 3px solid rgba(45, 171, 153, 1);
+}
+.tabHeader.tab3{
+  border-bottom: 3px solid rgba(93, 138, 197, 1);
+}
+.tabHeader.tab4{
+  border-bottom: 3px solid rgb(121, 137, 197);
+}
+.tabHeader.tab5{
+  border-bottom: 3px solid rgb(84, 197, 124);
+}
+
+.tabHeader > div {
+  height: 26px;
+  padding-top: 4px !important;
+  cursor: pointer;
+  text-align: center;
+}
+.tabHeader > div:not(:first-child){
+  border-left: 0px solid #898989;
+}
+.tabHeader > div.active.tab1{
+  background: rgba(115, 200, 176, 1);
+}
+.tabHeader > div.active.tab2{
+  background: rgba(45, 171, 153, 1);
+}
+.tabHeader > div.active.tab3{
+  background: rgba(93, 138, 197, 1);
+}
+.tabHeader > div.active.tab4{
+  background: rgb(121, 137, 197);
+}
+.tabHeader > div.active.tab5{
+  background: rgb(84, 197, 124);
+}
+
+.tabHeader > div.active {
+  -webkit-transition: background-color 500ms ease-in ;
+  -moz-transition: background-color 500ms ease-in ;
+  -o-transition: background-color 500ms ease-in ;
+  -ms-transition: background-color 500ms ease-in ;
+  transition: background-color 500ms ease-in ;
+}
+.formLabel {
+  padding-top: 8px !important;
+}
+#editNewItem input:not(.input):not([type='checkbox']):not([type='radio']),#editNewItem textarea{
+  width: 100%;
+}
+.otpSecret{
+  width: 40% !important;
+}
+tags-input{
+  width: auto !important;
+}
+.label_cpm{
+  position: absolute;
+}
+.nopadding{
+  padding: 0px !important;
+}
+.nomargin{
+  margin: 0px !important;
+}
 input.shareUrl {
-display: block;
-width: 96%;
+  display: block;
+  width: 96%;
+}
+.icon-copy{
+  position: relative;
+  top: 4px;
+  left: -15px;
 }

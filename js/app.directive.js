@@ -1,35 +1,95 @@
-
 app.directive('toggleTextStars', ['$compile',
-function($compile, $tooltip) {
+  function ($compile, $tooltip) {
+    return {
+      restrict: 'A',
+      transclude: false,
+      scope: {
+        pw: '='
+      },
+      link: function (scope, element) {
+        scope.curPW = '******';
+        scope.hSText = 'Show';
+        var el = angular.element('<span>{{curPW}} <span ng-click="togglePW()" class="link">[{{hSText}}]</span></span>');
+        element.html($compile(el)(scope));
+        scope.pwVisible = false;
+
+        scope.togglePW = function () {
+          if (!scope.pwVisible) {
+            scope.curPW = scope.pw;
+            scope.pwVisible = true;
+            scope.hSText = 'Hide';
+          } else {
+            scope.curPW = '******';
+            scope.pwVisible = false;
+            scope.hSText = 'Show';
+          }
+        }
+        scope.$watch('pw', function (n, o) {
+          if (scope.pwVisible) {
+            scope.curPW = scope.pw;
+          }
+        })
+      }
+    }
+  }]);
+
+app.directive('otpGenerator', ['$compile','$timeout',
+function($compile,$timeout) {
   return {
     restrict : 'A',
     transclude : false,
     scope : {
-      pw : '='
+      otpdata : '='
     },
-    link : function(scope, element, attrs, ngModelCtrl) {
-      scope.curPW = '******';
-      scope.hSText = 'Show';
-      var el = angular.element('<span>{{curPW}} <span ng-click="togglePW()" class="link">[{{hSText}}]</span></span>');
-      element.html($compile(el)(scope));
-      scope.pwVisible = false;
+    link : function(scope, element) {
+      scope.otp = null;
+      scope.timeleft = null;
+      scope.timer = null;
+      var updateOtp = function() {
+        if(!scope.otpdata){
+          return;
+        }
+        var key = base32tohex(scope.otpdata);
+        var epoch = Math.round(new Date().getTime() / 1000.0);
+        var time = leftpad(dec2hex(Math.floor(epoch / 30)), 16, '0');
+        var hmacObj = new jsSHA(time, 'HEX');
+        var hmac = hmacObj.getHMAC(key, 'HEX', 'SHA-1', "HEX");
+        var offset = hex2dec(hmac.substring(hmac.length - 1));
+        var otp = (hex2dec(hmac.substr(offset * 2, 8)) & hex2dec('7fffffff')) + '';
+        otp = (otp).substr(otp.length - 6, 6);
+        scope.otp = otp;
 
-      scope.togglePW = function() {
-        if (!scope.pwVisible) {
-          scope.curPW = scope.pw;
-          scope.pwVisible = true;
-          scope.hSText = 'Hide';
-        } else {
-          scope.curPW = '******';
-          scope.pwVisible = false;
-          scope.hSText = 'Show';
-        }
+      };
+
+      var timer = function(){
+        var epoch = Math.round(new Date().getTime() / 1000.0);
+        var countDown = 30 - (epoch % 30);
+        if (epoch % 30 == 0) updateOtp();
+        scope.timeleft = countDown;
+        scope.timer = $timeout(timer,1000);
+
+      };
+      scope.copiedotp = function(){
+        OC.Notification.showTimeout("Copied One time password to clipboard")
       }
-      scope.$watch('pw',function(n,o){
-        if(scope.pwVisible){
-          scope.curPW = scope.pw;
+      scope.$watch("otpdata",function(n){
+        if(n){
+          $timeout.cancel(scope.timer);
+          updateOtp();
+          timer();
+        } else {
+          $timeout.cancel(scope.timer);
         }
-      })
+      },true);
+      var html = '<span pw="otp" toggle-text-stars></span> <a clip-copy="otp" clip-click="copiedotp()" class="link">[Copy]</a> Time left: {{timeleft}}';
+      element.html($compile(html)(scope));
+
+      scope.$on(
+          "$destroy",
+          function( event ) {
+            $timeout.cancel(scope.timer);
+          }
+      );
     }
   }
 }]);
@@ -118,7 +178,7 @@ function(ItemService) {
                     size: file.size, 
                     icon: icon,
                     id: data.id,
-                    item_id: data.item_id,
+                    item_id: data.item_id
                 });
                 element.value = '';
               });
@@ -131,6 +191,35 @@ function(ItemService) {
     }
   }
 }]); 
+
+
+app.directive("qrread", ['$parse','$compile',function($parse,$compile) {
+  return {
+    scope : true,
+    link : function(scope, element, attributes) {
+      var gCtx = null,gCanvas = null,  c= 0, stype= 0, gUM=false, webkit=false, moz=false;
+      var invoker = $parse(attributes.onRead);
+      scope.imageData = null;
+
+      qrcode.callback = function(result){
+        //console.log('QR callback:',result);
+        invoker(scope, {qrdata: {qrData: result, image: scope.imageData } });
+        //element.val('');
+      }
+      element.bind("change", function(changeEvent) {
+        var reader = new FileReader(),file = changeEvent.target.files[0];
+        reader.readAsDataURL(file);
+        reader.onload = (function(theFile) {
+          return function(e) {
+            //gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
+            scope.imageData = e.target.result;
+            qrcode.decode(e.target.result);
+          };
+        })(file);
+      });
+    }
+  }
+}]);
 
 
 angular.module('offClick',[]).directive('offClick', ['$document', function ($document) {
