@@ -34,4 +34,8 @@ class ShareController extends Controller {
         $this->request = $request;
         $this->faviconFetcher = $faviconFetcher;
     }
+    
+    public function userSearch($name){
+        var_dump($name);
+    }
 }

@@ -57,5 +57,5 @@ $application->registerRoutes($this, array(
 	array('name' => 'item_api#addfile', 'url' => '/api/v1/item/{itemId}/addfile', 'verb' => 'PUT'),
 	array('name' => 'item_api#getfile', 'url' => '/api/v1/item/file/{id}', 'verb' => 'GET'),
 	array('name' => 'item_api#deletefile', 'url' => '/api/v1/item/file/{id}', 'verb' => 'DELETE'),
-	
+        array('name' => 'share#userSearch', 'url'=> '/api/v1/share/user/rsearch/{name}', 'verb' => 'PUT')
 )));
