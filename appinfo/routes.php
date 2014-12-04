@@ -27,7 +27,7 @@ $application = new Application();
 
 $application->registerRoutes($this, array(
 
-  'routes' => array(
+'routes' => array(
     array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
     array('name' => 'page#disablefirstrun', 'url' => '/disablefirstrun', 'verb' => 'GET'),
     array('name' => 'page#popup', 'url' => '/add', 'verb' => 'GET'),
@@ -60,5 +60,5 @@ $application->registerRoutes($this, array(
 
 
     array('name' => 'share#search', 'url' => '/api/v1/sharing/search', 'verb' => 'GET'),
-
+    array('name' => 'share#userSearch', 'url'=> '/api/v1/share/user/rsearch/{name}', 'verb' => 'PUT')
   )));

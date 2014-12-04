@@ -59,4 +59,7 @@ class ShareController extends Controller {
 
     return new JSONResponse($result);
   }
+  public function userSearch($name){
+     var_dump($name);
+  }
 }

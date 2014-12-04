@@ -38,7 +38,7 @@ if (!class_exists('\SimplePie')) {
 class Application extends App {
 
 
-  public function __construct(array $urlParams = array()) {
+public function __construct(array $urlParams = array()) {
     parent::__construct('passman', $urlParams);
 
     $container = $this->getContainer();
@@ -78,12 +78,16 @@ class Application extends App {
 
     $container->registerService('ShareController', function ($c) {
       return new ShareController(
-        $c->query('AppName'),
+        /*$c->query('AppName'),
         $c->query('Request'),
         $c->query('ItemBusinessLayer'),
         $c->query('UserId'),
         $c->query('TagBusinessLayer'),
-        $c->query('ShareManager')
+        $c->query('ShareManager')*/
+        $c->query('AppName'),
+        $c->query('Request'),
+        $c->query('UserId'),
+        $c->query('UserGroups')
       );
     });
 
@@ -141,6 +145,10 @@ class Application extends App {
       return \OCP\User::getUser();
     });
 
+    $container->registerService('UserGroups', function($c){
+        return $c->query('GroupManager')->getUserGroups($c->query('UserId'));
+    });
+
     $container->registerService('Db', function () {
       return new Db();
     });
@@ -150,6 +158,4 @@ class Application extends App {
     });
 
   }
-
-
 }
