@@ -50,20 +50,19 @@ class TagController extends Controller {
     return new JSONResponse($response);
   }
 
-  public function load() {
-    $tag = $this->params('tag');
+  public function load($tag) {
     if ($this->tagBusinessLayer->search($tag, $this->userId, true)) {
       $response = $this->tagBusinessLayer->load($tag, $this->userId);
     }
     return new JSONResponse($response);
   }
 
-  public function update() {
+  public function update($min_pw_strength,$renewal_period,$tag_id,$tag_label) {
     $tag = array();
-    $tag['min_pw_strength'] = $this->params('min_pw_strength');
-    $tag['renewal_period'] = $this->params('renewal_period');
-    $tag['tag_id'] = $this->params('tag_id');
-    $tag['tag_label'] = $this->params('tag_label');
+    $tag['min_pw_strength'] = $min_pw_strength;
+    $tag['renewal_period'] = $renewal_period;
+    $tag['tag_id'] = $tag_id;
+    $tag['tag_label'] = $tag_label;
 
     $response['tag'] = $this->tagBusinessLayer->update($tag, $this->userId);
 

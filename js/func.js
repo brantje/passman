@@ -1,3 +1,19 @@
+
+/***
+ *Extend the OC Notification
+ */
+var notificationTimer;
+OC.Notification.showTimeout = function (str, timeout) {
+  OC.Notification.hide();
+  if (notificationTimer) {
+    clearTimeout(notificationTimer);
+  }
+  timeout = (!timeout) ? 3000 : timeout;
+  OC.Notification.showHtml(str);
+  notificationTimer = setTimeout(function () {
+    OC.Notification.hide();
+  }, timeout);
+};
 function dataURItoBlob (dataURI, ftype) {
   var byteString, mimeString, ab, ia, bb, i;
   // convert base64 to raw binary data held in a string

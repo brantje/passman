@@ -61,12 +61,8 @@ class PageController extends Controller {
    * @NoAdminRequired
    * @NoCSRFRequired
    */
-  public function popup() {
-    $folders = array();
-    $foldersHierarchical = array();
-    $url = ($this->params('url')) ? $this->params('url') : '';
-    $label = ($this->params('title')) ? $this->params('title') : '';
-    $params = array('folders' => json_encode($foldersHierarchical), 'foldersPlain' => json_encode($folders), 'url' => $url, 'label' => $label, 'f');
+  public function popup($url='',$title='') {
+    $params = array('url' => $url, 'label' => $title);
     return new TemplateResponse('passman', 'popup', $params);
   }
 
@@ -108,8 +104,8 @@ class PageController extends Controller {
         }
         return die();
       } else {
-        if ($file) {
-          $image_mime = image_type_to_mime_type(exif_imagetype($file));
+        if ($f) {
+          $image_mime = image_type_to_mime_type(exif_imagetype($f));
           if ($image_mime) {
             header("Content-Type:" . $image_mime);
             header('Cache-Control: max-age=86400, public');
@@ -140,33 +136,8 @@ class PageController extends Controller {
 
   }
 
-  private function writeFavIcon($content) {
-    // check if file exists and write to it if possible
-    try {
-      try {
-        $file = $this->appStorage->get('/myfile.txt');
-      } catch (\OCP\Files\NotFoundException $e) {
-        $this->appStorage->touch('data/myfile.txt');
-        $file = $this->appStorage->get('/myfile.txt');
-      }
 
-      // the id can be accessed by $file->getId();
-      $file->putContent($content);
-      //return true;
 
-    } catch (\OCP\Files\NotPermittedException $e) {
-      // you have to create this exception by yourself ;)
-      die('Cant write to file');
-      //return false;
-    }
-  }
 
-  private function getFavIcon($file) {
-    try {
-      $file = $this->appStorage->get('/myfile.txt');
-    } catch (\OCP\Files\NotFoundException $e) {
-      return false;
-    }
-  }
 
 }

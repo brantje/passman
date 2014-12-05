@@ -12,6 +12,7 @@
 \OCP\Util::addscript('passman', 'sha');
 \OCP\Util::addscript('passman', 'func');
 \OCP\Util::addscript('passman', 'app');
+\OCP\Util::addscript('passman', 'app.service');
 \OCP\Util::addscript('passman', 'app.directive');
 \OCP\Util::addscript('passman', 'app.filter');
 
@@ -77,9 +78,10 @@
   <button class="button" id="deleteItem" ng-click="deleteItem(currentItem,true)"
           ng-show="currentItem">Delete item
   </button>
+  <input type="text" ng-model="itemFilter" class="visible-md visible-lg visible-sm pull-right searchbox" />
 </div>
 <ul id="pwList">
-  <li ng-repeat="item in items | orderBy: 'label'" ng-mouseover="mouseOver = true"
+  <li ng-repeat="item in items | orderBy: 'label' | filter: {'label': itemFilter}" ng-mouseover="mouseOver = true"
       ng-mouseleave="mouseOver = false; toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
       ng-class="{'row-active': item.id === currentItem.id}">
     <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"

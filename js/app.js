@@ -1,7 +1,9 @@
 /**
  *A lil bit of jQuery is needed..
  */
+
 $(document).ready(function () {
+  'use strict';
   /* Resize the pwList */
   var resizeList = function(){
     var containerHeight,containerWidth,listHeight;
@@ -11,121 +13,21 @@ $(document).ready(function () {
     console.log(listHeight)
     $('#pwList').height(containerHeight - $('#infoContainer').height() - 85);
     $('#pwList').width(containerWidth - 2);
-  }
+    $('#topContent').width(containerWidth - 2);
+  };
   $(window).resize(resizeList);
   resizeList();
 });
 
-var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
-  function ($httpProvider) {
-    $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
-  }]);
-app.factory('shareService', ['$http', function ($http) {
-  return {
-    shareItem: function (item) {
-      var queryUrl = OC.generateUrl('apps/passman/api/v1/sharing/share');
-      return $http({
-        url: queryUrl,
-        method: 'PUT',
-        data: item
-      });
-    }
-  };
-}]);
+var app;
+app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
+    function ($httpProvider) {
+        $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
+    }]);
 
-app.factory('ItemService', ['$http',
-  function ($http) {
-    return {
-      getItems: function (tags, showDeleted) {
-        var queryUrl = (!showDeleted) ? OC.generateUrl('apps/passman/api/v1/getbytags?tags=' + tags.join(',')) : OC.generateUrl('apps/passman/api/v1/items/getdeleted?tags=' + tags.join(','));
-        return $http({
-          url: queryUrl,
-          method: 'GET'
-        });
-      },
-      update: function (item) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/' + item.id),
-          data: item,
-          method: 'PATCH'
-        });
-      },
-      softDestroy: function (item) {
-        item.delete_date = Math.floor(new Date().getTime() / 1000);
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/' + item.id),
-          data: item,
-          method: 'PATCH'
-        });
-      },
-      recover: function (item) {
-        item.delete_date = 0;
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/' + item.id),
-          data: item,
-          method: 'PATCH'
-        });
-      },
-      destroy: function (item) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/delete/' + item.id),
-          method: 'DELETE'
-        });
-      },
-      create: function (item) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item'),
-          data: item,
-          method: 'PUT'
-        });
-      },
-      removeCustomfield: function (id) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/field/delete/' + id),
-          method: 'DELETE'
-        });
-      },
-      getFile: function (id) {
-        return $http({
-          url: OC.generateUrl('/apps/passman/api/v1/item/file/' + id),
-          method: 'GET'
-        });
-      },
-      uploadFile: function (file) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/' + file.item_id + '/addfile'),
-          method: 'PUT',
-          data: file
-        });
-      },
-      deleteFile: function (file) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/file/' + file.id),
-          method: 'DELETE'
-        });
-      }
-    };
-  }]);
-app.factory('TagService', ['$http',
-  function ($http) {
-    return {
-      getTag: function (tag) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/tag/load?tag=' + tag),
-          method: 'GET'
-        });
-      },
-      update: function (tag) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/tag/update'),
-          method: 'PATCH',
-          data: tag
-        });
-      }
-    };
-  }]);
 
 app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout) {
+  'use strict';
   console.log('appCtrl');
   $scope.items = [];
   $scope.showingDeletedItems = false;
@@ -196,11 +98,11 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.encryptObject = function(object){
     var ec = JSON.stringify(object);
     return $scope.encryptThis(ec);
-  }
+  };
   $scope.decryptObject = function(str){
     var s = $scope.decryptThis(str);
     return  JSON.parse(s);
-  }
+  };
 
   $scope.decryptThis = function (encryptedData, encKey) {
     var decryptedString = window.atob(encryptedData), encKey2 = (encKey) ? encKey : $scope.getEncryptionKey();
@@ -345,6 +247,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
 });
 
 app.controller('navigationCtrl', function ($scope, TagService) {
+  'use strict';
   $scope.tagProps = {};
 
   $scope.tagSettings = function (tag, $event) {
@@ -419,12 +322,13 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
       saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
     }
     ItemService.recover(saveThis).success(function () {
-      for (var i = 0; i < $scope.items.length; i++) {
-       if ($scope.items[i].id == item.id) {
-       var idx = $scope.items.indexOf(item);
-       $scope.items.splice(idx, 1)
-       }
-       }
+      var idx;
+      for (i = 0; i < $scope.items.length; i++) {
+        if ($scope.items[i].id == item.id) {
+          idx = $scope.items.indexOf(item);
+          $scope.items.splice(idx, 1);
+        }
+      }
     });
     OC.Notification.showTimeout('<div>' + item.label + ' recoverd</div>');
   };
@@ -706,13 +610,13 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
       type: parsedQR[1],
       label: decodeURIComponent(parsedQR[2]),
       qrCode: qrData.image
-    }
+    };
     qrInfo[parsedQR[3]] = parsedQR[4];
     qrInfo[parsedQR[5]] = parsedQR[6];
     console.log($scope.otpInfo);
     $scope.currentItem.otpsecret = qrInfo;
 
-  }
+  };
 
   $scope.usePw = function () {
     $scope.currentItem.password = $scope.generatedPW;
@@ -879,21 +783,6 @@ app.controller('shareCtrl', function ($scope, $http, shareService) {
 });
 
 
-/***
- *Extend the OC Notification
- */
-var notificationTimer;
-OC.Notification.showTimeout = function (str, timeout) {
-  OC.Notification.hide();
-  if (notificationTimer) {
-    clearTimeout(notificationTimer);
-  }
-  timeout = (!timeout) ? 3000 : timeout;
-  OC.Notification.showHtml(str);
-  notificationTimer = setTimeout(function () {
-    OC.Notification.hide();
-  }, timeout);
-};
 
 var t = function () { };
 /* Check if t function exists if not, create it to prevent errors */

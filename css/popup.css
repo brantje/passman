@@ -1,0 +1,13 @@
+#content-wrapper{
+  padding-top: 0px !important;
+}
+.icon-copy {
+  position: relative;
+  top: 4px;
+  left: -35px;
+}
+.buttons{
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
