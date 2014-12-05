@@ -78,7 +78,7 @@
   <button class="button" id="deleteItem" ng-click="deleteItem(currentItem,true)"
           ng-show="currentItem">Delete item
   </button>
-  <input type="text" ng-model="itemFilter" class="visible-md visible-lg visible-sm pull-right searchbox" />
+  <input type="text" ng-model="itemFilter" class="visible-md visible-lg visible-sm pull-right searchbox" placeholder="Search..." />
 </div>
 <ul id="pwList">
   <li ng-repeat="item in items | orderBy: 'label' | filter: {'label': itemFilter}" ng-mouseover="mouseOver = true"
@@ -331,14 +331,14 @@
               <input type="checkbox" ng-model="pwSettings.reqevery" id="reqevery"><label
               for="reqevery">Require Every Character Type</label><br>
           </span>
-          <button class="button" ng-click="generatePW()">Generate password</button>
+          <!--button class="button" ng-click="generatePW()">Generate password</button>
           <button class="button" ng-show="generatedPW!=''"
                   ng-click="usePw()">Use password
           </button>
           <div ng-show="generatedPW"><span>Generated password:</span> <br />{{generatedPW}}</div>
           <b ng-show="generatedPW"><span>Generated password score</span>:
                                                                         {{pwInfo.entropy}}</b><br />
-          <b ng-show="generatedPW"><span>Crack time</span>: {{pwInfo.crack_time | secondstohuman}}</b>
+          <b ng-show="generatedPW"><span>Crack time</span>: {{pwInfo.crack_time | secondstohuman}}</b-->
         </div>
       </div>
     </div>
@@ -462,44 +462,58 @@
       <div class="tab1 col-xs-3 col-md-2 nopadding"  ng-click="tabActive=1" ng-class="{'active': tabActive==1}">General</div>
       <div class="tab2 col-xs-3 col-md-2 nopadding" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">Sharing</div>
       <div class="tab3 col-xs-3 col-md-2 nopadding" ng-click="tabActive=3" ng-class="{'active': tabActive==3}">Tools</div>
+      <div class="tab4 col-xs-3 col-md-2 nopadding" ng-click="tabActive=4" ng-class="{'active': tabActive==4}">Bookmarklet</div>
     </div>
-    <div class="col-md-8">
-      <div ng-show="tabActive==1">
-        <h2>Content heading 1</h2>
+    <div class="col-md-12">
+      <div ng-show="tabActive==1" class="row">
+        <div class="col-md-11">
+          <h2>Content heading 1</h2>
 
-        <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi
-          sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor
-          risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam
-          sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius
-          sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+          <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi
+            sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor
+            risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam
+            sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius
+            sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+         </div>
       </div>
-      <div ng-show="tabActive==2">
-        <h2>Content heading 2</h2>
+      <div ng-show="tabActive==2" class="row">
+        <div class="col-md-11">
+          <h2>Content heading 2</h2>
 
-        <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi
-          sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor
-          risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam
-          sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius
-          sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+          <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi
+            sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor
+            risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam
+            sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius
+            sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+        </div>
       </div>
-      <div ng-show="tabActive==3">
+      <div ng-show="tabActive==3" class="row">
+        <div class="col-md-11">
         <p>Here you can indentify weak passwords, we will list the items. List all password with a rating less than</p>
         <input type="text" ng-model="settings.PSC.minStrength" />
         <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
-        <hr>
-        <table ng-table="tableParams" class="table" style="width: 100%;">
-          <tr>
-            <td>Label</td>
-            <td>Score</td>
-            <td>Password</td>
-          </tr>
-          <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
-            <td>{{item.label}}</td>
-            <td>{{item.score}}</td>
-            <td><span pw="item.password" toggle-text-stars></span> <a
-                ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a></td>
-          </tr>
-        </table>
+        <div style="max-height: 300px; overflow-y: auto;">
+          <table ng-table="tableParams" class="table" style="width: 100%;">
+            <tr>
+              <td>Label</td>
+              <td>Score</td>
+              <td>Password</td>
+            </tr>
+            <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
+              <td>{{item.label}}</td>
+              <td>{{item.score}}</td>
+              <td><span pw="item.password" toggle-text-stars></span> <a
+                  ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a></td>
+            </tr>
+          </table>
+         </div>
+        </div>
+      </div>
+      <div ng-show="tabActive==4" class="row">
+        <div class="col-md-11">
+        <p>Drag this to your browser bookmarks and click it, when you want to save username / password quickly</p><br />
+        <p ng-bind-html="bookmarklet"></p>
+        </div>
       </div>
     </div>
   </div>

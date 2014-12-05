@@ -101,6 +101,7 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
     label: '',
     password: '',
     passwordConfirm: '',
+   /* otpsecret: {},*/
     tags: [],
     url: ''
   };
@@ -217,9 +218,8 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
   };
 
   $scope.parseQR = function(qrData){
-    //console.log(qrData);
+    console.log(qrData)
     var re = /otpauth:\/\/(totp|hotp)\/(.*)\?(secret|issuer)=(.*)&(issuer|secret)=(.*)/, parsedQR,qrInfo;
-    $scope.QRCode.imgData = qrData.image;
     parsedQR = (qrData.qrData.match(re));
     qrInfo = {
       type: parsedQR[1],
@@ -228,9 +228,8 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
     };
     qrInfo[parsedQR[3]] = parsedQR[4];
     qrInfo[parsedQR[5]] = parsedQR[6];
-    console.log($scope.otpInfo);
     $scope.currentItem.otpsecret = qrInfo;
-
+    $scope.$apply();
   };
 
   $scope.usePw = function () {

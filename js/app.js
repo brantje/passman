@@ -140,8 +140,11 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
       modal: true,
       width: '750px',
       title: 'Settings',
-      height: 445,
-      position: {my: "center center", at: "center", of: window}
+      height: 545,
+      position:['center','top+50'],
+      open: function(){
+        $('.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix').remove();
+      }
     });
   };
   var countLSTTL = function () {
@@ -470,7 +473,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
       width: 360,
       minHeight: 480,
       height:480,
-      position:['center','top+20'],
+      position:['center','top+30'],
       open: function(event,ui){
         $('#labell').blur();
         if(!$scope.dinit){
@@ -671,13 +674,21 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   };
 });
 
-app.controller('settingsCtrl', function ($scope) {
+app.controller('settingsCtrl', function ($scope,$sce) {
   $scope.settings = {
     PSC: {
       minStrength: 40,
       weakItemList: []
     }
   };
+
+  var http = location.protocol;
+  var slashes = http.concat("//");
+  var host = slashes.concat(window.location.hostname);
+  var complete = host + location.pathname;
+  $scope.bookmarklet = $sce.trustAsHtml("<a class=\"button\" href=\"javascript:(function(){var a=window,b=document,c=encodeURIComponent,e=c(document.title),d=a.open('" + complete + "add?url='+c(b.location)+'&title='+e,'bkmk_popup','left='+((a.screenX||a.screenLeft)+10)+',top='+((a.screenY||a.screenTop)+10)+',height=465px,width=375px,resizable=0,alwaysRaised=1');a.setTimeout(function(){d.focus()},300);})();\">Save in passman</a>");
+
+
 
   $scope.checkPasswords = function () {
     $scope.settings.PSC.weakItemList = [];

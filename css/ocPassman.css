@@ -627,6 +627,9 @@ table.table tr td:nth-child(2) {
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
 }
+#settingsDialog{
+  width:100% !important;
+}
 #shareDialog,#editAddItemDialog,#settingsDialog{
   overflow: visible !important;
   padding-top: 0px;
@@ -634,8 +637,8 @@ table.table tr td:nth-child(2) {
 .tabHeader {
   height: 30px;
 /*  border-bottom: 1px solid #c9c9c9;*/
-  margin-left: -13px !important;
-  margin-right: -13px !important;
+  margin-left: -12px !important;
+  margin-right: -12px !important;
   margin-bottom: 10px;
   -moz-transition: border-color 500ms ease-in ;
   -o-transition: border-color 500ms ease-in ;

@@ -24,7 +24,6 @@
 
 <div ng-controller="popupCtrl" ng-app="passman">
   <div class="container">
-    <form method="get" name="new_item" id="editNewItem">
     <div class="tabHeader" ng-class="'tab'+tabActive" ng-init="tabActive=1">
       <div class="col-xs-2 nopadding tab1" ng-click="tabActive=1;" ng-class="{'active': tabActive==1}">General</div>
       <div class="col-xs-2 nopadding tab2" ng-click="tabActive=2;" ng-class="{'active': tabActive==2}">Password</div>
@@ -76,7 +75,7 @@
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Password</div>
-        <div class="col-xs-5">
+        <div class="col-xs-4">
           <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password"
                  autocomplete="off">
           <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
@@ -97,7 +96,7 @@
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Password (again)</div>
-        <div class="col-xs-5">
+        <div class="col-xs-4">
           <input type="password" ng-model="currentItem.passwordConfirm" autocomplete="off">
         </div>
       </div>
@@ -133,14 +132,6 @@
                   <input type="checkbox" ng-model="pwSettings.reqevery" id="reqevery"><label
                   for="reqevery">Require Every Character Type</label><br>
               </span>
-          <button class="button" ng-click="generatePW()">Generate password</button>
-          <button class="button" ng-show="generatedPW!=''"
-                  ng-click="usePw()">Use password
-          </button>
-          <div ng-show="generatedPW"><span>Generated password:</span> <br/>{{generatedPW}}</div>
-          <b ng-show="generatedPW"><span>Generated password score</span>:
-            {{pwInfo.entropy}}</b><br/>
-          <b ng-show="generatedPW"><span>Crack time</span>: {{pwInfo.crack_time | secondstohuman}}</b>
         </div>
       </div>
     </div>
@@ -211,52 +202,53 @@
       </div>
     </div>
     <div class="row nomargin" ng-show="tabActive==5">
-      <div class="col-xs-12">
-        <div class="col-xs-2 nopadding">
+      <div class="row">
+        <div class="col-xs-2">
           OTP type
         </div>
-        <div class="col-xs-6 nopadding">
+        <div class="col-xs-6">
           <input type="radio" name="seletcOTPType" value="image" ng-model="otpType" id="otpImg"><label for="otpImg">Upload
             an image</label><br/>
           <input type="radio" name="seletcOTPType" value="string" ng-model="otpType" id="otpStr"><label for="otpStr">Set the
             secret manually</label>
         </div>
-        <div class="col-xs-12 nopadding">
+        <div class="col-xs-12">
           <input type="file" qrread on-read="parseQR(qrdata)" ng-show="otpType==='image'"/>
           <label ng-show="otpType==='string'">Enter the 2 factor secret <input type="text"
                                                                                ng-model="currentItem.otpsecret.secret"
                                                                                class="otpSecret"/></label>
         </div>
       </div>
-      <hr>
+      <div class="row" ng-show="currentItem.otpsecret.qrCode">
+
       <div class="col-sm-12">Current OTP settings</div>
-      <div class="col-sm-4">
-        <img ng-src="{{currentItem.otpsecret.qrCode}}" ng-show="currentItem.otpsecret.qrCode" height="120" width="120">
+      <div class="col-xs-4">
+        <img ng-src="{{currentItem.otpsecret.qrCode}}"  height="120" width="120">
       </div>
-      <div class="col-sm-4">
-        <table ng-show="currentItem.otpsecret">
-          <tr ng-show="currentItem.otpsecret.type">
-            <td>Type:</td>
-            <td>{{currentItem.otpsecret.type}}</td>
-          </tr>
-          <tr ng-show="currentItem.otpsecret.label">
-            <td>Label:</td>
-            <td>{{currentItem.otpsecret.label}}</td>
-          </tr>
-          <tr ng-show="currentItem.otpsecret.issuer">
-            <td>Issuer:</td>
-            <td>{{currentItem.otpsecret.issuer}}</td>
-          </tr>
-          <tr ng-show="currentItem.otpsecret.secret">
-            <td>Secret:</td>
-            <td><span pw="currentItem.otpsecret.secret" toggle-text-stars></span> <a
-                clip-copy="currentItem.otpsecret.secret" clip-click="copied('URL')" class="link">[Copy]</a></td>
-          </tr>
-        </table>
+        <div class="col-xs-4">
+          <table>
+            <tr>
+              <td>Type:</td>
+              <td>{{currentItem.otpsecret.type}}</td>
+            </tr>
+            <tr >
+              <td>Label:</td>
+              <td>{{currentItem.otpsecret.label}}</td>
+            </tr>
+            <tr>
+              <td>Issuer:</td>
+              <td>{{currentItem.otpsecret.issuer}}</td>
+            </tr>
+            <tr>
+              <td>Secret:</td>
+              <td><span pw="currentItem.otpsecret.secret" toggle-text-stars></span> <a
+                  clip-copy="currentItem.otpsecret.secret" clip-click="copied('URL')" class="link">[Copy]</a></td>
+            </tr>
+          </table>
+
+        </div>
       </div>
     </div>
-
-    </form>
   </div>
 <div class="buttons">
   <button class="button cancel" ng-click="closeDialog()">Cancel</button>
