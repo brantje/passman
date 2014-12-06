@@ -519,45 +519,47 @@
   </div>
 </div>
 <!--- Start sharing -->
-<div id="shareDialog" ng-controller="shareCtrl" style="display: none;" ng-init="tabActive=1">
-  <div class="tabHeader" ng-class="'tab'+tabActive">
-    <div class="col-xs-4 tab1" ng-click="tabActive=1" ng-class="{'active': tabActive==1}">
-      Users & Groups
-    </div>
-    <div class="col-xs-4 tab2" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">
-      Links
-    </div>
-  </div>
-  <div class="row tabContent">
-    <div class="col-md-6" ng-show="tabActive==1">
-      Enter the users / groups you want to share the password with
-      <tags-input ng-model="shareSettings.shareWith" removeTagSymbol="x" replace-spaces-with-dashes="false"
-                  min-length="1">
-        <auto-complete source="loadUserAndGroups($query)" min-length="1" max-results-to-show="6"></auto-complete>
-      </tags-input>
-      <table width="100%">
-        <th>
-          <tr>
-            <td>Name</td>
-            <td>Type</td>
-          </tr>
-        </th>
-        <tr ng-repeat="sharetargets in shareSettings.shareWith">
-          <td>{{sharetargets.text}}</td>
-          <td>{{sharetargets.type}}</td>
-        </tr>
-      </table>
-    </div>
-    <div class="col-xs-8" ng-show="tabActive==2">
-      <label><input type="checkbox" ng-model="shareSettings.allowShareLink" ng-click="createShareUrl()" />Create share
-                                                                                                          link</label>
-
-      <div ng-show="shareSettings.allowShareLink">
-        Your share link:
-        <input type="text" ng-click-select ng-model="shareSettings.shareUrl" class="shareUrl" />
+<div ng-controller="shareCtrl">
+  <div  id="shareDialog"  style="display: none;" ng-init="tabActive=1">
+    <div class="tabHeader" ng-class="'tab'+tabActive">
+      <div class="col-xs-4 tab1" ng-click="tabActive=1" ng-class="{'active': tabActive==1}">
+        Users & Groups
+      </div>
+      <div class="col-xs-4 tab2" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">
+        Links
       </div>
     </div>
+    <div class="row tabContent">
+      <div class="col-md-6" ng-show="tabActive==1">
+        Enter the users / groups you want to share the password with
+        <tags-input ng-model="shareSettings.shareWith" removeTagSymbol="x" replace-spaces-with-dashes="false"
+                    min-length="1">
+          <auto-complete source="loadUserAndGroups($query)" min-length="1" max-results-to-show="6"></auto-complete>
+        </tags-input>
+        <table width="100%">
+          <th>
+            <tr>
+              <td>Name</td>
+              <td>Type</td>
+            </tr>
+          </th>
+          <tr ng-repeat="sharetargets in shareSettings.shareWith">
+            <td>{{sharetargets.text}}</td>
+            <td>{{sharetargets.type}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-xs-8" ng-show="tabActive==2">
+        <label><input type="checkbox" ng-model="shareSettings.allowShareLink" ng-click="createShareUrl()" />Create share
+                                                                                                            link</label>
 
+        <div ng-show="shareSettings.allowShareLink">
+          Your share link:
+          <input type="text" ng-click-select ng-model="shareSettings.shareUrl" class="shareUrl" />
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 <!-- end sharing -->

@@ -35,8 +35,8 @@ class ShareController extends Controller {
     $this->shareManager = $shareManager;
   }
 
-  public function search() {
-    $keyword = $this->params('k');
+  public function search($k) {
+    $keyword = $k;
     /* Setup some example results */
     $result[0]['text'] = 'User';
     $result[0]['type'] = 'user';
@@ -57,6 +57,11 @@ class ShareController extends Controller {
     $result[5]['type'] = 'user';
     $result[5]['id'] = 'test';
 
+    return new JSONResponse($result);
+  }
+
+  public function settings(){
+    $result['shareEncryptionKeySize'] = \OCP\CONFIG::getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'shareEncryptionKeySize');
     return new JSONResponse($result);
   }
 }

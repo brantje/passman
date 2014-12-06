@@ -8,6 +8,13 @@ app.factory('shareService', ['$http', function ($http) {
                 data: item
             });
         }
+        getSharingSettings: function () {
+            var queryUrl = OC.generateUrl('apps/passman/api/v1/sharing/settings');
+            return $http({
+                url: queryUrl,
+                method: 'get'
+            });
+        }
     };
 }]);
 
