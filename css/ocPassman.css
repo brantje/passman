@@ -630,6 +630,10 @@ table.table tr td:nth-child(2) {
 #settingsDialog{
   width:100% !important;
 }
+#settingsDialog label{
+  display: block;
+}
+
 #shareDialog,#editAddItemDialog,#settingsDialog{
   overflow: visible !important;
   padding-top: 0px;

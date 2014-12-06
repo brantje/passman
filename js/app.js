@@ -26,7 +26,7 @@ app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'of
     }]);
 
 
-app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout) {
+app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout, shareService) {
   'use strict';
   console.log('appCtrl');
   $scope.items = [];
@@ -36,7 +36,9 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.noFavIcon = OC.imagePath('passman', 'lock.svg');
   $scope.sessionExpireTime = 0;
   $scope.expireNotificationShown = false;
-
+  shareService.getSharingSettings().success(function(data){
+    $scope.userSharingSettings = data;
+  });
 
   $scope.loadItems = function (tags, showDeleted) {
     var idx = tags.indexOf('is:Deleted');
@@ -474,7 +476,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
       minHeight: 480,
       height:480,
       position:['center','top+30'],
-      open: function(event,ui){
+      open: function(){
         $('#labell').blur();
         if(!$scope.dinit){
           $('.button.cancel').appendTo('.ui-dialog-buttonset');
@@ -674,18 +676,16 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   };
 });
 
-app.controller('settingsCtrl', function ($scope,$sce) {
+app.controller('settingsCtrl', function ($scope,$sce,$timeout) {
   $scope.settings = {
     PSC: {
       minStrength: 40,
       weakItemList: []
     }
   };
+  $scope.shareSettingsLoaded = false;
 
-  var http = location.protocol;
-  var slashes = http.concat("//");
-  var host = slashes.concat(window.location.hostname);
-  var complete = host + location.pathname;
+  var http = location.protocol, slashes = http.concat("//"), host = slashes.concat(window.location.hostname), complete = host + location.pathname;
   $scope.bookmarklet = $sce.trustAsHtml("<a class=\"button\" href=\"javascript:(function(){var a=window,b=document,c=encodeURIComponent,e=c(document.title),d=a.open('" + complete + "add?url='+c(b.location)+'&title='+e,'bkmk_popup','left='+((a.screenX||a.screenLeft)+10)+',top='+((a.screenY||a.screenTop)+10)+',height=465px,width=375px,resizable=0,alwaysRaised=1');a.setTimeout(function(){d.focus()},300);})();\">Save in passman</a>");
 
 
@@ -707,9 +707,25 @@ app.controller('settingsCtrl', function ($scope,$sce) {
     }
   };
 
+  $scope.renewSharingKeys = function(){
+
+  };
+
+  $scope.$watch("userSharingSettings.settings",function(newVal){
+    if(!newVal){
+      return;
+    }
+    if(!$scope.shareSettingsLoaded){
+      $scope.shareSettingsLoaded = true;
+    } else {
+      console.log(newVal);
+      /** Share settings have changed, if key size changed, generate new key pairs?? */
+    }
+  },true);
+
 });
 
-app.controller('shareCtrl', function ($scope, $http, shareService) {
+app.controller('shareCtrl', function ($scope, $http, shareService,$timeout) {
   $scope.shareSettings = {allowShareLink: false, shareWith: []};
   $scope.loadUserAndGroups = function ($query) {
     /* Enter the url where we get the search results for $query
@@ -788,9 +804,15 @@ app.controller('shareCtrl', function ($scope, $http, shareService) {
   $scope.$on('shareItem', function (event, data) {
     if (event) {
       shareItem(data);
+      if(!$scope.userSharingSettings.settings.shareKeys){
+        $timeout(function(){
+          var keypair = KEYUTIL.generateKeypair("RSA", $scope.userSharingSettings.settings.shareKeySize);
+          $scope.userSharingSettings.settings.shareKeys = keypair;
+          shareService.saveSharingSettings($scope.userSharingSettings);
+        },500);
+      }
     }
   });
-
 });
 
 
