@@ -7,16 +7,20 @@ app.factory('shareService', ['$http', function ($http) {
                 method: 'PUT',
                 data: item
             });
-        },
-        getSharingSettings: function () {
-            var queryUrl = OC.generateUrl('apps/passman/api/v1/sharing/settings');
+        }
+    };
+}]);
+app.factory('settingsService', ['$http', function ($http) {
+    return {
+        getSettings: function () {
+            var queryUrl = OC.generateUrl('apps/passman/api/v1/settings');
             return $http({
                 url: queryUrl,
                 method: 'get'
             });
         },
-        saveSharingSettings: function (settings){
-          var queryUrl = OC.generateUrl('apps/passman/api/v1/sharing/savesettings');
+        saveSettings: function (settings){
+          var queryUrl = OC.generateUrl('apps/passman/api/v1/savesettings');
           return $http({
             url: queryUrl,
             method: 'POST',

@@ -26,7 +26,7 @@ app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'of
     }]);
 
 
-app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout, shareService) {
+app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout, settingsService) {
   'use strict';
   console.log('appCtrl');
   $scope.items = [];
@@ -36,8 +36,8 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.noFavIcon = OC.imagePath('passman', 'lock.svg');
   $scope.sessionExpireTime = 0;
   $scope.expireNotificationShown = false;
-  shareService.getSharingSettings().success(function(data){
-    $scope.userSharingSettings = data;
+  settingsService.getSettings().success(function(data){
+    $scope.userSettings = data;
   });
 
   $scope.loadItems = function (tags, showDeleted) {
@@ -711,7 +711,7 @@ app.controller('settingsCtrl', function ($scope,$sce,$timeout) {
 
   };
 
-  $scope.$watch("userSharingSettings.settings",function(newVal){
+  $scope.$watch("userSettings",function(newVal){
     if(!newVal){
       return;
     }
@@ -719,13 +719,13 @@ app.controller('settingsCtrl', function ($scope,$sce,$timeout) {
       $scope.shareSettingsLoaded = true;
     } else {
       console.log(newVal);
-      /** Share settings have changed, if key size changed, generate new key pairs?? */
+      /** Settings have changed, if key size changed, generate new key pairs?? */
     }
   },true);
 
 });
 
-app.controller('shareCtrl', function ($scope, $http, shareService,$timeout) {
+app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout) {
   $scope.shareSettings = {allowShareLink: false, shareWith: []};
   $scope.loadUserAndGroups = function ($query) {
     /* Enter the url where we get the search results for $query
@@ -804,11 +804,11 @@ app.controller('shareCtrl', function ($scope, $http, shareService,$timeout) {
   $scope.$on('shareItem', function (event, data) {
     if (event) {
       shareItem(data);
-      if(!$scope.userSharingSettings.settings.shareKeys){
+      if(!$scope.userSettings.settings.sharing.shareKeys){
         $timeout(function(){
-          var keypair = KEYUTIL.generateKeypair("RSA", $scope.userSharingSettings.settings.shareKeySize);
-          $scope.userSharingSettings.settings.shareKeys = keypair;
-          shareService.saveSharingSettings($scope.userSharingSettings);
+          var keypair = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+          $scope.userSettings.settings.sharing.shareKeys = keypair;
+          settingsService.saveSettings($scope.userSettings);
         },500);
       }
     }

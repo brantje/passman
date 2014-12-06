@@ -59,17 +59,4 @@ class ShareController extends Controller {
 
     return new JSONResponse($result);
   }
-  /**
-   * @NoAdminRequired
-   * @NoCSRFRequired
-   */
-  public function settings(){
-    $default = json_encode(array('shareKeySize'=>1024));
-    $result['settings'] = json_decode(\OCP\CONFIG::getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'shareSettings',$default));
-    return new JSONResponse($result);
-  }
-  public function savesettings($settings){
-    $result['settings'] = \OCP\CONFIG::setUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'shareSettings',json_encode($settings));
-    return new JSONResponse($result);
-  }
 }

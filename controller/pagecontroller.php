@@ -13,6 +13,7 @@ namespace OCA\Passman\Controller;
 
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
+use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Controller;
 use \OCP\CONFIG;
 
@@ -65,7 +66,20 @@ class PageController extends Controller {
     $params = array('url' => $url, 'label' => $title);
     return new TemplateResponse('passman', 'popup', $params);
   }
+  /**
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
+  public function settings(){
+    $default = json_encode(array('sharing'=>array('shareKeySize'=>1024)));
+    $result['settings'] = json_decode(\OCP\CONFIG::getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',$default));
+    return new JSONResponse($result);
+  }
+  public function savesettings($settings){
+    $result = \OCP\CONFIG::setUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',json_encode($settings));
 
+    return new JSONResponse($settings);
+  }
   /**
    * @NoAdminRequired
    * @NoCSRFRequired

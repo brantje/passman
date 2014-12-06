@@ -32,6 +32,9 @@ $application->registerRoutes($this, array(
     array('name' => 'page#disablefirstrun', 'url' => '/disablefirstrun', 'verb' => 'GET'),
     array('name' => 'page#popup', 'url' => '/add', 'verb' => 'GET'),
 
+    array('name' => 'page#settings', 'url' => '/api/v1/settings', 'verb' => 'GET'),
+    array('name' => 'page#savesettings', 'url' => '/api/v1/savesettings', 'verb' => 'POST'),
+
     array('name' => 'page#imageproxy', 'url' => '/imageproxy/{hash}', 'verb' => 'GET'),
 
 
@@ -60,7 +63,6 @@ $application->registerRoutes($this, array(
 
 
     array('name' => 'share#search', 'url' => '/api/v1/sharing/search', 'verb' => 'GET'),
-    array('name' => 'share#settings', 'url' => '/api/v1/sharing/settings', 'verb' => 'GET'),
-    array('name' => 'share#savesettings', 'url' => '/api/v1/sharing/savesettings', 'verb' => 'POST'),
+
 
   )));

@@ -469,14 +469,7 @@
     <div class="col-md-12">
       <div ng-show="tabActive==1" class="row">
         <div class="col-md-11">
-          <h2>Content heading 1</h2>
-
-          <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi
-            sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor
-            risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam
-            sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius
-            sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
-         </div>
+          <label>Use image proxy on HTTP pages <input type="checkbox" ></label>
       </div>
       <div ng-show="tabActive==2" class="row">
         <div class="col-sm-5">
@@ -529,7 +522,7 @@
 <!--- Start sharing -->
 <div ng-controller="shareCtrl">
   <div  id="shareDialog"  style="display: none;" ng-init="tabActive=1">
-    <div ng-show="userSharingSettings.settings.shareKeys">
+    <div ng-show="userSettings.settings.sharing.shareKeys">
       <div class="tabHeader" ng-class="'tab'+tabActive">
         <div class="col-xs-4 tab1" ng-click="tabActive=1" ng-class="{'active': tabActive==1}">
           Users & Groups
@@ -570,7 +563,7 @@
 
       </div>
     </div>
-    <div ng-show="!userSharingSettings.settings.shareKeys">
+    <div ng-show="!userSettings.settings.sharing.shareKeys">
       Generating sharing keys, this is a time time thing, please wait.
     </div>
   </div>
