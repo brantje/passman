@@ -187,6 +187,7 @@ class ItemApiController extends Controller {
     if (empty($item['favicon'])) {
       $favicon = $this->faviconFetcher->fetch($url);
       $favicon = (!empty($favicon)) ? $favicon : '';
+      $item['favicon'] = $favicon;
     }
     if (empty($errors)) {
 

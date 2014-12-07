@@ -72,7 +72,7 @@ class PageController extends Controller {
    * @NoCSRFRequired
    */
   public function settings(){
-    $default = json_encode(array('sharing'=>array('shareKeySize'=>1024)));
+    $default = json_encode(array('sharing'=>array('shareKeySize'=>1024),'useImageProxy'=>true));
     $result['settings'] = json_decode(\OCP\CONFIG::getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',$default));
     return new JSONResponse($result);
   }
@@ -90,9 +90,43 @@ class PageController extends Controller {
     if (filter_var($url, FILTER_VALIDATE_URL) === false) {
       die('Not a valid URL');
     }
-    $f = $this->getURL($url);
-    $name = tempnam('/tmp', "imageProxy");
-    file_put_contents($name, $f);
+    $fileInfo = getimagesize($url);
+    $imageType = $fileInfo['mime'];
+    preg_match('/image\/(.*)/',$imageType,$match);
+    $response = New Response();
+    $cache_expire_date = gmdate('D, d M Y H:i:s', time() + (60*60*24*90)) . ' GMT';
+    if($match){
+      $f = $this->getURL($url);
+
+      $response->setHeaders(array(
+        'Content-Type'=>$match[0],
+        'Cache-Control'=> 'max-age=7776000, public',
+        'User-Cache-Control'=> 'max-age=7776000',
+        'Strict-Transport-Security'=> 'max-age=7776000',
+        'Expires'=>  $cache_expire_date,
+        'Pragma'=>  'cache',
+      ));
+    } else {
+      $f = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
+      $f .='<!DOCTYPE svg  PUBLIC \'-//W3C//DTD SVG 1.1//EN\'  \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'>';
+      $f .='<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" height="16px" width="16px" version="1.1" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 71 100">';
+      $f .='<path d="m65.5 45v-15c0-16.542-13.458-30-30-30s-30 13.458-30 30v15h-5.5v55h71v-55h-5.5zm-52-15c0-12.131 9.869-22 22-22s22 9.869 22 22v15h-44v-15z"/>';
+      $f .= '</svg>';
+      $response->setHeaders(array(
+        'Content-Type'=>'image/svg+xml',
+        'Cache-Control'=> 'max-age=7776000, public',
+        'User-Cache-Control'=> 'max-age=7776000',
+        'Strict-Transport-Security'=> 'max-age=7776000',
+        'Expires'=>  $cache_expire_date,
+        'Pragma'=>  'cache',
+      ));
+    }
+    echo $f;
+
+    return $response;
+
+    //$name = tempnam('/tmp', "imageProxy");
+    //file_put_contents($name, $f);
     /*if (extension_loaded('imagick') || class_exists("Imagick")) {
       try {
         $isIcon = (strpos($url, '.ico') !== false) ? 'ico:' : '';
@@ -132,24 +166,14 @@ class PageController extends Controller {
         }
       }
     }*/
-    $response = New Response();
-    $response->setStatus(304);
-    $cache_expire_date = gmdate('D, d M Y H:i:s', time() + (60*60*24*90)) . ' GMT';
-    $response->setHeaders(array(
-      'Content-Type'=>'image/png',
-      'Cache-Control'=> 'max-age=7776000, public',
-      'User-Cache-Control'=> 'max-age=7776000',
-      'Strict-Transport-Security'=> 'max-age=7776000',
-      'Expires'=>  $cache_expire_date,
-      'Pragma'=>  'cache',
-    ));
-    echo $f;
-    return $response;
+
   }
 
   private function getURL($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 1);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,0);
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_URL, $url);

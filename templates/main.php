@@ -480,7 +480,7 @@
           <div class="col-md-11">
             <h2>General settings</h2>
 
-            <label><input type="checkbox" ng-model="userSettings.settings.useImageProxy"> Use image proxy (PHP module imagick must be installed)</label>
+            <label><input type="checkbox" ng-model="userSettings.settings.useImageProxy"> Use image proxy on https pages</label>
           </div>
         </div>
       </div>

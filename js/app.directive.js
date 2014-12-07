@@ -186,7 +186,7 @@ app.directive('imageProxy', function () {
       var src,hashedUrl;
       if(scope.image) {
         hashedUrl = window.btoa(scope.image)
-        src = OC.generateUrl('/apps/passman/imageproxy/' + hashedUrl+'.png');
+        src = OC.generateUrl('/apps/passman/imageproxy/' + hashedUrl);
         //iElement.append('<img src="' + src + '" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" />')
         iElement.attr("src",src)
         iElement.bind('error', function() {

@@ -35,7 +35,7 @@ $application->registerRoutes($this, array(
     array('name' => 'page#settings', 'url' => '/api/v1/settings', 'verb' => 'GET'),
     array('name' => 'page#savesettings', 'url' => '/api/v1/savesettings', 'verb' => 'POST'),
 
-    array('name' => 'page#imageproxy', 'url' => '/imageproxy/{hash}.png', 'verb' => 'GET'),
+    array('name' => 'page#imageproxy', 'url' => '/imageproxy/{hash}', 'verb' => 'GET'),
 
 
     array('name' => 'tag#search', 'url' => '/api/v1/tags/search', 'verb' => 'GET'),
