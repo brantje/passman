@@ -116,9 +116,7 @@ class ItemApiController extends Controller {
     if (empty($item['label'])) {
       array_push($errors, 'Label is mandatory');
     }
-    if (empty($favicon)) {
-      $favicon = $this->faviconFetcher->fetch($url);
-    }
+
     if (empty($errors)) {
       $result['itemid'] = $this->ItemBusinessLayer->create($item);
       if (!empty($customFields)) {
@@ -184,11 +182,8 @@ class ItemApiController extends Controller {
     if (empty($curItem)) {
       array_push($errors, 'Item not found');
     }
-    if (empty($item['favicon'])) {
-      $favicon = $this->faviconFetcher->fetch($url);
-      $favicon = (!empty($favicon)) ? $favicon : '';
-      $item['favicon'] = $favicon;
-    }
+
+
     if (empty($errors)) {
 
 
@@ -346,6 +341,18 @@ class ItemApiController extends Controller {
    */
   public function getfile($id) {
     return new JSONResponse($this->ItemBusinessLayer->getFile($id, $this->userId));
+  }
+
+  /**
+   * GetFile get a single file and his content
+   *
+   * @NoAdminRequired
+   */
+  public function getfavicon($hash) {
+    $url = base64_decode($hash);
+    $favicon = $this->faviconFetcher->fetch($url);
+    $response['favicon'] = $favicon;
+    return new JSONResponse($response);
   }
 
   /**

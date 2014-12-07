@@ -52,6 +52,7 @@ $application->registerRoutes($this, array(
     array('name' => 'item_api#delete', 'url' => '/api/v1/item/delete/{id}', 'verb' => 'DELETE'),
     array('name' => 'item_api#restore', 'url' => '/api/v1/item/restore/{id}', 'verb' => 'GET'),
     array('name' => 'item_api#search', 'url' => '/api/v1/item/search/{itemName}', 'verb' => 'GET'),
+    array('name' => 'item_api#getfavicon', 'url' => '/api/v1/item/getfavicon/{hash}', 'verb' => 'GET'),
 
     array('name' => 'item_api#addtag', 'url' => '/api/v1/tag/addtag', 'verb' => 'GET'),
 

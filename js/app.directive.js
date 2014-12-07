@@ -184,18 +184,18 @@ app.directive('imageProxy', function () {
     },
     link: function postLink(scope, iElement, iAttrs) {
       var src,hashedUrl;
-      if(scope.image) {
-        hashedUrl = window.btoa(scope.image)
-        src = OC.generateUrl('/apps/passman/imageproxy/' + hashedUrl);
-        //iElement.append('<img src="' + src + '" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" />')
-        iElement.attr("src",src)
-        iElement.bind('error', function() {
-          angular.element(this).attr("src", scope.fallback);
-        });
-      } else {
-        //iElement.append('<img src="' + scope.fallback + '" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" />')
-        iElement.attr("src",scope.fallback);
-      }
+      scope.$watch('image',function(newVal){
+        if(scope.image) {
+          hashedUrl = window.btoa(newVal)
+          src = OC.generateUrl('/apps/passman/imageproxy/' + hashedUrl);
+          iElement.attr("src",src)
+          iElement.bind('error', function() {
+            angular.element(this).attr("src", scope.fallback);
+          });
+        } else {
+          iElement.attr("src",scope.fallback);
+        }
+      },true);
     }
   };
 });

@@ -560,10 +560,18 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     }
   }, true);
 
+  $scope.updateFavIcon = function(){
+    var hashedUrl = window.btoa( $scope.currentItem.url)
+    $.get(OC.generateUrl('apps/passman/api/v1/item/getfavicon/'+ hashedUrl),function(data){
+      $scope.currentItem.favicon = data.favicon;
+    });
+  }
+
   $scope.closeDialog = function () {
     $('#editAddItemDialog').dialog('close');
     $scope.generatedPW = '';
     $scope.currentPWInfo = {};
+    $scope.currentItem.overrrideComplex = false;
     $scope.editing = false;
     $scope.errors = [];
   };
@@ -654,7 +662,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     if (item.password !== item.passwordConfirm) {
       $scope.errors.push("Passwords do not match");
     }
-    if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy) {
+    if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy && !$scope.currentItem.overrrideComplex) {
       $scope.errors.push("Minimal password score not met");
     }
     saveThis.expire_time = $scope.newExpireTime;
