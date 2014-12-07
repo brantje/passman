@@ -486,7 +486,7 @@
       </div>
       <div ng-show="tabActive==2" class="row">
         <div class="col-sm-5">
-          <label>Key size<select ng-model="userSharingSettings.settings.shareKeySize">
+          <label>Key size<select ng-model="userSettings.settings.sharing.shareKeySize">
               <option value="1024">Low (1024 bit)</option>
               <option value="2048">Medium (2048 bit)</option>
               <option value="4096">High (4096)</option>
