@@ -1,3 +1,34 @@
+app.directive('showLoaded', ['$rootScope',
+  function($rootScope) {
+    return {
+      restrict : 'A',
+      transclude : false,
+      scope : {
+        value : '=t'
+      },
+      link : function(scope, element) {
+        $rootScope.$on('loaded', function(){
+          element.css('display','block');
+        });
+      }
+    }
+  }]);
+app.directive('hideLoaded', ['$rootScope',
+  function($rootScope) {
+    return {
+      restrict : 'A',
+      transclude : false,
+      scope : {
+        value : '=t'
+      },
+      link : function(scope, element) {
+        $rootScope.$on('loaded', function(){
+          element.css('display','none');
+        });
+      }
+    }
+}]);
+
 app.directive('toggleTextStars', ['$compile',
   function ($compile, $tooltip) {
     return {
@@ -144,6 +175,29 @@ app.directive('fallbackSrc', function () {
     }
    }
    return fallbackSrc;
+});
+app.directive('imageProxy', function () {
+  return {
+    scope:{
+      image:'=',
+      fallback: '='
+    },
+    link: function postLink(scope, iElement, iAttrs) {
+      var src,hashedUrl;
+      scope.$watch('image',function(newVal){
+        if(scope.image) {
+          hashedUrl = window.btoa(newVal)
+          src = OC.generateUrl('/apps/passman/imageproxy/' + hashedUrl);
+          iElement.attr("src",src)
+          iElement.bind('error', function() {
+            angular.element(this).attr("src", scope.fallback);
+          });
+        } else {
+          iElement.attr("src",scope.fallback);
+        }
+      },true);
+    }
+  };
 });
 
 app.directive("fileread", ['ItemService',

@@ -1,3 +1,34 @@
+.loaderContainer{
+  height: 140px;
+  width: 120px;
+  margin-top: -70px;
+  margin-left: -60px;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+}
+.loaderContainer .text{
+  width: 120px;
+  text-align: center;
+}
+.loader{
+  border-bottom: 10px solid #1d2d44;
+  border-left: 10px solid #c9c9c9;
+  border-right: 10px solid #c9c9c9;
+  border-top: 10px solid #c9c9c9;
+  height: 120px;
+  width: 120px;
+  border-radius: 120px;
+  animation: 1.1s linear 0s normal none infinite running load8;
+}
+@keyframes load8 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 #app-navigation li {
 	width: auto;
 
@@ -140,8 +171,8 @@ color: #333;
 }
 div#topContent {
 	background: #f8f8f8;
-	height: 35px;
-  width: 100%;
+	height: 40px;
+  /*width: 100%;*/
   position: fixed;
 }
 /*
@@ -171,7 +202,7 @@ div#topContent {
 #pwList {
 	margin-left: 1px;
 	overflow: auto;
-	margin-top: 35px;
+	margin-top: 40px;
 }
 #pwList > li {
 	list-style: none;
@@ -179,6 +210,7 @@ div#topContent {
 	height: 30px;
 	cursor: pointer;
 	line-height: 30px;
+
 }
 #pwList li > span:first-child {
 	float: left;
@@ -188,6 +220,11 @@ div#topContent {
 #pwList > li div {
 	float: left;
 	cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+
 }
 
 #pwList li > i {
@@ -621,6 +658,13 @@ table.table tr td:nth-child(2) {
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
 }
+#settingsDialog{
+  width:100% !important;
+}
+#settingsDialog label{
+  display: block;
+}
+
 #shareDialog,#editAddItemDialog,#settingsDialog{
   overflow: visible !important;
   padding-top: 0px;
@@ -628,8 +672,8 @@ table.table tr td:nth-child(2) {
 .tabHeader {
   height: 30px;
 /*  border-bottom: 1px solid #c9c9c9;*/
-  margin-left: -13px !important;
-  margin-right: -13px !important;
+  margin-left: -12px !important;
+  margin-right: -12px !important;
   margin-bottom: 10px;
   -moz-transition: border-color 500ms ease-in ;
   -o-transition: border-color 500ms ease-in ;

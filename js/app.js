@@ -1,9 +1,11 @@
 /**
  *A lil bit of jQuery is needed..
  */
+
 $(document).ready(function () {
+  'use strict';
   /* Resize the pwList */
-  var resizeList = function(){
+  window.resizeList = function(){
     var containerHeight,containerWidth,listHeight;
     listHeight = $('#pwList').height();
     containerHeight = $('#app-content').height();
@@ -11,121 +13,21 @@ $(document).ready(function () {
     console.log(listHeight)
     $('#pwList').height(containerHeight - $('#infoContainer').height() - 85);
     $('#pwList').width(containerWidth - 2);
-  }
+    $('#topContent').width(containerWidth - 2);
+  };
   $(window).resize(resizeList);
   resizeList();
 });
 
-var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
-  function ($httpProvider) {
-    $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
-  }]);
-app.factory('shareService', ['$http', function ($http) {
-  return {
-    shareItem: function (item) {
-      var queryUrl = OC.generateUrl('apps/passman/api/v1/sharing/share');
-      return $http({
-        url: queryUrl,
-        method: 'PUT',
-        data: item
-      });
-    }
-  };
-}]);
+var app;
+app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
+    function ($httpProvider) {
+        $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
+    }]);
 
-app.factory('ItemService', ['$http',
-  function ($http) {
-    return {
-      getItems: function (tags, showDeleted) {
-        var queryUrl = (!showDeleted) ? OC.generateUrl('apps/passman/api/v1/getbytags?tags=' + tags.join(',')) : OC.generateUrl('apps/passman/api/v1/items/getdeleted?tags=' + tags.join(','));
-        return $http({
-          url: queryUrl,
-          method: 'GET'
-        });
-      },
-      update: function (item) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/' + item.id),
-          data: item,
-          method: 'PATCH'
-        });
-      },
-      softDestroy: function (item) {
-        item.delete_date = Math.floor(new Date().getTime() / 1000);
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/' + item.id),
-          data: item,
-          method: 'PATCH'
-        });
-      },
-      recover: function (item) {
-        item.delete_date = 0;
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/' + item.id),
-          data: item,
-          method: 'PATCH'
-        });
-      },
-      destroy: function (item) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/delete/' + item.id),
-          method: 'DELETE'
-        });
-      },
-      create: function (item) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item'),
-          data: item,
-          method: 'PUT'
-        });
-      },
-      removeCustomfield: function (id) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/field/delete/' + id),
-          method: 'DELETE'
-        });
-      },
-      getFile: function (id) {
-        return $http({
-          url: OC.generateUrl('/apps/passman/api/v1/item/file/' + id),
-          method: 'GET'
-        });
-      },
-      uploadFile: function (file) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/' + file.item_id + '/addfile'),
-          method: 'PUT',
-          data: file
-        });
-      },
-      deleteFile: function (file) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/item/file/' + file.id),
-          method: 'DELETE'
-        });
-      }
-    };
-  }]);
-app.factory('TagService', ['$http',
-  function ($http) {
-    return {
-      getTag: function (tag) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/tag/load?tag=' + tag),
-          method: 'GET'
-        });
-      },
-      update: function (tag) {
-        return $http({
-          url: OC.generateUrl('apps/passman/api/v1/tag/update'),
-          method: 'PATCH',
-          data: tag
-        });
-      }
-    };
-  }]);
 
-app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout) {
+app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout, settingsService,$rootScope) {
+  'use strict';
   console.log('appCtrl');
   $scope.items = [];
   $scope.showingDeletedItems = false;
@@ -134,7 +36,9 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.noFavIcon = OC.imagePath('passman', 'lock.svg');
   $scope.sessionExpireTime = 0;
   $scope.expireNotificationShown = false;
-
+  settingsService.getSettings().success(function(data){
+    $scope.userSettings = data;
+  });
 
   $scope.loadItems = function (tags, showDeleted) {
     var idx = tags.indexOf('is:Deleted');
@@ -167,6 +71,8 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
         return 0;
       });
       $scope.tags = tmp;
+      $rootScope.$broadcast('loaded');
+      $window.resizeList();
     });
   };
   //$scope.loadItems([]);
@@ -196,11 +102,11 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.encryptObject = function(object){
     var ec = JSON.stringify(object);
     return $scope.encryptThis(ec);
-  }
+  };
   $scope.decryptObject = function(str){
     var s = $scope.decryptThis(str);
     return  JSON.parse(s);
-  }
+  };
 
   $scope.decryptThis = function (encryptedData, encKey) {
     var decryptedString = window.atob(encryptedData), encKey2 = (encKey) ? encKey : $scope.getEncryptionKey();
@@ -238,8 +144,11 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
       modal: true,
       width: '750px',
       title: 'Settings',
-      height: 445,
-      position: {my: "center center", at: "center", of: window}
+      height: 545,
+      position:['center','top+50'],
+      open: function(){
+        $('.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix').remove();
+      }
     });
   };
   var countLSTTL = function () {
@@ -285,6 +194,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   };
 
   $scope.showEncryptionKeyDialog = function () {
+    $rootScope.$broadcast('loaded');
     $('#encryptionKeyDialog').dialog({
       draggable: false,
       resizable: false,
@@ -335,6 +245,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   /**
    *Onload -> Check if localstorage has key if not show dialog
    */
+
   if (!$.jStorage.get('encryptionKey')) {
     $scope.showEncryptionKeyDialog();
   } else {
@@ -345,6 +256,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
 });
 
 app.controller('navigationCtrl', function ($scope, TagService) {
+  'use strict';
   $scope.tagProps = {};
 
   $scope.tagSettings = function (tag, $event) {
@@ -419,12 +331,13 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
       saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
     }
     ItemService.recover(saveThis).success(function () {
-      for (var i = 0; i < $scope.items.length; i++) {
-       if ($scope.items[i].id == item.id) {
-       var idx = $scope.items.indexOf(item);
-       $scope.items.splice(idx, 1)
-       }
-       }
+      var idx;
+      for (i = 0; i < $scope.items.length; i++) {
+        if ($scope.items[i].id == item.id) {
+          idx = $scope.items.indexOf(item);
+          $scope.items.splice(idx, 1);
+        }
+      }
     });
     OC.Notification.showTimeout('<div>' + item.label + ' recoverd</div>');
   };
@@ -566,8 +479,8 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
       width: 360,
       minHeight: 480,
       height:480,
-      position:['center','top+20'],
-      open: function(event,ui){
+      position:['center','top+30'],
+      open: function(){
         $('#labell').blur();
         if(!$scope.dinit){
           $('.button.cancel').appendTo('.ui-dialog-buttonset');
@@ -647,10 +560,18 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     }
   }, true);
 
+  $scope.updateFavIcon = function(){
+    var hashedUrl = window.btoa( $scope.currentItem.url)
+    $.get(OC.generateUrl('apps/passman/api/v1/item/getfavicon/'+ hashedUrl),function(data){
+      $scope.currentItem.favicon = data.favicon;
+    });
+  }
+
   $scope.closeDialog = function () {
     $('#editAddItemDialog').dialog('close');
     $scope.generatedPW = '';
     $scope.currentPWInfo = {};
+    $scope.currentItem.overrrideComplex = false;
     $scope.editing = false;
     $scope.errors = [];
   };
@@ -706,13 +627,13 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
       type: parsedQR[1],
       label: decodeURIComponent(parsedQR[2]),
       qrCode: qrData.image
-    }
+    };
     qrInfo[parsedQR[3]] = parsedQR[4];
     qrInfo[parsedQR[5]] = parsedQR[6];
     console.log($scope.otpInfo);
     $scope.currentItem.otpsecret = qrInfo;
 
-  }
+  };
 
   $scope.usePw = function () {
     $scope.currentItem.password = $scope.generatedPW;
@@ -741,7 +662,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     if (item.password !== item.passwordConfirm) {
       $scope.errors.push("Passwords do not match");
     }
-    if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy) {
+    if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy && !$scope.currentItem.overrrideComplex) {
       $scope.errors.push("Minimal password score not met");
     }
     saveThis.expire_time = $scope.newExpireTime;
@@ -767,13 +688,19 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   };
 });
 
-app.controller('settingsCtrl', function ($scope) {
+app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
   $scope.settings = {
     PSC: {
       minStrength: 40,
       weakItemList: []
     }
   };
+  $scope.shareSettingsLoaded = false;
+
+  var http = location.protocol, slashes = http.concat("//"), host = slashes.concat(window.location.hostname), complete = host + location.pathname;
+  $scope.bookmarklet = $sce.trustAsHtml("<a class=\"button\" href=\"javascript:(function(){var a=window,b=document,c=encodeURIComponent,e=c(document.title),d=a.open('" + complete + "add?url='+c(b.location)+'&title='+e,'bkmk_popup','left='+((a.screenX||a.screenLeft)+10)+',top='+((a.screenY||a.screenTop)+10)+',height=465px,width=375px,resizable=0,alwaysRaised=1');a.setTimeout(function(){d.focus()},300);})();\">Save in passman</a>");
+
+
 
   $scope.checkPasswords = function () {
     $scope.settings.PSC.weakItemList = [];
@@ -792,9 +719,26 @@ app.controller('settingsCtrl', function ($scope) {
     }
   };
 
+  $scope.renewSharingKeys = function(){
+
+  };
+
+  $scope.$watch("userSettings",function(newVal){
+    if(!newVal){
+      return;
+    }
+    if(!$scope.shareSettingsLoaded){
+      $scope.shareSettingsLoaded = true;
+    } else {
+      console.log($scope.userSettings)
+      settingsService.saveSettings($scope.userSettings);
+      /** Settings have changed, if key size changed, generate new key pairs?? */
+    }
+  },true);
+
 });
 
-app.controller('shareCtrl', function ($scope, $http, shareService) {
+app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout) {
   $scope.shareSettings = {allowShareLink: false, shareWith: []};
   $scope.loadUserAndGroups = function ($query) {
     /* Enter the url where we get the search results for $query
@@ -873,27 +817,18 @@ app.controller('shareCtrl', function ($scope, $http, shareService) {
   $scope.$on('shareItem', function (event, data) {
     if (event) {
       shareItem(data);
+      if(!$scope.userSettings.settings.sharing.shareKeys){
+        $timeout(function(){
+          var keypair = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+          $scope.userSettings.settings.sharing.shareKeys = keypair;
+          settingsService.saveSettings($scope.userSettings);
+        },500);
+      }
     }
   });
-
 });
 
 
-/***
- *Extend the OC Notification
- */
-var notificationTimer;
-OC.Notification.showTimeout = function (str, timeout) {
-  OC.Notification.hide();
-  if (notificationTimer) {
-    clearTimeout(notificationTimer);
-  }
-  timeout = (!timeout) ? 3000 : timeout;
-  OC.Notification.showHtml(str);
-  notificationTimer = setTimeout(function () {
-    OC.Notification.hide();
-  }, timeout);
-};
 
 var t = function () { };
 /* Check if t function exists if not, create it to prevent errors */

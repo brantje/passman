@@ -12,9 +12,11 @@
 \OCP\Util::addscript('passman', 'sha');
 \OCP\Util::addscript('passman', 'func');
 \OCP\Util::addscript('passman', 'app');
+\OCP\Util::addscript('passman', 'app.service');
 \OCP\Util::addscript('passman', 'app.directive');
 \OCP\Util::addscript('passman', 'app.filter');
 \OCP\Util::addScript('passman', 'jsrsasign-4.7.0-all-min');
+
 
 \OCP\Util::addStyle('passman', 'ocPassman');
 \OCP\Util::addStyle('passman', 'ng-tags-input.min');
@@ -22,8 +24,12 @@
 
 
 ?>
-<div ng-app="passman" id="app" ng-controller="appCtrl">
-<div id="app-navigation" ng-controller="navigationCtrl">
+<div ng-app="passman" id="app" ng-controller="appCtrl" >
+<div class="loaderContainer" hide-loaded>
+  <div class="loader"></div>
+  <div class="text">Loading....</div>
+</div>
+<div id="app-navigation" ng-controller="navigationCtrl" style="display: none" show-loaded>
   <div id="searchTagContainer">
     <tags-input ng-model="selectedTags" removeTagSymbol="x" replace-spaces-with-dashes="false" min-length="1">
       <auto-complete source="loadTags($query)" min-length="1"></auto-complete>
@@ -69,7 +75,7 @@
     </div>
   </div>
 </div>
-<div id="app-content" ng-controller="contentCtrl">
+<div id="app-content" ng-controller="contentCtrl" style="display: none" show-loaded>
 <div id="topContent">
   <button class="button" id="addItem" ng-click="addItem()">Add item</button>
   <button class="button" id="editItem" ng-click="editItem(currentItem)"
@@ -78,17 +84,23 @@
   <button class="button" id="deleteItem" ng-click="deleteItem(currentItem,true)"
           ng-show="currentItem">Delete item
   </button>
+  <input type="text" ng-model="itemFilter" class="visible-md visible-lg visible-sm pull-right searchbox" placeholder="Search..." />
 </div>
 <ul id="pwList">
-  <li ng-repeat="item in items | orderBy: 'label'" ng-mouseover="mouseOver = true"
+  <li ng-repeat="item in items | orderBy: 'label' | filter: {'label': itemFilter}" ng-mouseover="mouseOver = true"
       ng-mouseleave="mouseOver = false; toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
       ng-class="{'row-active': item.id === currentItem.id}">
-    <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
-         style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
-         ng-if="item.favicon">
-    <img style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
-         ng-src="{{noFavIcon}}" ng-if="!item.favicon">
+    <!-- if no image proxy -->
+      <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
+           style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
+           ng-if="item.favicon && !userSettings.settings.useImageProxy">
+      <img style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
+           ng-src="{{noFavIcon}}" ng-if="!item.favicon && !userSettings.settings.useImageProxy">
+    <!-- end if -->
 
+    <!-- If image proxy === true -->
+    <img image-proxy image="item.favicon" fallback="noFavIcon" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" ng-if="userSettings.settings.useImageProxy">
+    <!--- // end  if-->
     <div style="display: inline-block;" class="itemLabel">{{item.label}}</div>
     <ul class="editMenu" ng-style="{visibility: mouseOver && 'visible' || 'hidden'}">
       <li ng-click="toggle.state = !toggle.state" ng-class="{'show' : toggle.state}" off-click=' toggle.state = false'
@@ -237,6 +249,17 @@
       <div class="row">
         <div class="col-xs-1 formLabel">Label</div>
         <div class="col-xs-7"><input type="text" ng-model="currentItem.label" autocomplete="off" id="labell"required></div>
+        <div class="col-xs-1"><!-- if no image proxy -->
+          <img ng-src="{{currentItem.favicon}}" fallback-src="noFavIcon"
+               style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
+               ng-if="currentItem.favicon && !userSettings.settings.useImageProxy">
+          <img style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
+               ng-src="{{noFavIcon}}" ng-if="!currentItem.favicon && !userSettings.settings.useImageProxy">
+          <!-- end if -->
+
+          <!-- If image proxy === true -->
+          <img image-proxy image="currentItem.favicon" fallback="noFavIcon" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" ng-if="userSettings.settings.useImageProxy">
+        </div>
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Description</div>
@@ -254,7 +277,10 @@
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">URL</div>
-        <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.url" autocomplete="off"></div>
+        <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.url" autocomplete="off" ng-blur="updateFavIcon()"></div>
+      </div><div class="row">
+        <div class="col-xs-1 formLabel">Icon</div>
+        <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.favicon" autocomplete="off"> </div>
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Tags</div>
@@ -330,14 +356,14 @@
               <input type="checkbox" ng-model="pwSettings.reqevery" id="reqevery"><label
               for="reqevery">Require Every Character Type</label><br>
           </span>
-          <button class="button" ng-click="generatePW()">Generate password</button>
+          <!--button class="button" ng-click="generatePW()">Generate password</button>
           <button class="button" ng-show="generatedPW!=''"
                   ng-click="usePw()">Use password
           </button>
           <div ng-show="generatedPW"><span>Generated password:</span> <br />{{generatedPW}}</div>
           <b ng-show="generatedPW"><span>Generated password score</span>:
                                                                         {{pwInfo.entropy}}</b><br />
-          <b ng-show="generatedPW"><span>Crack time</span>: {{pwInfo.crack_time | secondstohuman}}</b>
+          <b ng-show="generatedPW"><span>Crack time</span>: {{pwInfo.crack_time | secondstohuman}}</b-->
         </div>
       </div>
     </div>
@@ -455,94 +481,118 @@
   <img id="fileImg" /><br />
   <span id="downloadImage"></span>
 </div>
-<div ng-controller="settingsCtrl" id="settingsDialog"  ng-init="tabActive=1" style="display: none;">
-  <div class="">
-    <div class="col-md-12 tabHeader nopadding" ng-class="'tab'+tabActive">
-      <div class="tab1 col-xs-3 col-md-2 nopadding"  ng-click="tabActive=1" ng-class="{'active': tabActive==1}">General</div>
-      <div class="tab2 col-xs-3 col-md-2 nopadding" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">Sharing</div>
-      <div class="tab3 col-xs-3 col-md-2 nopadding" ng-click="tabActive=3" ng-class="{'active': tabActive==3}">Tools</div>
-    </div>
-    <div class="col-md-8">
-      <div ng-show="tabActive==1">
-        <h2>Content heading 1</h2>
-
-        <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi
-          sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor
-          risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam
-          sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius
-          sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+  <div ng-controller="settingsCtrl" id="settingsDialog"  ng-init="tabActive=1" style="display: none;">
+    <div class="">
+      <div class="col-md-12 tabHeader nopadding" ng-class="'tab'+tabActive">
+        <div class="tab1 col-xs-3 col-md-2 nopadding"  ng-click="tabActive=1" ng-class="{'active': tabActive==1}">General</div>
+        <div class="tab2 col-xs-3 col-md-2 nopadding" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">Sharing</div>
+        <div class="tab3 col-xs-3 col-md-2 nopadding" ng-click="tabActive=3" ng-class="{'active': tabActive==3}">Tools</div>
+        <div class="tab4 col-xs-3 col-md-2 nopadding" ng-click="tabActive=4" ng-class="{'active': tabActive==4}">Bookmarklet</div>
       </div>
-      <div ng-show="tabActive==2">
-        <h2>Content heading 2</h2>
+      <div class="col-md-12">
+        <div ng-show="tabActive==1" class="row">
+          <div class="col-md-11">
+            <h2>General settings</h2>
 
-        <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi
-          sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor
-          risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam
-          sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius
-          sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+            <label><input type="checkbox" ng-model="userSettings.settings.useImageProxy"> Use image proxy on https pages</label>
+          </div>
+        </div>
       </div>
-      <div ng-show="tabActive==3">
-        <p>Here you can indentify weak passwords, we will list the items. List all password with a rating less than</p>
-        <input type="text" ng-model="settings.PSC.minStrength" />
-        <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
-        <hr>
-        <table ng-table="tableParams" class="table" style="width: 100%;">
-          <tr>
-            <td>Label</td>
-            <td>Score</td>
-            <td>Password</td>
-          </tr>
-          <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
-            <td>{{item.label}}</td>
-            <td>{{item.score}}</td>
-            <td><span pw="item.password" toggle-text-stars></span> <a
-                ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a></td>
-          </tr>
-        </table>
+      <div ng-show="tabActive==2" class="row">
+        <div class="col-sm-5">
+          <label>Key size<select ng-model="userSettings.settings.sharing.shareKeySize">
+              <option value="1024">Low (1024 bit)</option>
+              <option value="2048">Medium (2048 bit)</option>
+              <option value="4096">High (4096)</option>
+            </select></label>
+          <label>Setting 2 <input type="checkbox"></label>
+          <label>Setting 3 <input type="checkbox"></label>
+        </div>
+        <div class="col-sm-5">
+          <label>Renew sharing keys: <input type="button" ng-click="renewSharingKeys()"></label>
+          <label>Setting 7 <input type="checkbox"></label>
+          <label>Setting 8 <input type="checkbox"></label>
+          <label>Setting 9 <input type="checkbox"></label>
+        </div>
+      </div>
+      <div ng-show="tabActive==3" class="row">
+        <div class="col-md-11">
+          <p>Here you can indentify weak passwords, we will list the items. List all password with a rating less than</p>
+          <input type="text" ng-model="settings.PSC.minStrength" />
+          <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
+          <div style="max-height: 300px; overflow-y: auto;">
+            <table ng-table="tableParams" class="table" style="width: 100%;">
+              <tr>
+                <td>Label</td>
+                <td>Score</td>
+                <td>Password</td>
+              </tr>
+              <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
+                <td>{{item.label}}</td>
+                <td>{{item.score}}</td>
+                <td><span pw="item.password" toggle-text-stars></span> <a
+                    ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div ng-show="tabActive==4" class="row">
+        <div class="col-md-11">
+          <p>Drag this to your browser bookmarks and click it, when you want to save username / password quickly</p><br />
+          <p ng-bind-html="bookmarklet"></p>
+        </div>
       </div>
     </div>
   </div>
 </div>
 <!--- Start sharing -->
-<div id="shareDialog" ng-controller="shareCtrl" style="display: none;" ng-init="tabActive=1">
-  <div class="tabHeader" ng-class="'tab'+tabActive">
-    <div class="col-xs-4 tab1" ng-click="tabActive=1" ng-class="{'active': tabActive==1}">
-      Users & Groups
-    </div>
-    <div class="col-xs-4 tab2" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">
-      Links
-    </div>
-  </div>
-  <div class="row tabContent">
-    <div class="col-md-6" ng-show="tabActive==1">
-      Enter the users / groups you want to share the password with
-      <tags-input ng-model="shareSettings.shareWith" removeTagSymbol="x" replace-spaces-with-dashes="false"
-                  min-length="1">
-        <auto-complete source="loadUserAndGroups($query)" min-length="1" max-results-to-show="6"></auto-complete>
-      </tags-input>
-      <table width="100%">
-        <th>
-          <tr>
-            <td>Name</td>
-            <td>Type</td>
-          </tr>
-        </th>
-        <tr ng-repeat="sharetargets in shareSettings.shareWith">
-          <td>{{sharetargets.text}}</td>
-          <td>{{sharetargets.type}}</td>
-        </tr>
-      </table>
-    </div>
-    <div class="col-xs-8" ng-show="tabActive==2">
-      <label><input type="checkbox" ng-model="shareSettings.allowShareLink" ng-click="createShareUrl()" />Create share
-                                                                                                          link</label>
+<div ng-controller="shareCtrl">
+  <div  id="shareDialog"  style="display: none;" ng-init="tabActive=1">
+    <div ng-show="userSettings.settings.sharing.shareKeys">
+      <div class="tabHeader" ng-class="'tab'+tabActive">
+        <div class="col-xs-4 tab1" ng-click="tabActive=1" ng-class="{'active': tabActive==1}">
+          Users & Groups
+        </div>
+        <div class="col-xs-4 tab2" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">
+          Links
+        </div>
+      </div>
+      <div class="row tabContent">
+        <div class="col-md-6" ng-show="tabActive==1">
+          Enter the users / groups you want to share the password with
+          <tags-input ng-model="shareSettings.shareWith" removeTagSymbol="x" replace-spaces-with-dashes="false"
+                      min-length="1">
+            <auto-complete source="loadUserAndGroups($query)" min-length="1" max-results-to-show="6"></auto-complete>
+          </tags-input>
+          <table width="100%">
+            <th>
+              <tr>
+                <td>Name</td>
+                <td>Type</td>
+              </tr>
+            </th>
+            <tr ng-repeat="sharetargets in shareSettings.shareWith">
+              <td>{{sharetargets.text}}</td>
+              <td>{{sharetargets.type}}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-xs-8" ng-show="tabActive==2">
+          <label><input type="checkbox" ng-model="shareSettings.allowShareLink" ng-click="createShareUrl()" />Create share
+                                                                                                              link</label>
 
-      <div ng-show="shareSettings.allowShareLink">
-        Your share link:
-        <input type="text" ng-click-select ng-model="shareSettings.shareUrl" class="shareUrl" />
+          <div ng-show="shareSettings.allowShareLink">
+            Your share link:
+            <input type="text" ng-click-select ng-model="shareSettings.shareUrl" class="shareUrl" />
+          </div>
+        </div>
+
       </div>
     </div>
-
+    <div ng-show="!userSettings.settings.sharing.shareKeys">
+      Generating sharing keys, this is a time time thing, please wait.
+    </div>
   </div>
 </div>
 <!-- end sharing -->

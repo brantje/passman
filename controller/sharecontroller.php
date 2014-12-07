@@ -35,8 +35,8 @@ class ShareController extends Controller {
     $this->shareManager = $shareManager;
   }
 
-  public function search() {
-    $keyword = $this->params('k');
+  public function search($k) {
+    $keyword = $k;
     /* Setup some example results */
     $result[0]['text'] = 'User';
     $result[0]['type'] = 'user';

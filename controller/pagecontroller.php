@@ -13,6 +13,8 @@ namespace OCA\Passman\Controller;
 
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
+use \OCP\AppFramework\Http\Response;
+use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Controller;
 use \OCP\CONFIG;
 
@@ -61,69 +63,117 @@ class PageController extends Controller {
    * @NoAdminRequired
    * @NoCSRFRequired
    */
-  public function popup() {
-    $folders = array();
-    $foldersHierarchical = array();
-    $url = ($this->params('url')) ? $this->params('url') : '';
-    $label = ($this->params('title')) ? $this->params('title') : '';
-    $params = array('folders' => json_encode($foldersHierarchical), 'foldersPlain' => json_encode($folders), 'url' => $url, 'label' => $label, 'f');
+  public function popup($url='',$title='') {
+    $params = array('url' => $url, 'label' => $title);
     return new TemplateResponse('passman', 'popup', $params);
   }
+  /**
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
+  public function settings(){
+    $default = json_encode(array('sharing'=>array('shareKeySize'=>1024),'useImageProxy'=>true));
+    $result['settings'] = json_decode(\OCP\CONFIG::getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',$default));
+    return new JSONResponse($result);
+  }
+  public function savesettings($settings){
+    $result = \OCP\CONFIG::setUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',json_encode($settings));
 
+    return new JSONResponse($settings);
+  }
   /**
    * @NoAdminRequired
    * @NoCSRFRequired
    */
   public function imageproxy($hash) {
-    $hash = array_pop(explode('/', $_SERVER['REQUEST_URI']));
     $url = base64_decode($hash);
     if (filter_var($url, FILTER_VALIDATE_URL) === false) {
       die('Not a valid URL');
     }
-    $md5Url = md5($url);
-    if ($this->getFavIcon($md5Url)) {
-      echo 'get file';
-      //echo $this->getFavIcon($md5Url);
-    } else {
+    $fileInfo = getimagesize($url);
+    $imageType = $fileInfo['mime'];
+    preg_match('/image\/(.*)/',$imageType,$match);
+    $response = New Response();
+    $cache_expire_date = gmdate('D, d M Y H:i:s', time() + (60*60*24*90)) . ' GMT';
+    if($match){
       $f = $this->getURL($url);
-      $name = tempnam('/tmp', "imageProxy");
-      file_put_contents($name, $f);
-      if (extension_loaded('imagick') || class_exists("Imagick")) {
-        try {
-          $isIcon = (strpos($url, '.ico') !== false) ? 'ico:' : '';
-          $image = new \Imagick($isIcon . $name);
-          if ($image->valid()) {
-            $image->setImageFormat('png');
-            header("Content-Type: image/png");
-            header('Cache-Control: max-age=86400, public');
 
-            //$this->writeFavIcon($md5url, '123456789');
-            echo $image;
+      $response->setHeaders(array(
+        'Content-Type'=>$match[0],
+        'Cache-Control'=> 'max-age=7776000, public',
+        'User-Cache-Control'=> 'max-age=7776000',
+        'Strict-Transport-Security'=> 'max-age=7776000',
+        'Expires'=>  $cache_expire_date,
+        'Pragma'=>  'cache',
+      ));
+    } else {
+      $f = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
+      $f .='<!DOCTYPE svg  PUBLIC \'-//W3C//DTD SVG 1.1//EN\'  \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'>';
+      $f .='<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" height="16px" width="16px" version="1.1" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 71 100">';
+      $f .='<path d="m65.5 45v-15c0-16.542-13.458-30-30-30s-30 13.458-30 30v15h-5.5v55h71v-55h-5.5zm-52-15c0-12.131 9.869-22 22-22s22 9.869 22 22v15h-44v-15z"/>';
+      $f .= '</svg>';
+      $response->setHeaders(array(
+        'Content-Type'=>'image/svg+xml',
+        'Cache-Control'=> 'max-age=7776000, public',
+        'User-Cache-Control'=> 'max-age=7776000',
+        'Strict-Transport-Security'=> 'max-age=7776000',
+        'Expires'=>  $cache_expire_date,
+        'Pragma'=>  'cache',
+      ));
+    }
+    echo $f;
 
-          }
-        } catch (exception $e) {
-          header("HTTP/1.1 200 OK");
-          echo "test";
-          die();
+    return $response;
+
+    //$name = tempnam('/tmp', "imageProxy");
+    //file_put_contents($name, $f);
+    /*if (extension_loaded('imagick') || class_exists("Imagick")) {
+      try {
+        $isIcon = (strpos($url, '.ico') !== false) ? 'ico:' : '';
+        $image = new \Imagick($isIcon . $name);
+        if ($image->valid()) {
+          $image->setImageFormat('jpg');
+          //echo $image;
+          $response = New Response();
+          $response->setStatus(304);
+          $cache_expire_date = gmdate('D, d M Y H:i:s', time() + (60*60*24*90)) . ' GMT';
+          $response->setHeaders(array(
+            'Content-Type'=>'image/png',
+            'Cache-Control'=> 'max-age=7776000, public',
+            'User-Cache-Control'=> 'max-age=7776000',
+            'Strict-Transport-Security'=> 'max-age=7776000',
+            'Expires'=>  $cache_expire_date,
+            'Pragma'=>  'cache',
+          ));
+          echo $image;
+          return $response;
         }
-        return die();
-      } else {
-        if ($file) {
-          $image_mime = image_type_to_mime_type(exif_imagetype($file));
-          if ($image_mime) {
-            header("Content-Type:" . $image_mime);
-            header('Cache-Control: max-age=86400, public');
-            echo $f;
-            return die();
-          }
+      } catch (exception $e) {
+        header("HTTP/1.1 200 OK");
+        echo "test";
+        die();
+      }
+      return die();
+    } else {
+      if ($f) {
+        $image_mime = image_type_to_mime_type(exif_imagetype($f));
+        if ($image_mime) {
+          header("Content-Type:" . $image_mime);
+          header('Cache-Control: max-age=86400, public');
+          header('Cache-Control: max-age=86400, public');
+          echo $f;
+          return die();
         }
       }
-    }
+    }*/
+
   }
 
   private function getURL($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 1);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,0);
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -140,33 +190,8 @@ class PageController extends Controller {
 
   }
 
-  private function writeFavIcon($content) {
-    // check if file exists and write to it if possible
-    try {
-      try {
-        $file = $this->appStorage->get('/myfile.txt');
-      } catch (\OCP\Files\NotFoundException $e) {
-        $this->appStorage->touch('data/myfile.txt');
-        $file = $this->appStorage->get('/myfile.txt');
-      }
 
-      // the id can be accessed by $file->getId();
-      $file->putContent($content);
-      //return true;
 
-    } catch (\OCP\Files\NotPermittedException $e) {
-      // you have to create this exception by yourself ;)
-      die('Cant write to file');
-      //return false;
-    }
-  }
 
-  private function getFavIcon($file) {
-    try {
-      $file = $this->appStorage->get('/myfile.txt');
-    } catch (\OCP\Files\NotFoundException $e) {
-      return false;
-    }
-  }
 
 }

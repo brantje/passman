@@ -60,8 +60,8 @@ class ItemApiController extends Controller {
    *
    * @NoAdminRequired
    */
-  public function getdeleted() {
-    $tags = $this->params('tags');
+  public function getdeleted($tags) {
+    //$tags = $this->params('tags');
     $tags = (empty($tags)) ? false : $tags;
     $result['items'] = $this->ItemBusinessLayer->getByTag($tags, $this->userId, true);
     return new JSONResponse($result);
@@ -70,8 +70,8 @@ class ItemApiController extends Controller {
   /**
    * @NoAdminRequired
    */
-  public function get($itemId) {
-    $itemId = $this->params('id');
+  public function get($id) {
+    $itemId = $id;
     $result['item'] = $this->ItemBusinessLayer->get($itemId, $this->userId);
 
     return new JSONResponse($result);
@@ -81,9 +81,9 @@ class ItemApiController extends Controller {
    * @NoAdminRequired
    *
    */
-  public function getbytag($itemId) {
-    $itemId = $this->params('id');
-    $tags = $this->params('tags');
+  public function getbytag($id,$tags) {
+    $itemId = $id;
+    //$tags = $this->params('tags');
     $tags = (empty($tags)) ? false : $tags;
     $result['items'] = $this->ItemBusinessLayer->getByTag($tags, $this->userId, false);
 
@@ -97,29 +97,26 @@ class ItemApiController extends Controller {
    *
    * @NoAdminRequired
    */
-  public function create() {
+  public function create($account,$created,$description,$email,$favicon,$label,$password,$expire_time,$url,$otpsecret,$tags,$customFields) {
     $errors = array();
     $userId = $this->userId;
-    $item['account'] = $this->params('account');
-    $item['created'] = $this->params('created');
-    $item['description'] = $this->params('description');
-    $item['email'] = $this->params('email');
-    $item['favicon'] = $this->params('favicon');
-    $item['label'] = $this->params('label');
-    $item['password'] = $this->params('password');
-    $item['expire_time'] = ($this->params('expire_time')) ? $this->params('expire_time') : 0;
+    $item['account'] = $account;
+    $item['created'] = $created;
+    $item['description'] = $description;
+    $item['email'] = $email;
+    $item['favicon'] = $favicon;
+    $item['label'] = $label;
+    $item['password'] =  $password;
+    $item['expire_time'] = ($expire_time) ? $expire_time : 0;
     $item['user_id'] = $this->userId;
-    $item['url'] = $this->params('url');
-    $item['otpsecret'] = $this->params('otpsecret');
-    $tags = $this->params('tags');
-    $customFields = $this->params('customFields');
+    $item['url'] = $url;
+    $item['otpsecret'] = $otpsecret;
+
 
     if (empty($item['label'])) {
       array_push($errors, 'Label is mandatory');
     }
-    if (empty($favicon)) {
-      $favicon = $this->faviconFetcher->fetch($url);
-    }
+
     if (empty($errors)) {
       $result['itemid'] = $this->ItemBusinessLayer->create($item);
       if (!empty($customFields)) {
@@ -158,38 +155,35 @@ class ItemApiController extends Controller {
    * @NoAdminRequired
    * @NoCSRFRequired
    */
-  public function update($itemId) {
+  public function update($id,$account,$created,$description,$email,$favicon,$label,$password,$expire_time,$delete_date=0,$url,$otpsecret,$tags,$customFields) {
     $errors = array();
 
     $item = array();
-    $item['id'] = $this->params('id');
-    $item['account'] = $this->params('account');
-    $item['created'] = $this->params('created');
-    $item['description'] = $this->params('description');
-    $item['email'] = $this->params('email');
-    $item['favicon'] = $this->params('favicon');
-    $item['label'] = $this->params('label');
-    $item['password'] = $this->params('password');
-    $item['expire_time'] = $this->params('expire_time');
-    $item['user_id'] = $this->params('user_id');
-    $item['delete_date'] = ($this->params('delete_date')) ? $this->params('delete_date') : 0;
-    $item['url'] = $this->params('url');
-    $item['otpsecret'] = $this->params('otpsecret');
-    $tags = $this->params('tags');
-    $customFields = $this->params('customFields');
+    $item['id'] = $id;
+    $item['account'] = $account;
+    $item['created'] = $created;
+    $item['description'] = $description;
+    $item['email'] = $email;
+    $item['favicon'] = $favicon;
+    $item['label'] = $label;
+    $item['password'] = $password;
+    $item['expire_time'] = $expire_time;
+    $item['user_id'] = $this->userId;
+    $item['delete_date'] = $delete_date;
+    $item['url'] = $url;
+    $item['otpsecret'] = $otpsecret; $this->params('otpsecret');
+
     $maxRenewalPeriod = 0;
     if (empty($label)) {
       array_push($item['label'], 'Label is mandatory');
     }
 
-    $curItem = $this->ItemBusinessLayer->get($itemId, $this->userId);
+    $curItem = $this->ItemBusinessLayer->get($id, $this->userId);
     if (empty($curItem)) {
       array_push($errors, 'Item not found');
     }
-    if (empty($item['favicon'])) {
-      $favicon = $this->faviconFetcher->fetch($url);
-      $favicon = (!empty($favicon)) ? $favicon : '';
-    }
+
+
     if (empty($errors)) {
 
 
@@ -231,8 +225,8 @@ class ItemApiController extends Controller {
   /**
    * @NoAdminRequired
    */
-  public function search($itemName) {
-    $deleted['deleted'] = $this->ItemBusinessLayer->search($this->params('q'), $this->userId);
+  public function search($q) {
+    $deleted['deleted'] = $this->ItemBusinessLayer->search($q, $this->userId);
     return new JSONResponse($deleted['deleted']);
   }
 
@@ -240,9 +234,8 @@ class ItemApiController extends Controller {
    * @NoCSRFRequired
    * @NoAdminRequired
    */
-  public function addtag() {
-    $itemId = (int)$this->params('itemId');
-    $tag = $this->params('tag');
+  public function addtag($itemId,$tag) {
+
 
     $item = $this->ItemBusinessLayer->get($itemId, $this->userId);
     $tags = explode(',', $item->tags);
@@ -256,8 +249,9 @@ class ItemApiController extends Controller {
    */
   public function delete($id) {
     $errors = array();
-    $itemId = $this->params('id');
-    $findItem = $this->ItemBusinessLayer->get($itemId);
+    $itemId = $id;
+	$userId = $this->userId;
+    $findItem = $this->ItemBusinessLayer->get($itemId,$userId);
     if (empty($findItem)) {
       array_push($errors, 'Item not found');
     }
@@ -274,6 +268,7 @@ class ItemApiController extends Controller {
    */
   public function deletefield($id) {
     $errors = array();
+	$result = array();
     $findItem = $this->ItemBusinessLayer->deleteField($id, $this->userId);
 
     return new JSONResponse($result['deleted']);
@@ -284,8 +279,9 @@ class ItemApiController extends Controller {
    */
   public function restore($id) {
     $errors = array();
-    $itemId = $this->params('id');
-    $findItem = $this->ItemBusinessLayer->get($itemId);
+    $itemId = $id;
+	$userId = $this->userId;
+    $findItem = $this->ItemBusinessLayer->get($itemId,$userId);
     if (empty($findItem)) {
       array_push($errors, 'Item not found');
     }
@@ -314,26 +310,26 @@ class ItemApiController extends Controller {
    * }
    * @NoAdminRequired
    */
-  public function addfile($itemId) {
+  public function addfile($item_id,$filename,$type,$mimetype,$size,$content) {
     //echo $itemId;
     $errors = array();
     $file = array();
-    $file['item_id'] = $this->params('item_id');
-    $file['filename'] = $this->params('filename');
-    $file['type'] = $this->params('type');
-    $file['mimetype'] = $this->params('mimetype');
-    $file['size'] = $this->params('size');
-    $file['content'] = $this->params('content');
+    $file['item_id'] = $item_id;
+    $file['filename'] = $filename;
+    $file['type'] = $type;
+    $file['mimetype'] = $mimetype;
+    $file['size'] = $size;
+    $file['content'] = $content;
     $file['user_id'] = $this->userId;
 
-    $checkId = $this->get($itemId);
+    $checkId = $this->get($item_id);
     if (empty($checkId)) {
       array_push($errors, 'Item not found');
     }
     if (empty($errors)) {
       $result = $this->ItemBusinessLayer->addFileToItem($file);
     } else {
-      $result['errors'] = $error;
+      $result['errors'] = $errors;
     }
     return new JSONResponse($result);
   }
@@ -345,6 +341,18 @@ class ItemApiController extends Controller {
    */
   public function getfile($id) {
     return new JSONResponse($this->ItemBusinessLayer->getFile($id, $this->userId));
+  }
+
+  /**
+   * GetFile get a single file and his content
+   *
+   * @NoAdminRequired
+   */
+  public function getfavicon($hash) {
+    $url = base64_decode($hash);
+    $favicon = $this->faviconFetcher->fetch($url);
+    $response['favicon'] = $favicon;
+    return new JSONResponse($response);
   }
 
   /**
