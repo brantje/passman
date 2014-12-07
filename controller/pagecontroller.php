@@ -13,6 +13,7 @@ namespace OCA\Passman\Controller;
 
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
+use \OCP\AppFramework\Http\Response;
 use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Controller;
 use \OCP\CONFIG;
@@ -85,50 +86,65 @@ class PageController extends Controller {
    * @NoCSRFRequired
    */
   public function imageproxy($hash) {
-    $hash = array_pop(explode('/', $_SERVER['REQUEST_URI']));
     $url = base64_decode($hash);
     if (filter_var($url, FILTER_VALIDATE_URL) === false) {
       die('Not a valid URL');
     }
-    $md5Url = md5($url);
-    if ($this->getFavIcon($md5Url)) {
-      echo 'get file';
-      //echo $this->getFavIcon($md5Url);
-    } else {
-      $f = $this->getURL($url);
-      $name = tempnam('/tmp', "imageProxy");
-      file_put_contents($name, $f);
-      if (extension_loaded('imagick') || class_exists("Imagick")) {
-        try {
-          $isIcon = (strpos($url, '.ico') !== false) ? 'ico:' : '';
-          $image = new \Imagick($isIcon . $name);
-          if ($image->valid()) {
-            $image->setImageFormat('png');
-            header("Content-Type: image/png");
-            header('Cache-Control: max-age=86400, public');
-
-            //$this->writeFavIcon($md5url, '123456789');
-            echo $image;
-
-          }
-        } catch (exception $e) {
-          header("HTTP/1.1 200 OK");
-          echo "test";
-          die();
+    $f = $this->getURL($url);
+    $name = tempnam('/tmp', "imageProxy");
+    file_put_contents($name, $f);
+    /*if (extension_loaded('imagick') || class_exists("Imagick")) {
+      try {
+        $isIcon = (strpos($url, '.ico') !== false) ? 'ico:' : '';
+        $image = new \Imagick($isIcon . $name);
+        if ($image->valid()) {
+          $image->setImageFormat('jpg');
+          //echo $image;
+          $response = New Response();
+          $response->setStatus(304);
+          $cache_expire_date = gmdate('D, d M Y H:i:s', time() + (60*60*24*90)) . ' GMT';
+          $response->setHeaders(array(
+            'Content-Type'=>'image/png',
+            'Cache-Control'=> 'max-age=7776000, public',
+            'User-Cache-Control'=> 'max-age=7776000',
+            'Strict-Transport-Security'=> 'max-age=7776000',
+            'Expires'=>  $cache_expire_date,
+            'Pragma'=>  'cache',
+          ));
+          echo $image;
+          return $response;
         }
-        return die();
-      } else {
-        if ($f) {
-          $image_mime = image_type_to_mime_type(exif_imagetype($f));
-          if ($image_mime) {
-            header("Content-Type:" . $image_mime);
-            header('Cache-Control: max-age=86400, public');
-            echo $f;
-            return die();
-          }
+      } catch (exception $e) {
+        header("HTTP/1.1 200 OK");
+        echo "test";
+        die();
+      }
+      return die();
+    } else {
+      if ($f) {
+        $image_mime = image_type_to_mime_type(exif_imagetype($f));
+        if ($image_mime) {
+          header("Content-Type:" . $image_mime);
+          header('Cache-Control: max-age=86400, public');
+          header('Cache-Control: max-age=86400, public');
+          echo $f;
+          return die();
         }
       }
-    }
+    }*/
+    $response = New Response();
+    $response->setStatus(304);
+    $cache_expire_date = gmdate('D, d M Y H:i:s', time() + (60*60*24*90)) . ' GMT';
+    $response->setHeaders(array(
+      'Content-Type'=>'image/png',
+      'Cache-Control'=> 'max-age=7776000, public',
+      'User-Cache-Control'=> 'max-age=7776000',
+      'Strict-Transport-Security'=> 'max-age=7776000',
+      'Expires'=>  $cache_expire_date,
+      'Pragma'=>  'cache',
+    ));
+    echo $f;
+    return $response;
   }
 
   private function getURL($url) {

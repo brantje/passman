@@ -5,7 +5,7 @@
 $(document).ready(function () {
   'use strict';
   /* Resize the pwList */
-  var resizeList = function(){
+  window.resizeList = function(){
     var containerHeight,containerWidth,listHeight;
     listHeight = $('#pwList').height();
     containerHeight = $('#app-content').height();
@@ -26,7 +26,7 @@ app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'of
     }]);
 
 
-app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout, settingsService) {
+app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout, settingsService,$rootScope) {
   'use strict';
   console.log('appCtrl');
   $scope.items = [];
@@ -71,6 +71,8 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
         return 0;
       });
       $scope.tags = tmp;
+      $rootScope.$broadcast('loaded');
+      $window.resizeList();
     });
   };
   //$scope.loadItems([]);
@@ -192,6 +194,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   };
 
   $scope.showEncryptionKeyDialog = function () {
+    $rootScope.$broadcast('loaded');
     $('#encryptionKeyDialog').dialog({
       draggable: false,
       resizable: false,
@@ -242,6 +245,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   /**
    *Onload -> Check if localstorage has key if not show dialog
    */
+
   if (!$.jStorage.get('encryptionKey')) {
     $scope.showEncryptionKeyDialog();
   } else {
@@ -676,7 +680,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   };
 });
 
-app.controller('settingsCtrl', function ($scope,$sce,$timeout) {
+app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
   $scope.settings = {
     PSC: {
       minStrength: 40,
@@ -718,7 +722,8 @@ app.controller('settingsCtrl', function ($scope,$sce,$timeout) {
     if(!$scope.shareSettingsLoaded){
       $scope.shareSettingsLoaded = true;
     } else {
-      console.log(newVal);
+      console.log($scope.userSettings)
+      settingsService.saveSettings($scope.userSettings);
       /** Settings have changed, if key size changed, generate new key pairs?? */
     }
   },true);

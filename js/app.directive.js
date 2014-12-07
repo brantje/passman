@@ -1,3 +1,34 @@
+app.directive('showLoaded', ['$rootScope',
+  function($rootScope) {
+    return {
+      restrict : 'A',
+      transclude : false,
+      scope : {
+        value : '=t'
+      },
+      link : function(scope, element) {
+        $rootScope.$on('loaded', function(){
+          element.css('display','block');
+        });
+      }
+    }
+  }]);
+app.directive('hideLoaded', ['$rootScope',
+  function($rootScope) {
+    return {
+      restrict : 'A',
+      transclude : false,
+      scope : {
+        value : '=t'
+      },
+      link : function(scope, element) {
+        $rootScope.$on('loaded', function(){
+          element.css('display','none');
+        });
+      }
+    }
+}]);
+
 app.directive('toggleTextStars', ['$compile',
   function ($compile, $tooltip) {
     return {
@@ -144,6 +175,29 @@ app.directive('fallbackSrc', function () {
     }
    }
    return fallbackSrc;
+});
+app.directive('imageProxy', function () {
+  return {
+    scope:{
+      image:'=',
+      fallback: '='
+    },
+    link: function postLink(scope, iElement, iAttrs) {
+      var src,hashedUrl;
+      if(scope.image) {
+        hashedUrl = window.btoa(scope.image)
+        src = OC.generateUrl('/apps/passman/imageproxy/' + hashedUrl+'.png');
+        //iElement.append('<img src="' + src + '" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" />')
+        iElement.attr("src",src)
+        iElement.bind('error', function() {
+          angular.element(this).attr("src", scope.fallback);
+        });
+      } else {
+        //iElement.append('<img src="' + scope.fallback + '" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" />')
+        iElement.attr("src",scope.fallback);
+      }
+    }
+  };
 });
 
 app.directive("fileread", ['ItemService',

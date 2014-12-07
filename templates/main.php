@@ -24,8 +24,12 @@
 
 
 ?>
-<div ng-app="passman" id="app" ng-controller="appCtrl">
-<div id="app-navigation" ng-controller="navigationCtrl">
+<div ng-app="passman" id="app" ng-controller="appCtrl" >
+<div class="loaderContainer" hide-loaded>
+  <div class="loader"></div>
+  <div class="text">Loading....</div>
+</div>
+<div id="app-navigation" ng-controller="navigationCtrl" style="display: none" show-loaded>
   <div id="searchTagContainer">
     <tags-input ng-model="selectedTags" removeTagSymbol="x" replace-spaces-with-dashes="false" min-length="1">
       <auto-complete source="loadTags($query)" min-length="1"></auto-complete>
@@ -71,7 +75,7 @@
     </div>
   </div>
 </div>
-<div id="app-content" ng-controller="contentCtrl">
+<div id="app-content" ng-controller="contentCtrl" style="display: none" show-loaded>
 <div id="topContent">
   <button class="button" id="addItem" ng-click="addItem()">Add item</button>
   <button class="button" id="editItem" ng-click="editItem(currentItem)"
@@ -86,12 +90,17 @@
   <li ng-repeat="item in items | orderBy: 'label' | filter: {'label': itemFilter}" ng-mouseover="mouseOver = true"
       ng-mouseleave="mouseOver = false; toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
       ng-class="{'row-active': item.id === currentItem.id}">
-    <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
-         style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
-         ng-if="item.favicon">
-    <img style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
-         ng-src="{{noFavIcon}}" ng-if="!item.favicon">
+    <!-- if no image proxy -->
+      <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
+           style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
+           ng-if="item.favicon && !userSettings.settings.useImageProxy">
+      <img style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
+           ng-src="{{noFavIcon}}" ng-if="!item.favicon && !userSettings.settings.useImageProxy">
+    <!-- end if -->
 
+    <!-- If image proxy === true -->
+    <img image-proxy image="item.favicon" fallback="noFavIcon" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" ng-if="userSettings.settings.useImageProxy">
+    <!--- // end  if-->
     <div style="display: inline-block;" class="itemLabel">{{item.label}}</div>
     <ul class="editMenu" ng-style="{visibility: mouseOver && 'visible' || 'hidden'}">
       <li ng-click="toggle.state = !toggle.state" ng-class="{'show' : toggle.state}" off-click=' toggle.state = false'
@@ -458,28 +467,32 @@
   <img id="fileImg" /><br />
   <span id="downloadImage"></span>
 </div>
-<div ng-controller="settingsCtrl" id="settingsDialog"  ng-init="tabActive=1" style="display: none;">
-  <div class="">
-    <div class="col-md-12 tabHeader nopadding" ng-class="'tab'+tabActive">
-      <div class="tab1 col-xs-3 col-md-2 nopadding"  ng-click="tabActive=1" ng-class="{'active': tabActive==1}">General</div>
-      <div class="tab2 col-xs-3 col-md-2 nopadding" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">Sharing</div>
-      <div class="tab3 col-xs-3 col-md-2 nopadding" ng-click="tabActive=3" ng-class="{'active': tabActive==3}">Tools</div>
-      <div class="tab4 col-xs-3 col-md-2 nopadding" ng-click="tabActive=4" ng-class="{'active': tabActive==4}">Bookmarklet</div>
-    </div>
-    <div class="col-md-12">
-      <div ng-show="tabActive==1" class="row">
-        <div class="col-md-11">
-          <label>Use image proxy on HTTP pages <input type="checkbox" ></label>
+  <div ng-controller="settingsCtrl" id="settingsDialog"  ng-init="tabActive=1" style="display: none;">
+    <div class="">
+      <div class="col-md-12 tabHeader nopadding" ng-class="'tab'+tabActive">
+        <div class="tab1 col-xs-3 col-md-2 nopadding"  ng-click="tabActive=1" ng-class="{'active': tabActive==1}">General</div>
+        <div class="tab2 col-xs-3 col-md-2 nopadding" ng-click="tabActive=2" ng-class="{'active': tabActive==2}">Sharing</div>
+        <div class="tab3 col-xs-3 col-md-2 nopadding" ng-click="tabActive=3" ng-class="{'active': tabActive==3}">Tools</div>
+        <div class="tab4 col-xs-3 col-md-2 nopadding" ng-click="tabActive=4" ng-class="{'active': tabActive==4}">Bookmarklet</div>
+      </div>
+      <div class="col-md-12">
+        <div ng-show="tabActive==1" class="row">
+          <div class="col-md-11">
+            <h2>General settings</h2>
+
+            <label><input type="checkbox" ng-model="userSettings.settings.useImageProxy"> Use image proxy (PHP module imagick must be installed)</label>
+          </div>
+        </div>
       </div>
       <div ng-show="tabActive==2" class="row">
         <div class="col-sm-5">
-            <label>Key size<select ng-model="userSharingSettings.settings.shareKeySize">
-                <option value="1024">Low (1024 bit)</option>
-                <option value="2048">Medium (2048 bit)</option>
-                <option value="4096">High (4096)</option>
+          <label>Key size<select ng-model="userSharingSettings.settings.shareKeySize">
+              <option value="1024">Low (1024 bit)</option>
+              <option value="2048">Medium (2048 bit)</option>
+              <option value="4096">High (4096)</option>
             </select></label>
-            <label>Setting 2 <input type="checkbox"></label>
-            <label>Setting 3 <input type="checkbox"></label>
+          <label>Setting 2 <input type="checkbox"></label>
+          <label>Setting 3 <input type="checkbox"></label>
         </div>
         <div class="col-sm-5">
           <label>Renew sharing keys: <input type="button" ng-click="renewSharingKeys()"></label>
@@ -490,30 +503,30 @@
       </div>
       <div ng-show="tabActive==3" class="row">
         <div class="col-md-11">
-        <p>Here you can indentify weak passwords, we will list the items. List all password with a rating less than</p>
-        <input type="text" ng-model="settings.PSC.minStrength" />
-        <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
-        <div style="max-height: 300px; overflow-y: auto;">
-          <table ng-table="tableParams" class="table" style="width: 100%;">
-            <tr>
-              <td>Label</td>
-              <td>Score</td>
-              <td>Password</td>
-            </tr>
-            <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
-              <td>{{item.label}}</td>
-              <td>{{item.score}}</td>
-              <td><span pw="item.password" toggle-text-stars></span> <a
-                  ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a></td>
-            </tr>
-          </table>
-         </div>
+          <p>Here you can indentify weak passwords, we will list the items. List all password with a rating less than</p>
+          <input type="text" ng-model="settings.PSC.minStrength" />
+          <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
+          <div style="max-height: 300px; overflow-y: auto;">
+            <table ng-table="tableParams" class="table" style="width: 100%;">
+              <tr>
+                <td>Label</td>
+                <td>Score</td>
+                <td>Password</td>
+              </tr>
+              <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
+                <td>{{item.label}}</td>
+                <td>{{item.score}}</td>
+                <td><span pw="item.password" toggle-text-stars></span> <a
+                    ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a></td>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
       <div ng-show="tabActive==4" class="row">
         <div class="col-md-11">
-        <p>Drag this to your browser bookmarks and click it, when you want to save username / password quickly</p><br />
-        <p ng-bind-html="bookmarklet"></p>
+          <p>Drag this to your browser bookmarks and click it, when you want to save username / password quickly</p><br />
+          <p ng-bind-html="bookmarklet"></p>
         </div>
       </div>
     </div>
