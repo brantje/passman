@@ -290,8 +290,15 @@
           <tags-input ng-model="currentItem.tags" removeTagSymbol="x" min-length="1" replace-spaces-with-dashes="false">
             <auto-complete source="loadTags($query)" min-length="1" max-results-to-show="2"></auto-complete>
           </tags-input>
+		    </div>
+        <div class="col-xs-9">
+          <div class="currentTags">
+            <div ng-repeat="tag in currentItem.tags" class="pull-left tag">
+              {{tag.text}} <span ng-click="removeTag(tag)" class="icon icon-delete"></span>
+            </div>
+          </div>
         </div>
-      </div>
+        </div>
     </div>
     <div class="row nomargin" ng-show="tabActive==2">
       <div class="row">
@@ -435,6 +442,7 @@
       </div>
     </div>
     <div class="row nomargin" ng-show="tabActive==5">
+
       <div class="col-xs-12">
         <div class="col-xs-2 nopadding">
           OTP type

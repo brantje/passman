@@ -564,6 +564,16 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     }
   }, true);
 
+  $scope.removeTag =function(tag){
+    var idx;
+    angular.forEach($scope.currentItem.tags,function(t){
+      if(tag.text === t.text){
+        idx = $scope.currentItem.tags.indexOf(t);
+        $scope.currentItem.tags.splice(idx,1);
+      }
+    });
+  }
+
   $scope.updateFavIcon = function(){
     $scope.loadingIcon = true;
     var hashedUrl = window.btoa( $scope.currentItem.url)

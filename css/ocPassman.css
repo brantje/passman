@@ -227,6 +227,7 @@ div#topContent {
 	float: left;
 	background-repeat: no-repeat;
 	background-position: 3px 6px;
+  cursor: pointer;
 }
 #pwList > li div {
 	float: left;
@@ -301,7 +302,28 @@ div[aria-describedby="editAddItemDialog"] {
 #pwTools input {
   width: 30px;
 }
-
+.currentTags {
+  margin-top: 5px;
+}
+.currentTags .tag{
+  background-color: #C1CDE4;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 3px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+.currentTags .tag .icon-delete {
+  float: right;
+  margin-top: 2px;
+  height: 16px !important;
+  width: 10px !important;
+  min-height: 0px;
+  min-width: 0px;
+  margin-left: 3px;
+  margin-right: 3px;;
+}
 /*--- DROPDOWN ---*/
 .editMenu{
   list-style:none;
@@ -707,6 +729,9 @@ table.table tr td:nth-child(2) {
 .tabHeader.tab5{
   border-bottom: 3px solid rgb(84, 197, 124);
 }
+.tabHeader.tab6{
+  border-bottom: 3px solid rgb(151, 197, 44);
+}
 
 .tabHeader > div {
   height: 26px;
@@ -732,6 +757,9 @@ table.table tr td:nth-child(2) {
 .tabHeader > div.active.tab5{
   background: rgb(84, 197, 124);
 }
+.tabHeader > div.active.tab6{
+  background: rgb(151, 197, 44);
+}
 
 .tabHeader > div.active {
   -webkit-transition: background-color 500ms ease-in ;
@@ -749,9 +777,7 @@ table.table tr td:nth-child(2) {
 .otpSecret{
   width: 40% !important;
 }
-tags-input{
-  width: auto !important;
-}
+
 .label_cpm{
   position: absolute;
 }

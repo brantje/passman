@@ -112,7 +112,7 @@ function($compile,$timeout) {
           $timeout.cancel(scope.timer);
         }
       },true);
-      var html = '<span pw="otp" toggle-text-stars></span> <a clip-copy="otp" clip-click="copiedotp()" class="link">[Copy]</a> Time left: {{timeleft}}';
+      var html = '<span pw="otp" toggle-text-stars></span> <a clip-copy="otp" clip-click="copiedotp()" class="link">[Copy]</a> Time left: <span ng-bind="timeleft"></span>';
       element.html($compile(html)(scope));
 
       scope.$on(
