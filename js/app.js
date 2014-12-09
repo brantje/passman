@@ -17,10 +17,29 @@ $(document).ready(function () {
   };
   $(window).resize(resizeList);
   resizeList();
+  var lastTime;
+  $(document).on('keyup',function(evt){
+    console.log(evt);
+    if(evt.keyCode === 16){
+      if(!lastTime){
+        lastTime = new Date().getTime();
+        console.log(lastTime);
+      } else {
+        var curr = new Date().getTime();
+        if(curr-lastTime < 2000){
+          console.log('search');
+          $('#itemSearch').focus();
+          lastTime = null;
+        } else {
+          lastTime = null;
+        }
+      }
+    }
+  });
 });
 
 var app;
-app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
+app = angular.module('passman', ['ngSanitize', 'ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
     function ($httpProvider) {
         $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
     }]);
@@ -284,7 +303,7 @@ app.controller('navigationCtrl', function ($scope, TagService) {
 
 });
 
-app.controller('contentCtrl', function ($scope, $sce, ItemService) {
+app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
   console.log('contentCtrl');
   $scope.currentItem = {};
   $scope.editing = false;
@@ -308,7 +327,11 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
         item.otpsecret = $scope.decryptObject(item.otpsecret);
       }
     }
-
+    if(item.url){
+      if(item.url.indexOf('https:') === -1 && item.url.indexOf('http:') === -1){
+        item.url = 'http://'+ item.url;
+      }
+    }
     item.decrypted = true;
     $scope.currentItem = item;
     $scope.currentItem.passwordConfirm = item.password;
@@ -343,7 +366,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService) {
   };
 
   $scope.shareItem = function (item) {
-    $scope.$broadcast('shareItem', item);
+    $rootScope.$broadcast('shareItem', item);
   };
 
   $scope.deleteItem = function (item, softDelete) {
@@ -748,7 +771,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
 
 });
 
-app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout) {
+app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$rootScope) {
   $scope.shareSettings = {allowShareLink: false, shareWith: []};
   $scope.loadUserAndGroups = function ($query) {
     /* Enter the url where we get the search results for $query
@@ -824,7 +847,7 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout) {
   /**
    *Catch the shareItem event
    */
-  $scope.$on('shareItem', function (event, data) {
+  $rootScope.$on('shareItem', function (event, data) {
     if (event) {
       shareItem(data);
       if(!$scope.userSettings.settings.sharing.shareKeys){

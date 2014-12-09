@@ -84,11 +84,11 @@
   <button class="button" id="deleteItem" ng-click="deleteItem(currentItem,true)"
           ng-show="currentItem">Delete item
   </button>
-  <input type="text" ng-model="itemFilter" class="visible-md visible-lg visible-sm pull-right searchbox" placeholder="Search..." />
+  <input type="text" id="itemSearch" ng-model="itemFilter" class="visible-md visible-lg visible-sm pull-right searchbox" placeholder="Search..." />
 </div>
 <ul id="pwList">
-  <li ng-repeat="item in items | orderBy: 'label' | filter: {'label': itemFilter}" ng-mouseover="mouseOver = true"
-      ng-mouseleave="mouseOver = false; toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
+  <li ng-repeat="item in items | orderBy: 'label' | filter: {'label': itemFilter}"
+      ng-mouseleave="toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
       ng-class="{'row-active': item.id === currentItem.id}">
     <!-- if no image proxy -->
       <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
@@ -101,15 +101,15 @@
     <!-- If image proxy === true -->
     <img image-proxy image="item.favicon" fallback="noFavIcon" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" ng-if="userSettings.settings.useImageProxy">
     <!--- // end  if-->
-    <div style="display: inline-block;" class="itemLabel">{{item.label}}</div>
-    <ul class="editMenu" ng-style="{visibility: mouseOver && 'visible' || 'hidden'}">
+    <div style="display: inline-block;" class="itemLabel">{{item.label}} </div> <i class="icon-rename icon" ng-click="editItem(item)" title="Edit"></i>
+    <ul class="editMenu">
       <li ng-click="toggle.state = !toggle.state" ng-class="{'show' : toggle.state}" off-click=' toggle.state = false'
           off-click-if='toggle.state'>
         <span class="icon-caret-dark more"></span>
         <ul ng-if="!showingDeletedItems">
           <li><a ng-click="editItem(item)">Edit</a></li>
-          <li><a ng-click="deleteItem(item,true )">Delete</a></li>
           <li><a ng-click="shareItem(item)">Share</a></li>
+          <li><a ng-click="deleteItem(item,true )">Delete</a></li>
         </ul>
         <ul ng-if="showingDeletedItems">
           <li><a ng-click="recoverItem(item)">Restore</a></li>
@@ -196,7 +196,7 @@
         <span>URL</span> :
       </td>
       <td>
-        {{currentItem.url}} <a clip-copy="currentItem.url" clip-click="copied('URL')" class="link">[Copy]</a>
+        {{currentItem.url}} <a clip-copy="currentItem.url" clip-click="copied('URL')" class="link">[Copy]</a> <a ng-href="{{currentItem.url}}" class="link" target="_blank">[Open]</a>
       </td>
     </tr>
     <tr ng-show="currentItem.files.length > 0 && currentItem.files">
@@ -285,7 +285,7 @@
       <div class="row">
         <div class="col-xs-1 formLabel">Tags</div>
         <div class="col-xs-7">
-          <tags-input ng-model="currentItem.tags" removeTagSymbol="x" min-length="1" replace-spaces-with-dashes="false">
+          <tags-input ng-model="currentItem.tags" class="inputCurrentTags" removeTagSymbol="x" min-length="1" replace-spaces-with-dashes="false">
             <auto-complete source="loadTags($query)" min-length="1" max-results-to-show="2"></auto-complete>
           </tags-input>
 		    </div>
