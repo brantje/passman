@@ -259,6 +259,11 @@ td.td_title {
 	list-style: none;
 	min-width: 150px;
 }
+#pwList li .icon-rename{
+  visibility: hidden;
+}#pwList li:hover .icon-rename{
+   visibility: visible;
+ }
 .editMenu .more{
   height: 20px;
   width: 20px;
@@ -314,6 +319,9 @@ div[aria-describedby="editAddItemDialog"] {
 #pwTools input {
   width: 30px;
 }
+.inputCurrentTags .host .tags .tag-list {
+  display: none;
+}
 .currentTags {
   margin-top: 5px;
 }
@@ -337,6 +345,11 @@ div[aria-describedby="editAddItemDialog"] {
   margin-right: 3px;;
 }
 /*--- DROPDOWN ---*/
+#pwList li .editMenu{
+  visibility: hidden;
+}#pwList li:hover .editMenu{
+  visibility: visible;
+}
 .editMenu ul{
   background:#fff; /* Adding a background makes the dropdown work properly in IE7+. Make this as close to your page's background as possible (i.e. white page == white background). */
   background:rgba(255,255,255,0); /* But! Let's make the background fully transparent where we can, we don't actually want to see it if we can help it... */
