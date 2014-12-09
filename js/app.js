@@ -10,9 +10,9 @@ $(document).ready(function () {
     listHeight = $('#pwList').height();
     containerHeight = $('#app-content').height();
     containerWidth = $('#app-content').width();
-    $('#pwList').height(containerHeight - $('#infoContainer').height() - 60);
+    console.log(listHeight)
+    $('#pwList').height(containerHeight - $('#infoContainer').height() - 85);
     $('#pwList').width(containerWidth - 2);
-    $('#infoContainer').width(containerWidth - 2);
     $('#topContent').width(containerWidth - 2);
   };
   $(window).resize(resizeList);
@@ -284,7 +284,7 @@ app.controller('navigationCtrl', function ($scope, TagService) {
 
 });
 
-app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$window,$timeout) {
+app.controller('contentCtrl', function ($scope, $sce, ItemService) {
   console.log('contentCtrl');
   $scope.currentItem = {};
   $scope.editing = false;
@@ -313,10 +313,6 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$wi
     $scope.currentItem = item;
     $scope.currentItem.passwordConfirm = item.password;
     $scope.requiredPWStrength = 0;
-    $scope.resizeWintimer = $timeout(function(){
-      $window.resizeList();
-      $timeout.cancel($scope.resizeWintimer);
-    },50);
   };
 
   $scope.recoverItem = function (item) {
@@ -347,7 +343,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$wi
   };
 
   $scope.shareItem = function (item) {
-    $rootScope.$broadcast('shareItem', item);
+    $scope.$broadcast('shareItem', item);
   };
 
   $scope.deleteItem = function (item, softDelete) {
@@ -481,8 +477,8 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$wi
     $('#editAddItemDialog').dialog({
       title: 'Edit item',
       width: 360,
-      /*minHeight: 480,*/
-     /* height:480,*/
+      minHeight: 480,
+      height:480,
       position:['center','top+30'],
       open: function(){
         $('#labell').blur();
@@ -575,24 +571,19 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   }
 
   $scope.updateFavIcon = function(){
-    $scope.loadingIcon = true;
     var hashedUrl = window.btoa( $scope.currentItem.url)
     $.get(OC.generateUrl('apps/passman/api/v1/item/getfavicon/'+ hashedUrl),function(data){
       $scope.currentItem.favicon = data.favicon;
-      $scope.loadingIcon = false;
     });
-  };
+  }
 
-  $('#editAddItemDialog').on( "dialogclose", function( event, ui ) {
+  $scope.closeDialog = function () {
+    $('#editAddItemDialog').dialog('close');
     $scope.generatedPW = '';
     $scope.currentPWInfo = {};
     $scope.currentItem.overrrideComplex = false;
     $scope.editing = false;
     $scope.errors = [];
-  });
-  $scope.closeDialog = function () {
-    $('#editAddItemDialog').dialog('close');
-
   };
   $scope.generatePW = function () {
     $scope.generatedPW = generatePassword($scope.pwSettings.length, $scope.pwSettings.upper, $scope.pwSettings.lower, $scope.pwSettings.digits, $scope.pwSettings.special, $scope.pwSettings.mindigits, $scope.pwSettings.ambig, $scope.pwSettings.reqevery);
@@ -757,7 +748,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
 
 });
 
-app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$rootScope) {
+app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout) {
   $scope.shareSettings = {allowShareLink: false, shareWith: []};
   $scope.loadUserAndGroups = function ($query) {
     /* Enter the url where we get the search results for $query
@@ -833,7 +824,7 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
   /**
    *Catch the shareItem event
    */
-  $rootScope.$on('shareItem', function (event, data) {
+  $scope.$on('shareItem', function (event, data) {
     if (event) {
       shareItem(data);
       if(!$scope.userSettings.settings.sharing.shareKeys){

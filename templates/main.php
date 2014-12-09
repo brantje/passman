@@ -87,8 +87,8 @@
   <input type="text" ng-model="itemFilter" class="visible-md visible-lg visible-sm pull-right searchbox" placeholder="Search..." />
 </div>
 <ul id="pwList">
-  <li ng-repeat="item in items | orderBy: 'label' | filter: {'label': itemFilter}"
-      ng-mouseleave="toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
+  <li ng-repeat="item in items | orderBy: 'label' | filter: {'label': itemFilter}" ng-mouseover="mouseOver = true"
+      ng-mouseleave="mouseOver = false; toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
       ng-class="{'row-active': item.id === currentItem.id}">
     <!-- if no image proxy -->
       <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
@@ -102,7 +102,7 @@
     <img image-proxy image="item.favicon" fallback="noFavIcon" style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" ng-if="userSettings.settings.useImageProxy">
     <!--- // end  if-->
     <div style="display: inline-block;" class="itemLabel">{{item.label}}</div>
-    <ul class="editMenu" ng-style="{visibility: item.id===currentItem.id && 'visible' || 'hidden'}">
+    <ul class="editMenu" ng-style="{visibility: mouseOver && 'visible' || 'hidden'}">
       <li ng-click="toggle.state = !toggle.state" ng-class="{'show' : toggle.state}" off-click=' toggle.state = false'
           off-click-if='toggle.state'>
         <span class="icon-caret-dark more"></span>
@@ -196,7 +196,7 @@
         <span>URL</span> :
       </td>
       <td>
-        {{currentItem.url}} <a ng-href="{{currentItem.url}}" target="_blank" class="link">[Open url]</a> <a clip-copy="currentItem.url" clip-click="copied('URL')" class="link">[Copy]</a>
+        {{currentItem.url}} <a clip-copy="currentItem.url" clip-click="copied('URL')" class="link">[Copy]</a>
       </td>
     </tr>
     <tr ng-show="currentItem.files.length > 0 && currentItem.files">
@@ -278,11 +278,9 @@
       <div class="row">
         <div class="col-xs-1 formLabel">URL</div>
         <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.url" autocomplete="off" ng-blur="updateFavIcon()"></div>
-      </div>
-      <div class="row">
+      </div><div class="row">
         <div class="col-xs-1 formLabel">Icon</div>
-        <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.favicon" autocomplete="off"></div>
-        <div class="col-xs-1">  <div class="loaderSmall" style="margin-top: 5px;" ng-show="loadingIcon"> </div></div>
+        <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.favicon" autocomplete="off"> </div>
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Tags</div>
