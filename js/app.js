@@ -167,6 +167,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
       position:['center','top+50'],
       open: function(){
         $('.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix').remove();
+        console.log($scope.userSettings);
       }
     });
   };
@@ -771,7 +772,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
 
 });
 
-app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$rootScope) {
+app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$rootScope,$location) {
   $scope.shareSettings = {allowShareLink: false, shareWith: []};
   $scope.loadUserAndGroups = function ($query) {
     /* Enter the url where we get the search results for $query
@@ -795,6 +796,7 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
    * The function used for sharing
    */
   var shareItem = function (rawItem) {
+
     var item = angular.copy(rawItem), encryptedFields = ['account', 'email', 'password', 'description'], i;
     if (!item.decrypted) {
       for (i = 0; i < encryptedFields.length; i++) {
@@ -831,6 +833,20 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
         }
       }
     });
+
+    if ($location.protocol() === 'http') {
+      $('#shareDialog').dialog('close');
+      $('<div>Sharing over http might be insecure <a href="" target="_blank" class="link">[Read more]</a></div>').dialog({
+        modal: true,
+        width: 315,
+        buttons: {
+          "close": function (event, ui) {
+            $(this).dialog('destroy');
+            $('#shareDialog').dialog('open');
+          }
+        }
+      });
+    }
 
     $scope.createSharedItem = function () {
       item = angular.copy($scope.sharingItem);
