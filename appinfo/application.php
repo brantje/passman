@@ -12,6 +12,7 @@
 namespace OCA\Passman\AppInfo;
 
 
+use OCA\Passman\Controller\NotificationController;
 use \OCP\AppFramework\App;
 
 
@@ -84,6 +85,14 @@ class Application extends App {
         $c->query('UserId'),
         $c->query('TagBusinessLayer'),
         $c->query('ShareManager')
+      );
+    });
+
+    $container->registerService('NotificationController', function ($c) {
+      return new NotificationController(
+        $c->query('AppName'),
+        $c->query('Request'),
+        $c->query('UserId')
       );
     });
 
