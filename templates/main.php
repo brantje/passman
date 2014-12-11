@@ -513,14 +513,13 @@
               <option value="2048">Medium (2048 bit)</option>
               <option value="4096">High (4096)</option>
             </select></label>
-          <label>Setting 2 <input type="checkbox"></label>
-          <label>Setting 3 <input type="checkbox"></label>
+          Public key<br >
+          <textarea style="width: 100%; height: 200px;" >{{userSettings.settings.sharing.shareKeys.pubKeyObj}}</textarea>
         </div>
         <div class="col-sm-5">
-          <label>Renew sharing keys: <input type="button" ng-click="renewSharingKeys()"></label>
-          <label>Setting 7 <input type="checkbox"></label>
-          <label>Setting 8 <input type="checkbox"></label>
-          <label>Setting 9 <input type="checkbox"></label>
+          <label>Renew sharing keys: <input type="button" ng-click="renewShareKeys()" value="Renew"></label>
+          Private key<br />
+          <textarea style="width: 100%; height: 200px;">{{userSettings.settings.sharing.shareKeys.prvKeyObj}}</textarea>
         </div>
       </div>
       <div ng-show="tabActive==3" class="row">

@@ -57,6 +57,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.expireNotificationShown = false;
   settingsService.getSettings().success(function(data){
     $scope.userSettings = data;
+    $window.userSettings = data;
   });
 
   $scope.loadItems = function (tags, showDeleted) {
@@ -753,9 +754,11 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
     }
   };
 
-  $scope.renewSharingKeys = function(){
-
+  $scope.renewShareKeys = function(){
+    var keypair = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+    $scope.userSettings.settings.sharing.shareKeys = keypair;
   };
+
 
   $scope.$watch("userSettings",function(newVal){
     if(!newVal){
