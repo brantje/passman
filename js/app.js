@@ -371,6 +371,11 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
     $rootScope.$broadcast('shareItem', item);
   };
 
+  $scope.showRevisions = function (item) {
+
+    $rootScope.$broadcast('showRevisions', item);
+  };
+
   $scope.deleteItem = function (item, softDelete) {
     var i, idx;
     if (softDelete) {
@@ -774,7 +779,25 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
   },true);
 
 });
+app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope) {
+  console.log('revisionCtrl')
+  $rootScope.$on('showRevisions', function (event, item) {
+    RevisionService.getRevisions(item.id).success(function(data){
+        $scope.revisions = data;
+        $('#revisions').dialog({
+          width: 400,
+          title: 'Revisions of '+ item.label,
+          position:['center','top+30'],
+          buttons:{
+            "close": function(){
+              $(this).dialog('destroy');
+            }
+          }
+        });
+    });
+  });
 
+});
 app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$rootScope,$location) {
   $scope.shareSettings = {allowShareLink: false, shareWith: []};
   $scope.loadUserAndGroups = function ($query) {

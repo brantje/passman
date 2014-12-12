@@ -63,6 +63,9 @@ $application->registerRoutes($this, array(
     array('name' => 'item_api#getfile', 'url' => '/api/v1/item/file/{id}', 'verb' => 'GET'),
     array('name' => 'item_api#deletefile', 'url' => '/api/v1/item/file/{id}', 'verb' => 'DELETE'),
 
+    array('name' => 'revision#save', 'url' => '/api/v1/item/{id}/history', 'verb' => 'PUT'),
+    array('name' => 'revision#getrevisions', 'url' => '/api/v1/item/{id}/history', 'verb' => 'GET'),
+
 
     array('name' => 'share#search', 'url' => '/api/v1/sharing/search', 'verb' => 'GET'),
 

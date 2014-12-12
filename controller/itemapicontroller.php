@@ -24,16 +24,18 @@ class ItemApiController extends Controller {
   private $ItemBusinessLayer;
   private $tagBusinessLayer;
   private $faviconFetcher;
+  private $revisionController;
   public $request;
 
 
-  public function __construct($appName, IRequest $request, ItemBusinessLayer $ItemBusinessLayer, $userId, $tagBusinessLayer, $faviconFetcher) {
+  public function __construct($appName, IRequest $request, ItemBusinessLayer $ItemBusinessLayer, $userId, $tagBusinessLayer, $faviconFetcher, $revisionController) {
     parent::__construct($appName, $request);
     $this->userId = $userId;
     $this->ItemBusinessLayer = $ItemBusinessLayer;
     $this->tagBusinessLayer = $tagBusinessLayer;
     $this->request = $request;
     $this->faviconFetcher = $faviconFetcher;
+    $this->revisionController = $revisionController;
   }
 
 
@@ -216,6 +218,7 @@ class ItemApiController extends Controller {
         $item['expire_time'] = strtotime("+" . $maxRenewalPeriod . " days") * 1000;
       }
       $result['success'] = $this->ItemBusinessLayer->update($item);
+      $this->revisionController->save($item['id'],json_encode($curItem));
     } else {
       $result['errors'] = $errors;
     }
