@@ -1,6 +1,3 @@
-::-webkit-scrollbar {
-  width: 4px;
-}
 .loaderContainer{
   height: 140px;
   width: 120px;
@@ -23,20 +20,19 @@
   width: 120px;
   border-radius: 120px;
   animation: 1.1s linear 0s normal none infinite running load8;
-  -webkit-animation: load8 1.1s infinite linear;
 }
-.loaderSmall{
-  border-bottom: 5px solid #1d2d44;
-  border-left: 5px solid #c9c9c9;
-  border-right: 5px solid #c9c9c9;
-  border-top: 5px solid #c9c9c9;
-  height: 15px;
-  width: 15px;
-  border-radius: 15px;
-  animation: 1.1s linear 0s normal none infinite running load8;
-  -webkit-animation: load8 1.1s infinite linear;
+@keyframes load8 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-@-webkit-keyframes load8{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes load8{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}
+#app-navigation li {
+	width: auto;
+
+}
 #app-navigation li > a {
 	display: block;
 	width: auto;
@@ -135,6 +131,7 @@ color: #333;
 	padding: 0px 8px 0px 8px;
 	margin: 0 4px;
 	cursor: pointer;
+	line-height: 21px;
 	line-height: 19px;
 	margin-top: 4px;
 }
@@ -215,14 +212,6 @@ div#topContent {
 	line-height: 30px;
 
 }
-#pwList li > img{
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
 #pwList li > span:first-child {
 	float: left;
 	background-repeat: no-repeat;
@@ -236,12 +225,7 @@ div#topContent {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 80%;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+
 }
 
 #pwList li > i {
@@ -257,10 +241,9 @@ div#infoContainer {
 	width: 100%;
 	border-top: 1px solid #ccc;
 	background: rgba(239, 239, 239, 1.0);
-	padding-bottom: 10px;
+	padding-bottom: 35px;
 	padding-top: 10px;
-  max-height: 190px;
-  height: auto;
+	height: 190px;
 	overflow: auto;
 }
 td.td_title {
@@ -276,13 +259,47 @@ td.td_title {
 	list-style: none;
 	min-width: 150px;
 }
-
+#pwList li .icon-rename{
+  visibility: hidden;
+}#pwList li:hover .icon-rename{
+   visibility: visible;
+ }
+.editMenu .more{
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+}
+.editMenu{
+  list-style:none;
+  font-weight:bold;
+  /*margin-bottom:10px;*/
+  /* Clear floats */
+  width:10px;
+  /* Bring the nav above everything else--uncomment if needed.
+  position:relative;
+  z-index:5;
+  */
+ margin-right: 15px;
+ cursor: pointer;
+}
+.editMenu li{
+  float:left;
+  margin-right:10px;
+  position:relative;
+}
+.editMenu a{
+  display:block;
+  /*padding:5px;
+  color:#fff;
+  background:#333;*/
+  text-decoration:none;
+}
 #editAddItemDialog{
-  /*height: 390px !important;*/
+  height: 390px !important;
 }
 div[aria-describedby="editAddItemDialog"] {
- /* height: 490px !important;
-  max-height: 490px;*/
+  height: 490px !important;
+  max-height: 490px;
 }
 #pwTools {
   text-align: left;
@@ -301,6 +318,9 @@ div[aria-describedby="editAddItemDialog"] {
 }
 #pwTools input {
   width: 30px;
+}
+.inputCurrentTags .host .tags .tag-list {
+  display: none;
 }
 .currentTags {
   margin-top: 5px;
@@ -325,32 +345,10 @@ div[aria-describedby="editAddItemDialog"] {
   margin-right: 3px;;
 }
 /*--- DROPDOWN ---*/
-.editMenu{
-  list-style:none;
-  font-weight:bold;
-  /*margin-bottom:10px;*/
-  /* Clear floats */
-  width:15px;
-  /* Bring the nav above everything else--uncomment if needed.
-  position:relative;
-  z-index:5;
-  */
-  margin-right: 15px;
-  cursor: pointer;
-  /* Clear floats */
-  float:right;
-}
-.editMenu li{
-  float:left;
-  margin-right:10px;
-  position:relative;
-}
-.editMenu a{
-  display:block;
-  /*padding:5px;
-  color:#fff;
-  background:#333;*/
-  text-decoration:none;
+#pwList li .editMenu{
+  visibility: hidden;
+}#pwList li:hover .editMenu{
+  visibility: visible;
 }
 .editMenu ul{
   background:#fff; /* Adding a background makes the dropdown work properly in IE7+. Make this as close to your page's background as possible (i.e. white page == white background). */
@@ -362,7 +360,7 @@ div[aria-describedby="editAddItemDialog"] {
 }
 .editMenu ul li{
   padding-top:1px; /* Introducing a padding between the li and the a give the illusion spaced items */
- /* float:none; */
+  float:none;
 }
 .editMenu ul a{
   white-space:nowrap; /* Stop text wrapping and creating multi-line dropdown items */
@@ -392,7 +390,10 @@ div[aria-describedby="editAddItemDialog"] {
   opacity: 1;
 } 
 .editMenu{
-
+  list-style:none;
+  font-weight:bold;
+  /* Clear floats */
+  float:right;
   /* Bring the nav above everything else--uncomment if needed.
   position:relative;
   z-index:5;
