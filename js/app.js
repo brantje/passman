@@ -10,17 +10,36 @@ $(document).ready(function () {
     listHeight = $('#pwList').height();
     containerHeight = $('#app-content').height();
     containerWidth = $('#app-content').width();
-    $('#pwList').height(containerHeight - $('#infoContainer').height() - 60);
+    console.log(listHeight)
+    $('#pwList').height(containerHeight - $('#infoContainer').height() - 85);
     $('#pwList').width(containerWidth - 2);
-    $('#infoContainer').width(containerWidth - 2);
     $('#topContent').width(containerWidth - 2);
   };
   $(window).resize(resizeList);
   resizeList();
+  var lastTime;
+  $(document).on('keyup',function(evt){
+    console.log(evt);
+    if(evt.keyCode === 16){
+      if(!lastTime){
+        lastTime = new Date().getTime();
+        console.log(lastTime);
+      } else {
+        var curr = new Date().getTime();
+        if(curr-lastTime < 2000){
+          console.log('search');
+          $('#itemSearch').focus();
+          lastTime = null;
+        } else {
+          lastTime = null;
+        }
+      }
+    }
+  });
 });
 
 var app;
-app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
+app = angular.module('passman', ['ngSanitize', 'ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
     function ($httpProvider) {
         $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
     }]);
@@ -38,6 +57,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.expireNotificationShown = false;
   settingsService.getSettings().success(function(data){
     $scope.userSettings = data;
+    $window.userSettings = data;
   });
 
   $scope.loadItems = function (tags, showDeleted) {
@@ -148,6 +168,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
       position:['center','top+50'],
       open: function(){
         $('.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix').remove();
+        console.log($scope.userSettings);
       }
     });
   };
@@ -284,7 +305,7 @@ app.controller('navigationCtrl', function ($scope, TagService) {
 
 });
 
-app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$window,$timeout) {
+app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
   console.log('contentCtrl');
   $scope.currentItem = {};
   $scope.editing = false;
@@ -308,15 +329,15 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$wi
         item.otpsecret = $scope.decryptObject(item.otpsecret);
       }
     }
-
+    if(item.url){
+      if(item.url.indexOf('https:') === -1 && item.url.indexOf('http:') === -1){
+        item.url = 'http://'+ item.url;
+      }
+    }
     item.decrypted = true;
     $scope.currentItem = item;
     $scope.currentItem.passwordConfirm = item.password;
     $scope.requiredPWStrength = 0;
-    $scope.resizeWintimer = $timeout(function(){
-      $window.resizeList();
-      $timeout.cancel($scope.resizeWintimer);
-    },50);
   };
 
   $scope.recoverItem = function (item) {
@@ -481,8 +502,8 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$wi
     $('#editAddItemDialog').dialog({
       title: 'Edit item',
       width: 360,
-      /*minHeight: 480,*/
-     /* height:480,*/
+      minHeight: 480,
+      height:480,
       position:['center','top+30'],
       open: function(){
         $('#labell').blur();
@@ -575,24 +596,19 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   }
 
   $scope.updateFavIcon = function(){
-    $scope.loadingIcon = true;
     var hashedUrl = window.btoa( $scope.currentItem.url)
     $.get(OC.generateUrl('apps/passman/api/v1/item/getfavicon/'+ hashedUrl),function(data){
       $scope.currentItem.favicon = data.favicon;
-      $scope.loadingIcon = false;
     });
-  };
+  }
 
-  $('#editAddItemDialog').on( "dialogclose", function( event, ui ) {
+  $scope.closeDialog = function () {
+    $('#editAddItemDialog').dialog('close');
     $scope.generatedPW = '';
     $scope.currentPWInfo = {};
     $scope.currentItem.overrrideComplex = false;
     $scope.editing = false;
     $scope.errors = [];
-  });
-  $scope.closeDialog = function () {
-    $('#editAddItemDialog').dialog('close');
-
   };
   $scope.generatePW = function () {
     $scope.generatedPW = generatePassword($scope.pwSettings.length, $scope.pwSettings.upper, $scope.pwSettings.lower, $scope.pwSettings.digits, $scope.pwSettings.special, $scope.pwSettings.mindigits, $scope.pwSettings.ambig, $scope.pwSettings.reqevery);
@@ -738,9 +754,11 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
     }
   };
 
-  $scope.renewSharingKeys = function(){
-
+  $scope.renewShareKeys = function(){
+    var keypair = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+    $scope.userSettings.settings.sharing.shareKeys = keypair;
   };
+
 
   $scope.$watch("userSettings",function(newVal){
     if(!newVal){
@@ -757,7 +775,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
 
 });
 
-app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$rootScope) {
+app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$rootScope,$location) {
   $scope.shareSettings = {allowShareLink: false, shareWith: []};
   $scope.loadUserAndGroups = function ($query) {
     /* Enter the url where we get the search results for $query
@@ -781,6 +799,7 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
    * The function used for sharing
    */
   var shareItem = function (rawItem) {
+
     var item = angular.copy(rawItem), encryptedFields = ['account', 'email', 'password', 'description'], i;
     if (!item.decrypted) {
       for (i = 0; i < encryptedFields.length; i++) {
@@ -817,6 +836,20 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
         }
       }
     });
+
+    if ($location.protocol() === 'http') {
+      $('#shareDialog').dialog('close');
+      $('<div>Sharing over http might be insecure <a href="" target="_blank" class="link">[Read more]</a></div>').dialog({
+        modal: true,
+        width: 315,
+        buttons: {
+          "close": function (event, ui) {
+            $(this).dialog('destroy');
+            $('#shareDialog').dialog('open');
+          }
+        }
+      });
+    }
 
     $scope.createSharedItem = function () {
       item = angular.copy($scope.sharingItem);

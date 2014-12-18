@@ -94,60 +94,55 @@ class PageController extends Controller {
     $imageType = $fileInfo['mime'];
     preg_match('/image\/(.*)/',$imageType,$match);
 
-    $cache_expire_date = gmdate('D, d M Y H:i:s', time() + (60*60*24*90)) . ' GMT';
+    $response = New Response();
+    $response->setStatus(304);
+    $response->cacheFor((60*60*24*90));
     if($match){
+      $response->addHeader('Content-Type',$match[0]);
       $f = $this->getURL($url);
-      $response = New Response();
-      $response->setHeaders(array(
-        'Content-Type'=>$match[0],
-        'Cache-Control'=> 'max-age=7776000, public',
-        'User-Cache-Control'=> 'max-age=7776000',
-        'Strict-Transport-Security'=> 'max-age=7776000',
-        'Expires'=>  $cache_expire_date,
-        'Pragma'=>  'cache',
-      ));
+      if (extension_loaded('imagick') || class_exists("Imagick")) {
+        $name = tempnam('/tmp', "imageProxy");
+        file_put_contents($name, $f);
+        try {
+          $isIcon = (strpos($url, '.ico') !== false) ? 'ico:' : '';
+          $image = new \Imagick($isIcon . $name);
+          if ($image->valid()) {
+            $image->setImageFormat('jpg');
+          }
+        } catch (exception $e) {
+          $f = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
+          $f .='<!DOCTYPE svg  PUBLIC \'-//W3C//DTD SVG 1.1//EN\'  \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'>';
+          $f .='<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" height="16px" width="16px" version="1.1" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 71 100">';
+          $f .='<path d="m65.5 45v-15c0-16.542-13.458-30-30-30s-30 13.458-30 30v15h-5.5v55h71v-55h-5.5zm-52-15c0-12.131 9.869-22 22-22s22 9.869 22 22v15h-44v-15z"/>';
+          $f .= '</svg>';
+          echo $f;
+        }
+
+      } else{
+        $f = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
+        $f .='<!DOCTYPE svg  PUBLIC \'-//W3C//DTD SVG 1.1//EN\'  \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'>';
+        $f .='<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" height="16px" width="16px" version="1.1" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 71 100">';
+        $f .='<path d="m65.5 45v-15c0-16.542-13.458-30-30-30s-30 13.458-30 30v15h-5.5v55h71v-55h-5.5zm-52-15c0-12.131 9.869-22 22-22s22 9.869 22 22v15h-44v-15z"/>';
+        $f .= '</svg>';
+      }
     } else {
       $f = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
       $f .='<!DOCTYPE svg  PUBLIC \'-//W3C//DTD SVG 1.1//EN\'  \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'>';
       $f .='<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" height="16px" width="16px" version="1.1" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 71 100">';
       $f .='<path d="m65.5 45v-15c0-16.542-13.458-30-30-30s-30 13.458-30 30v15h-5.5v55h71v-55h-5.5zm-52-15c0-12.131 9.869-22 22-22s22 9.869 22 22v15h-44v-15z"/>';
       $f .= '</svg>';
-      $response = New Response();
-      $response->setHeaders(array(
-        'Content-Type'=>'image/svg+xml',
-        'Cache-Control'=> 'max-age=7776000, public',
-        'User-Cache-Control'=> 'max-age=7776000',
-        'Strict-Transport-Security'=> 'max-age=7776000',
-        'Expires'=>  $cache_expire_date,
-        'Pragma'=>  'cache',
-      ));
     }
     echo $f;
-
     return $response;
+    //
 
-    //$name = tempnam('/tmp', "imageProxy");
-    //file_put_contents($name, $f);
+    //
     /*if (extension_loaded('imagick') || class_exists("Imagick")) {
       try {
         $isIcon = (strpos($url, '.ico') !== false) ? 'ico:' : '';
         $image = new \Imagick($isIcon . $name);
         if ($image->valid()) {
           $image->setImageFormat('jpg');
-          //echo $image;
-          $response = New Response();
-          $response->setStatus(304);
-          $cache_expire_date = gmdate('D, d M Y H:i:s', time() + (60*60*24*90)) . ' GMT';
-          $response->setHeaders(array(
-            'Content-Type'=>'image/png',
-            'Cache-Control'=> 'max-age=7776000, public',
-            'User-Cache-Control'=> 'max-age=7776000',
-            'Strict-Transport-Security'=> 'max-age=7776000',
-            'Expires'=>  $cache_expire_date,
-            'Pragma'=>  'cache',
-          ));
-          echo $image;
-          return $response;
         }
       } catch (exception $e) {
         header("HTTP/1.1 200 OK");
@@ -173,14 +168,15 @@ class PageController extends Controller {
   private function getURL($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 1);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5);
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_URL, $url);
     $tmp = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
+
     if ($httpCode == 404) {
       return false;
     } else {
