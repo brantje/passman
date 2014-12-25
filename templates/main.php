@@ -666,21 +666,23 @@
           <button class="btn btn-default pull-left">Delete selected</button>
         </div>
       </div>
-      <div class="row" ng-repeat="revision in revisions"  ng-class="{'even': $even} ">
-        <div class="col-md-1 nopadding">
-          <input type="checkbox" ng-model="revision.selected">
-        </div>
-        <div class="col-md-3">
-          <span ng-if="revision.revision_date!== 'current'">{{revision.revision_date*1000 | date:"dd/MM/yyyy H:mm"}}<br /> by {{revision.user_id}}</span>
-          <span ng-if="revision.revision_date=== 'current'">Current revision by {{revision.user_id}}</span>
+      <div class="revContainer">
+        <div ng-repeat="revision in revisions"  ng-class="{'even': $even} ">
+          <div class="col-md-1 nopadding">
+            <input type="checkbox" ng-model="revision.selected">
+          </div>
+          <div class="col-md-3">
+            <span ng-if="revision.revision_date!== 'current'">{{revision.revision_date*1000 | date:"dd/MM/yyyy H:mm"}}<br /> by {{revision.user_id}}</span>
+            <span ng-if="revision.revision_date=== 'current'">Current revision by {{revision.user_id}}</span>
 
-        </div>
-        <div class="col-md-6">
-          {{revision.data.label}}
-        </div>
-        <div class="col-md-6">
-          <a ng-click="showRevision(revision)" class="link">Show</a>
-          <span ng-if="revision.revision_date!== 'current'"> | Restore</span>
+          </div>
+          <div class="col-md-6">
+            {{revision.data.label}}
+          </div>
+          <div class="col-md-6">
+            <a ng-click="showRevision(revision)" class="link">Show</a>
+            <span ng-if="revision.revision_date!== 'current'"> | <a class="link" ng-click="restoreRevision(revision)">Restore</a></span>
+          </div>
         </div>
       </div>
     </div>
@@ -803,7 +805,7 @@
     <div id="encryptionKeyDialog" style="display: none;">
       <p>Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your
         passwords</p>
-      <input type="password" id="ecKey" style="width: 150px;"/><br/>
+      <input type="password" id="ecKey" style="width: 150px;" ng-enter="doLogin()"/><br/>
       <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember">Remember this key</label>
       <select id="rememberTime">
         <option value="15">15 Minutes</option>
@@ -815,7 +817,6 @@
         <option value="10080">7 Days</option>
         <option value="43200">30 Days</option>
       </select>
-
     </div>
 </div>
 <!-- End appCtrl -->

@@ -802,11 +802,11 @@ input.shareUrl {
 #revisions{
   overflow-x: hidden;
 }
-#revisions .row{
+#revisions > .revContainer > div{
   height: 50px;
   padding: 10px;
 }
-#revisions .row.even{
+#revisions > .revContainer > div.even{
   background-color: #E2E2E2;
 }
 
@@ -821,4 +821,7 @@ input.shareUrl {
   display: inline-block;
   height: 10px;
   vertical-align: top;
+}
+.revContainer{
+  height: 350px; overflow-y: scroll;
 }

@@ -19,14 +19,13 @@ $(document).ready(function () {
   resizeList();
   var lastTime;
   $(document).on('keyup',function(evt){
+    console.log('Keycode: ',evt.keyCode)
     if(evt.keyCode === 16){
       if(!lastTime){
         lastTime = new Date().getTime();
-        console.log(lastTime);
       } else {
         var curr = new Date().getTime();
         if(curr-lastTime < 2000){
-          console.log('search');
           $('#itemSearch').focus();
           lastTime = null;
         } else {
@@ -90,7 +89,6 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
         }
         return 0;
       });
-      console.log($scope.items)
       $scope.tags = tmp;
       $rootScope.$broadcast('loaded');
       $window.resizeList();
@@ -241,6 +239,10 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
 
     $scope.sessionExpireTime = str;
     $scope.ttlTimer = $timeout(countLSTTL, 1000);
+  };
+
+  $scope.doLogin = function(){
+    console.log('Do login');
   };
 
   $scope.showEncryptionKeyDialog = function () {
@@ -811,27 +813,28 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
   },true);
 
 });
-app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope) {
+app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope,ItemService) {
   $scope.revisionCompareArr = [];
+
   $rootScope.$on('showRevisions', function (event, item) {
     RevisionService.getRevisions(item.id).success(function(data){
-        $scope.revisions = data;
-        var tmp = {
-          user_id: item.user_id,
-          revision_date:'current',
-          data: item
-        }
-        $scope.revisions.unshift(tmp);
-        $('#revisions').dialog({
-          width: 450,
-          title: 'Revisions of '+ item.label,
-          position:['center','top+30'],
-          buttons:{
-            "close": function(){
-              $(this).dialog('destroy');
-            }
+      $scope.revisions = data;
+      var tmp = {
+        user_id: item.user_id,
+        revision_date:'current',
+        data: item
+      }
+      $scope.revisions.unshift(tmp);
+      $('#revisions').dialog({
+        width: 450,
+        title: 'Revisions of '+ item.label,
+        position:['center','top+30'],
+        buttons:{
+          "close": function(){
+            $(this).dialog('destroy');
           }
-        });
+        }
+      });
     });
   });
   $scope.compareSelected = function(){
@@ -863,6 +866,12 @@ app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope) {
         }
       }
     });
+  };
+
+  $scope.restoreRevision = function(revision){
+    console.log(revision);
+    ItemService.update(revision.data);
+    $scope.revisions[0].data = revision.data;
   };
 
 });
