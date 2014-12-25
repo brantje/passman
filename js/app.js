@@ -543,6 +543,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
         if(!$scope.dinit){
           $('.button.cancel').appendTo('.ui-dialog-buttonset');
           $('.button.save').appendTo('.ui-dialog-buttonset');
+          $scope.dinit = true;
         }
       }
     });
