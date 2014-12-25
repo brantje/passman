@@ -128,6 +128,34 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
     return  JSON.parse(s);
   };
 
+  $scope.decryptItem = function(rawItem){
+    var item = angular.copy(rawItem), encryptedFields = ['account', 'email', 'password', 'description'], i;
+    if (!item.decrypted) {
+      for (i = 0; i < encryptedFields.length; i++) {
+        if (item[encryptedFields[i]]) {
+          item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
+        }
+      }
+      if(item.customFields) {
+        for (i = 0; i < item.customFields.length; i++) {
+          item.customFields[i].label = $scope.decryptThis(item.customFields[i].label);
+          item.customFields[i].value = $scope.decryptThis(item.customFields[i].value);
+        }
+      }
+      if(item.files) {
+        for (i = 0; i < item.files.length; i++) {
+          item.files[i].filename = $scope.decryptThis(item.files[i].filename);
+          item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
+        }
+      }
+      if(item.otpsecret) {
+        item.otpsecret = $scope.decryptObject(item.otpsecret);
+      }
+    }
+    return item;
+  };
+
+
   $scope.decryptThis = function (encryptedData, encKey) {
     var decryptedString = window.atob(encryptedData), encKey2 = (encKey) ? encKey : $scope.getEncryptionKey();
     try {
@@ -780,12 +808,18 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
 
 });
 app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope) {
-  console.log('revisionCtrl')
+  $scope.revisionCompareArr = [];
   $rootScope.$on('showRevisions', function (event, item) {
     RevisionService.getRevisions(item.id).success(function(data){
         $scope.revisions = data;
+        var tmp = {
+          user_id: item.user_id,
+          revision_date:'current',
+          data: item
+        }
+        $scope.revisions.unshift(tmp);
         $('#revisions').dialog({
-          width: 400,
+          width: 450,
           title: 'Revisions of '+ item.label,
           position:['center','top+30'],
           buttons:{
@@ -796,6 +830,36 @@ app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope) {
         });
     });
   });
+  $scope.compareSelected = function(){
+    $scope.revisionCompareArr = [];
+    angular.forEach($scope.revisions,function(revision){
+      if(revision.selected){
+        var revData = $scope.decryptItem(revision.data);
+        revision.data = revData;
+        $scope.revisionCompareArr.push(revision);
+      }
+    });
+    $scope.openRevisionsDialog('600px');
+  };
+  $scope.showRevision = function(revision){
+    $scope.revisionCompareArr = [];
+    var revData = $scope.decryptItem(revision.data);
+    revision.data = revData;
+    $scope.revisionCompareArr.push(revision);
+    $scope.openRevisionsDialog('auto');
+  };
+
+  $scope.openRevisionsDialog = function(width){
+    $('#showRevisions').dialog({
+      width: width,
+      position:['center','top+30'],
+      buttons: {
+        "Close": function(){
+          $(this).dialog('destroy');
+        }
+      }
+    });
+  };
 
 });
 app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$rootScope,$location) {

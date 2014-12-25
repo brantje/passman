@@ -809,3 +809,16 @@ input.shareUrl {
 #revisions .row.even{
   background-color: #E2E2E2;
 }
+
+.revisionTable{
+  width: 280px;
+  margi-right: 5px;
+}
+.revisionTable tr{
+  height: 10px !important;
+}
+.revisionTable td{
+  display: inline-block;
+  height: 10px;
+  vertical-align: top;
+}
