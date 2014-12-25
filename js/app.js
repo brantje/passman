@@ -19,7 +19,6 @@ $(document).ready(function () {
   resizeList();
   var lastTime;
   $(document).on('keyup',function(evt){
-    console.log(evt);
     if(evt.keyCode === 16){
       if(!lastTime){
         lastTime = new Date().getTime();
@@ -54,6 +53,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.selectedTags = [];
   $scope.noFavIcon = OC.imagePath('passman', 'lock.svg');
   $scope.sessionExpireTime = 0;
+  $scope.itemFilter = {};
   $scope.expireNotificationShown = false;
   settingsService.getSettings().success(function(data){
     $scope.userSettings = data;
@@ -90,6 +90,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
         }
         return 0;
       });
+      console.log($scope.items)
       $scope.tags = tmp;
       $rootScope.$broadcast('loaded');
       $window.resizeList();
@@ -243,7 +244,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   };
 
   $scope.showEncryptionKeyDialog = function () {
-    $rootScope.$broadcast('loaded');
+
     $('#encryptionKeyDialog').dialog({
       draggable: false,
       resizable: false,
@@ -273,6 +274,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
           $('#ecKey').val('');
           $('#ecRemember').removeAttr('checked');
           $('#rememberTime').val('15');
+          //$rootScope.$broadcast('loaded');
         }
       }
     });
@@ -290,6 +292,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
     $.jStorage.set('encryptionKey', '');
     $timeout.cancel($scope.ttlTimer);
     $scope.items = [];
+    $scope.tags = [];
   };
   /**
    *Onload -> Check if localstorage has key if not show dialog
@@ -534,7 +537,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
     $sce.trustAsHtml($scope.currentItem.description);
     $('#editAddItemDialog').dialog({
       title: 'Edit item',
-      width: 360,
+      width: 420,
       minHeight: 480,
       height:480,
       position:['center','top+30'],

@@ -3,15 +3,12 @@ app.directive('showLoaded', ['$rootScope',
     return {
       restrict : 'A',
       transclude : false,
-      scope : {
-        value : '=t'
-      },
       link : function(scope, element) {
         $rootScope.$on('loaded', function(){
           element.css('display','block');
         });
       }
-    }
+    };
   }]);
 app.directive('hideLoaded', ['$rootScope',
   function($rootScope) {
