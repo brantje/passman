@@ -297,6 +297,9 @@ td.td_title {
 #editAddItemDialog{
   height: 390px !important;
 }
+div[aria-describedby="editAddItemDialog"] .ui-widget-content{
+  border: none !important;
+}
 div[aria-describedby="editAddItemDialog"] {
   height: 490px !important;
   max-height: 490px;

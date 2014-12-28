@@ -194,7 +194,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
       height: 545,
       position:['center','top+50'],
       open: function(){
-        $('.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix').remove();
+       /* $('.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix').remove();*/
         console.log($scope.userSettings);
       }
     });
@@ -532,7 +532,6 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
     $scope.editItem(newItem);
 
   };
-  $scope.dinit = false;
   $scope.editItem = function (item) {
     $scope.currentItem = item;
     $scope.editing = true;
@@ -545,10 +544,9 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
       position:['center','top+30'],
       open: function(){
         $('#labell').blur();
-        if(!$scope.dinit){
+        if(!$('.ui-dialog-buttonset').find('.button.save')){
           $('.button.cancel').appendTo('.ui-dialog-buttonset');
           $('.button.save').appendTo('.ui-dialog-buttonset');
-          $scope.dinit = true;
         }
       }
     });

@@ -19,7 +19,7 @@ See README.md or https://github.com/fraywing/textAngular/wiki for requirements a
 .ta-editor.ta-html, .ta-scroll-window.form-control {
   max-height: 300px;
   min-height: 10px !important;
-  height: 150px;
+  height: 100px;
   overflow: auto;
   font-family: inherit;
   font-size: 100%;
@@ -32,10 +32,11 @@ See README.md or https://github.com/fraywing/textAngular/wiki for requirements a
 }
 
 .ta-scroll-window > .ta-bind {
-  height: 150px;
+  height: 88px;
   min-height: 10px !important;
   max-height: 300px;
   padding: 6px 12px;
+  font-size: 12px;
 }
 
 .ta-editor:focus {
