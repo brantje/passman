@@ -37,7 +37,7 @@ $(document).ready(function () {
 });
 
 var app;
-app = angular.module('passman', ['ngSanitize', 'ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
+app = angular.module('passman', ['textAngular', 'ngSanitize', 'ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
     function ($httpProvider) {
         $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
     }]);
@@ -607,7 +607,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     }
     $scope.requiredPWStrength = 0;
     $scope.renewal_period = 0;
-    var i, tag;
+    var i, tag,today;
     for (i = 0; i < newVal.length; i++) {
       tag = newVal[i];
       if (tag.min_pw_strength) {
@@ -619,6 +619,10 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
       if (tag.renewal_period) {
         if (tag.renewal_period > $scope.renewal_period) {
           $scope.renewal_period = tag.renewal_period * 1;
+          if($scope.currentItem.password===''){
+            today = new Date().getTime()
+            $scope.currentItem.expire_time = today+(86400000 * $scope.renewal_period);
+          }
         }
       }
     }
@@ -736,7 +740,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     if (item.password !== item.passwordConfirm) {
       $scope.errors.push("Passwords do not match");
     }
-    if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy && !$scope.currentItem.overrrideComplex) {
+    if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy && !$scope.currentItem.overrrideComplex || ($scope.requiredPWStrength && item.password==='')) {
       $scope.errors.push("Minimal password score not met");
     }
     saveThis.expire_time = $scope.newExpireTime;

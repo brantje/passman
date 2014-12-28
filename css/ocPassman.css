@@ -412,16 +412,19 @@ div[aria-describedby="editAddItemDialog"] {
 	border-bottom: 1px solid rgb(0, 102, 255);
 	cursor: pointer;
 }
-.link {
+.link,.ui-widget-content a,#infoContainer .description a {
 	color: rgb(0, 102, 255) !important;
 	cursor: pointer;
 }
-.link:hover {
+.link:hover,.ui-widget-content a:hover,#infoContainer .description a:hover {
 	text-decoration: underline;
 }
 .link.loadFile {
 	margin-right: 8px;
 	display: block;
+}
+.td_title{
+  vertical-align: top !important;
 }
 #infoContainer span.ui-icon.ui-icon-carat-1-e {
 	margin: 0px;
@@ -430,7 +433,7 @@ div[aria-describedby="editAddItemDialog"] {
 	width: 100%;
 }
 #infoContainer table tr td:first-child {
-	width: 135px;
+	width: 120px;
 }
 #item_tabs label {
 	display: block;
@@ -447,7 +450,14 @@ div[aria-describedby="editAddItemDialog"] {
 #item_tabs #customFieldName, #item_tabs #customFieldValue {
 	width: 85%;
 }
-
+.ta-editor {
+  max-height: 300px;
+  height: 150px;
+  overflow: auto;
+  font-family: inherit;
+  font-size: 100%;
+  margin:20px 0;
+}
 #item_tabs input[type="checkbox"] {
 	width: 30px;
 }

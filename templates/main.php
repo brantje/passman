@@ -7,6 +7,10 @@
 \OCP\Util::addscript('passman', 'jstorage');
 \OCP\Util::addscript('passman', 'bower_components/zxcvbn/zxcvbn-async');
 \OCP\Util::addscript('passman', 'pwgen');
+
+\OCP\Util::addscript('passman', 'textAngular-rangy.min');
+\OCP\Util::addscript('passman', 'textAngular.min');
+
 \OCP\Util::addscript('passman', 'ng-click-select');
 \OCP\Util::addscript('passman', 'qrReader/llqrcode');
 \OCP\Util::addscript('passman', 'sha');
@@ -19,8 +23,10 @@
 
 
 \OCP\Util::addStyle('passman', 'ocPassman');
+\OCP\Util::addStyle('passman', 'textAngular');
 \OCP\Util::addStyle('passman', 'ng-tags-input.min');
 \OCP\Util::addStyle('passman', 'bootstrapGrid');
+\OCP\Util::addStyle('passman', 'fontawsome/font-awesome');
 
 
 ?>
@@ -145,7 +151,7 @@
             <span>Description</span> :
           </td>
           <td>
-            <div ng-bind-html="currentItem.description  | to_trusted"></div>
+            <div ng-bind-html="currentItem.description  | to_trusted" class="description"></div>
             <a clip-copy="currentItem.description" clip-click="copied('description')" class="link">[Copy]</a>
           </td>
         </tr>
@@ -173,13 +179,13 @@
         <tr ng-if="currentItem.otpsecret ">
           <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                   style="float: left; margin-right: .3em;">&nbsp;</span>
-            <span>One time password</span> :
+            <span style="border-bottom: 1px dotted #000;" title="One time password">OTP</span> :
           </td>
           <td>
             &nbsp;<span otp-generator otpdata="currentItem.otpsecret.secret"></span>
           </td>
         </tr>
-        <tr ng-show="currentItem.expire_time">
+        <tr ng-show="currentItem.expire_time !=0 && currentItem.expire_time">
           <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                   style="float: left; margin-right: .3em;">&nbsp;</span>
             <span>Expires</span> :
@@ -244,7 +250,7 @@
 
     <!-- Add / edit item -->
     <div id="editAddItemDialog" style="display: none;" ng-controller="addEditItemCtrl">
-      <div class="error" ng-show="errors">
+      <div class="error" ng-show="errors.length > 0">
         <div ng-repeat="error in errors">{{error}}</div>
       </div>
       <form method="get" name="new_item" id="editNewItem">
@@ -282,8 +288,8 @@
           </div>
           <div class="row">
             <div class="col-xs-1 formLabel">Description</div>
-            <div class="col-xs-7"><textarea rows="4" name="desc" id="desc" ng-model="currentItem.description"
-                                            cols="3"></textarea></div>
+            <div class="col-xs-7">
+              <div text-angular ng-model="currentItem.description"  ta-toolbar="[['bold','italics','underline','undo','redo','insertLink']]"></div></div>
           </div>
           <div class="row">
             <div class="col-xs-1 formLabel">Login</div>
