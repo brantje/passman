@@ -641,7 +641,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     $.get(OC.generateUrl('apps/passman/api/v1/item/getfavicon/'+ hashedUrl),function(data){
       $scope.currentItem.favicon = data.favicon;
     });
-  }
+  };
 
   $scope.closeDialog = function () {
     $('#editAddItemDialog').dialog('close');
