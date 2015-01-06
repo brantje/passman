@@ -298,11 +298,3 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
     }
   };
 });
-var t = function () { };
-/* Check if t function exists if not, create it to prevent errors */
-if (null === t) {
-function t (app, string) {
-console.log('Fuck, l10n failed to load', 'App: ' + app, 'String: ' + string);
-return string;
-}
-}
