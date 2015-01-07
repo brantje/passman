@@ -10,7 +10,6 @@ $(document).ready(function () {
     listHeight = $('#pwList').height();
     containerHeight = $('#app-content').height();
     containerWidth = $('#app-content').width();
-    console.log(listHeight)
     $('#pwList').height(containerHeight - $('#infoContainer').height() - 85);
     $('#pwList').width(containerWidth - 2);
     $('#topContent').width(containerWidth - 2);
@@ -64,7 +63,6 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   });
   if($location.hash().match(/selectItem=([0-9]+)/)){
     $scope.selectThisItem = $location.hash().match(/selectItem=([0-9]+)/)[1];
-    console.log('Select this item '+ $scope.selectThisItem)
   }
   $scope.loadItems = function (tags, showDeleted) {
     var idx = tags.indexOf('is:Deleted');
@@ -254,43 +252,47 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
 
   $scope.doLogin = function(){
     console.log('Do login');
+    if ($('#ecKey').val() === '') {
+      OC.Notification.showTimeout("Encryption key can't be empty!");
+      return false;
+    }
+    $('#encryptionKeyDialog').dialog("close");
+
+    $scope.setEncryptionKey($('#ecKey').val());
+    $scope.loadItems([]);
+    if ($('#ecRemember:checked').length > 0) {
+      $.jStorage.set('encryptionKey', window.btoa($('#ecKey').val()));
+      if ($('#rememberTime').val() !== 'forever') {
+        var time = $('#rememberTime').val() * 60 * 1000;
+        $.jStorage.setTTL("encryptionKey", time);
+        countLSTTL();
+      }
+    }
+    $('#ecKey').val('');
+    $('#ecRemember').removeAttr('checked');
+    $('#rememberTime').val('15');
+    //$rootScope.$broadcast('loaded');
   };
 
   $scope.showEncryptionKeyDialog = function () {
-
-    $('#encryptionKeyDialog').dialog({
-      draggable: false,
-      resizable: false,
-      closeOnEscape: false,
-      modal: true,
-      /*open: function (event, ui) {
-        //$(".ui-dialog-titlebar-close").hide();
-      },*/
-      buttons: {
-        "Ok": function () {
-          if ($('#ecKey').val() === '') {
-            OC.Notification.showTimeout("Encryption key can't be empty!");
-            return false;
+    var showEncDTimeout;
+    showEncDTimeout = $timeout(function(){
+      $('#encryptionKeyDialog').dialog({
+        draggable: false,
+        resizable: false,
+        closeOnEscape: false,
+        modal: true,
+        /*open: function (event, ui) {
+         //$(".ui-dialog-titlebar-close").hide();
+         },*/
+        buttons: {
+          "Ok": function () {
+            $scope.doLogin();
           }
-          $(this).dialog("close");
-
-          $scope.setEncryptionKey($('#ecKey').val());
-          $scope.loadItems([]);
-          if ($('#ecRemember:checked').length > 0) {
-            $.jStorage.set('encryptionKey', window.btoa($('#ecKey').val()));
-            if ($('#rememberTime').val() !== 'forever') {
-              var time = $('#rememberTime').val() * 60 * 1000;
-              $.jStorage.setTTL("encryptionKey", time);
-              countLSTTL();
-            }
-          }
-          $('#ecKey').val('');
-          $('#ecRemember').removeAttr('checked');
-          $('#rememberTime').val('15');
-          //$rootScope.$broadcast('loaded');
         }
-      }
-    });
+      });
+      $timeout.cancel(showEncDTimeout);
+    },20);
   };
 
   $scope.loadTags = function (query) {

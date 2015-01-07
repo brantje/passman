@@ -226,8 +226,9 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
     });
   };
 
-  $scope.loadFavIconTimer = $timeout(function(){
+  var loadFavIconTimer = $timeout(function(){
     $scope.updateFavIcon();
+    $timeout.cancel(loadFavIconTimer);
 
   },50);
   $scope.parseQR = function(qrData){

@@ -808,27 +808,28 @@
       </table>
 
     </div>
-    <div id="encryptionKeyDialog" style="display: none;">
-      <p>Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your
-        passwords</p>
-      <input type="password" id="ecKey" style="width: 150px;" ng-enter="doLogin()"/><br/>
-      <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember">Remember this key</label>
-      <select id="rememberTime">
-        <option value="15">15 Minutes</option>
-        <option value="15">30 Minutes</option>
-        <option value="60">60 Minutes</option>
-        <option value="180">3 Hours</option>
-        <option value="480">8 Hours</option>
-        <option value="1440">1 Day</option>
-        <option value="10080">7 Days</option>
-        <option value="43200">30 Days</option>
-      </select>
-    </div>
+
 </div>
-<!-- End appCtrl -->
+
 
 <!-- start revision dialog -->
 
-
+<div id="encryptionKeyDialog" style="display: none;">
+  <p>Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your
+    passwords</p>
+  <input type="password" id="ecKey" style="width: 150px;" ng-enter="doLogin()"/><br/>
+  <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember">Remember this key</label>
+  <select id="rememberTime">
+    <option value="15">15 Minutes</option>
+    <option value="15">30 Minutes</option>
+    <option value="60">60 Minutes</option>
+    <option value="180">3 Hours</option>
+    <option value="480">8 Hours</option>
+    <option value="1440">1 Day</option>
+    <option value="10080">7 Days</option>
+    <option value="43200">30 Days</option>
+  </select>
+</div>
 
 </div>
+<!-- End appCtrl -->
