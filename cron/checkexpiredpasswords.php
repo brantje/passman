@@ -11,7 +11,7 @@
 namespace OCA\Passman\Cron;
 
 use \OCA\Passman\AppInfo\Application;
-use \OCA\Passman\Service\Cronservice;
+use \OCA\Passman\Service\CronService;
 class CheckExpiredPasswords extends \OC\BackgroundJob\TimedJob {
   public function __construct() {
     // Run once per day
