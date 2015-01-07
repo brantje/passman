@@ -33,7 +33,7 @@ use \OCA\Passman\Db\RevisionManager;
 
 use \OCA\PassMan\Utility\SimplePieAPIFactory;
 use \OCA\PassMan\Utility\FaviconFetcher;
-use \OCA\Passman\Service\Cronservice;
+use \OCA\Passman\Service\CronService;
 
 if (!class_exists('\SimplePie')) {
   require_once __DIR__ . '/../3rdparty/simplepie/autoloader.php';
