@@ -59,4 +59,8 @@ class ShareController extends Controller {
 
     return new JSONResponse($result);
   }
+  public function share($item){
+
+    return new JSONResponse($item);
+  }
 }

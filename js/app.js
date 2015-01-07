@@ -897,7 +897,7 @@ app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope,Item
   };
 
 });
-app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$rootScope,$location) {
+app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$rootScope,$location, shareService) {
   $scope.shareSettings = {allowShareLink: false, shareWith: []};
   $scope.loadUserAndGroups = function ($query) {
     /* Enter the url where we get the search results for $query
@@ -979,7 +979,8 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
 
 
       /** And then share it */
-      shareService.shareItem(item).success(function (data) {
+      var shareItem = {item: item};
+      shareService.shareItem(shareItem).success(function (data) {
         /** Data contains the response from server */
         console.log(data);
       });
