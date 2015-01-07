@@ -10,7 +10,7 @@
  */
 
 namespace OCA\Passman\AppInfo;
-//\OCP\App::registerAdmin('passman', 'templates/admin');
+\OCP\App::registerAdmin('passman', 'admin-settings');
 \OCP\App::addNavigationEntry(array(
   // the string under which your app will be referenced in owncloud
   'id' => 'passman',

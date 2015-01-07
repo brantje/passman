@@ -87,6 +87,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
         }
         if(data.items[i].id === $scope.selectThisItem){
           $scope.$broadcast('showItem',data.items[i]);
+
         }
       }
       tmp.sort(function (x, y) {
