@@ -392,6 +392,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
       }
     }
     item.decrypted = true;
+    $scope.pwOnLoad = angular.copy(item.password);
     $scope.currentItem = item;
     $scope.currentItem.passwordConfirm = item.password;
     $scope.requiredPWStrength = 0;
@@ -562,7 +563,6 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
   $scope.editItem = function (item) {
     $scope.currentItem = item;
     $scope.editing = true;
-    $scope.pwOnLoad = item.password;
     $sce.trustAsHtml($scope.currentItem.description);
     $('#editAddItemDialog').dialog({
       title: 'Edit item',
@@ -626,7 +626,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
       return;
     }
     $scope.requiredPWStrength = 0;
-    $scope.renewal_period = 0;
+    $scope.renewal_period = undefined;
     var i, tag;
     for (i = 0; i < newVal.length; i++) {
       tag = newVal[i];
@@ -637,7 +637,14 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
         }
       }
       if (tag.renewal_period) {
-        if (tag.renewal_period < $scope.renewal_period) {
+        if($scope.renewal_period === undefined){
+          if(tag.renewal_period > 0){
+            $scope.renewal_period = tag.renewal_period * 1;
+            $scope.currentItem.expire_time = $scope.today+(86400000 * $scope.renewal_period);
+          }
+        }
+
+        if (tag.renewal_period < $scope.renewal_period && tag.renewal_period > 0) {
           $scope.renewal_period = tag.renewal_period * 1;
           if($scope.currentItem.password===''){
             $scope.currentItem.expire_time = $scope.today+(86400000 * $scope.renewal_period);
@@ -671,7 +678,6 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     $scope.currentItem.overrrideComplex = false;
     $scope.editing = false;
     $scope.errors = [];
-    $scope.pwOnLoad = undefined;
   };
   $scope.generatePW = function () {
     $scope.generatedPW = generatePassword($scope.pwSettings.length, $scope.pwSettings.upper, $scope.pwSettings.lower, $scope.pwSettings.digits, $scope.pwSettings.special, $scope.pwSettings.mindigits, $scope.pwSettings.ambig, $scope.pwSettings.reqevery);
@@ -761,10 +767,14 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy && !$scope.currentItem.overrrideComplex || ($scope.requiredPWStrength && item.password==='')) {
       $scope.errors.push("Minimal password score not met");
     }
-    if($scope.pwOnLoad === unEncryptedItem.password && saveThis.expire_time <= $scope.today && saveThis.expire_time > 0){
-      $scope.errors.push("Password is expired, please change it.");
+    console.log($scope.pwOnLoad,unEncryptedItem.password)
+    if($scope.pwOnLoad === unEncryptedItem.password){
+      if(saveThis.expire_time <= $scope.today && saveThis.expire_time > 0){
+        $scope.errors.push("Password is expired, please change it.");
+      }
     } else{
-      if(saveThis.expire_time <= $scope.today){
+        console.log('Renew renewp',$scope.renewal_period)
+      if($scope.renewal_period > 0){
         var itemExpireDate = $scope.currentItem.expire_time * 1,days;
         if (itemExpireDate !== 0 && $scope.renewal_period === '0') {
           if (itemExpireDate < $scope.today && $scope.editing) {
