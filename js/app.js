@@ -49,6 +49,13 @@ app = angular.module('passman', ['textAngular', 'ngSanitize', 'ngResource', 'ngT
 app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout, settingsService,$rootScope,$location) {
   'use strict';
   console.log('appCtrl');
+  var today =  new Date();
+  today.setHours(0);
+  today.setMinutes(0);
+  today.setSeconds(0);
+  today.setMilliseconds(0);
+  $scope.today = today.getTime();
+  
   $scope.items = [];
   $scope.showingDeletedItems = false;
   $scope.tags = [];
@@ -251,7 +258,6 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   };
 
   $scope.doLogin = function(){
-    console.log('Do login');
     if ($('#ecKey').val() === '') {
       OC.Notification.showTimeout("Encryption key can't be empty!");
       return false;
@@ -354,7 +360,6 @@ app.controller('navigationCtrl', function ($scope, TagService) {
 app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,notificationService) {
   console.log('contentCtrl');
   $scope.currentItem = {};
-
   $scope.editing = false;
 
   $scope.$on('showItem',function(evt,item){
@@ -557,6 +562,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
   $scope.editItem = function (item) {
     $scope.currentItem = item;
     $scope.editing = true;
+    $scope.pwOnLoad = item.password;
     $sce.trustAsHtml($scope.currentItem.description);
     $('#editAddItemDialog').dialog({
       title: 'Edit item',
@@ -596,6 +602,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     ambig: false,
     reqevery: true
   };
+
   /** The binding is fucked up...
    $scope.$watch('$parent.currentItem',function(n){
     $scope.currentItem = n;
@@ -612,13 +619,6 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
       return;
     }
     $scope.currentPWInfo = zxcvbn(newVal);
-    var today = new Date().getTime(), itemExpireDate = $scope.currentItem.expire_time * 1,days;
-    if (itemExpireDate !== 0 && $scope.renewal_period === '0') {
-      if (itemExpireDate < today && $scope.editing) {
-        days = 86400000 * $scope.renewal_period;
-        $scope.newExpireTime = today + days;
-      }
-    }
   }, true);
 
   $scope.$watch('currentItem.tags', function (newVal) {
@@ -627,7 +627,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     }
     $scope.requiredPWStrength = 0;
     $scope.renewal_period = 0;
-    var i, tag,today;
+    var i, tag;
     for (i = 0; i < newVal.length; i++) {
       tag = newVal[i];
       if (tag.min_pw_strength) {
@@ -640,8 +640,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
         if (tag.renewal_period > $scope.renewal_period) {
           $scope.renewal_period = tag.renewal_period * 1;
           if($scope.currentItem.password===''){
-            today = new Date().getTime()
-            $scope.currentItem.expire_time = today+(86400000 * $scope.renewal_period);
+            $scope.currentItem.expire_time = $scope.today+(86400000 * $scope.renewal_period);
           }
         }
       }
@@ -672,6 +671,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     $scope.currentItem.overrrideComplex = false;
     $scope.editing = false;
     $scope.errors = [];
+    $scope.pwOnLoad = undefined;
   };
   $scope.generatePW = function () {
     $scope.generatedPW = generatePassword($scope.pwSettings.length, $scope.pwSettings.upper, $scope.pwSettings.lower, $scope.pwSettings.digits, $scope.pwSettings.special, $scope.pwSettings.mindigits, $scope.pwSettings.ambig, $scope.pwSettings.reqevery);
@@ -728,9 +728,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     };
     qrInfo[parsedQR[3]] = parsedQR[4];
     qrInfo[parsedQR[5]] = parsedQR[6];
-    console.log($scope.otpInfo);
     $scope.currentItem.otpsecret = qrInfo;
-
   };
 
   $scope.usePw = function () {
@@ -740,7 +738,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
 
   $scope.saveItem = function (item) {
     $scope.errors = [];
-    var saveThis = angular.copy(item), unEncryptedItem = angular.copy(saveThis), encryptedFields = ['account', 'email', 'password', 'description'], i;
+    var saveThis = angular.copy(item), unEncryptedItem = item, encryptedFields = ['account', 'email', 'password', 'description'], i;
     for (i = 0; i < encryptedFields.length; i++) {
       saveThis[encryptedFields[i]] = $scope.encryptThis(saveThis[encryptedFields[i]]);
     }
@@ -763,7 +761,20 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy && !$scope.currentItem.overrrideComplex || ($scope.requiredPWStrength && item.password==='')) {
       $scope.errors.push("Minimal password score not met");
     }
-    saveThis.expire_time = $scope.newExpireTime;
+    if($scope.pwOnLoad === unEncryptedItem.password && saveThis.expire_time <= $scope.today){
+      $scope.errors.push("Password is expired, please change it.");
+    } else{
+      if(saveThis.expire_time <= $scope.today){
+        var itemExpireDate = $scope.currentItem.expire_time * 1,days;
+        if (itemExpireDate !== 0 && $scope.renewal_period === '0') {
+          if (itemExpireDate < $scope.today && $scope.editing) {
+            days = 86400000 * $scope.renewal_period;
+            saveThis.expire_time = $scope.today + days;
+          }
+        }
+      }
+    }
+
     if ($scope.errors.length === 0) {
       delete saveThis.passwordConfirm;
       if (saveThis.id) {

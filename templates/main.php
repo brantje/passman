@@ -84,17 +84,12 @@
   <div id="app-content" ng-controller="contentCtrl" style="display: none" show-loaded>
     <div id="topContent" >
       <button class="button" id="addItem" ng-click="addItem()">Add item</button>
-      <button class="button" id="editItem" ng-click="editItem(currentItem)"
-              ng-show="currentItem">Edit item
-      </button>
-      <button class="button" id="deleteItem" ng-click="deleteItem(currentItem,true)"
-              ng-show="currentItem">Delete item
-      </button>
-      <input type="text" id="itemSearch" ng-model="itemFilter.label"
+      <input type="search" id="itemSearch" ng-model="itemFilter.label"
              class="visible-md visible-lg visible-sm pull-right searchbox" placeholder="Search..."/>
     </div>
+
     <ul id="pwList">
-      <li ng-repeat="item in items | orderBy: 'label' | filter: itemFilter"
+      <li ng-repeat="item in filteredItems = (items | orderBy: 'label' | filter: itemFilter)"
           ng-mouseleave="toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
           ng-class="{'row-active': item.id === currentItem.id}">
         <!-- if no image proxy -->
@@ -104,13 +99,12 @@
         <img style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
              ng-src="{{noFavIcon}}" ng-if="!item.favicon && !userSettings.settings.useImageProxy">
         <!-- end if -->
-
         <!-- If image proxy === true -->
         <img image-proxy image="item.favicon" fallback="noFavIcon"
              style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
              ng-if="userSettings.settings.useImageProxy">
         <!--- // end  if-->
-        <div style="display: inline-block;" class="itemLabel">{{item.label}}</div>
+        <div style="display: inline-block;" class="itemLabel" ng-class="{ 'expired': item.expire_time <= today && item.expire_time > 0 }">{{item.label}}</div>
         <i class="icon-rename icon" ng-click="editItem(item)" title="Edit"></i>
         <ul class="editMenu">
           <li ng-click="toggle.state = !toggle.state" ng-class="{'show' : toggle.state}"
@@ -132,6 +126,7 @@
         <div class="tag" ng-repeat="ttag in item.tags" ng-click="selectTag(ttag.text)"><span
               class="value">{{ttag.text}}</span></div>
       </li>
+      <li ng-show="filteredItems.length === 0 && itemFilter"><div style="display: inline-block; margin-left: 10px;" class="itemLabel">No results</div></li>
     </ul>
     <div id="infoContainer">
       <table>
