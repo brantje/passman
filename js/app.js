@@ -637,7 +637,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
         }
       }
       if (tag.renewal_period) {
-        if (tag.renewal_period > $scope.renewal_period) {
+        if (tag.renewal_period < $scope.renewal_period) {
           $scope.renewal_period = tag.renewal_period * 1;
           if($scope.currentItem.password===''){
             $scope.currentItem.expire_time = $scope.today+(86400000 * $scope.renewal_period);

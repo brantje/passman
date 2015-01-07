@@ -858,6 +858,3 @@ input.shareUrl {
   font-size: 15px;
   cursor: pointer;
 }
-.searchbox input[type="search"]:focus{
-  background-position: 2px 0px;
-}
