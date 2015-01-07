@@ -17,7 +17,7 @@ class CheckExpiredPasswords extends \OC\BackgroundJob\TimedJob {
     // Run once per day
     $this->setInterval(60 * 60 * 24);
   }
-  
+
   public static function run() {
     $app = new Application();
     $container = $app->getContainer();
