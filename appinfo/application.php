@@ -171,7 +171,7 @@ class Application extends App {
     /** Cron  **/
     $container->registerService('CronService', function ($c) {
       return new CronService(
-        $c->query('Db'),
+        $c->query('ServerContainer')->getDb(),
         $c->query('NotificationController'),
         $c->query('Logger')
       );
