@@ -11,14 +11,14 @@
 namespace OCA\Passman\Cron;
 
 use \OCA\Passman\AppInfo\Application;
-
+use \OCA\Passman\Service\Cronservice;
 class CheckExpiredPasswords extends \OC\BackgroundJob\TimedJob {
   public function __construct() {
     // Run once per day
     $this->setInterval(60 * 60 * 24);
   }
 
-  public static function run() {
+  protected function run($argument) {
     $app = new Application();
     $container = $app->getContainer();
     $container->query('CronService')->run();
