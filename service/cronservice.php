@@ -9,7 +9,7 @@
  * @author Sander Brand <brantje@gmail.com>
  * @copyright Sander Brand 2014
  */
-namespace OCA\Passman\Service\Cron;
+namespace OCA\Passman\Service;
 
 class CronService {
   private $db;
