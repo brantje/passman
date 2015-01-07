@@ -10,6 +10,22 @@ app.factory('shareService', ['$http', function ($http) {
     }
   };
 }]);
+app.factory('notificationService', ['$http', function ($http) {
+  return {
+    deleteItem: function (item) {
+      var postData = {
+        subject: 'item_deleted',
+        subjectParams: [item.label, item.user_id]
+      },
+      queryUrl = OC.generateUrl('apps/passman/api/v1/notification/add');
+      return $http({
+        url: queryUrl,
+        method: 'POST',
+        data: item
+      });
+    }
+  };
+}]);
 app.factory('settingsService', ['$http', function ($http) {
   return {
     getSettings: function () {
@@ -41,6 +57,7 @@ app.factory('ItemService', ['$http',
         });
       },
       update: function (item) {
+        console.log(item)
         return $http({
           url: OC.generateUrl('apps/passman/api/v1/item/' + item.id),
           data: item,

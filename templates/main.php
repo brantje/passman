@@ -40,8 +40,8 @@
       <tags-input ng-model="selectedTags" removeTagSymbol="x" replace-spaces-with-dashes="false" min-length="1">
         <auto-complete source="loadTags($query)" min-length="1"></auto-complete>
       </tags-input>
-      <span>Related Tags</span>
     </div>
+    <span>Related Tags</span>
     <ul id="tagList">
       <li class="tag" ng-click="selectTag(tag)" ng-repeat="tag in tags" ng-mouseover="mouseOver = true"
           ng-mouseleave="mouseOver = false">
@@ -687,7 +687,7 @@
           </div>
           <div class="col-md-6">
             <a ng-click="showRevision(revision)" class="link">Show</a>
-            <span ng-if="revision.revision_date!== 'current'"> | <a class="link" ng-click="restoreRevision(revision)">Restore</a></span>
+            <span ng-if="revision.revision_date!== 'current'"> | <a class="link" ng-click="restoreRevision(revision,revision.revision_date)">Restore</a></span>
           </div>
         </div>
       </div>

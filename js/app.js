@@ -338,7 +338,7 @@ app.controller('navigationCtrl', function ($scope, TagService) {
 
 });
 
-app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
+app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,notificationService) {
   console.log('contentCtrl');
   $scope.currentItem = {};
   $scope.editing = false;
@@ -388,6 +388,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
     if(saveThis.otpsecret) {
       saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
     }
+    saveThis.isRecovered = true;
     ItemService.recover(saveThis).success(function () {
       var idx;
       for (i = 0; i < $scope.items.length; i++) {
@@ -426,6 +427,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
       if(saveThis.otpsecret) {
         saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
       }
+      saveThis.isDeleted = true;
       ItemService.softDestroy(saveThis).success(function () {
         for (i = 0; i < $scope.items.length; i++) {
           if ($scope.items[i].id === item.id) {
@@ -435,6 +437,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope) {
         }
       });
       OC.Notification.showTimeout('<div>' + item.label + ' deleted</div>');
+      ///notificationService.deleteItem(item);
     } else {
       ItemService.destroy(item).success(function () {
         for (i = 0; i < $scope.items.length; i++) {
@@ -870,8 +873,8 @@ app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope,Item
     });
   };
 
-  $scope.restoreRevision = function(revision){
-    console.log(revision);
+  $scope.restoreRevision = function(revision,date){
+    revision.data.restoredRevision = date;
     ItemService.update(revision.data);
     $scope.revisions[0].data = revision.data;
   };

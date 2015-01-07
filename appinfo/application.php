@@ -33,10 +33,15 @@ use \OCA\Passman\Db\RevisionManager;
 
 use \OCA\PassMan\Utility\SimplePieAPIFactory;
 use \OCA\PassMan\Utility\FaviconFetcher;
+use \OCA\PassMan\Cron\CronService;
 
 if (!class_exists('\SimplePie')) {
   require_once __DIR__ . '/../3rdparty/simplepie/autoloader.php';
 }
+
+\OC::$server->getActivityManager()->registerExtension(function() {
+  return new \OCA\Passman\Activity();
+});
 
 class Application extends App {
 
@@ -67,7 +72,8 @@ class Application extends App {
         $c->query('UserId'),
         $c->query('TagBusinessLayer'),
         $c->query('FaviconFetcher'),
-        $c->query('RevisionController')
+        $c->query('RevisionController'),
+        $c->query('NotificationController')
       );
     });
 
@@ -161,6 +167,16 @@ class Application extends App {
         $c->query('SimplePieAPIFactory')
       );
     });
+
+    /** Cron  **/
+    $container->registerService('CronService', function ($c) {
+      return new CronService(
+        $c->query('Db'),
+        $c->query('NotificationController'),
+        $c->query('Logger')
+      );
+    });
+
     /**
      * Core
      */
@@ -175,7 +191,9 @@ class Application extends App {
     $container->registerService('AppStorage', function ($c) {
       return $c->query('ServerContainer')->getAppFolder();
     });
-
+    $container->registerService('Logger', function($c) {
+      return $c->query('ServerContainer')->getLogger();
+    });
   }
 
 

@@ -24,10 +24,11 @@ class RevisionManager {
   public function save($itemId,$userId,$data){
     $sql = "INSERT INTO `*PREFIX*passman_revisions` (item_id,user_id,data,revision_date) VALUES(?,?,?,?)";
     $query = $this->db->prepareQuery($sql);
+    $time = time();
     $query->bindParam(1, $itemId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_INT);
     $query->bindParam(3, $data, \PDO::PARAM_INT);
-    $query->bindParam(4, time(), \PDO::PARAM_STR);
+    $query->bindParam(4, $time, \PDO::PARAM_STR);
     $result = $query->execute();
     return $this->db->getInsertId('`*PREFIX*passman_revisions`');
   }

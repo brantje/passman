@@ -37,7 +37,7 @@ $application->registerRoutes($this, array(
 
     array('name' => 'page#imageproxy', 'url' => '/imageproxy/{hash}', 'verb' => 'GET'),
 
-    array('name' => 'notification#add', 'url' => '/api/v1/notification/add', 'verb' => 'GET'),
+    array('name' => 'notification#add', 'url' => '/api/v1/notification/add', 'verb' => 'POST'),
 
     array('name' => 'tag#search', 'url' => '/api/v1/tags/search', 'verb' => 'GET'),
     array('name' => 'tag#loadall', 'url' => '/api/v1/tags/list', 'verb' => 'GET'),
