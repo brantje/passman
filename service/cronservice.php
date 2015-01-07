@@ -20,6 +20,7 @@ class CronService {
     $this->db = $db;
     $this->notification = $notifiction;
     $this -> logger = $logger;
+
   }
 
   public function run(){

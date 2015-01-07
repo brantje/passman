@@ -102,7 +102,9 @@ class Activity implements \OCP\Activity\IExtension {
 				case self::SUBJECT_ITEM_SHARED:
 					return $l->t('%s has been shared', $params)->__toString();
 			}
+			return false;
 		}
+		return false;
 	}
 	/**
 	 * The extension can define the type of parameters for translation
