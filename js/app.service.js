@@ -57,7 +57,6 @@ app.factory('ItemService', ['$http',
         });
       },
       update: function (item) {
-        console.log(item)
         return $http({
           url: OC.generateUrl('apps/passman/api/v1/item/' + item.id),
           data: item,

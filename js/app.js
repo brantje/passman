@@ -761,7 +761,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy && !$scope.currentItem.overrrideComplex || ($scope.requiredPWStrength && item.password==='')) {
       $scope.errors.push("Minimal password score not met");
     }
-    if($scope.pwOnLoad === unEncryptedItem.password && saveThis.expire_time <= $scope.today){
+    if($scope.pwOnLoad === unEncryptedItem.password && saveThis.expire_time <= $scope.today && saveThis.expire_time > 0){
       $scope.errors.push("Password is expired, please change it.");
     } else{
       if(saveThis.expire_time <= $scope.today){
