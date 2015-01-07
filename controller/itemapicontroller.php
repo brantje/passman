@@ -26,8 +26,6 @@ class ItemApiController extends Controller {
   private $faviconFetcher;
   private $revisionController;
   private $notification;
-  public $request;
-
 
   public function __construct($appName, IRequest $request, ItemBusinessLayer $ItemBusinessLayer, $userId, $tagBusinessLayer, $faviconFetcher, $revisionController,$notificationController) {
     parent::__construct($appName, $request);
@@ -147,7 +145,8 @@ class ItemApiController extends Controller {
     } else {
       $result['errors'] = $errors;
     }
-    $this->notification->add('item_created',array($item['label'],$userId));
+    $remoteUrl = \OCP\Util::linkToRoute('passman.page.index').'#selectItem='. $result['itemid'];
+    $this->notification->add('item_created',array($item['label'],$this->userId),'',array(),$remoteUrl);
     $item['id'] = $result['itemid'];
     return new JSONResponse($item);
   }
@@ -222,17 +221,19 @@ class ItemApiController extends Controller {
       }
       $result['success'] = $this->ItemBusinessLayer->update($item);
       $this->revisionController->save($item['id'],json_encode($curItem));
+;
+      $remoteUrl = \OCP\Util::linkToRoute('passman.page.index').'#selectItem='. $item['id'];
       if(!$restoredRevision && !$isDeleted &&!$isRecovered){
-        $this->notification->add('item_edited',array($curItem['label'],$this->userId));
+        $this->notification->add('item_edited',array($curItem['label'],$this->userId),'',array(),$remoteUrl);
       } else {
         if($restoredRevision) {
-          $this->notification->add('item_apply_revision', array($curItem['label'], $this->userId, $restoredRevision));
+          $this->notification->add('item_apply_revision', array($curItem['label'], $this->userId, $restoredRevision),'',array(),$remoteUrl);
         }
         if($isDeleted){
-          $this->notification->add('item_deleted',array($curItem['label'],$this->userId));
+          $this->notification->add('item_deleted',array($curItem['label'],$this->userId),'',array());
         }
         if($isRecovered){
-          $this->notification->add('item_recovered',array($curItem['label'],$this->userId));
+          $this->notification->add('item_recovered',array($curItem['label'],$this->userId),'',array(),$remoteUrl);
         }
       }
 
@@ -279,7 +280,6 @@ class ItemApiController extends Controller {
     if (empty($errors)) {
       $result['deleted'] = $this->ItemBusinessLayer->delete($itemId, $this->userId);
       $this->notification->add('item_destroyed',array($findItem['label'],$this->userId));
-
     } else {
       $result['errors'] = $errors;
     }

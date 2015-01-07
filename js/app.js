@@ -37,13 +37,17 @@ $(document).ready(function () {
 });
 
 var app;
-app = angular.module('passman', ['textAngular', 'ngSanitize', 'ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
-    function ($httpProvider) {
+app = angular.module('passman', ['textAngular', 'ngSanitize', 'ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider','$locationProvider',
+    function ($httpProvider,$locationProvider) {
         $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
+        $locationProvider.html5Mode({
+          enabled: true,
+          requireBase: false
+        }).hashPrefix('!');
     }]);
 
 
-app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout, settingsService,$rootScope) {
+app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeout, settingsService,$rootScope,$location) {
   'use strict';
   console.log('appCtrl');
   $scope.items = [];
@@ -58,7 +62,10 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
     $scope.userSettings = data;
     $window.userSettings = data;
   });
-
+  if($location.hash().match(/selectItem=([0-9]+)/)){
+    $scope.selectThisItem = $location.hash().match(/selectItem=([0-9]+)/)[1];
+    console.log('Select this item '+ $scope.selectThisItem)
+  }
   $scope.loadItems = function (tags, showDeleted) {
     var idx = tags.indexOf('is:Deleted');
     if (idx >= 0) {
@@ -77,6 +84,9 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
               tmp.push(tag);
             }
           }
+        }
+        if(data.items[i].id === $scope.selectThisItem){
+          $scope.$broadcast('showItem',data.items[i]);
         }
       }
       tmp.sort(function (x, y) {
@@ -341,7 +351,13 @@ app.controller('navigationCtrl', function ($scope, TagService) {
 app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,notificationService) {
   console.log('contentCtrl');
   $scope.currentItem = {};
+
   $scope.editing = false;
+
+  $scope.$on('showItem',function(evt,item){
+    $scope.showItem(item);
+  });
+
   $scope.showItem = function (rawItem) {
     var item = rawItem, encryptedFields = ['account', 'email', 'password', 'description'], i;
     if (!item.decrypted) {

@@ -30,4 +30,4 @@ namespace OCA\Passman\AppInfo;
   // navigation or on the settings page of your app
   'name' => \OC_L10N::get('Passwords')->t('Passwords')
 ));
-\OCP\Backgroundjob::registerJob('OCA\Passman\Cron\CheckExpiredPasswords');
+\OCP\Backgroundjob::registerJob('OCA\Passman\Cron\RunCron');
