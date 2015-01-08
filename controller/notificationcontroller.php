@@ -59,9 +59,9 @@ class NotificationController extends Controller {
    * @type = Can be passman_password or passman_password_shared
    * @priority = Int -> [10,20,30,40,50]
    */
-  public function add($subject,$subjectParams=array(),$message='',$messageParams=array(),$link='',$user=null,$type='passman_password',$priority=30) {
+  public function add($subject,$subjectParams=array(),$message='',$messageParams=array(),$link='',$user=null,$type='',$priority=30) {
     $affectedUser = ($user) ? $user : $this->userId;
-
+    $type = 'passman_'.$subject;
     \OC::$server->getActivityManager()-> publishActivity(
     'passman',
     $subject,
