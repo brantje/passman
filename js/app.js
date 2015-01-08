@@ -767,13 +767,11 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy && !$scope.currentItem.overrrideComplex || ($scope.requiredPWStrength && item.password==='')) {
       $scope.errors.push("Minimal password score not met");
     }
-    console.log($scope.pwOnLoad,unEncryptedItem.password)
     if($scope.pwOnLoad === unEncryptedItem.password){
       if(saveThis.expire_time <= $scope.today && saveThis.expire_time > 0){
         $scope.errors.push("Password is expired, please change it.");
       }
     } else{
-        console.log('Renew renewp',$scope.renewal_period)
       if($scope.renewal_period > 0){
         var itemExpireDate = $scope.currentItem.expire_time * 1,days;
         if (itemExpireDate !== 0 && $scope.renewal_period === '0') {

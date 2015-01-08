@@ -11,7 +11,7 @@
 namespace OCA\Passman;
 
 class Activity implements \OCP\Activity\IExtension {
-	const TYPE_ITEM = 'item';
+	const TYPE_ITEM = 'passman_password';
 	const TYPE_ITEM_SHARED = 'item_shared';
 
 	const SUBJECT_ITEM_CREATED = 'item_created';

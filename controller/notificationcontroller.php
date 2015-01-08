@@ -56,10 +56,10 @@ class NotificationController extends Controller {
    * @messageParams = Message params (not needed)
    * @link = will be -> <ownCloud>/apps/activity/$link
    * @user = Target user
-   * @type = Can be item or item_shared
+   * @type = Can be passman_password or passman_password_shared
    * @priority = Int -> [10,20,30,40,50]
    */
-  public function add($subject,$subjectParams=array(),$message='',$messageParams=array(),$link='',$user=null,$type='item',$priority=30) {
+  public function add($subject,$subjectParams=array(),$message='',$messageParams=array(),$link='',$user=null,$type='passman_password',$priority=30) {
     $affectedUser = ($user) ? $user : $this->userId;
 
     \OC::$server->getActivityManager()-> publishActivity(
