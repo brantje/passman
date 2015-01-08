@@ -24,16 +24,18 @@ class ItemApiController extends Controller {
   private $ItemBusinessLayer;
   private $tagBusinessLayer;
   private $faviconFetcher;
-  public $request;
+  private $revisionController;
+  private $notification;
 
-
-  public function __construct($appName, IRequest $request, ItemBusinessLayer $ItemBusinessLayer, $userId, $tagBusinessLayer, $faviconFetcher) {
+  public function __construct($appName, IRequest $request, ItemBusinessLayer $ItemBusinessLayer, $userId, $tagBusinessLayer, $faviconFetcher, $revisionController,$notificationController) {
     parent::__construct($appName, $request);
     $this->userId = $userId;
     $this->ItemBusinessLayer = $ItemBusinessLayer;
     $this->tagBusinessLayer = $tagBusinessLayer;
     $this->request = $request;
     $this->faviconFetcher = $faviconFetcher;
+    $this->revisionController = $revisionController;
+    $this->notification = $notificationController;
   }
 
 
@@ -143,6 +145,8 @@ class ItemApiController extends Controller {
     } else {
       $result['errors'] = $errors;
     }
+    $remoteUrl = \OCP\Util::linkToRoute('passman.page.index').'#selectItem='. $result['itemid'];
+    $this->notification->add('item_created',array($item['label'],$this->userId),'',array(),$remoteUrl);
     $item['id'] = $result['itemid'];
     return new JSONResponse($item);
   }
@@ -155,7 +159,7 @@ class ItemApiController extends Controller {
    * @NoAdminRequired
    * @NoCSRFRequired
    */
-  public function update($id,$account,$created,$description,$email,$favicon,$label,$password,$expire_time,$delete_date=0,$url,$otpsecret,$tags,$customFields) {
+  public function update($id,$account,$created,$description,$email,$favicon,$label,$password,$expire_time,$delete_date=0,$url,$otpsecret,$tags,$customFields,$restoredRevision=false,$isDeleted=false,$isRecovered=false) {
     $errors = array();
 
     $item = array();
@@ -216,9 +220,27 @@ class ItemApiController extends Controller {
         $item['expire_time'] = strtotime("+" . $maxRenewalPeriod . " days") * 1000;
       }
       $result['success'] = $this->ItemBusinessLayer->update($item);
+      $this->revisionController->save($item['id'],json_encode($curItem));
+;
+      $remoteUrl = \OCP\Util::linkToRoute('passman.page.index').'#selectItem='. $item['id'];
+      if(!$restoredRevision && !$isDeleted &&!$isRecovered){
+        $this->notification->add('item_edited',array($curItem['label'],$this->userId),'',array(),$remoteUrl);
+      } else {
+        if($restoredRevision) {
+          $this->notification->add('item_apply_revision', array($curItem['label'], $this->userId, $restoredRevision),'',array(),$remoteUrl);
+        }
+        if($isDeleted){
+          $this->notification->add('item_deleted',array($curItem['label'],$this->userId),'',array());
+        }
+        if($isRecovered){
+          $this->notification->add('item_recovered',array($curItem['label'],$this->userId),'',array(),$remoteUrl);
+        }
+      }
+
     } else {
       $result['errors'] = $errors;
     }
+
     return new JSONResponse($result);
   }
 
@@ -250,13 +272,14 @@ class ItemApiController extends Controller {
   public function delete($id) {
     $errors = array();
     $itemId = $id;
-	$userId = $this->userId;
+	  $userId = $this->userId;
     $findItem = $this->ItemBusinessLayer->get($itemId,$userId);
     if (empty($findItem)) {
       array_push($errors, 'Item not found');
     }
     if (empty($errors)) {
       $result['deleted'] = $this->ItemBusinessLayer->delete($itemId, $this->userId);
+      $this->notification->add('item_destroyed',array($findItem['label'],$this->userId));
     } else {
       $result['errors'] = $errors;
     }
@@ -280,13 +303,14 @@ class ItemApiController extends Controller {
   public function restore($id) {
     $errors = array();
     $itemId = $id;
-	$userId = $this->userId;
+	  $userId = $this->userId;
     $findItem = $this->ItemBusinessLayer->get($itemId,$userId);
     if (empty($findItem)) {
       array_push($errors, 'Item not found');
     }
     if (empty($errors)) {
       $result['restored'] = $this->ItemBusinessLayer->restore($itemId, $this->userId);
+
     } else {
       $result['errors'] = $errors;
     }

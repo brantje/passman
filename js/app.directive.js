@@ -3,15 +3,12 @@ app.directive('showLoaded', ['$rootScope',
     return {
       restrict : 'A',
       transclude : false,
-      scope : {
-        value : '=t'
-      },
       link : function(scope, element) {
         $rootScope.$on('loaded', function(){
           element.css('display','block');
         });
       }
-    }
+    };
   }]);
 app.directive('hideLoaded', ['$rootScope',
   function($rootScope) {
@@ -28,6 +25,19 @@ app.directive('hideLoaded', ['$rootScope',
       }
     }
 }]);
+app.directive('ngEnter', function() {
+  return function(scope, element, attrs) {
+    element.bind("keydown keypress", function(event) {
+      if(event.which === 13) {
+        scope.$apply(function(){
+          scope.$eval(attrs.ngEnter, {'event': event});
+        });
+
+        event.preventDefault();
+      }
+    });
+  };
+});
 
 app.directive('toggleTextStars', ['$compile',
   function ($compile, $tooltip) {

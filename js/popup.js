@@ -6,8 +6,8 @@ var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard',
         $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
     }]);
 app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout) {
-
-
+  $scope.currentItem = {};
+  $scope.noFavIcon = OC.imagePath('passman', 'lock.svg');
   $scope.encryptObject = function(object){
     var ec = JSON.stringify(object);
     return $scope.encryptThis(ec);
@@ -217,6 +217,20 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
     });
   };
 
+  $scope.updateFavIcon = function(){
+    var hashedUrl = window.btoa( $scope.currentItem.url)
+    $.get(OC.generateUrl('apps/passman/api/v1/item/getfavicon/'+ hashedUrl),function(data){
+      console.log(data)
+      $scope.currentItem.favicon = data.favicon;
+      $scope.$apply();
+    });
+  };
+
+  var loadFavIconTimer = $timeout(function(){
+    $scope.updateFavIcon();
+    $timeout.cancel(loadFavIconTimer);
+
+  },50);
   $scope.parseQR = function(qrData){
     console.log(qrData)
     var re = /otpauth:\/\/(totp|hotp)\/(.*)\?(secret|issuer)=(.*)&(issuer|secret)=(.*)/, parsedQR,qrInfo;
@@ -285,3 +299,11 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
     }
   };
 });
+var t = function () { };
+/* Check if t function exists if not, create it to prevent errors  */
+if (null === t) {
+  function t (app, string) {
+    console.log('Fuck, l10n failed to load', 'App: ' + app, 'String: ' + string);
+    return string;
+  }
+}

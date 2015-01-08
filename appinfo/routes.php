@@ -28,6 +28,7 @@ $application = new Application();
 $application->registerRoutes($this, array(
 
 'routes' => array(
+  'routes' => array(
     array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
     array('name' => 'page#disablefirstrun', 'url' => '/disablefirstrun', 'verb' => 'GET'),
     array('name' => 'page#popup', 'url' => '/add', 'verb' => 'GET'),
@@ -37,7 +38,7 @@ $application->registerRoutes($this, array(
 
     array('name' => 'page#imageproxy', 'url' => '/imageproxy/{hash}', 'verb' => 'GET'),
 
-    array('name' => 'notification#add', 'url' => '/api/v1/notification/add', 'verb' => 'GET'),
+    array('name' => 'notification#add', 'url' => '/api/v1/notification/add', 'verb' => 'POST'),
 
     array('name' => 'tag#search', 'url' => '/api/v1/tags/search', 'verb' => 'GET'),
     array('name' => 'tag#loadall', 'url' => '/api/v1/tags/list', 'verb' => 'GET'),
@@ -63,7 +64,10 @@ $application->registerRoutes($this, array(
     array('name' => 'item_api#getfile', 'url' => '/api/v1/item/file/{id}', 'verb' => 'GET'),
     array('name' => 'item_api#deletefile', 'url' => '/api/v1/item/file/{id}', 'verb' => 'DELETE'),
 
+    array('name' => 'revision#save', 'url' => '/api/v1/item/{id}/history', 'verb' => 'PUT'),
+    array('name' => 'revision#getrevisions', 'url' => '/api/v1/item/{id}/history', 'verb' => 'GET'),
+
 
     array('name' => 'share#search', 'url' => '/api/v1/sharing/search', 'verb' => 'GET'),
-    array('name' => 'share#userSearch', 'url'=> '/api/v1/share/user/rsearch/{name}', 'verb' => 'PUT')
+    array('name' => 'share#share', 'url' => '/api/v1/sharing/share', 'verb' => 'PUT'),
   )));

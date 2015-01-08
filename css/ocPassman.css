@@ -100,8 +100,16 @@ ul#tagList {
  margin: 5px;
  cursor: pointer;
  }*/
- 
- 
+
+input#itemSearch {
+  padding: 2px 5px 5px 5px !important;
+  margin-top: 6px;
+  -webkit-transition: width 1s; /* For Safari 3.1 to 6.0 */
+  transition: width 1s;
+}
+input#itemSearch:focus {
+  width: 200px;
+}
  
 #tagList .tag {
 	height: 50px;
@@ -117,6 +125,10 @@ border: 1px solid #ddd;
 background: #c9c9c9;
 font-weight: bold;
 color: #333;
+}
+#pwList .itemLabel.expired{
+  color: #C00000;
+  font-style: italic;
 }
 #pwList .tag {
 	-moz-border-radius: 6px;
@@ -297,6 +309,9 @@ td.td_title {
 #editAddItemDialog{
   height: 390px !important;
 }
+div[aria-describedby="editAddItemDialog"] .ui-widget-content{
+  border: none !important;
+}
 div[aria-describedby="editAddItemDialog"] {
   height: 490px !important;
   max-height: 490px;
@@ -412,16 +427,19 @@ div[aria-describedby="editAddItemDialog"] {
 	border-bottom: 1px solid rgb(0, 102, 255);
 	cursor: pointer;
 }
-.link {
+.link,.ui-widget-content a,#infoContainer .description a {
 	color: rgb(0, 102, 255) !important;
 	cursor: pointer;
 }
-.link:hover {
+.link:hover,.ui-widget-content a:hover,#infoContainer .description a:hover {
 	text-decoration: underline;
 }
 .link.loadFile {
 	margin-right: 8px;
 	display: block;
+}
+.td_title{
+  vertical-align: top !important;
 }
 #infoContainer span.ui-icon.ui-icon-carat-1-e {
 	margin: 0px;
@@ -430,7 +448,7 @@ div[aria-describedby="editAddItemDialog"] {
 	width: 100%;
 }
 #infoContainer table tr td:first-child {
-	width: 135px;
+	width: 120px;
 }
 #item_tabs label {
 	display: block;
@@ -447,7 +465,14 @@ div[aria-describedby="editAddItemDialog"] {
 #item_tabs #customFieldName, #item_tabs #customFieldValue {
 	width: 85%;
 }
-
+.ta-editor {
+  max-height: 300px;
+  height: 150px;
+  overflow: auto;
+  font-family: inherit;
+  font-size: 100%;
+  margin:20px 0;
+}
 #item_tabs input[type="checkbox"] {
 	width: 30px;
 }
@@ -796,4 +821,40 @@ input.shareUrl {
   position: relative;
   top: 4px;
   left: -15px;
+}
+
+
+#revisions{
+  overflow-x: hidden;
+}
+#revisions > .revContainer > div{
+  height: 50px;
+  padding: 10px;
+}
+#revisions > .revContainer > div.even{
+  background-color: #E2E2E2;
+}
+
+.revisionTable{
+  width: 280px;
+  margi-right: 5px;
+}
+.revisionTable tr{
+  height: 10px !important;
+}
+.revisionTable td{
+  display: inline-block;
+  height: 10px;
+  vertical-align: top;
+}
+.revContainer{
+  height: 350px; overflow-y: scroll;
+}
+
+.clearIcon{
+  position: absolute;
+  right: 10px;
+  top: 6px;
+  font-size: 15px;
+  cursor: pointer;
 }

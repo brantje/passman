@@ -49,9 +49,11 @@ class ItemBusinessLayer {
       $result = $this->ItemManager->get($r['id'], $userId);
       $tgs = ($result['tags'] != '') ? explode(',', $result['tags']) : null;
       $tags = array();
-      foreach ($tgs as $curTag) {
-        $tag = $this->TagBusinessLayer->search($curTag, $userId, true);
-        $tags[] = $tag[0];
+      if(count($tgs) > 0) {
+        foreach ($tgs as $curTag) {
+          $tag = $this->TagBusinessLayer->search($curTag, $userId, true);
+          $tags[] = $tag[0];
+        }
       }
       $result['tags'] = $tags;
       $result['files'] = $this->ItemManager->getFiles($result['id'], $userId);

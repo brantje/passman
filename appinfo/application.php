@@ -19,6 +19,7 @@ use \OCP\AppFramework\App;
 use \OCA\Passman\Controller\PageController;
 
 use \OCA\Passman\Controller\TagController;
+use \OCA\Passman\Controller\RevisionController;
 use \OCA\Passman\BusinessLayer\TagBusinessLayer;
 use \OCA\Passman\Db\TagManager;
 
@@ -28,13 +29,19 @@ use \OCA\Passman\Db\ItemManager;
 
 use \OCA\Passman\Controller\ShareController;
 use \OCA\Passman\Db\ShareManager;
+use \OCA\Passman\Db\RevisionManager;
 
 use \OCA\PassMan\Utility\SimplePieAPIFactory;
 use \OCA\PassMan\Utility\FaviconFetcher;
+use \OCA\Passman\Service\CronService;
 
 if (!class_exists('\SimplePie')) {
   require_once __DIR__ . '/../3rdparty/simplepie/autoloader.php';
 }
+
+\OC::$server->getActivityManager()->registerExtension(function() {
+  return new \OCA\Passman\Activity();
+});
 
 class Application extends App {
 
@@ -64,7 +71,9 @@ public function __construct(array $urlParams = array()) {
         $c->query('ItemBusinessLayer'),
         $c->query('UserId'),
         $c->query('TagBusinessLayer'),
-        $c->query('FaviconFetcher')
+        $c->query('FaviconFetcher'),
+        $c->query('RevisionController'),
+        $c->query('NotificationController')
       );
     });
 
@@ -90,6 +99,15 @@ public function __construct(array $urlParams = array()) {
         $c->query('UserId'),
         $c->query('UserGroups')
       );
+    });
+
+    $container->registerService('RevisionController', function ($c) {
+        return new RevisionController(
+          $c->query('AppName'),
+          $c->query('Request'),
+          $c->query('UserId'),
+          $c->query('RevisionManager')
+        );
     });
 
     $container->registerService('NotificationController', function ($c) {
@@ -133,7 +151,13 @@ public function __construct(array $urlParams = array()) {
     });
 
     $container->registerService('ShareManager', function ($c) {
-      return new TagManager(
+      return new ShareManager(
+        $c->query('ServerContainer')->getDb()
+      );
+    });
+
+    $container->registerService('RevisionManager', function ($c) {
+      return new RevisionManager(
         $c->query('ServerContainer')->getDb()
       );
     });
@@ -147,6 +171,16 @@ public function __construct(array $urlParams = array()) {
         $c->query('SimplePieAPIFactory')
       );
     });
+
+    /** Cron  **/
+    $container->registerService('CronService', function ($c) {
+      return new CronService(
+        $c->query('ServerContainer')->getDb(),
+        $c->query('NotificationController'),
+        $c->query('Logger')
+      );
+    });
+
     /**
      * Core
      */
@@ -165,6 +199,8 @@ public function __construct(array $urlParams = array()) {
     $container->registerService('AppStorage', function ($c) {
       return $c->query('ServerContainer')->getAppFolder();
     });
-
+    $container->registerService('Logger', function($c) {
+      return $c->query('ServerContainer')->getLogger();
+    });
   }
 }

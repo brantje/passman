@@ -37,6 +37,19 @@
       <div class="row">
         <div class="col-xs-1 formLabel">Label</div>
         <div class="col-xs-7"><input type="text" ng-init="currentItem.label = '<?php p($_['label']); ?>'" ng-model="currentItem.label" autocomplete="off" id="labell" required></div>
+        <div class="col-xs-1"><!-- if no image proxy -->
+          <img ng-src="{{currentItem.favicon}}" fallback-src="noFavIcon"
+               style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 10px;"
+               ng-if="currentItem.favicon">
+          <img style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 10px;"
+               ng-src="{{noFavIcon}}" ng-if="!currentItem.favicon && !userSettings.settings.useImageProxy">
+          <!-- end if -->
+
+          <!-- If image proxy === true -->
+          <img image-proxy image="currentItem.favicon" fallback="noFavIcon"
+               style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
+               ng-if="userSettings.settings.useImageProxy">
+        </div>
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Description</div>
@@ -54,7 +67,11 @@
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">URL</div>
-        <div class="col-xs-7"><input type="text" name="url" ng-init="currentItem.url = '<?php p($_['url']); ?>'" ng-model="currentItem.url" autocomplete="off"></div>
+        <div class="col-xs-7"><input type="text" name="url" ng-blur="updateFavIcon()" ng-init="currentItem.url = '<?php p($_['url']); ?>'" ng-model="currentItem.url" autocomplete="off"></div>
+      </div>
+      <div class="row">
+        <div class="col-xs-1 formLabel">Icon</div>
+        <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.favicon" autocomplete="off"></div>
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Tags</div>
@@ -252,7 +269,7 @@
   </div>
 <div class="buttons">
   <button class="button cancel" ng-click="closeDialog()">Cancel</button>
-  <button class="button save" ng-click="saveItem(currentItem)" ng-disabled="!new_item.$valid">Save</button>
+  <button class="button save" ng-click="saveItem(currentItem)">Save</button>
 </div>
 </div>
 <div id="encryptionKeyDialog" style="display: none;">

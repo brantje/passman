@@ -36,32 +36,44 @@ class NotificationController extends Controller {
    *
    * @NoAdminRequired
    * @NoCSRFRequired
+   * @subject = One of these: item_created, item_edited, item_apply_revision
+   *                          item_deleted, item_recovered, item_destroyed,
+   *                          item_expired, item_shared
+   *
+   *
+   *
+   *
+   * @subjectParams =  Subject     | Subject params
+   *                  item_created = array($itemName,$user)
+   *                  item_edited = array($itemName,$user)
+   *                  item_apply_revision = array($itemName,$user,$revision);
+   *                  item_deleted = array($itemName,$user)
+   *                  item_recovered = array($itemName,$user)
+   *                  item_destroyed = array($itemName,$user)
+   *                  item_expired = array($itemName)
+   *                  item_shared = array($itemName)
+   * @message = Custom message (not needed)
+   * @messageParams = Message params (not needed)
+   * @link = will be -> <ownCloud>/apps/activity/$link
+   * @user = Target user
+   * @type = Can be item or item_shared
+   * @priority = Int -> [10,20,30,40,50]
    */
-  public function add($subject,$subjectParams=array(),$message='',$messageParams=array(),$link,$user=null,$type,$priority) {
+  public function add($subject,$subjectParams=array(),$message='',$messageParams=array(),$link='',$user=null,$type='item',$priority=30) {
     $affectedUser = ($user) ? $user : $this->userId;
+
     \OC::$server->getActivityManager()-> publishActivity(
     'passman',
-    $subject,// The subject. Eg: '%s shared an item with you' %s is given in the parameter below
-    $subjectParams, //The parameters. The number of %s must match the array's length
-    $message, // Message, see: subject
-    $messageParams, //Message params: see subjectParams
+    $subject,
+    $subjectParams,
+    $message,
+    $messageParams,
     null,
     $link, //The link (No more doc yet)
-    $affectedUser, //The affected user
-    $type, // Type of activity eg: password_edited
-    $priority // Prio see below
-    /*
-      const PRIORITY_VERYLOW  = 10;
-      const PRIORITY_LOW      = 20;
-      const PRIORITY_MEDIUM   = 30;
-      const PRIORITY_HIGH     = 40;
-      const PRIORITY_VERYHIGH = 50;
-     */
+    $affectedUser,
+    $type,
+    $priority
     );
-	$response = func_get_args();
-	return $response;
-      /*'passman',
-      $msg, array($item->name), 'Message that item is expired', array(),
-    '', '', $this->user, '', PRIORITY_MEDIUM)*/;
+	return array('success'=>'ok');
   }
 }
