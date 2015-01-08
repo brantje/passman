@@ -805,7 +805,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   };
 });
 
-app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
+app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareService) {
   $scope.settings = {
     PSC: {
       minStrength: 40,
@@ -837,7 +837,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
   };
 
   $scope.renewShareKeys = function(){
-    var keypair = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+    var keypair = shareService.generateShareKeys();
     $scope.userSettings.settings.sharing.shareKeys = keypair;
   };
 
@@ -1015,7 +1015,7 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
       shareItem(data);
       if(!$scope.userSettings.settings.sharing.shareKeys){
         $timeout(function(){
-          var keypair = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+          var keypair = shareService.generateShareKeys();
           $scope.userSettings.settings.sharing.shareKeys = keypair;
           settingsService.saveSettings($scope.userSettings);
         },500);
