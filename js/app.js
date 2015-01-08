@@ -767,13 +767,11 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy && !$scope.currentItem.overrrideComplex || ($scope.requiredPWStrength && item.password==='')) {
       $scope.errors.push("Minimal password score not met");
     }
-    console.log($scope.pwOnLoad,unEncryptedItem.password)
     if($scope.pwOnLoad === unEncryptedItem.password){
       if(saveThis.expire_time <= $scope.today && saveThis.expire_time > 0){
         $scope.errors.push("Password is expired, please change it.");
       }
     } else{
-        console.log('Renew renewp',$scope.renewal_period)
       if($scope.renewal_period > 0){
         var itemExpireDate = $scope.currentItem.expire_time * 1,days;
         if (itemExpireDate !== 0 && $scope.renewal_period === '0') {
@@ -807,7 +805,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   };
 });
 
-app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
+app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareService) {
   $scope.settings = {
     PSC: {
       minStrength: 40,
@@ -839,7 +837,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService) {
   };
 
   $scope.renewShareKeys = function(){
-    var keypair = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+    var keypair = shareService.generateShareKeys();
     $scope.userSettings.settings.sharing.shareKeys = keypair;
   };
 
@@ -1017,7 +1015,7 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
       shareItem(data);
       if(!$scope.userSettings.settings.sharing.shareKeys){
         $timeout(function(){
-          var keypair = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+          var keypair = shareService.generateShareKeys();
           $scope.userSettings.settings.sharing.shareKeys = keypair;
           settingsService.saveSettings($scope.userSettings);
         },500);

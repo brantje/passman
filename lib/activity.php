@@ -11,8 +11,14 @@
 namespace OCA\Passman;
 
 class Activity implements \OCP\Activity\IExtension {
-	const TYPE_ITEM = 'item';
-	const TYPE_ITEM_SHARED = 'item_shared';
+	const TYPE_ITEM_CREATED = 'passman_item_created';
+	const TYPE_ITEM_EDITED = 'passman_item_edited';
+	const TYPE_ITEM_APPLY_REV = 'passman_item_apply_revision';
+	const TYPE_ITEM_DELETED = 'passman_item_deleted';
+	const TYPE_ITEM_RECOVERED = 'passman_item_recovered';
+	const TYPE_ITEM_DESTROYED = 'passman_item_destroyed';
+	const TYPE_ITEM_EXPIRED = 'passman_item_expired';
+	const TYPE_ITEM_SHARED = 'passman_item_shared';
 
 	const SUBJECT_ITEM_CREATED = 'item_created';
 	const SUBJECT_ITEM_EDITED = 'item_edited';
@@ -38,8 +44,14 @@ class Activity implements \OCP\Activity\IExtension {
 	public function getNotificationTypes($languageCode) {
 		$l = \OC::$server->getL10N('passman', $languageCode);
 		return array(
-			self::TYPE_ITEM => $l->t('Password actions (edit, update, delete, etc)'),
-			self::TYPE_ITEM_SHARED => $l->t('Shared password actions (edit, update, delete, etc)'),
+			self::TYPE_ITEM_CREATED => $l->t('[Passman] item creations'),
+			self::TYPE_ITEM_EDITED => $l->t('[Passman] item edits'),
+			self::TYPE_ITEM_APPLY_REV => $l->t('[Passman] Revert to a revision'),
+			self::TYPE_ITEM_DELETED => $l->t('[Passman] Item deleted'),
+			self::TYPE_ITEM_RECOVERED => $l->t('[Passman] Item recovered'),
+			self::TYPE_ITEM_DESTROYED => $l->t('[Passman] Item destroyed'),
+			self::TYPE_ITEM_EXPIRED => $l->t('[Passman] Item expires'),
+			self::TYPE_ITEM_SHARED => $l->t('[Passman] Item is shared')
 		);
 	}
 	/**
@@ -62,7 +74,7 @@ class Activity implements \OCP\Activity\IExtension {
 	 */
 	public function getDefaultTypes($method) {
 		if ($method === 'stream') {
-			return array(self::TYPE_ITEM, self::TYPE_ITEM_SHARED);
+			return array(self::TYPE_ITEM_CREATED, self::TYPE_ITEM_EDITED, self::TYPE_ITEM_APPLY_REV,self::TYPE_ITEM_DELETED,self::TYPE_ITEM_RECOVERED,self::TYPE_ITEM_DESTROYED,self::TYPE_ITEM_EXPIRED,self::TYPE_ITEM_SHARED);
 		}
 		return false;
 	}
@@ -145,10 +157,22 @@ class Activity implements \OCP\Activity\IExtension {
 	 */
 	public function getTypeIcon($type) {
 		switch ($type) {
-			case self::TYPE_ITEM:
+			case self::TYPE_ITEM_CREATED:
+				return 'icon-lock';
+			case self::TYPE_ITEM_APPLY_REV:
+				return 'icon-lock';
+			case self::TYPE_ITEM_DELETED:
+				return 'icon-lock';
+			case self::TYPE_ITEM_RECOVERED:
+				return 'icon-lock';
+			case self::TYPE_ITEM_DESTROYED:
+				return 'icon-lock';
+			case self::TYPE_ITEM_EXPIRED:
 				return 'icon-lock';
 			case self::TYPE_ITEM_SHARED:
 				return 'icon-share';
+			case self::TYPE_ITEM_EDITED:
+				return 'icon-lock';
 		}
 		return false;
 	}
@@ -192,7 +216,7 @@ class Activity implements \OCP\Activity\IExtension {
 	 */
 	public function getQueryForFilter($filter) {
 		if ($filter === 'passwords') {
-			return array('`app` = ? and `type` = ?', array('passman', self::TYPE_ITEM));
+			return array('`app` = ? and `type` = ?', array('passman', self::TYPE_ITEM_CREATED));
 		}
 		return false;
 	}

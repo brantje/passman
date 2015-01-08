@@ -292,7 +292,7 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
         ItemService.create(saveThis).success(function () {
           OC.Notification.showTimeout('Item created!',3000);
           $timeout(function(){
-            $window.close();
+            //$window.close();
           },3400);
         });
       }

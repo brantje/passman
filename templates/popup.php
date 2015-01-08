@@ -268,7 +268,6 @@
     </div>
   </div>
 <div class="buttons">
-  <button class="button cancel" ng-click="closeDialog()">Cancel</button>
   <button class="button save" ng-click="saveItem(currentItem)">Save</button>
 </div>
 </div>

@@ -7,6 +7,10 @@ app.factory('shareService', ['$http', function ($http) {
         method: 'PUT',
         data: item
       });
+    },
+    generateShareKeys: function(){
+      var shareKeys = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+      return shareKeys;
     }
   };
 }]);
