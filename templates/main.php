@@ -104,7 +104,7 @@
         <img image-proxy image="item.favicon" fallback="noFavIcon"
              style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
              ng-if="userSettings.settings.useImageProxy  && !userSettings.settings.noFavIcons">
-        <div ng-if="userSettings.settings.noFavIcons"  style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"></div>
+        <img ng-if="userSettings.settings.noFavIcons"  style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;" ng-src="{{noFavIcon}}">
         <!--- // end  if-->
         <div style="display: inline-block;" class="itemLabel" ng-class="{ 'expired': item.expire_time <= today && item.expire_time > 0 }">{{item.label}}</div>
         <i class="icon-rename icon" ng-click="editItem(item)" title="Edit"></i>
