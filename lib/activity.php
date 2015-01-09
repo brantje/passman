@@ -16,11 +16,17 @@ class Activity implements \OCP\Activity\IExtension {
 	const TYPE_ITEM_SHARED = 'passman_item_shared';
 
 	const SUBJECT_ITEM_CREATED = 'item_created';
+	const SUBJECT_ITEM_CREATED_SELF = 'item_created_self';
 	const SUBJECT_ITEM_EDITED = 'item_edited';
+	const SUBJECT_ITEM_EDITED_SELF = 'item_edited_self';
 	const SUBJECT_APPLY_REV = 'item_apply_revision';
+	const SUBJECT_APPLY_REV_SELF = 'item_apply_revision_self';
 	const SUBJECT_ITEM_DELETED = 'item_deleted';
+	const SUBJECT_ITEM_DELETED_SELF = 'item_deleted_self';
 	const SUBJECT_ITEM_RECOVERED = 'item_recovered';
+	const SUBJECT_ITEM_RECOVERED_SELF = 'item_recovered_self';
 	const SUBJECT_ITEM_DESTROYED = 'item_destroyed';
+	const SUBJECT_ITEM_DESTROYED_SELF = 'item_destroyed_self';
 	const SUBJECT_ITEM_EXPIRED = 'item_expired';
 	const SUBJECT_ITEM_SHARED = 'item_shared';
 
@@ -94,16 +100,28 @@ class Activity implements \OCP\Activity\IExtension {
 			switch ($text) {
 				case self::SUBJECT_ITEM_CREATED:
 					return $l->t('%1$s has been created by %2$s', $params)->__toString();
+				case self::SUBJECT_ITEM_CREATED_SELF:
+					return $l->t('You created %1$s', $params)->__toString();
 				case self::SUBJECT_ITEM_EDITED:
 					return $l->t('%1$s has been updated by %2$s', $params)->__toString();
+				case self::SUBJECT_ITEM_EDITED_SELF:
+					return $l->t('You changed %1$s', $params)->__toString();
 				case self::SUBJECT_APPLY_REV:
-					return $l->t('%2$s has been revised %1$s to revision %3$s', $params)->__toString();
+					return $l->t('%2$s has been revised %1$s to the revision of %3$s', $params)->__toString();
+				case self::SUBJECT_APPLY_REV_SELF:
+					return $l->t('You reverted %1$s back to the revision of %3$s', $params)->__toString();
 				case self::SUBJECT_ITEM_DELETED:
 					return $l->t('%1$s has been deleted by %2$s', $params)->__toString();
+				case self::SUBJECT_ITEM_DELETED_SELF:
+					return $l->t('You deleted %1$s', $params)->__toString();
 				case self::SUBJECT_ITEM_RECOVERED:
 					return $l->t('%1$s has been recovered by %2$s', $params)->__toString();
+				case self::SUBJECT_ITEM_RECOVERED_SELF:
+					return $l->t('You recovered %1$s', $params)->__toString();
 				case self::SUBJECT_ITEM_DESTROYED:
 					return $l->t('%1$s has been permanently deleted by %2$s', $params)->__toString();
+				case self::SUBJECT_ITEM_DESTROYED_SELF:
+					return $l->t('You permanently deleted %1$s', $params)->__toString();
 				case self::SUBJECT_ITEM_EXPIRED:
 					return $l->t('The password of %s has expired, renew it now.', $params)->__toString();
 				case self::SUBJECT_ITEM_SHARED:
@@ -128,15 +146,21 @@ class Activity implements \OCP\Activity\IExtension {
 		if ($app === 'passman') {
 			switch ($text) {
 				case self::SUBJECT_ITEM_CREATED:
+				case self::SUBJECT_ITEM_CREATED_SELF:
 				case self::SUBJECT_ITEM_EDITED:
+				case self::SUBJECT_ITEM_EDITED_SELF:
 				case self::SUBJECT_ITEM_DELETED:
+				case self::SUBJECT_ITEM_DELETED_SELF:
 				case self::SUBJECT_ITEM_RECOVERED:
+				case self::SUBJECT_ITEM_RECOVERED_SELF:
 				case self::SUBJECT_ITEM_DESTROYED:
+				case self::SUBJECT_ITEM_DESTROYED_SELF:
 					return array(
 						0 => 'passman',
 						1 => 'username',
 					);
 				case self::SUBJECT_APPLY_REV:
+				case self::SUBJECT_APPLY_REV_SELF:
 					return array(
 						0 => 'passman',
 						1 => 'username',
