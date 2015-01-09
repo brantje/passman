@@ -601,7 +601,11 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
         if(!$('.ui-dialog-buttonset').find('.button.save')){
           $('.button.cancel').appendTo('.ui-dialog-buttonset');
           $('.button.save').appendTo('.ui-dialog-buttonset');
+          $scope.errors = [];
         }
+      },
+      close: function(){
+        $scope.errors = [];
       }
     });
   };
@@ -616,6 +620,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   $scope.uploadQueue = {};
   $scope.generatedPW = '';
   $scope.pwInfo = {};
+
   $scope.QRCode = {};
   $scope.favIconLoading = false;
   $scope.currentPWInfo = {};

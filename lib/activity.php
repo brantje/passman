@@ -123,7 +123,7 @@ class Activity implements \OCP\Activity\IExtension {
 				case self::SUBJECT_ITEM_DESTROYED_SELF:
 					return $l->t('You permanently deleted %1$s', $params)->__toString();
 				case self::SUBJECT_ITEM_EXPIRED:
-					return $l->t('The password of %s has expired, renew it now.', $params)->__toString();
+					return $l->t('The password of %1$s has expired, renew it now.', $params)->__toString();
 				case self::SUBJECT_ITEM_SHARED:
 					return $l->t('%s has been shared', $params)->__toString();
 			}
