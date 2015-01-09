@@ -11,6 +11,7 @@
 
 namespace OCA\Passman\Controller;
 
+use OCA\Passman\Activity;
 use \OCA\Passman\BusinessLayer\TagBusinessLayer;
 use \OCA\Passman\BusinessLayer\ItemBusinessLayer;
 use \OCP\IRequest;
@@ -146,7 +147,7 @@ class ItemApiController extends Controller {
       $result['errors'] = $errors;
     }
     $remoteUrl = \OCP\Util::linkToRoute('passman.page.index').'#selectItem='. $result['itemid'];
-    $this->notification->add('item_created',array($item['label'],$this->userId),'',array(),$remoteUrl);
+    $this->notification->add(Activity::SUBJECT_ITEM_CREATED,array($item['label'],$this->userId),'',array(),$remoteUrl, null, Activity::TYPE_ITEM_ACTION);
     $item['id'] = $result['itemid'];
     return new JSONResponse($item);
   }
