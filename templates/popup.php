@@ -67,7 +67,7 @@
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">URL</div>
-        <div class="col-xs-7"><input type="text" name="url" ng-blur="updateFavIcon()" ng-init="currentItem.url = '<?php p($_['url']); ?>'" ng-model="currentItem.url" autocomplete="off"></div>
+        <div class="col-xs-7"><input type="text" name="url" ng-blur="updateFavIcon()" ng-init="currentItem.url = '<?php p($_['url']); ?>'" ng-model="currentItem.url" autocomplete="off"></div><div ng-show="favIconLoading" class="loader" style="height: 10px; width: 10px; border-width: 5px; display: inline-block; margin-top: 10px; margin-left: 10px;"></div>
       </div>
       <div class="row">
         <div class="col-xs-1 formLabel">Icon</div>

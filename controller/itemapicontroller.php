@@ -228,6 +228,7 @@ class ItemApiController extends Controller {
         $this->notification->add('item_edited'.$self,array($curItem['label'],$this->userId),'',array(),$remoteUrl,null, Activity::TYPE_ITEM_ACTION);
       } else {
         if($restoredRevision) {
+          $restoredRevision = \OC::$server->query('DateTimeFormatter')->formatDateTime($restoredRevision,'long', 'short');
           $this->notification->add('item_apply_revision'.$self, array($curItem['label'], $this->userId, $restoredRevision),'',array(),$remoteUrl,null, Activity::TYPE_ITEM_ACTION);
         }
         if($isDeleted){
@@ -280,7 +281,7 @@ class ItemApiController extends Controller {
     }
     if (empty($errors)) {
       $result['deleted'] = $this->ItemBusinessLayer->delete($itemId, $this->userId);
-      $self = ($findItem == $this->userId) ? '_self' : '';
+      $self = ($findItem['user_id'] == $this->userId) ? '_self' : '';
       $this->notification->add('item_destroyed'.$self,array($findItem['label'],$this->userId),'',array(),'', null, Activity::TYPE_ITEM_ACTION);
     } else {
       $result['errors'] = $errors;

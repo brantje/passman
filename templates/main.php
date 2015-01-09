@@ -207,7 +207,7 @@
           </td>
           <td>
             {{currentItem.url}} <a clip-copy="currentItem.url" clip-click="copied('URL')" class="link">[Copy]</a> <a
-                ng-href="{{currentItem.url}}" class="link" target="_blank">[Open]</a>
+                make-url url="currentItem.url" class="link" target="_blank">[Open]</a>
           </td>
         </tr>
         <tr ng-show="currentItem.files.length > 0 && currentItem.files">
@@ -299,8 +299,7 @@
           </div>
           <div class="row">
             <div class="col-xs-1 formLabel">URL</div>
-            <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.url" autocomplete="off"
-                                         ng-blur="updateFavIcon()"></div>
+            <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.url" autocomplete="off" ng-model-options="{debounce: 750}"></div><div ng-show="favIconLoading" class="loader smallloader" ></div>
           </div>
           <div class="row">
             <div class="col-xs-1 formLabel">Icon</div>
@@ -605,6 +604,151 @@
         </div>
       </div>
     </div>
+    <div ng-controller="revisionCtrl" style="display: none;">
+      <div id="revisions">
+        <div class="row">
+          <div class="col-md-10">
+            <button class="btn btn-default pull-left" ng-click="compareSelected()">Compare selected</button>
+            <button class="btn btn-default pull-left">Delete selected</button>
+          </div>
+        </div>
+        <div class="revContainer">
+          <div ng-repeat="revision in revisions"  ng-class="{'even': $even} ">
+            <div class="col-md-1 nopadding">
+              <input type="checkbox" ng-model="revision.selected">
+            </div>
+            <div class="col-md-3">
+              <span ng-if="revision.revision_date!== 'current'">{{revision.revision_date*1000 | date:"dd/MM/yyyy H:mm"}}<br /> by {{revision.user_id}}</span>
+              <span ng-if="revision.revision_date=== 'current'">Current revision by {{revision.user_id}}</span>
+
+            </div>
+            <div class="col-md-6">
+              {{revision.data.label}}
+            </div>
+            <div class="col-md-6">
+              <a ng-click="showRevision(revision)" class="link">Show</a>
+              <span ng-if="revision.revision_date!== 'current'"> | <a class="link" ng-click="restoreRevision(revision,revision.revision_date)">Restore</a></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="showRevisions">
+        <table style="width:100%">
+          <tr>
+            <td ng-repeat="showRevision in revisionCompareArr">
+              <span ng-if="showRevision.revision_date!== 'current'">Revision of {{showRevision.revision_date*1000 | date:"dd/MM/yyyy H:mm"}} by {{showRevision.user_id}}</span>
+              <span ng-if="showRevision.revision_date=== 'current'">Current revision by {{showRevision.user_id}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td ng-repeat="showRevision in revisionCompareArr">
+              <table class="revisionTable">
+                <tbody>
+                <tr ng-show="showRevision.data.label">
+                  <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                          style="float: left; margin-right: .3em;">&nbsp;</span>
+                    <span>Label</span>:
+                  </td>
+                  <td>
+                    {{showRevision.data.label}}
+                  </td>
+                </tr>
+                <tr ng-show="showRevision.data.description">
+                  <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                          style="float: left; margin-right: .3em;">&nbsp;</span>
+                    <span>Description</span> :
+                  </td>
+                  <td>
+                    <span ng-bind-html="showRevision.data.description  | to_trusted"></span>
+
+                  </td>
+                </tr>
+                <tr ng-show="showRevision.data.account ">
+                  <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                          style="float: left; margin-right: .3em;">&nbsp;</span>
+                    <span>Account</span> :
+                  </td>
+                  <td>
+                    {{showRevision.data.account}}
+                  </td>
+                </tr>
+                <tr ng-show="showRevision.data.password ">
+                  <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                          style="float: left; margin-right: .3em;">&nbsp;</span>
+                    <span>Password</span> :
+                  </td>
+                  <td>
+                    <span pw="showRevision.data.password" toggle-text-stars></span>
+                  </td>
+                </tr>
+                <tr ng-if="showRevision.data.otpsecret ">
+                  <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                          style="float: left; margin-right: .3em;">&nbsp;</span>
+                    <span>One time password</span> :
+                  </td>
+                  <td>
+                    &nbsp; Yes
+                  </td>
+                </tr>
+                <tr ng-show="showRevision.data.expire_time">
+                  <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                          style="float: left; margin-right: .3em;">&nbsp;</span>
+                    <span>Expires</span> :
+                  </td>
+                  <td>
+                    {{showRevision.data.expire_time | date}}
+                  </td>
+                </tr>
+                <tr ng-show="showRevision.data.email ">
+                  <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                          style="float: left; margin-right: .3em;">&nbsp;</span>
+                    <span>Email</span> :
+                  </td>
+                  <td>
+                    {{showRevision.data.email}}
+                  </td>
+                </tr>
+                <tr ng-show="showRevision.data.url ">
+                  <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                          style="float: left; margin-right: .3em;">&nbsp;</span>
+                    <span>URL</span> :
+                  </td>
+                  <td>
+                    {{showRevision.data.url}}
+                  </td>
+                </tr>
+                <tr ng-show="showRevision.data.files.length > 0 && showRevision.data.files">
+                  <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                          style="float:left; margin-right:.3em;">&nbsp;</span>
+                    <span>Files & Images</span> :
+                  </td>
+                  <td>
+            <span ng-repeat="file in currentItem.files" class="link loadFile"><span
+                  ng-class="file.icon"></span>{{file.filename}}  ({{file.size | bytes}})</span>
+                  </td>
+                </tr>
+                <tr ng-show="showRevision.data.customFields.length > 0" ng-repeat="custom in showRevision.data.customFields">
+                  <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                          style="float:left; margin-right:.3em;">&nbsp;</span>
+                    {{custom.label}} :
+                  </td>
+                  <td>
+                      <span ng-if="custom.clicktoshow==0">
+                        {{custom.value}}
+                      </span>
+                      <span ng-if="custom.clicktoshow==1">
+                       <span pw="custom.value" toggle-text-stars></span>
+                      </span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
   </div>
   <!-- End contentCtrl -->
 
@@ -661,150 +805,7 @@
   <!-- end sharing -->
 
 
-  <div ng-controller="revisionCtrl" style="display: none;">
-    <div id="revisions">
-      <div class="row">
-        <div class="col-md-10">
-          <button class="btn btn-default pull-left" ng-click="compareSelected()">Compare selected</button>
-          <button class="btn btn-default pull-left">Delete selected</button>
-        </div>
-      </div>
-      <div class="revContainer">
-        <div ng-repeat="revision in revisions"  ng-class="{'even': $even} ">
-          <div class="col-md-1 nopadding">
-            <input type="checkbox" ng-model="revision.selected">
-          </div>
-          <div class="col-md-3">
-            <span ng-if="revision.revision_date!== 'current'">{{revision.revision_date*1000 | date:"dd/MM/yyyy H:mm"}}<br /> by {{revision.user_id}}</span>
-            <span ng-if="revision.revision_date=== 'current'">Current revision by {{revision.user_id}}</span>
 
-          </div>
-          <div class="col-md-6">
-            {{revision.data.label}}
-          </div>
-          <div class="col-md-6">
-            <a ng-click="showRevision(revision)" class="link">Show</a>
-            <span ng-if="revision.revision_date!== 'current'"> | <a class="link" ng-click="restoreRevision(revision,revision.revision_date)">Restore</a></span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="showRevisions">
-      <table style="width:100%">
-        <tr>
-          <td ng-repeat="showRevision in revisionCompareArr">
-           <span ng-if="showRevision.revision_date!== 'current'">Revision of {{showRevision.revision_date*1000 | date:"dd/MM/yyyy H:mm"}} by {{showRevision.user_id}}</span>
-           <span ng-if="showRevision.revision_date=== 'current'">Current revision by {{showRevision.user_id}}</span>
-          </td>
-        </tr>
-        <tr>
-          <td ng-repeat="showRevision in revisionCompareArr">
-            <table class="revisionTable">
-              <tbody>
-              <tr ng-show="showRevision.data.label">
-                <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                                        style="float: left; margin-right: .3em;">&nbsp;</span>
-                  <span>Label</span>:
-                </td>
-                <td>
-                  {{showRevision.data.label}}
-                </td>
-              </tr>
-              <tr ng-show="showRevision.data.description">
-                <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                                        style="float: left; margin-right: .3em;">&nbsp;</span>
-                  <span>Description</span> :
-                </td>
-                <td>
-                  <span ng-bind-html="showRevision.data.description  | to_trusted"></span>
-
-                </td>
-              </tr>
-              <tr ng-show="showRevision.data.account ">
-                <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                                        style="float: left; margin-right: .3em;">&nbsp;</span>
-                  <span>Account</span> :
-                </td>
-                <td>
-                  {{showRevision.data.account}}
-                </td>
-              </tr>
-              <tr ng-show="showRevision.data.password ">
-                <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                                        style="float: left; margin-right: .3em;">&nbsp;</span>
-                  <span>Password</span> :
-                </td>
-                <td>
-                  <span pw="showRevision.data.password" toggle-text-stars></span>
-                </td>
-              </tr>
-              <tr ng-if="showRevision.data.otpsecret ">
-                <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                                        style="float: left; margin-right: .3em;">&nbsp;</span>
-                  <span>One time password</span> :
-                </td>
-                <td>
-                  &nbsp; Yes
-                </td>
-              </tr>
-              <tr ng-show="showRevision.data.expire_time">
-                <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                                        style="float: left; margin-right: .3em;">&nbsp;</span>
-                  <span>Expires</span> :
-                </td>
-                <td>
-                  {{showRevision.data.expire_time | date}}
-                </td>
-              </tr>
-              <tr ng-show="showRevision.data.email ">
-                <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                                        style="float: left; margin-right: .3em;">&nbsp;</span>
-                  <span>Email</span> :
-                </td>
-                <td>
-                  {{showRevision.data.email}}
-                </td>
-              </tr>
-              <tr ng-show="showRevision.data.url ">
-                <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                                        style="float: left; margin-right: .3em;">&nbsp;</span>
-                  <span>URL</span> :
-                </td>
-                <td>
-                  {{showRevision.data.url}}
-                </td>
-              </tr>
-              <tr ng-show="showRevision.data.files.length > 0 && showRevision.data.files">
-                <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                                        style="float:left; margin-right:.3em;">&nbsp;</span>
-                  <span>Files & Images</span> :
-                </td>
-                <td>
-            <span ng-repeat="file in currentItem.files" class="link loadFile"><span
-                  ng-class="file.icon"></span>{{file.filename}}  ({{file.size | bytes}})</span>
-                </td>
-              </tr>
-              <tr ng-show="showRevision.data.customFields.length > 0" ng-repeat="custom in showRevision.data.customFields">
-                <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
-                                                        style="float:left; margin-right:.3em;">&nbsp;</span>
-                  {{custom.label}} :
-                </td>
-                <td>
-                      <span ng-if="custom.clicktoshow==0">
-                        {{custom.value}}
-                      </span>
-                      <span ng-if="custom.clicktoshow==1">
-                       <span pw="custom.value" toggle-text-stars></span>
-                      </span>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      </table>
-
-    </div>
 
 </div>
 

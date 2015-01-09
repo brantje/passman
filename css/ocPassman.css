@@ -29,6 +29,14 @@
     transform: rotate(360deg);
   }
 }
+.smallloader{
+    height: 10px;
+    width: 10px;
+    border-width: 5px;
+    display: inline-block;
+    margin-top: 10px;
+    margin-left: 10px;
+}
 #app-navigation li {
 	width: auto;
 

@@ -187,7 +187,7 @@ class Activity implements \OCP\Activity\IExtension {
 		switch ($type) {
 			case self::TYPE_ITEM_ACTION:
 			case self::TYPE_ITEM_EXPIRED:
-				return 'icon-lock';
+				return 'icon-password';
 			case self::TYPE_ITEM_SHARED:
 				return 'icon-share';
 		}

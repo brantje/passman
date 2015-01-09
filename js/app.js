@@ -18,7 +18,6 @@ $(document).ready(function () {
   resizeList();
   var lastTime;
   $(document).on('keyup',function(evt){
-    console.log('Keycode: ',evt.keyCode)
     if(evt.keyCode === 16){
       if(!lastTime){
         lastTime = new Date().getTime();
@@ -93,6 +92,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
         if(data.items[i].id === $scope.selectThisItem){
           $scope.$broadcast('showItem',data.items[i]);
 
+
         }
       }
       tmp.sort(function (x, y) {
@@ -165,6 +165,32 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
       }
       if(item.otpsecret) {
         item.otpsecret = $scope.decryptObject(item.otpsecret);
+      }
+    }
+    return item;
+  };
+  $scope.encryptItem = function(rawItem){
+    var item = angular.copy(rawItem), encryptedFields = ['account', 'email', 'password', 'description'], i;
+    if (!item.decrypted) {
+      for (i = 0; i < encryptedFields.length; i++) {
+        if (item[encryptedFields[i]]) {
+          item[encryptedFields[i]] = $scope.encryptThis(item[encryptedFields[i]]);
+        }
+      }
+      if(item.customFields) {
+        for (i = 0; i < item.customFields.length; i++) {
+          item.customFields[i].label = $scope.encryptThis(item.customFields[i].label);
+          item.customFields[i].value = $scope.encryptThis(item.customFields[i].value);
+        }
+      }
+      if(item.files) {
+        for (i = 0; i < item.files.length; i++) {
+          item.files[i].filename = $scope.encryptThis(item.files[i].filename);
+          item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
+        }
+      }
+      if(item.otpsecret) {
+        item.otpsecret = $scope.encryptObject(item.otpsecret);
       }
     }
     return item;
@@ -591,6 +617,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   $scope.generatedPW = '';
   $scope.pwInfo = {};
   $scope.QRCode = {};
+  $scope.favIconLoading = false;
   $scope.currentPWInfo = {};
   $scope.pwSettings = {
     length: 12,
@@ -662,12 +689,21 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
         $scope.currentItem.tags.splice(idx,1);
       }
     });
-  }
+  };
+
+  $scope.$watch('currentItem.url',function(newVal){
+    if(!newVal){
+      return;
+    }
+    $scope.updateFavIcon();
+  });
 
   $scope.updateFavIcon = function(){
+    $scope.favIconLoading = true;
     var hashedUrl = window.btoa( $scope.currentItem.url)
     $.get(OC.generateUrl('apps/passman/api/v1/item/getfavicon/'+ hashedUrl),function(data){
       $scope.currentItem.favicon = data.favicon;
+      $scope.favIconLoading = false;
     });
   };
 
@@ -913,8 +949,25 @@ app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope,Item
 
   $scope.restoreRevision = function(revision,date){
     revision.data.restoredRevision = date;
-    ItemService.update(revision.data);
-    $scope.revisions[0].data = revision.data;
+    ItemService.update(revision.data).success(function(){
+      OC.Notification.showTimeout(revision.data.label +' restored to the revision of '+ moment(date*1000).format("MMMM D, YYYY hh:mm"));
+      $scope.revisions[0].data = revision.data;
+      var old = $scope.encryptItem(angular.copy($scope.currentItem));
+      var tmp = {
+        user_id: old.user_id,
+        revision_date:new Date().getTime()/1000,
+        data: old
+      };
+      $scope.revisions.splice(1, 0, tmp);
+
+      $scope.$emit('showItem',angular.copy(revision.data));
+      angular.forEach($scope.items,function(item){
+        if(item.id === revision.data.id){
+          item.label = revision.data.label;
+        }
+      });
+    });
+
   };
 
 });
