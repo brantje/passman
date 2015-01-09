@@ -38,7 +38,7 @@ class CronService {
       $this -> logger -> info($row['label'].' is expired',array('app'=>'passman'));
       $remoteUrl = \OCP\Util::linkToRoute('passman.page.index').'#selectItem='. $row['id'];
       $url = 'http://localhost/core/index.php/apps/passman/#selectItem='. $row['id'];
-      $this->notification->add('item_expired',array($row['label']),'',array(),$remoteUrl,$row['user_id']);
+      $this->notification->add('item_expired',array($row['label']),'',array(),$remoteUrl,$row['user_id'], Activity::TYPE_ITEM_ACTION);
     }
   }
 }

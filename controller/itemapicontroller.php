@@ -225,16 +225,16 @@ class ItemApiController extends Controller {
 ;
       $remoteUrl = \OCP\Util::linkToRoute('passman.page.index').'#selectItem='. $item['id'];
       if(!$restoredRevision && !$isDeleted &&!$isRecovered){
-        $this->notification->add('item_edited',array($curItem['label'],$this->userId),'',array(),$remoteUrl);
+        $this->notification->add('item_edited',array($curItem['label'],$this->userId),'',array(),$remoteUrl,null, Activity::TYPE_ITEM_ACTION);
       } else {
         if($restoredRevision) {
-          $this->notification->add('item_apply_revision', array($curItem['label'], $this->userId, $restoredRevision),'',array(),$remoteUrl);
+          $this->notification->add('item_apply_revision', array($curItem['label'], $this->userId, $restoredRevision),'',array(),$remoteUrl,null, Activity::TYPE_ITEM_ACTION);
         }
         if($isDeleted){
-          $this->notification->add('item_deleted',array($curItem['label'],$this->userId),'',array());
+          $this->notification->add('item_deleted',array($curItem['label'],$this->userId),'',array(),'', null, Activity::TYPE_ITEM_ACTION);
         }
         if($isRecovered){
-          $this->notification->add('item_recovered',array($curItem['label'],$this->userId),'',array(),$remoteUrl);
+          $this->notification->add('item_recovered',array($curItem['label'],$this->userId),'',array(),$remoteUrl,null, Activity::TYPE_ITEM_ACTION);
         }
       }
 
@@ -280,7 +280,7 @@ class ItemApiController extends Controller {
     }
     if (empty($errors)) {
       $result['deleted'] = $this->ItemBusinessLayer->delete($itemId, $this->userId);
-      $this->notification->add('item_destroyed',array($findItem['label'],$this->userId));
+      $this->notification->add('item_destroyed',array($findItem['label'],$this->userId),'',array(),'', null, Activity::TYPE_ITEM_ACTION);
     } else {
       $result['errors'] = $errors;
     }
