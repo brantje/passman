@@ -802,6 +802,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     /**
      *Field checking
      */
+    console.log(item)
     if (item.password !== item.passwordConfirm) {
       $scope.errors.push("Passwords do not match");
     }
@@ -865,15 +866,24 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     var i, pwd, tmp;
     for (i = 0; i < $scope.items.length; i++) {
       tmp = angular.copy($scope.items[i]);
-      pwd = zxcvbn($scope.decryptThis(tmp.password));
-      if (pwd.entropy < $scope.settings.PSC.minStrength) {
-        tmp.score = pwd.entropy;
-        tmp.password = pwd.password;
-        tmp.originalItem = $scope.items[i];
-        if (tmp.password !== '') {
-          $scope.settings.PSC.weakItemList.push(tmp);
-        }
-      }
+      console.log('Checking ',tmp.label);
+        if(tmp.password){
+          try{
+            pwd = zxcvbn($scope.decryptThis(tmp.password));
+            if (pwd.entropy < $scope.settings.PSC.minStrength) {
+              console.log(pwd);
+              tmp.score = pwd.entropy;
+              tmp.password = pwd.password;
+              tmp.crack_time_display = pwd.crack_time_display;
+              tmp.originalItem = $scope.items[i];
+              if (tmp.password !== '') {
+                $scope.settings.PSC.weakItemList.push(tmp);
+              }
+            }
+          }  catch (e){
+          console.log('Error ',e)
+          }
+       }
     }
   };
 

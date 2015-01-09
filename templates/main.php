@@ -20,8 +20,7 @@
 \OCP\Util::addscript('passman', 'app.directive');
 \OCP\Util::addscript('passman', 'app.filter');
 \OCP\Util::addScript('passman', 'jsrsasign-4.7.0-all-min');
-\OCP\Util::addScript('passman', 'async');
-\OCP\Util::addScript('passman', 'crypto_wrap');
+
 
 
 \OCP\Util::addStyle('passman', 'ocPassman');
@@ -97,14 +96,15 @@
         <!-- if no image proxy -->
         <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
              style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
-             ng-if="item.favicon && !userSettings.settings.useImageProxy">
+             ng-if="item.favicon && !userSettings.settings.useImageProxy && !userSettings.settings.noFavIcons">
         <img style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
-             ng-src="{{noFavIcon}}" ng-if="!item.favicon && !userSettings.settings.useImageProxy">
+             ng-src="{{noFavIcon}}" ng-if="!item.favicon && !userSettings.settings.useImageProxy  && !userSettings.settings.noFavIcons">
         <!-- end if -->
         <!-- If image proxy === true -->
         <img image-proxy image="item.favicon" fallback="noFavIcon"
              style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
-             ng-if="userSettings.settings.useImageProxy">
+             ng-if="userSettings.settings.useImageProxy  && !userSettings.settings.noFavIcons">
+        <div ng-if="userSettings.settings.noFavIcons"  style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"></div>
         <!--- // end  if-->
         <div style="display: inline-block;" class="itemLabel" ng-class="{ 'expired': item.expire_time <= today && item.expire_time > 0 }">{{item.label}}</div>
         <i class="icon-rename icon" ng-click="editItem(item)" title="Edit"></i>
@@ -550,6 +550,7 @@
 
               <label><input type="checkbox" ng-model="userSettings.settings.useImageProxy"> Use image proxy on https
                 pages</label>
+              <label><input type="checkbox" ng-model="userSettings.settings.noFavIcons"> Disable fav icons</label>
             </div>
           </div>
         </div>
@@ -577,19 +578,29 @@
               than</p>
             <input type="text" ng-model="settings.PSC.minStrength"/>
             <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
+            <div ng-show="settings.PSC.weakItemList.length > 0">You've got {{settings.PSC.weakItemList.length}} weak passwords</div>
             <div style="max-height: 300px; overflow-y: auto;">
-              <table ng-table="tableParams" class="table" style="width: 100%;">
-                <tr>
-                  <td>Label</td>
-                  <td>Score</td>
-                  <td>Password</td>
-                </tr>
-                <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
-                  <td>{{item.label}}</td>
-                  <td>{{item.score}}</td>
-                  <td><span pw="item.password" toggle-text-stars></span> <a
-                        ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a></td>
-                </tr>
+              <table ng-table="tableParams" class="table table-striped header-fixed weakPwList">
+                <thead>
+                  <tr>
+                    <th>Label</th>
+                    <th>Score</th>
+                    <th>Crack time</td>
+                    <th>Password</th>
+                  </tr>
+                </thead>
+                <tbody style="height: 230px;">
+                  <tr ng-repeat="item in settings.PSC.weakItemList | orderBy:'score'">
+                    <td>{{item.label}}</td>
+                    <td>{{item.score}}</td>
+                    <td>{{item.crack_time_display}}</td>
+
+                    <td>
+                      <span pw="item.password" toggle-text-stars></span>
+                      <a ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[edit]</a>
+                    </td>
+                  </tr>
+                </tbody>
               </table>
             </div>
           </div>

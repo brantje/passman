@@ -715,12 +715,6 @@ div#settingTabs {
   min-height: 99%;
 }
 
-table.table tr td:first-child {
-  width: 200px;
-}
-table.table tr td:nth-child(2) {
-  width: 60px;
-}
 
 .ui-dialog[aria-describedby="shareDialog"] .ui-dialog-titlebar,.ui-dialog[aria-describedby="editAddItemDialog"] .ui-dialog-titlebar,.ui-dialog[aria-describedby="settingsDialog"] .ui-dialog-titlebar{
   border-bottom-right-radius: 0px;
@@ -865,4 +859,48 @@ input.shareUrl {
   top: 6px;
   font-size: 15px;
   cursor: pointer;
+}
+
+.header-fixed {
+    width: 100%
+}
+
+.header-fixed > thead,
+.header-fixed > tbody,
+.header-fixed > thead > tr,
+.header-fixed > tbody > tr,
+.header-fixed > thead > tr > th,
+.header-fixed > tbody > tr > td {
+    display: block;
+
+}
+
+.header-fixed > tbody > tr:after,
+.header-fixed > thead > tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+    border-bottom: 1px solid #c0c0c0 !important;
+}
+.header-fixed > thead > tr th{
+    width: 25%
+
+}
+.header-fixed > tbody {
+    overflow-y: auto;
+}
+
+.header-fixed > tbody > tr > td,
+.header-fixed > thead > tr > th {
+    float: left;
+
+}
+.header-fixed > tbody tr td{
+    width: 25%
+}
+.weakPwList > thead > tr > th, .weakPwList > tbody > tr > th, .table > tfoot > tr > th, .weakPwList > thead > tr > td, .weakPwList > tbody > tr > td, .weakPwList > tfoot > tr > td{
+    border-bottom: medium none !important;
+    padding: 5px 0px 5px 0px !important;
+    /*border-top: medium none !important;*/
 }
