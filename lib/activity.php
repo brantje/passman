@@ -92,9 +92,6 @@ class Activity implements \OCP\Activity\IExtension {
 	 */
 	public function translate($app, $text, $params, $stripPath, $highlightParams, $languageCode) {
 		$l = \OC::$server->getL10N('passman', $languageCode);
-		if (!$text) {
-			return '';
-		}
 		if ($app === 'passman') {
 			switch ($text) {
 				case self::SUBJECT_ITEM_CREATED:
@@ -114,7 +111,6 @@ class Activity implements \OCP\Activity\IExtension {
 				case self::SUBJECT_ITEM_SHARED:
 					return $l->t('%s has been shared', $params)->__toString();
 			}
-			return false;
 		}
 		return false;
 	}
