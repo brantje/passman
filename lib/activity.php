@@ -65,6 +65,7 @@ class Activity implements \OCP\Activity\IExtension {
 				self::TYPE_ITEM_ACTION,
 				self::TYPE_ITEM_EXPIRED,
 				self::TYPE_ITEM_SHARED,
+				self::TYPE_ITEM_EXPIRED,
 			);
 		}
 		if ($method === 'email') {

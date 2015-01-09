@@ -31,3 +31,6 @@ namespace OCA\Passman\AppInfo;
   'name' => \OC_L10N::get('Passwords')->t('Passwords')
 ));
 \OCP\Backgroundjob::registerJob('OCA\Passman\Cron\RunCron');
+\OC::$server->getActivityManager()->registerExtension(function() {
+  return new \OCA\Passman\Activity();
+});
