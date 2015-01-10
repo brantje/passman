@@ -39,10 +39,6 @@ if (!class_exists('\SimplePie')) {
   require_once __DIR__ . '/../3rdparty/simplepie/autoloader.php';
 }
 
-\OC::$server->getActivityManager()->registerExtension(function() {
-  return new \OCA\Passman\Activity();
-});
-
 class Application extends App {
 
 

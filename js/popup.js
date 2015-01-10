@@ -105,6 +105,7 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
     tags: [],
     url: ''
   };
+  $scope.favIconLoading = false;
   $scope.pwFieldVisible = false;
   $scope.newCustomfield = {clicktoshow: 0};
   $scope.newExpireTime = 0;
@@ -218,10 +219,12 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
   };
 
   $scope.updateFavIcon = function(){
+    $scope.favIconLoading = true;
     var hashedUrl = window.btoa( $scope.currentItem.url)
     $.get(OC.generateUrl('apps/passman/api/v1/item/getfavicon/'+ hashedUrl),function(data){
       console.log(data)
       $scope.currentItem.favicon = data.favicon;
+      $scope.favIconLoading = false;
       $scope.$apply();
     });
   };
