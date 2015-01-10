@@ -9,8 +9,14 @@ app.factory('shareService', ['$http', function ($http) {
       });
     },
     generateShareKeys: function(){
-      var shareKeys = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
-      return shareKeys;
+      //var shareKeys = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+      console.log("Generating 2048 key");
+      CRYPTO.RSA.genKeyPair(2048, function(){
+        console.log("Key generation finished.");
+        console.log("Private: " + CRYPTO.RSA._private_key);
+        console.log("Public: " + CRYPTO.RSA._public_key);
+      });
+      //return shareKeys;
     }
   };
 }]);

@@ -25,17 +25,39 @@ var CRYPTO = {
          * @param callback A function called after the generation its done
          */
         genKeyPair: function (size, callback) {
-            async.parallel([
-                async.apply(function () {
-                    this._genKeyPairCallback(KEYUTIL.generateKeypair("RSA", size));
-                    callback();
-                })
-            ]);
-            async.run();
+            setTimeout(function(){
+                _cb(KEYUTIL.generateKeypair("RSA", size, null));
+                callback();
+            }, 200);
         },
         _genKeyPairCallback: function (key) {
             this._private_key = key['prvKeyObj'];
             this._public_key = key['pubKeyObj'];
+        },
+
+        /**
+         * Returns a PKCS encoded string containing the private key
+         * @returns string
+         */
+        getPrivKeyPKCS : function(){
+            //if (_priv_key == null) Check if privkey its null before calling this method
+            return KEYUTIL.getPEM(this._private_key, 'PKCS1PRV');
+        },
+
+        /**
+         * Sets the object private key from the given PKCS8 PEM string
+         * @param key (string)
+         */
+        setPrivKeyFromPKCS : function(key){
+            this._private_key = KEYUTIL.getKeyFromPublicPKCS8PEM(key);
+        }
+    },
+    AES: {
+        cypher: function(data, key){
+            return sjcl.encrypt(key, data);
+        },
+        decypher: function(cryptogram, key){
+                return sjcl.decrypt(key, cryptogram);
         }
     }
 };
