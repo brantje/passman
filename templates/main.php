@@ -31,6 +31,7 @@
 
 
 ?>
+
 <div ng-app="passman" id="app" ng-controller="appCtrl">
   <div class="loaderContainer" hide-loaded>
     <div class="loader"></div>
@@ -813,7 +814,8 @@
 <!-- start revision dialog -->
 
 <div id="encryptionKeyDialog" style="display: none;">
-  <p><?php p($l->t('Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your
+  <p><?php p($l->t('Enter your encryption key.')); ?></p>
+  <p><?php p($l->t('If this if the first time you use Passman, this key will be used for encryption your
     passwords')); ?></p>
   <input type="password" id="ecKey" style="width: 150px;" ng-enter="doLogin()"/><br/>
   <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember"><?php p($l->t('Remember this key ')); ?></label>

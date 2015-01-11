@@ -55,7 +55,7 @@ public function __construct(array $urlParams = array()) {
         $c->query('AppName'),
         $c->query('Request'),
         $c->query('UserId'),
-        $c->query('ItemBusinessLayer'),
+        $c->query('ItemApiController'),
         $c->query('AppStorage')
       );
     });

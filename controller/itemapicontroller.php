@@ -119,7 +119,6 @@ class ItemApiController extends Controller {
     if (empty($item['label'])) {
       array_push($errors, 'Label is mandatory');
     }
-
     if (empty($errors)) {
       $result['itemid'] = $this->ItemBusinessLayer->create($item);
       if (!empty($customFields)) {

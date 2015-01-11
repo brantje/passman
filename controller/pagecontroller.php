@@ -21,13 +21,13 @@ use \OCP\CONFIG;
 class PageController extends Controller {
 
   private $userId;
-  private $itemBusinessLayer;
+  private $itemAPI;
   private $appStorage;
 
-  public function __construct($appName, IRequest $request, $userId, $ItemBusinessLayer, $appStorage) {
+  public function __construct($appName, IRequest $request, $userId, $ItemAPI, $appStorage) {
     parent::__construct($appName, $request);
     $this->userId = $userId;
-    $this->itemBusinessLayer = $ItemBusinessLayer;
+    $this->itemAPI = $ItemAPI;
     $this->appStorage = $appStorage;
   }
 
@@ -42,11 +42,33 @@ class PageController extends Controller {
    * @NoCSRFRequired
    */
   public function index() {
-    $conf = \OCP\CONFIG::getUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 1);
+    $conf = \OCP\IConfig::getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'firstpassmanrun', 'show', 1);
+    $params = array('user' => $this->userId);
     if ($conf == 1) {
       \OCP\Util::addscript('passman', 'firstrun');
+      array_push($params,array('firstRun'=> true));
+      $exampleItems = array();
+      $exampleItems[0] = array(
+        'label'=>'Item 1',
+        'tags' => array(array('text'=>'Example tag'),array('text'=>'Example tag 2'))
+      );
+      $exampleItems[1] = array(
+        'label'=>'Item 2',
+        'tags' => array(array('text'=>'Example tag 2'),array('text'=>'Example tag 4'))
+      );
+      $exampleItems[2] = array(
+        'label'=>'Item 3',
+        'tags' => array(array('text'=>'Example tag 1'),array('text'=>'Example tag 5'))
+      );
+      $exampleItems[3] = array(
+        'label'=>'Item 4',
+        'tags' => array(array('text'=>'Example tag 6'),array('text'=>'Example tag 5'))
+      );
+      foreach($exampleItems as $key => $val){
+        $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
+      }
     }
-    $params = array('user' => $this->userId);
+
     return new TemplateResponse('passman', 'main', $params);
     // templates/main.php
   }
@@ -55,7 +77,7 @@ class PageController extends Controller {
    * @NoAdminRequired
    */
   public function disablefirstrun() {
-    \OCP\Config::setUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 0);
+    \OCP\IConfig::setUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'firstpassmanrun', 'show', 0);
     echo "Succes!";
   }
 

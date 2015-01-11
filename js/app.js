@@ -346,6 +346,9 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
    */
 
   if (!$.jStorage.get('encryptionKey')) {
+    if(firstRun) {
+      $scope.loadItems([]);
+    }
     $scope.showEncryptionKeyDialog();
   } else {
     $scope.setEncryptionKey(window.atob($.jStorage.get('encryptionKey')));
@@ -359,6 +362,7 @@ app.controller('navigationCtrl', function ($scope, TagService) {
   $scope.tagProps = {};
 
   $scope.tagSettings = function (tag, $event) {
+    console.log(tag)
     $event.stopPropagation();
     TagService.getTag(tag).success(function (data) {
       $scope.tagProps = data;
@@ -367,10 +371,10 @@ app.controller('navigationCtrl', function ($scope, TagService) {
         width: 210,
         buttons: {
           "Save": function () {
-            console.log($scope.tagProps);
             var t = this;
             TagService.update($scope.tagProps).success(function () {
               $(t).dialog('close');
+              $scope.tags[$scope.tags.indexOf(tag)] = $scope.tagProps.tag_label;
             });
           },
           "Close": function () {
@@ -397,7 +401,9 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
     if (!item.decrypted) {
       for (i = 0; i < encryptedFields.length; i++) {
         if (item[encryptedFields[i]]) {
-          item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
+          if(item[encryptedFields[i]]){
+            item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
+          }
         }
       }
       for (i = 0; i < item.customFields.length; i++) {

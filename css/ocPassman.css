@@ -37,6 +37,7 @@
     margin-top: 10px;
     margin-left: 10px;
 }
+
 #app-navigation li {
 	width: auto;
 
@@ -92,6 +93,7 @@ ul#tagList {
 	padding-bottom: 15px;
 	background: #f8f8f8;
 	width: 241px;
+    height: 70px;
 }
 
 /*.tag {
@@ -370,7 +372,7 @@ div[aria-describedby="editAddItemDialog"] {
 /*--- DROPDOWN ---*/
 #pwList li .editMenu{
   visibility: hidden;
-}#pwList li:hover .editMenu{
+}#pwList li:hover .editMenu,#pwList > li.row-active .editMenu{
   visibility: visible;
 }
 .editMenu ul{
@@ -660,9 +662,9 @@ li.fileListItem .icon-delete {
   padding: 0px;
 }
 #steps li {
-  font-size: 24px;
+  font-size: 20px;
   float: left;
-  padding: 10px;
+  padding: 8px;
   color: #b0b1b3;
 }
 #steps li span {
