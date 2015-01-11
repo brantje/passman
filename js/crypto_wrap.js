@@ -50,6 +50,25 @@ var CRYPTO = {
          */
         setPrivKeyFromPKCS : function(key){
             this._private_key = KEYUTIL.getKeyFromPublicPKCS8PEM(key);
+        },
+
+        /**
+         * Returns a PEM with the public key of the PRIVATE key
+         * @returns {*}
+         */
+        getPublicPEM : function(){
+            return KEYUTIL.getPEM(this._private_key);
+        },
+        /**
+         * Sets the publick key from a PEM
+         * @param pubKey
+         */
+        setPublicPEM : function(pubKey){
+            this._public_key = KEYUTIL.getPublicKeyFromCertPEM(pubKey);
+        },
+
+        decypherWithPrivate : function(data){
+
         }
     },
     AES: {
