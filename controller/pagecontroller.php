@@ -42,7 +42,7 @@ class PageController extends Controller {
    * @NoCSRFRequired
    */
   public function index() {
-    $conf = \OCP\IConfig::getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'firstpassmanrun', 'show', 1);
+    $conf = \OCP\CONFIG::getUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 1);
     $params = array('user' => $this->userId);
     if ($conf == 1) {
       \OCP\Util::addscript('passman', 'firstrun');
@@ -77,7 +77,7 @@ class PageController extends Controller {
    * @NoAdminRequired
    */
   public function disablefirstrun() {
-    \OCP\IConfig::setUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'firstpassmanrun', 'show', 0);
+    \OCP\Config::setUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 0);
     echo "Succes!";
   }
 
