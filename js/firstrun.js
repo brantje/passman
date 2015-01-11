@@ -1,34 +1,31 @@
 firstRun = true;
 $(document).ready(function(){
-  var firstrun ='<div id="firstRun">';
-    firstrun += '<div id="fieldsetContainer"><fieldset><legend>Welcome</legend>'
-    firstrun += 'Welcome to PassMan, the password manager for ownCloud!<br />In the next steps you will learn how to use it.'
-    firstrun += '</fieldset>'
-    firstrun += '<fieldset><legend>Folders</legend>'
-    firstrun += '<img src="http://puu.sh/9Z6s9/d77db8c517.png"><br />Right click on a folder to get an context menu.<br />Under settings you can set the required strength for the passwords in this folder.'
-    firstrun += '</fieldset>'
-    firstrun += '<fieldset><legend>Items</legend>'
-    firstrun += 'Items contain your username / password or any other sensive information.<br /><img src="http://puu.sh/9Z6BK/6df2317a34.png"><br />When you are in a folder you can create / edit / delete items.<br />'
-    firstrun += '</fieldset>'
-    firstrun += '<fieldset><legend>Last few things...</legend>'
-    firstrun += 'In the next screen you will be asked to enter your encryption key.<br />This key will be used to encrypt all information.<br /><strong>This key is private and therefore is never send to the server</strong>'
-    firstrun += '</fieldset></div></div>'
-    $(firstrun).dialog({width: 420, modal: true,draggable: false, resizable: false,closeOnEscape: false});
-    $('#firstRun').parent().find('.ui-dialog-buttonpane').remove();
-    $('#firstRun').parent().find('.ui-dialog-titlebar-close').remove();
-    $('#fieldsetContainer').formToWizard();
-    setTimeout(function(){
-      $('[aria-describedby="encryptionKeyDialog"]').hide();
-    },1);
-    
-    $(document).on('click','#finishFirstRun',function(){
-      $('#firstRun').dialog('destroy').remove();
-      $.get(OC.generateUrl('apps/passman/disablefirstrun'));
-      $('[aria-describedby="encryptionKeyDialog"]').show();
-    })
+    var firstrun = $.get(OC.webroot + '/apps/passman/templates/firstrun.php',function(data){
+        $('<div id="firstRun">'+data+'</div>').dialog({
+            width: 460,
+            modal: true,
+            draggable: false,
+            resizable: false,
+            closeOnEscape: false,
+            position:['center','top+80']
+        });
+        setTimeout(function(){
+            $('[aria-describedby="encryptionKeyDialog"]').hide();
+        },5);
+        $('#firstRun').parent().find('.ui-dialog-buttonpane').remove();
+        $('#firstRun').parent().find('.ui-dialog-titlebar-close').remove();
+        $('#fieldsetContainer').formToWizard();
+
+        $('[aria-describedby="firstRun"]').css({top: '60px'})
+
+        $(document).on('click','#finishFirstRun',function(){
+            $('#firstRun').dialog('destroy').remove();
+            $.get(OC.generateUrl('apps/passman/disablefirstrun'));
+            $('.ui-widget-overlay.ui-front').remove();
+
+        });
+    });
 });
-
-
 
 
 
@@ -59,7 +56,7 @@ $(document).ready(function(){
             // 2
             var name = $(this).find("legend").html();
             $("#steps").append("<li id='stepDesc" + i + "'>Step " + (i + 1) + "<span>" + name + "</span></li>");
-      $(this).find("legend").remove()
+            $(this).find("legend").remove()
             if (i == 0) {
                 createNextButton(i);
                 selectStep(i);
@@ -92,6 +89,34 @@ $(document).ready(function(){
             $("#" + stepName + "commands").append("<a href='#' id='" + stepName + "Next' class='next button'>Next ></a>");
 
             $("#" + stepName + "Next").bind("click", function(e) {
+                if(i==1){
+                    this.checkTags = function() {
+                        var tags,invalidTags;
+                        tags = angular.element('#app').scope().tags;
+                        invalidTags = 0;
+                        angular.forEach(tags,function(tag){
+                           if(tag.match(/Example (.*)/)){
+                              invalidTags +=1;
+                           }
+                        });
+                        if(invalidTags > 0){
+                            OC.Notification.showTimeout('You have to edit '+ invalidTags +' tags to go to the next step');
+                        } else {
+                            return true
+                        }
+                    };
+                    if(!this.checkTags()) {
+                        return
+                    }
+                }
+                if(i==2){
+                    if($('#frEncKey').val()!=''){
+                        angular.element('#app').scope().setEncryptionKey($('#frEncKey').val());
+                    } else {
+                        OC.Notification.showTimeout('Please set your encryption key');
+                        return;
+                    }
+                }
                 $("#" + stepName).hide();
                 $("#step" + (i + 1)).show();
                 if (i + 2 == count){
@@ -105,6 +130,31 @@ $(document).ready(function(){
         function selectStep(i) {
             $("#steps li").removeClass("current");
             $("#stepDesc" + i).addClass("current");
+            if(i === 1){
+                $('#tagList').css('position','absolute');
+                $('#tagList').css('z-index','400');
+            }
+            if(i === 3){
+                $('#tagList').css('position','initial');
+                $('#tagList').css('z-index','1');
+                $('[aria-describedby="firstRun"]').animate({ top: '250' },500);
+                $('#pwList').css({
+                    'position':'absolute',
+                    'z-index':'400' ,
+                    'background':'#fff'
+                });
+
+                $('#pwList > li:first-child').click();
+                setTimeout(function() {
+                    $('#pwList > li:first-child .editMenu li').click();
+                },100);
+            }
+            if(i === 4){
+                $('#pwList').css({
+                    'position':'initial',
+                    'z-index': '2'
+                })
+            }
         }
 
     }
