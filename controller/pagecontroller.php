@@ -46,7 +46,6 @@ class PageController extends Controller {
     $params = array('user' => $this->userId);
     if ($conf == 1) {
       \OCP\Util::addscript('passman', 'firstrun');
-      array_push($params,array('firstRun'=> true));
       $exampleItems = array();
       $exampleItems[0] = array(
         'label'=>'Item 1',
@@ -54,18 +53,10 @@ class PageController extends Controller {
       );
       $exampleItems[1] = array(
         'label'=>'Item 2',
-        'tags' => array(array('text'=>'Example tag 2'),array('text'=>'Example tag 4'))
-      );
-      $exampleItems[2] = array(
-        'label'=>'Item 3',
-        'tags' => array(array('text'=>'Example tag 1'),array('text'=>'Example tag 5'))
-      );
-      $exampleItems[3] = array(
-        'label'=>'Item 4',
-        'tags' => array(array('text'=>'Example tag 6'),array('text'=>'Example tag 5'))
+        'tags' => array(array('text'=>'Example tag 2'),array('text'=>'Example tag 3'))
       );
       foreach($exampleItems as $key => $val){
-        $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
+       // $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
       }
     }
 
@@ -89,6 +80,7 @@ class PageController extends Controller {
     $params = array('url' => $url, 'label' => $title);
     return new TemplateResponse('passman', 'popup', $params);
   }
+
   /**
    * @NoAdminRequired
    * @NoCSRFRequired
