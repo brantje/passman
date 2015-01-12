@@ -1,5 +1,46 @@
+.loaderContainer{
+  height: 140px;
+  width: 120px;
+  margin-top: -70px;
+  margin-left: -60px;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+}
+.loaderContainer .text{
+  width: 120px;
+  text-align: center;
+}
+.loader{
+  border-bottom: 10px solid #1d2d44;
+  border-left: 10px solid #c9c9c9;
+  border-right: 10px solid #c9c9c9;
+  border-top: 10px solid #c9c9c9;
+  height: 120px;
+  width: 120px;
+  border-radius: 120px;
+  animation: 1.1s linear 0s normal none infinite running load8;
+}
+@keyframes load8 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.smallloader{
+    height: 10px;
+    width: 10px;
+    border-width: 5px;
+    display: inline-block;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
 #app-navigation li {
 	width: auto;
+
 }
 #app-navigation li > a {
 	display: block;
@@ -12,12 +53,12 @@
 	/* text-overflow: ellipsis; */
 	/* color: #333; */
 }
+.ui-front {
+  z-index: 300;
+}
 #app-navigation > ul {
 	height: auto !important;
 	overflow: initial;
-}
-#searchresults {
-	display: none !important;
 }
 .ui-widget-overlay.ui-front {
 	top: 45px;
@@ -30,6 +71,10 @@ tbody tr:hover, tr:active {
 }
 #app-navigation {
 	overflow: auto;
+  border-right: 1px solid #868686;
+}
+#app-settings{
+  border-right: 1px solid #868686;
 }
 ul#tagList {
 	/*	padding-bottom: 70px;*/
@@ -48,24 +93,9 @@ ul#tagList {
 	padding-bottom: 15px;
 	background: #f8f8f8;
 	width: 241px;
+    height: 70px;
 }
-#searchTagContainer > span {
-	padding-left: 15px;
-	margin-top: 7px;
-	display: block;
-	font-weight: bold;
-}
-#searchTagContainer ul.tagit li.tagit-new {
-	padding: .25em 4px .25em 0;
-	width: 90px !important;
-}
-#searchTagContainer ul.tagit {
-	width: 215px;
-	margin-left: 15px;
-}
-#tabs-01 ul.tagit.ui-widget.ui-widget-content.ui-corner-all {
-	max-width: 375px;
-}
+
 /*.tag {
  -moz-border-radius: 6px;
  border-radius: 6px;
@@ -80,8 +110,16 @@ ul#tagList {
  margin: 5px;
  cursor: pointer;
  }*/
- 
- 
+
+input#itemSearch {
+  padding: 2px 5px 5px 5px !important;
+  margin-top: 6px;
+  -webkit-transition: width 1s; /* For Safari 3.1 to 6.0 */
+  transition: width 1s;
+}
+input#itemSearch:focus {
+  width: 200px;
+}
  
 #tagList .tag {
 	height: 50px;
@@ -97,6 +135,10 @@ border: 1px solid #ddd;
 background: #c9c9c9;
 font-weight: bold;
 color: #333;
+}
+#pwList .itemLabel.expired{
+  color: #C00000;
+  font-style: italic;
 }
 #pwList .tag {
 	-moz-border-radius: 6px;
@@ -125,8 +167,8 @@ color: #333;
 .nav-trashbin {
 	height: 50px;
 	position: fixed;
-	bottom: 45px;
-	width: 241px;
+  bottom: 43px;
+  width: 249px;
 	vertical-align: middle;
 	padding-top: 15px;
 	cursor: pointer;
@@ -140,6 +182,7 @@ color: #333;
 .nav-trashbin a {
 	position: absolute;
 }
+
 #ocPassman {
 	height: 100%;
 	width: 100%;
@@ -149,37 +192,10 @@ color: #333;
 	margin: 0 auto;
 }
 div#topContent {
-	margin-left: 20px;
 	background: #f8f8f8;
-	height: 35px;
-}
-#menu ul {
-	margin-left: 1.3em;
-}
-.menuContainer {
-	width: 250px;
-	height: 100%;
-	float: left;
-	background-color: #f8f8f8;
-	border-right: 1px solid #ccc;
-}
-.jstree-default .jstree-themeicon {
-	background-image: url('../../../core/img/filetypes/folder.svg') !important;
-	background-position: center center;
-	background-size: contain;
-	height: 25px !important;
-	width: 25px !important;
-}
-li.ui-state-default {
-	border: none !important;
-}
-.ui-state-default i.jstree-themeicon {
-	background: url('../img/folder-open.png') !important;
-	border: none !important;
-}
-#menu .ui-state-default {
-	border: none;
-	background: lightblue;
+	height: 40px;
+  /*width: 100%;*/
+  position: fixed;
 }
 /*
  #menu li {
@@ -193,12 +209,6 @@ li.ui-state-default {
  #menu .open {
  background: url(../img/folder_open.png) no-repeat !important;
  }*/
-div#ocpContent {
-	position: absolute;
-	left: 251px;
-	width: 76%;
-	height: 100%;
-}
 #addItem, #editItem, #deleteItem {
 	width: 95px;
 	float: left;
@@ -214,77 +224,41 @@ div#ocpContent {
 #pwList {
 	margin-left: 1px;
 	overflow: auto;
-	/*margin-top: 10px;*/
+	margin-top: 40px;
 }
-#pwList li {
+#pwList > li {
 	list-style: none;
 	border-bottom: 1px solid #ddd;
 	height: 30px;
 	cursor: pointer;
 	line-height: 30px;
+
 }
 #pwList li > span:first-child {
 	float: left;
-	padding-left: 20px;
-	background-image: url('../img/lock.svg');
 	background-repeat: no-repeat;
 	background-position: 3px 6px;
-	margin-left: 5px;
+  cursor: pointer;
 }
-#pwList li div {
+#pwList > li div {
 	float: left;
 	cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+
 }
 
-li.ui-draggable-dragging {
-	padding-left: 20px;
-	list-style: none;
-	padding: 5px 10px 5px 10px;
-	margin-left:10px;
-	background-color: #fff;
-	border: 1px solid black;
-	width: auto;
-	display: block;
-}
-li.ui-draggable-dragging span:first-child {
-	float: left;
-	padding-left: 20px;
-	background-image: url('../img/lock.svg');
-	background-repeat: no-repeat;
-	background-position: 3px 6px;
-}
-li.ui-draggable-dragging .tag {
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-	-webkit-border-radius: 11px;
-	border: 1px solid rgba(239, 239, 239, 1.0);
-	background: none;
-	background-color: rgba(239, 239, 239, 1.0) !important;
-	width: auto !important;
-	font-weight: normal;
-	float: right;
-	padding: 0px 8px 0px 8px;
-	margin: 0 4px;
-	cursor: pointer;
-	line-height: 21px;
-	line-height: 19px;
-	margin-top: 4px;
-}
-li.ui-draggable-dragging .delete-icon{
-display: none !important;
-}
 #pwList li > i {
 margin-right: 10px;
 }
-#pwList li:hover {
+#pwList > li:hover,#pwList > li.active {
 	background: #f0f0f0;
 }
-.rowTools div {
-	display: inline-block;
-	height: 30px;
-}
+
 div#infoContainer {
-	position: absolute;
+	position: fixed;
 	bottom: 0px;
 	width: 100%;
 	border-top: 1px solid #ccc;
@@ -307,12 +281,148 @@ td.td_title {
 	list-style: none;
 	min-width: 150px;
 }
-#pwList #actions {
-	float: right;
-	margin-right: 20px;
-	margin-top: 3px;
-	position: absolute;
-	right: 0px;
+#pwList li .icon-rename{
+  visibility: hidden;
+}#pwList li:hover .icon-rename{
+   visibility: visible;
+ }
+.editMenu .more{
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+}
+.editMenu{
+  list-style:none;
+  font-weight:bold;
+  /*margin-bottom:10px;*/
+  /* Clear floats */
+  width:10px;
+  /* Bring the nav above everything else--uncomment if needed.
+  position:relative;
+  z-index:5;
+  */
+ margin-right: 15px;
+ cursor: pointer;
+}
+.editMenu li{
+  float:left;
+  margin-right:10px;
+  position:relative;
+}
+.editMenu a{
+  display:block;
+  /*padding:5px;
+  color:#fff;
+  background:#333;*/
+  text-decoration:none;
+}
+#editAddItemDialog{
+  height: 390px !important;
+}
+div[aria-describedby="editAddItemDialog"] .ui-widget-content{
+  border: none !important;
+}
+div[aria-describedby="editAddItemDialog"] {
+  height: 490px !important;
+  max-height: 490px;
+}
+#pwTools {
+  text-align: left;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ccc;
+  /* width: 230px; */
+  margin: 0 auto;
+  font-size: 12px;
+}
+#pwTools span{
+  cursor: pointer !important;
+}
+#pwTools label {
+  display: inline-block;
+}
+#pwTools input {
+  width: 30px;
+}
+.inputCurrentTags .host .tags .tag-list {
+  display: none;
+}
+.currentTags {
+  margin-top: 5px;
+}
+.currentTags .tag{
+  background-color: #C1CDE4;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 3px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+.currentTags .tag .icon-delete {
+  float: right;
+  margin-top: 2px;
+  height: 16px !important;
+  width: 10px !important;
+  min-height: 0px;
+  min-width: 0px;
+  margin-left: 3px;
+  margin-right: 3px;;
+}
+/*--- DROPDOWN ---*/
+#pwList li .editMenu{
+  visibility: hidden;
+}#pwList li:hover .editMenu,#pwList > li.row-active .editMenu{
+  visibility: visible;
+}
+.editMenu ul{
+  background:#fff; /* Adding a background makes the dropdown work properly in IE7+. Make this as close to your page's background as possible (i.e. white page == white background). */
+  background:rgba(255,255,255,0); /* But! Let's make the background fully transparent where we can, we don't actually want to see it if we can help it... */
+  list-style:none;
+  position:absolute;
+/*  left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
+  left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
+}
+.editMenu ul li{
+  padding-top:1px; /* Introducing a padding between the li and the a give the illusion spaced items */
+  float:none;
+}
+.editMenu ul a{
+  white-space:nowrap; /* Stop text wrapping and creating multi-line dropdown items */
+}
+.editMenu li.show ul{ /* Display the dropdown on hover */
+  left: -50px;
+  top: 28px;
+  width: 70px;
+  background-color: #383c43;
+ /* border-bottom-left-radius: 7px;
+  border-bottom: 1px #333 solid;
+  border-left: 1px #333 solid;
+  box-shadow: 0 0 7px rgb(29,45,68);*/
+  z-index: 99;
+}
+.editMenu li.show a{ /* These create persistent hover states, meaning the top-most link stays 'hovered' even when your cursor has moved down the list. */
+  text-decoration:underline;
+  
+}
+.editMenu li.show ul a{ /* The persistent hover state does however create a global style for links even before they're hovered. Here we undo these effects. */
+  text-decoration:none;
+  opacity: .7;
+  margin-left: 10px;
+  color: #fff;
+}
+.editMenu li.show ul li a:hover{ /* Here we define the most explicit hover states--what happens when you hover each individual link. */
+  opacity: 1;
+} 
+.editMenu{
+  list-style:none;
+  font-weight:bold;
+  /* Clear floats */
+  float:right;
+  /* Bring the nav above everything else--uncomment if needed.
+  position:relative;
+  z-index:5;
+  */
 }
 #actions span:not(.icon) {
 	position: relative;
@@ -327,19 +437,28 @@ td.td_title {
 	border-bottom: 1px solid rgb(0, 102, 255);
 	cursor: pointer;
 }
-.link {
+.link,.ui-widget-content a,#infoContainer .description a {
 	color: rgb(0, 102, 255) !important;
 	cursor: pointer;
 }
-.link:hover {
+.link:hover,.ui-widget-content a:hover,#infoContainer .description a:hover {
 	text-decoration: underline;
 }
 .link.loadFile {
 	margin-right: 8px;
 	display: block;
 }
+.td_title{
+  vertical-align: top !important;
+}
 #infoContainer span.ui-icon.ui-icon-carat-1-e {
 	margin: 0px;
+}
+#infoContainer table{
+	width: 100%;
+}
+#infoContainer table tr td:first-child {
+	width: 120px;
 }
 #item_tabs label {
 	display: block;
@@ -347,27 +466,43 @@ td.td_title {
 #item_tabs input, #item_tabs textarea {
 	width: 95%;
 }
+#tabs-04 input[type="text"]{
+  width: 90%;
+}
+#item_tabs input[type="password"]{
+  width: 70% !important;
+}
 #item_tabs #customFieldName, #item_tabs #customFieldValue {
 	width: 85%;
 }
-
+.ta-editor {
+  max-height: 300px;
+  height: 150px;
+  overflow: auto;
+  font-family: inherit;
+  font-size: 100%;
+  margin:20px 0;
+}
 #item_tabs input[type="checkbox"] {
 	width: 30px;
 }
 #pwTools {
-	font-size: 9px;
-	text-align: center;
-	width: 100%;
-	margin-left: 10px;
+  text-align: left;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ccc;
+  /* width: 230px; */
+  margin: 0 auto;
+  font-size: 12px;
 }
 #pwTools span{
-	cursor: pointer !important;
+ cursor: pointer !important;
 }
 #pwTools label {
-	display: inline-block;
+ display: inline-block;
 }
 #pwTools input {
-	width: 30px;
+ width: 30px;
 }
 .icon {
 	height: 24px;
@@ -388,14 +523,30 @@ label[for="item_login"] {
 #showPW {
 	margin-left: 10px;
 }
-#complex_attendue {
-	color: #D04806;
-	font-weight: bold;
+.bold{
+  font-weight: bold;
+}
+hr { display: block; height: 1px;
+    border: 0; border-top: 1px solid #ccc;
+    margin: 1em 0; padding: 0; }
+.blue{
+  border-top:1px solid #1d2d44;
+}
+.pwPreview {
+width: 72%;
+display: inline-block;
+height: 26px;
+padding-left: 7px;
+padding-top: 8px;
+}
+input[name="customFieldName"],input[name="customFieldValue"]{
+  width: 80% !important;
 }
 .save, .cancel {
 	width: 60px;
 	float: right;
 	text-align: center;
+	margin-top:30px;
 }
 #fileList li {
 	height: 24px;
@@ -449,16 +600,7 @@ li.ui-menu-item .description {
 	display: inline-block;
 	background-size: cover;
 }
-.loadingItem {
-	display: none;
-	position: absolute;
-	left: 50%;
-	top: 70px;
-}
-.loadingItem > div{
-	position: relative; 
-	left: -50%; 
-}
+
 li.fileListItem {
 	width: 100%;
 	height: 25px;
@@ -467,95 +609,14 @@ li.fileListItem .icon-delete {
 	cursor: pointer;
 }
 
-input.jstree-rename-input {
-	line-height: 25px !important;
-	height: 25px !important;
-	padding-left: 3px !important;
-}
-.copy {
-	margin-left: 10px;
-	color: rgb(0, 102, 255);
-}
-.copy:hover {
-	text-decoration: underline;
-}
-/*
- #popupDiv{
- width:300px;
- height:300px;
- background:red;
- position:fixed;
- top:50%;
- left:50%;
- margin-top:-150px;
- margin-left:-150px;
- }*/
 
-/*First run wizard */
-
-.prev, .next {
-
-	padding: 5px 10px;
-	color: #fff;
-	text-decoration: none;
+#topContent button{
+  display: none;
 }
-.prev:hover, .next:hover {
-
-	text-decoration: none;
+#addItem{
+	margin-left: 20px;
+	display: inline-block !important;
 }
-.prev {
-	float: left;
-}
-.next {
-	float: right;
-}
-#steps {
-	list-style: none;
-	width: 100%;
-	overflow: hidden;
-	margin: 0px;
-	padding: 0px;
-}
-#steps li {
-	font-size: 24px;
-	float: left;
-	padding: 10px;
-	color: #b0b1b3;
-}
-#steps li span {
-	font-size: 11px;
-	display: block;
-}
-#steps li.current {
-	color: #000;
-}
-#makeWizard {
-	background-color: #b0232a;
-	color: #fff;
-	padding: 5px 10px;
-	text-decoration: none;
-	font-size: 18px;
-}
-#makeWizard:hover {
-	background-color: #000;
-}
-
-.folder-icon {
-	background-image: url('../../../core/img/filetypes/folder.svg') !important;
-	background-position: center center;
-	background-size: contain;
-	height: 20px !important;
-	width: 20px !important;
-}
-
-legend {
-	font-size: 18px;
-	margin: 0px;
-	padding: 10px 0px;
-	color: #b0232a;
-	font-weight: bold;
-}
-
 @media (max-width: 768px) {
 	div#topContent {
 		margin-left: 50px;
@@ -564,4 +625,284 @@ legend {
 	#pwList .tag {
 		display: none;
 	}
+	#editItem{
+		display: inline-block;
+	}
+	#topContent button{
+    display: inline-block;
+  }
+}
+.ui-dialog { z-index: 1000 !important ;}
+.vis-hidden{
+     visibility: hidden;
+  }
+/*First run wizard */
+
+.prev, .next {
+
+  padding: 5px 10px;
+  color: #fff;
+  text-decoration: none;
+}
+.prev:hover, .next:hover {
+
+  text-decoration: none;
+}
+.prev {
+  float: left;
+}
+.next {
+  float: right;
+}
+#steps {
+  list-style: none;
+  width: 100%;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+}
+#steps li {
+  font-size: 20px;
+  float: left;
+  padding: 8px;
+  color: #b0b1b3;
+}
+#steps li span {
+  font-size: 11px;
+  display: block;
+}
+#steps li.current {
+  color: #000;
+}
+#makeWizard {
+  background-color: #b0232a;
+  color: #fff;
+  padding: 5px 10px;
+  text-decoration: none;
+  font-size: 18px;
+}
+#makeWizard:hover {
+  background-color: #000;
+}  
+.ui-tabs-vertical { width: 55em; }
+
+.ui-tabs-vertical .ui-tabs-nav {
+  padding: .2em .1em .2em .2em;
+  float: left;
+  width: 12em;
+}
+.ui-tabs-vertical .ui-tabs-nav li {
+  clear: left;
+  width: 100%;
+  border-bottom-width: 1px !important;
+  border-right-width: 0 !important;
+  margin: 1px 1px .2em 0;
+}
+.ui-tabs-vertical .ui-tabs-nav li a {
+  display: block;
+}
+.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active {
+  padding-bottom: 0;
+  padding-right: .1em;
+  border-right-width: 1px;
+  border-right-width: 1px;
+  margin-bottom: 1px;
+}
+.ui-tabs-vertical .ui-tabs-panel {
+  padding: 1em;
+  float: right;
+  width: 40em;
+}
+div#settingTabs {
+  min-height: 99%;
+}
+
+
+.ui-dialog[aria-describedby="shareDialog"] .ui-dialog-titlebar,.ui-dialog[aria-describedby="editAddItemDialog"] .ui-dialog-titlebar,.ui-dialog[aria-describedby="settingsDialog"] .ui-dialog-titlebar{
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+#settingsDialog{
+  width:100% !important;
+}
+#settingsDialog label{
+  display: block;
+}
+
+#shareDialog,#editAddItemDialog,#settingsDialog{
+  overflow: visible !important;
+  padding-top: 0px;
+}
+.tabHeader {
+  height: 30px;
+/*  border-bottom: 1px solid #c9c9c9;*/
+  margin-left: -12px !important;
+  margin-right: -12px !important;
+  margin-bottom: 10px;
+  -moz-transition: border-color 500ms ease-in ;
+  -o-transition: border-color 500ms ease-in ;
+  -ms-transition: border-color 500ms ease-in ;
+  transition: border-color 500ms ease-in ;
+}
+.tabHeader.tab1{
+  border-bottom: 3px solid rgba(115, 200, 176, 1);
+}
+.tabHeader.tab2{
+  border-bottom: 3px solid rgba(45, 171, 153, 1);
+}
+.tabHeader.tab3{
+  border-bottom: 3px solid rgba(93, 138, 197, 1);
+}
+.tabHeader.tab4{
+  border-bottom: 3px solid rgb(121, 137, 197);
+}
+.tabHeader.tab5{
+  border-bottom: 3px solid rgb(84, 197, 124);
+}
+.tabHeader.tab6{
+  border-bottom: 3px solid rgb(151, 197, 44);
+}
+
+.tabHeader > div {
+  height: 26px;
+  padding-top: 4px !important;
+  cursor: pointer;
+  text-align: center;
+}
+.tabHeader > div:not(:first-child){
+  border-left: 0px solid #898989;
+}
+.tabHeader > div.active.tab1{
+  background: rgba(115, 200, 176, 1);
+}
+.tabHeader > div.active.tab2{
+  background: rgba(45, 171, 153, 1);
+}
+.tabHeader > div.active.tab3{
+  background: rgba(93, 138, 197, 1);
+}
+.tabHeader > div.active.tab4{
+  background: rgb(121, 137, 197);
+}
+.tabHeader > div.active.tab5{
+  background: rgb(84, 197, 124);
+}
+.tabHeader > div.active.tab6{
+  background: rgb(151, 197, 44);
+}
+
+.tabHeader > div.active {
+  -webkit-transition: background-color 500ms ease-in ;
+  -moz-transition: background-color 500ms ease-in ;
+  -o-transition: background-color 500ms ease-in ;
+  -ms-transition: background-color 500ms ease-in ;
+  transition: background-color 500ms ease-in ;
+}
+.formLabel {
+  padding-top: 8px !important;
+}
+#editNewItem input:not(.input):not([type='checkbox']):not([type='radio']),#editNewItem textarea{
+  width: 100%;
+}
+.otpSecret{
+  width: 40% !important;
+}
+
+.label_cpm{
+  position: absolute;
+}
+.nopadding{
+  padding: 0px !important;
+}
+.nomargin{
+  margin: 0px !important;
+}
+input.shareUrl {
+  display: block;
+  width: 96%;
+}
+.icon-copy{
+  position: relative;
+  top: 4px;
+  left: -15px;
+}
+
+
+#revisions{
+  overflow-x: hidden;
+}
+#revisions > .revContainer > div{
+  height: 50px;
+  padding: 10px;
+}
+#revisions > .revContainer > div.even{
+  background-color: #E2E2E2;
+}
+
+.revisionTable{
+  width: 280px;
+  margi-right: 5px;
+}
+.revisionTable tr{
+  height: 10px !important;
+}
+.revisionTable td{
+  display: inline-block;
+  height: 10px;
+  vertical-align: top;
+}
+.revContainer{
+  height: 350px; overflow-y: scroll;
+}
+
+.clearIcon{
+  position: absolute;
+  right: 10px;
+  top: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.header-fixed {
+    width: 100%
+}
+
+.header-fixed > thead,
+.header-fixed > tbody,
+.header-fixed > thead > tr,
+.header-fixed > tbody > tr,
+.header-fixed > thead > tr > th,
+.header-fixed > tbody > tr > td {
+    display: block;
+
+}
+
+.header-fixed > tbody > tr:after,
+.header-fixed > thead > tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+    border-bottom: 1px solid #c0c0c0 !important;
+}
+.header-fixed > thead > tr th{
+    width: 25%
+
+}
+.header-fixed > tbody {
+    overflow-y: auto;
+}
+
+.header-fixed > tbody > tr > td,
+.header-fixed > thead > tr > th {
+    float: left;
+
+}
+.header-fixed > tbody tr td{
+    width: 25%
+}
+.weakPwList > thead > tr > th, .weakPwList > tbody > tr > th, .table > tfoot > tr > th, .weakPwList > thead > tr > td, .weakPwList > tbody > tr > td, .weakPwList > tfoot > tr > td{
+    border-bottom: medium none !important;
+    padding: 5px 0px 5px 0px !important;
+    /*border-top: medium none !important;*/
 }

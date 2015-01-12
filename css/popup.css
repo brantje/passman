@@ -1,49 +1,19 @@
-header{
-	display: none;
-}
-#slideshow {
-display: none;
-display: none;
+body{
+  background: #eee;
 }
 #content-wrapper{
-	padding-top: 0px !important;
+  padding-top: 0px !important;
 }
-#content{
-	height: auto !important;
+.icon-copy {
+  position: relative;
+  top: 4px;
+  left: -25px;
 }
-.addPw {
-	background: none repeat scroll 0 0 #F8F8F8;
-	border-radius: 0.5em 0.5em 0.5em 0.5em;
-	color: #555555;
-	margin: 1em;
-	padding: 0.5em 1em;
-	text-shadow: 0 1px 0 #FFFFFF;
-	width: 500px;
+.buttons{
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
 }
-.addPw h1 {
-	font-weight: bold;
-	border-bottom: 1px solid #BABABA;
-}
-
-.addPw .close_btn {
-height: 18px;
-margin: -20px 0 0;
-padding: 1px;
-float: right;
-width: 19px;
-}
-.pw_desc {
-width: 90%;
-}
-
-.addPw fieldset > ul > li {
-	margin-top: 1em;
-}
-.addPw fieldset input, .addPw textarea {
-	width: 100%;
-}
-div#passwordStrengthDiv {
-	font-size: 14px;
-	margin-left: 130px;
-	margin-top: 10px;
+input[type="text"], input[type="password"],textarea{
+  width: 100% !important;
 }

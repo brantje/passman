@@ -1,297 +1,312 @@
-String.prototype.repeat = function(num) {
-	return new Array(num + 1).join(this);
-}
-$.fn.serializeObject = function() {
-	var o = {};
-	var a = this.serializeArray();
-	$.each(a, function() {
-		if (o[this.name] !== undefined) {
-			if (!o[this.name].push) {
-				o[this.name] = [o[this.name]];
-			}
-			o[this.name].push(this.value || '');
-		} else {
-			o[this.name] = this.value || '';
-		}
-	});
-	return o;
-};
+$(document).ready(function(){
+  $('#header').remove();
+});
+var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
+    function ($httpProvider) {
+        $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
+    }]);
+app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout) {
+  $scope.currentItem = {};
+  $scope.noFavIcon = OC.imagePath('passman', 'lock.svg');
+  $scope.encryptObject = function(object){
+    var ec = JSON.stringify(object);
+    return $scope.encryptThis(ec);
+  };
+  $scope.decryptObject = function(str){
+    var s = $scope.decryptThis(str);
+    return  JSON.parse(s);
+  };
 
-$(document).ready(function() {
-	$(document).data('minPWStrength',-1);
-	$(document).data('renewalPeriod',0);
-	$('#custom_pw').buttonset();
-	$('#pwTools').tooltip();
+  $scope.decryptThis = function (encryptedData, encKey) {
+    var decryptedString = window.atob(encryptedData), encKey2 = (encKey) ? encKey : $scope.getEncryptionKey();
+    try {
+      decryptedString = sjcl.decrypt(encKey2, decryptedString);
+    } catch (e) {
+      console.log('Invalid key!');
+      decryptedString = '';
+    }
 
-	$('.icon-toggle').toggle(function() {
-		$("#pw1").attr('type', 'text');
-	}, function() {
-		$("#pw1").attr('type', 'password');
-	});
-	$('.icon-paste').click(function() {
-		$('#pw2').val($('#pw1').val());
-	});
-	$('.icon-history').click(function() {
-		var length = $('#pw_size').val();
-		var charset = "", retVal = "";
+    return decryptedString;
+  };
 
-		var pw_symbols = "!\"#$%&'()*+,-./:;< = >?@[\\]^_`{|}~";
-		var pw_digits = '0123456789';
-		var pw_uppers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		var pw_lowers = 'abcdefghijklmnopqrstuvwxyz';
+  $scope.encryptThis = function (str, encKey) {
+    var encryptedString = str, encKey2 = (encKey) ? encKey : $scope.getEncryptionKey();
+    try {
+      encryptedString = sjcl.encrypt(encKey2, encryptedString);
+    } catch (e) {
+      console.log('Invalid key!', e);
+      encryptedString = '';
+    }
+    encryptedString = window.btoa(encryptedString);
+    return encryptedString;
+  };
+  $scope.getEncryptionKey = function () {
+    return $scope.encryptionKey;
+  };
 
-		if ($('#pw_numerics:checked').length > 0) {
-			charset += pw_digits;
-		}
-		if ($('#pw_maj:checked').length > 0) {
-			charset += pw_lowers + pw_uppers;
-		}
-		//
-		if ($('#pw_symbols:checked').length > 0) {
-			charset += pw_symbols;
-		}
-		for (var i = 0, n = charset.length; i < length; ++i) {
-			retVal += charset.charAt(Math.floor(Math.random() * n));
-		}
-		$('#pw1').val(retVal).change().focus().trigger('keyup.simplePassMeter');
-	});
-	passwordRatings = [{
-		"minScore" : 0,
-		"className" : "meterFail",
-		"text" : "Very weak"
-	}, {
-		"minScore" : 25,
-		"className" : "meterWarn",
-		"text" : "Weak"
-	}, {
-		"minScore" : 50,
-		"className" : "meterWarn",
-		"text" : "Medium"
-	}, {
-		"minScore" : 60,
-		"className" : "meterGood",
-		"text" : "Strong"
-	}, {
-		"minScore" : 70,
-		"className" : "meterGood",
-		"text" : "Very strong"
-	}, {
-		"minScore" : 80,
-		"className" : "meterExcel",
-		"text" : "Heavy"
-	}, {
-		"minScore" : 90,
-		"className" : "meterExcel",
-		"text" : "Very heavy"
-	}];
-	$('#pw1').simplePassMeter({
-		container : '#passwordStrengthDiv',
-		requirements : {},
-		defaultText : "Complexity",
-		ratings : passwordRatings
-	});
+  $scope.setEncryptionKey = function (key) {
+    $scope.encryptionKey = key;
+  };
 
-	$('#pw1').bind({
-		"score.simplePassMeter" : function(jQEvent, score) {
-			$(document).data('passwordScore', score);
-			if (score > 0)
-				$('.simplePassMeterText').append(' (' + score + ' points)');
-		}
-	});
+  $scope.showEncryptionKeyDialog = function () {
+    $('#encryptionKeyDialog').dialog({
+      draggable: false,
+      resizable: false,
+      closeOnEscape: false,
+      modal: true,
+      /*open: function (event, ui) {
+       //$(".ui-dialog-titlebar-close").hide();
+       },*/
+      buttons: {
+        "Ok": function () {
+          if ($('#ecKey').val() === '') {
+            OC.Notification.showTimeout("Encryption key can't be empty!");
+            return false;
+          }
+          $(this).dialog("close");
 
-	setTimeout(function() {
-		$('#slideshow').remove();
-	}, 600);
+          $scope.setEncryptionKey($('#ecKey').val());
+          if ($('#ecRemember:checked').length > 0) {
+            $.jStorage.set('encryptionKey', window.btoa($('#ecKey').val()));
+            if ($('#rememberTime').val() !== 'forever') {
+              var time = $('#rememberTime').val() * 60 * 1000;
+              $.jStorage.setTTL("encryptionKey", time);
+            }
+          }
+          $('#ecKey').val('');
+          $('#ecRemember').removeAttr('checked');
+          $('#rememberTime').val('15');
+        }
+      }
+    });
+  };
 
-	$(document).on('click', '#save', function(e) {
-		var ERROR = '';
-		var formData = $('.pw_desc').serializeObject();
-		formData.folderid = $('#folder').val();
-		var createUrl = OC.generateUrl('apps/passman/api/v1/item');
-		/*var passwordStrength = $(document).data('passwordScore');
-		 var requiredStrength = getRating(folderSettings.min_pw_strength);
-		 if (passwordStrength < requiredStrength.minScore && $('#override:checked').length == 0) {
-		 ERROR = 'Password complexity is not fulfilled!';
-		 }*/
-		if (formData.pw1 != formData.pw2) {
-			ERROR = 'Passwords do not match!';
-		}
-		if (formData.label == '') {
-			ERROR = 'A label is mandatory!';
-		}
+  if (!$.jStorage.get('encryptionKey')) {
+    $scope.showEncryptionKeyDialog();
+  } else {
+    $scope.setEncryptionKey(window.atob($.jStorage.get('encryptionKey')));
+    //$scope.loadItems([]);
+  }
 
-		var ignoredEncryptionFields = ['folderid', 'item_id', 'label','url'];
-		$.each(formData, function(k, v) {
-			if ($.inArray(k, ignoredEncryptionFields) == -1) {
-				formData[k] = encryptThis(v);
-			}
-		});
-		formData.customFields = [];
+  $scope.currentItem = {
+    account: '',
+    created: '',
+    customFields: [],
+    delete_date: "0",
+    description: "",
+    email: '',
+    expire_time: 0,
+    favicon: '',
+    files: [],
+    label: '',
+    password: '',
+    passwordConfirm: '',
+   /* otpsecret: {},*/
+    tags: [],
+    url: ''
+  };
+  $scope.favIconLoading = false;
+  $scope.pwFieldVisible = false;
+  $scope.newCustomfield = {clicktoshow: 0};
+  $scope.newExpireTime = 0;
+  $scope.uploadQueue = {};
+  $scope.generatedPW = '';
+  $scope.pwInfo = {};
+  $scope.QRCode = {};
+  $scope.currentPWInfo = {};
+  $scope.pwSettings = {
+    length: 12,
+    upper: true,
+    lower: true,
+    digits: true,
+    special: false,
+    mindigits: 3,
+    ambig: false,
+    reqevery: true
+  };
+  /** The binding is fucked up...
+   $scope.$watch('$parent.currentItem',function(n){
+    $scope.currentItem = n;
+  },true);
+   $scope.$watch('currentItem',function(n){
+    $scope.$parent.currentItem = n;
+  },true);*/
 
-		if ($(document).data('renewalPeriod') > 0) {
-			var from = new Date()
-			var expireDate = new Date();
-			formData.expire_time = expireDate.addDays($(document).data('renewalPeriod') * 1);
-		} else {
-			formData.expire_time = 0;
-		}
-		formData.tags = $("#tags").tagit("assignedTags").join(',');
-		console.log(formData);
-		if (!ERROR) {
-			$.post(createUrl, formData, function(data) {
-				console.log(data)
-				window.close()
-			})
-		} else {
-			alert(ERROR);
-		}
+  $scope.$watch('currentItem.password', function (newVal) {
+    if (typeof zxcvbn !== 'function') {
+      return;
+    }
+    if (!newVal) {
+      return;
+    }
+    $scope.currentPWInfo = zxcvbn(newVal);
+    var today = new Date().getTime(), itemExpireDate = $scope.currentItem.expire_time * 1,days;
+    if (itemExpireDate !== 0 && $scope.renewal_period === '0') {
+      if (itemExpireDate < today && $scope.editing) {
+        days = 86400000 * $scope.renewal_period;
+        $scope.newExpireTime = today + days;
+      }
+    }
+  }, true);
+  $scope.copied = function (what) {
+    OC.Notification.showTimeout('Copied ' + what.toLowerCase() + ' to clipboard');
+  };
+  $scope.$watch('currentItem.tags', function (newVal) {
+    if (!newVal) {
+      return;
+    }
+    $scope.requiredPWStrength = 0;
+    $scope.renewal_period = 0;
+    var i, tag;
+    for (i = 0; i < newVal.length; i++) {
+      tag = newVal[i];
+      if (tag.min_pw_strength) {
+        if (tag.min_pw_strength > $scope.requiredPWStrength) {
+          /** @namespace tag.min_pw_strength */
+          $scope.requiredPWStrength = tag.min_pw_strength;
+        }
+      }
+      if (tag.renewal_period) {
+        if (tag.renewal_period > $scope.renewal_period) {
+          $scope.renewal_period = tag.renewal_period * 1;
+        }
+      }
+    }
+  }, true);
+  $scope.generatePW = function () {
+    $scope.generatedPW = generatePassword($scope.pwSettings.length, $scope.pwSettings.upper, $scope.pwSettings.lower, $scope.pwSettings.digits, $scope.pwSettings.special, $scope.pwSettings.mindigits, $scope.pwSettings.ambig, $scope.pwSettings.reqevery);
+    $scope.pwInfo = zxcvbn($scope.generatedPW);
+  };
+  //     allow spec char       //minimum digits  Avoid Ambiguous Characters     Require Every Character Type
+  //generatePassword(length, upper, lower, digits, special,                 mindigits,      ambig,                       reqevery)
+  $scope.togglePWField = function () {
+    $scope.pwFieldVisible = ($scope.pwFieldVisible === false);
+  };
 
-	})
-	var saveCurrentTagData = function(evt,ui){
-		$(document).data('minPWStrength',0);
-		$(document).data('renewalPeriod',0);
-		 var tagData = $(document).data('tagsData');
-		 $.each($("#tags").tagit("assignedTags"),function(k,v){
-		 	$.get(OC.generateUrl('apps/passman/api/v1/tag/load'),{'tag': v},function(data){
-		 		if(data != null){
-					if(data.tag.min_pw_strength*1 > $(document).data('minPWStrength')){
-						console.log(data);
-						$(document).data('minPWStrength', data.tag.min_pw_strength)
-						var r = getRating(data.tag.min_pw_strength)
-						console.log(r);
-						$('#complex_attendue').text(r.text);
-					}
-					if(data.tag.renewal_period > $(document).data('renewalPeriod')){
-						$(document).data('renewalPeriod', data.tag.renewal_period)
-					}
-				}
-		 	});
-		 });
-		 
-	};
-	$('#tags').tagit({
-		allowSpaces : true,
-		autocomplete : {
-			source : function(request, response) {
-				$.ajax({
-					url : OC.generateUrl('apps/passman/api/v1/tags/search'),
-					dataType : "json",
-					data : {
-						k : request.term
-					},
-					success : function(data) {
-						response($.map(data, function(item) {
-							return {
-								label : item.label,
-								value : item.label
-							};
-						}));
-					}
-				});
-			}
-		},
-		afterTagAdded: saveCurrentTagData,
-		afterTagRemoved: saveCurrentTagData 
-	});
+  $scope.addCField = function (customField) {
+    if (!customField.label || !customField.value) {
+      return;
+    }
+    $scope.currentItem.customFields.push(customField);
+    $scope.newCustomfield = {clicktoshow: 0};
+  };
 
-	var ls = $.jStorage.get("ENC_KEY");
-	if (!ls || !$.jStorage.storageAvailable()) {
-		encryptionKeyDialog();
-	} else {
-		setEncKey($.jStorage.get("ENC_KEY"));
-	}
+  $scope.removeCField = function (customField) {
+    var i, idx;
+    for (i = 0; i < $scope.currentItem.customFields.length; i++) {
+      if ($scope.currentItem.customFields[i].id === customField.id) {
+        idx = $scope.currentItem.customFields.indexOf(customField);
+        $scope.currentItem.customFields.splice(idx, 1);
+      }
+    }
+    if (customField.id) {
+      ItemService.removeCustomfield(customField.id);
+    }
+  };
+  $scope.loadTags = function (query) {
+    return $http.get(OC.generateUrl('apps/passman/api/v1/tags/search?k=' + query));
+  };
+  $scope.deleteFile = function (file) {
+    var i, idx;
+    ItemService.deleteFile(file).success(function () {
+      for (i = 0; i < $scope.currentItem.files.length; i++) {
+        if ($scope.currentItem.files[i].id === file.id) {
+          idx = $scope.currentItem.files.indexOf(file);
+          $scope.currentItem.files.splice(idx, 1);
+        }
+      }
+    });
+  };
 
-})
-function encryptionKeyDialog() {
-	$('#encryptionKeyDialog').dialog({
-		draggable : false,
-		resizable : false,
-		closeOnEscape : false,
-		modal : true,
-		open : function(event, ui) {
-			//$(".ui-dialog-titlebar-close").hide();
-		},
-		buttons : {
-			"Ok" : function() {
-				if ($('#ecKey').val() == '') {
-					return false;
-				}
-				$(this).dialog("close");
-				setEncKey($('#ecKey').val());
-				if ($('#ecRemember:checked').length > 0) {
-					$.jStorage.set("ENC_KEY", $('#ecKey').val());
-					if ($('#rememberTime').val() != 'forever') {
-						var time = $('#rememberTime').val() * 60 * 1000;
-						$.jStorage.setTTL("ENC_KEY", time);
-					}
-				}
-				$('#ecKey').val('');
-				$('#ecRemember').removeAttr('checked');
-				$('#rememberTime').val('15');
-			}
-		}
-	});
+  $scope.updateFavIcon = function(){
+    $scope.favIconLoading = true;
+    var hashedUrl = window.btoa( $scope.currentItem.url)
+    $.get(OC.generateUrl('apps/passman/api/v1/item/getfavicon/'+ hashedUrl),function(data){
+      console.log(data)
+      $scope.currentItem.favicon = data.favicon;
+      $scope.favIconLoading = false;
+      $scope.$apply();
+    });
+  };
 
-	$('#ecKey').keypress(function(event) {
-		if (event.keyCode == 13) {
-			$('.ui-dialog-buttonpane button').click();
-		}
+  var loadFavIconTimer = $timeout(function(){
+    $scope.updateFavIcon();
+    $timeout.cancel(loadFavIconTimer);
 
-	});
+  },50);
+  $scope.parseQR = function(qrData){
+    console.log(qrData)
+    var re = /otpauth:\/\/(totp|hotp)\/(.*)\?(secret|issuer)=(.*)&(issuer|secret)=(.*)/, parsedQR,qrInfo;
+    parsedQR = (qrData.qrData.match(re));
+    qrInfo = {
+      type: parsedQR[1],
+      label: decodeURIComponent(parsedQR[2]),
+      qrCode: qrData.image
+    };
+    qrInfo[parsedQR[3]] = parsedQR[4];
+    qrInfo[parsedQR[5]] = parsedQR[6];
+    $scope.currentItem.otpsecret = qrInfo;
+    $scope.$apply();
+  };
 
-	$('#rememberTime').change(function() {
-		$('#ecRemember').attr('checked', 'checked');
-	});
-}
-function getRating(str){
-	var scoreInfo;
-	 $.each(passwordRatings,function(k,v){
-	 	if(str >= this.minScore)
-	 		scoreInfo = this;
-	 });
-	return scoreInfo;
-}
-function setEncKey(key) {
-	$(document).data('ENC_KEY', key);
-}
+  $scope.usePw = function () {
+    $scope.currentItem.password = $scope.generatedPW;
+    $scope.currentItem.passwordConfirm = $scope.generatedPW;
+  };
 
-function getEncKey() {
-	return $(document).data('ENC_KEY');
-}
-
-/**
- * Generate salt
- */
-function generateSalt(len) {
-	var text = "";
-	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~`!@#$%^&*()_+-={}[]:\";'<>?,./|\\";
-
-	for (var i = 0; i < len; i++)
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-	return text;
-}
-
-/**
- * Encrypt a string with the algorithm
- */
-
-function encryptThis(str) {
-	var encryptedString = str;
-	var encryptionKey = getEncKey();
-
-	encryptedString = sjcl.encrypt(encryptionKey, encryptedString)
-
-	encryptedString = window.btoa(encryptedString);
-	return encryptedString;
-}
-
-/**
- * Decrypt a string with the algorithm
- */
-function decryptThis(str) {
-	encryptedString = window.atob(str);
-	var decryptionKey = getEncKey();
-	var decryptedString = sjcl.decrypt(decryptionKey, encryptedString);
-	return decryptedString;
+  $scope.saveItem = function (item) {
+    $scope.errors = [];
+    var saveThis = angular.copy(item), unEncryptedItem = angular.copy(saveThis), encryptedFields = ['account', 'email', 'password', 'description'], i;
+    for (i = 0; i < encryptedFields.length; i++) {
+      saveThis[encryptedFields[i]] = $scope.encryptThis(saveThis[encryptedFields[i]]);
+    }
+    if (saveThis.customFields.length > 0) {
+      for (i = 0; i < saveThis.customFields.length; i++) {
+        saveThis.customFields[i].label = $scope.encryptThis(saveThis.customFields[i].label);
+        saveThis.customFields[i].value = $scope.encryptThis(saveThis.customFields[i].value);
+        saveThis.customFields[i].clicktoshow = (saveThis.customFields[i].clicktoshow) ? 1 : 0;
+      }
+    }
+    if(saveThis.otpsecret) {
+      saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
+    }
+    /**
+     *Field checking
+     */
+    if (item.password !== item.passwordConfirm) {
+      $scope.errors.push("Passwords do not match");
+    }
+    if ($scope.requiredPWStrength > $scope.currentPWInfo.entropy) {
+      $scope.errors.push("Minimal password score not met");
+    }
+    saveThis.expire_time = $scope.newExpireTime;
+    if ($scope.errors.length === 0) {
+      delete saveThis.passwordConfirm;
+      if (saveThis.id) {
+        ItemService.update(saveThis).success(function (data) {
+          if (data.success) {
+            $scope.errors = [];
+            unEncryptedItem.expire_time = data.success.expire_time;
+            $scope.$parent.currentItem = unEncryptedItem;
+            $scope.closeDialog();
+          }
+        });
+      } else {
+        ItemService.create(saveThis).success(function () {
+          OC.Notification.showTimeout('Item created!',3000);
+          $timeout(function(){
+            //$window.close();
+          },3400);
+        });
+      }
+    }
+  };
+});
+var t = function () { };
+/* Check if t function exists if not, create it to prevent errors  */
+if (null === t) {
+  function t (app, string) {
+    console.log('Fuck, l10n failed to load', 'App: ' + app, 'String: ' + string);
+    return string;
+  }
 }
