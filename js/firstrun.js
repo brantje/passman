@@ -134,9 +134,11 @@ $(document).ready(function(){
                 $('#tagList').css('position','absolute');
                 $('#tagList').css('z-index','400');
             }
-            if(i === 3){
+            if(i === 2){
                 $('#tagList').css('position','initial');
                 $('#tagList').css('z-index','1');
+            }
+            if(i === 3){
                 $('[aria-describedby="firstRun"]').animate({ top: '250' },500);
                 $('#pwList').css({
                     'position':'absolute',

@@ -26,7 +26,7 @@
 			</fieldset>
 			<fieldset>
 				<legend>Items</legend>
-				Here are your example items.<br />
+				Here are your example items, you're free to edit or delete them.<br />
 				Items contain your username / password or any other sensitive information.<br />
 
 				Hint: click on the arrow (<i class="icon icon-caret-dark more"></i>) to expand an menu to display various options for an item.
