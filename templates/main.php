@@ -769,7 +769,7 @@
         </div>
         <div class="row tabContent">
           <div class="col-md-6" ng-show="tabActive==1">
-            <?php p($l->t('Enter the users / groups you want to the password with')); ?>
+            <?php p($l->t('Enter the users / groups you want to share the password with')); ?>
             <tags-input ng-model="shareSettings.shareWith" removeTagSymbol="x" replace-spaces-with-dashes="false"
                         min-length="1">
               <auto-complete source="loadUserAndGroups($query)" min-length="1" max-results-to-show="6"></auto-complete>
