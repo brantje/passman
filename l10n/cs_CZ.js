@@ -110,7 +110,6 @@ OC.L10N.register(
     "Files & Images" : "Soubory a obrázky",
     "Users & Groups" : "Uživatelé a skupiny",
     "Links" : "Odkazy",
-    "Enter the users / groups you want to the password with" : "Zadejte uživatele / skupiny, se kterými chcete sdílet heslo",
     "Name" : "Název",
     "Create share link" : "Vytvořit odkaz",
     "Your share link" : "Váš odkaz",

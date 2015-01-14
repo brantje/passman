@@ -110,7 +110,6 @@ OC.L10N.register(
     "Files & Images" : "Files & Images",
     "Users & Groups" : "Users & Groups",
     "Links" : "Links",
-    "Enter the users / groups you want to the password with" : "Enter the users / groups you want to the password with",
     "Name" : "Name",
     "Create share link" : "Create share link",
     "Your share link" : "Your share link",
