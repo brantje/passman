@@ -59,12 +59,14 @@ OC.L10N.register(
     "Minimal password score" : "Score minimal pour le mot de passe",
     "Override required password score" : "Outre-passer le score requis pour le mot de passe",
     "Current password score" : "Score courant pour le mot de passe",
+    "Crack time" : "Temps nécessaire pour casser le mot de passe",
     "Password (again)" : "Mot de passe (encore)",
     "Password will expire at" : "Le mot de passe expire le",
     "Show password generation settings" : "Afficher les paramètres de génération du mot de passe",
     "Hide password generation settings" : "Masquer les paramètres de génération du mot de passe",
     "Password length" : "Longueur du mot de passe",
     "Special" : "Spécial",
+    "Minimum digit count" : "Nombre minimum de chiffres",
     "Avoid ambiguous characters" : "Eviter les caractères ambigus",
     "Require every character type" : "Requérir tous les types de caractères",
     "Existing files" : "Fichiers existants",
@@ -106,6 +108,7 @@ OC.L10N.register(
     "Files & Images" : "Fichiers & Images",
     "Users & Groups" : "Utilisateurs & Groupes",
     "Links" : "Liens",
+    "Enter the users / groups you want to share the password with" : "Saisir les utilisateurs/groupes avec qui partager le mot de passe",
     "Name" : "Nom",
     "Create share link" : "Créer un lien de partage",
     "Your share link" : "Votre lien de partage",
@@ -119,6 +122,7 @@ OC.L10N.register(
     "Days" : "Jours",
     "OTP Settings" : "Paramètres OTP",
     "Override required score" : "Outre-passer le score requis",
-    "Password will expire at " : "Le mot de passe expire le"
+    "Password will expire at " : "Le mot de passe expire le",
+    "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\r\n    passwords" : "Saisir la clef de chiffrement. Si c'est la première fois que vous utilisez Passman, cette clef sera utilisée pour le chiffrement de vos mots de passe"
 },
 "nplurals=2; plural=(n > 1);");

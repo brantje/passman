@@ -110,6 +110,7 @@ OC.L10N.register(
     "Files & Images" : "Dateien & Bilder",
     "Users & Groups" : "Nutzer & Gruppen",
     "Links" : "Links",
+    "Enter the users / groups you want to share the password with" : "Die Benutzer / Gruppen eingeben, mit denen Sie das Passwort teilen wollen",
     "Name" : "Name",
     "Create share link" : "Link für das Teilen erstellen",
     "Your share link" : "Ihr geteilter Link",
