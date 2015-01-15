@@ -20,7 +20,7 @@
 \OCP\Util::addscript('passman', 'app.directive');
 \OCP\Util::addscript('passman', 'app.filter');
 \OCP\Util::addScript('passman', 'jsrsasign-4.7.0-all-min');
-
+\OCP\Util::addScript('passman', 'jsencript.min.js');
 
 
 \OCP\Util::addStyle('passman', 'ocPassman');

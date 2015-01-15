@@ -13,8 +13,9 @@ var CRYPTO = {
      * The private key object
      */
     RSA: {
-        _private_key: null,
-        _public_key: null,
+        _ca_pub_key  : null,
+        _private_key : null,
+        _public_key  : null,
 
 
         //From now on, just methods
@@ -24,13 +25,13 @@ var CRYPTO = {
          * @param size
          * @param callback A function called after the generation its done
          */
-        genKeyPair: function (size, callback) {
+        genKeyPair : function (size, callback) {
             setTimeout(function(){
                 _cb(KEYUTIL.generateKeypair("RSA", size, null));
                 callback();
             }, 200);
         },
-        _genKeyPairCallback: function (key) {
+        _genKeyPairCallback : function (key) {
             this._private_key = key['prvKeyObj'];
             this._public_key = key['pubKeyObj'];
         },
@@ -53,6 +54,14 @@ var CRYPTO = {
         },
 
         /**
+         * Sets the server (CA) public key
+         * @param pub_key
+         */
+        setServerPublicKey : function(pub_key){
+            this._ca_pub_key = pub_key;
+        },
+
+        /**
          * Returns a PEM with the public key of the PRIVATE key
          * @returns {*}
          */
@@ -60,14 +69,29 @@ var CRYPTO = {
             return KEYUTIL.getPEM(this._private_key);
         },
         /**
-         * Sets the publick key from a PEM
+         * Sets the public key from a PEM
          * @param pubKey
          */
         setPublicPEM : function(pubKey){
             this._public_key = KEYUTIL.getPublicKeyFromCertPEM(pubKey);
         },
 
-        decypherWithPrivate : function(data){
+        decypherWithServer : function(data){
+            var tmp = new JSEncrypt();
+            tmp.setPrivateKey(this._ca_pub_key);
+            var dec = tmp.decrypt(data);
+
+            return (dec == data) ? null : dec;
+        },
+
+        /**
+         * Checks whether the server public key it's valid or not.
+         * When we already have a private key, the server key should be signed with our public key
+         * TODO: Find a better way of improving this check!
+         * @param pub_key
+         * @returns boolean True if it's valid, false otherwise
+         */
+        checkServerPubKey : function(pub_key){
 
         }
     },
