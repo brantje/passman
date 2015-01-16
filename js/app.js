@@ -621,6 +621,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
   };
   $rootScope.$on('closeEdit',function(){
     $scope.editingItem = false;
+    setTimeout(window.resizeList,10);
   })
   $scope.editItem = function(item){
     $scope.editingItem = true;
@@ -761,8 +762,8 @@ app.controller('addEditItemCtrl', function ($scope, ItemService,$rootScope) {
     $scope.editing = false;
     $scope.errors = [];
     $rootScope.$broadcast('closeEdit');
-    window.resizeList();
   };
+
   $scope.generatePW = function () {
     $scope.generatedPW = generatePassword($scope.pwSettings.length, $scope.pwSettings.upper, $scope.pwSettings.lower, $scope.pwSettings.digits, $scope.pwSettings.special, $scope.pwSettings.mindigits, $scope.pwSettings.ambig, $scope.pwSettings.reqevery);
     $scope.pwInfo = zxcvbn($scope.generatedPW);

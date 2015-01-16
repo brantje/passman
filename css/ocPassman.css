@@ -198,6 +198,9 @@ div#topContent {
   position: fixed;
   top:45px;
 }
+.content{
+  overflow: hidden;
+}
 /*
  #menu li {
  background: url(../img/folder_closed.png) no-repeat;
