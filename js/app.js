@@ -346,8 +346,10 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
    */
 
   if (!$.jStorage.get('encryptionKey')) {
-    if( typeof firstRun !== undefined) {
-      $scope.loadItems([]);
+    if( typeof firstRun === "boolean") {
+      if(firstRun=== true){
+        $scope.loadItems([]);
+      }
     } else {
       $scope.showEncryptionKeyDialog();
     }
