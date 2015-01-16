@@ -84,7 +84,7 @@
     </div>
   </div>
   <div id="app-content" ng-controller="contentCtrl" style="display: none" show-loaded>
-    <div class="content" ng-if="!editingItem">
+    <div class="content" ng-show="!editingItem">
       <div id="topContent" >
         <button class="button" id="addItem" ng-click="addItem()"><?php p($l->t('Add item')); ?></button>
         <input type="search" id="itemSearch" ng-model="itemFilter.label"

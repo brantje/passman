@@ -353,6 +353,9 @@ td.td_title {
 .editItem .bottomRow .btn{
   margin-right: 10px;
 }
+.editItem .bottomRow{
+  margin-bottom: 10px;
+}
 
 #editAddItemDialog{
   height: 390px !important;
