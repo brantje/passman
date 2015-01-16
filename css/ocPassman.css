@@ -196,6 +196,7 @@ div#topContent {
 	height: 40px;
   /*width: 100%;*/
   position: fixed;
+  top:45px;
 }
 /*
  #menu li {
@@ -316,6 +317,40 @@ td.td_title {
   background:#333;*/
   text-decoration:none;
 }
+.editItem{
+  overflow-x: hidden;
+}
+.editItem .tabHeader > div{
+  height: 27px;
+}
+
+.editItem .tab .ui-icon-copy{
+  display: inline-block;
+  position: relative;
+  top: -4px;
+}
+.editItem .tab{
+  padding: 5px 35px 5px 35px;
+}
+.editItem .tab label{
+  display: block;
+}
+.editItem .tab .pwPreview{
+  width: 100%;
+  max-width: 300px;
+  display: inline-block;
+  margin-bottom: 6px;
+  height: 34px;
+}
+.editItem .tab input[type="text"],.editItem .tab input[type="password"]{
+  width: 100%;
+  max-width: 300px;
+  display: inline-block;
+}
+.editItem .bottomRow .btn{
+  margin-right: 10px;
+}
+
 #editAddItemDialog{
   height: 390px !important;
 }
