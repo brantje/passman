@@ -24,6 +24,8 @@ See README.md or https://github.com/fraywing/textAngular/wiki for requirements a
   font-family: inherit;
   font-size: 100%;
   margin-top: 5px;
+  width: 100%;
+  max-width: 300px;
 }
 
 .ta-scroll-window.form-control {
@@ -37,6 +39,8 @@ See README.md or https://github.com/fraywing/textAngular/wiki for requirements a
   max-height: 300px;
   padding: 6px 12px;
   font-size: 12px;
+  width: 100%;
+  max-width: 300px;
 }
 
 .ta-editor:focus {

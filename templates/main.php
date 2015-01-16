@@ -253,13 +253,13 @@
           <div class="col-xs-2 nopadding tab2" ng-click="tabActive=2;" ng-class="{'active': tabActive==2}"><?php p($l->t('Password')); ?></div>
           <div class="col-xs-2 nopadding tab3" ng-click="tabActive=3;" ng-class="{'active': tabActive==3}" ng-show="currentItem.id"><?php p($l->t('Files')); ?></div>
           <div class="col-xs-2 nopadding tab4" ng-click="tabActive=4" ng-class="{'active': tabActive==4}"><?php p($l->t('Custom fields')); ?></div>
-          <div class="col-xs-2 nopadding tab5" ng-click="tabActive=5" ng-class="{'active': tabActive==5}"><?php p($l->t('OTP settings')); ?></div>
+          <div class="col-xs-2 nopadding tab5" ng-click="tabActive=5" ng-class="{'active': tabActive==5}" tooltip="<?php p($l->t('One time password settings')); ?>"><?php p($l->t('OTP settings')); ?></div>
         </div>
       </div>
 
       <div class="row tab" ng-show="tabActive==1">
         <div class="row">
-          <div class="col-xs-12 col-md-5">
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
             <div class="row">
               <div class="col-xs-12">
                 <label><?php p($l->t('Label')); ?></label>
@@ -292,15 +292,15 @@
               </div>
             </div>
           </div>
-          <div class="col-xs-12 col-md-6">
+          <div class="col-xs-12 col-sm-6 col-md-6">
             <div class="row">
-              <div class="col-xs-12">
+              <div class="col-xs-8 col-sm-12 col-md-12">
                 <label><?php p($l->t('Description')); ?></label>
                 <div text-angular ng-model="currentItem.description"  ta-toolbar="[['bold','italics','underline','undo','redo','insertLink']]"></div>
               </div>
             </div>
             <div class="row">
-              <div class="col-xs-12">
+              <div class="col-xs-8 col-sm-12 col-md-12">
                 <label>Add tag</label>
                 <tags-input ng-model="currentItem.tags" class="inputCurrentTags" removeTagSymbol="x" min-length="1"
                             replace-spaces-with-dashes="false">
@@ -309,7 +309,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-xs-12">
+              <div class="col-xs-8 col-sm-12 col-md-12">
                 <label>Tags</label>
                 <div class="currentTags">
                   <div ng-repeat="tag in currentItem.tags" class="pull-left tag">
@@ -346,7 +346,7 @@
                    class="ui-icon ui-icon-copy"></a>
               </div>
             </div>
-            <div class="row" ng-show="currentPWInfo">
+            <div class="row" ng-show="currentPWInfo.entropy">
               <div class="col-xs-12">
                 <span><?php p($l->t('Current password score')); ?>:</span> {{currentPWInfo.entropy}}<br/>
                 <span><?php p($l->t('Crack time')); ?>:</span><br>
@@ -370,14 +370,14 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-5 col-md-4 col-lg-3">
+          <div class="col-sm-5 col-md-4 col-lg-2">
             <div class="row">
               <span ng-click="showPwSettings=true" class="link col-xs-12" ng-show="!showPwSettings"><?php p($l->t('Show password generation settings')); ?></span>
               <span ng-click="showPwSettings=false" class="link col-xs-12" ng-show="showPwSettings"><?php p($l->t('Hide password generation settings')); ?></span>
               <div id="pwTools" ng-show="showPwSettings">
                 <span id="custom_pw">
                     <span><?php p($l->t('Password length')); ?></span>
-                    <input type="number" ng-model="pwSettings.length" style="width:30px"><br>
+                    <input type="number" ng-model="pwSettings.length" style="width:50px"><br>
                     <input type="checkbox" ng-model="pwSettings.upper"><label for="upper">A-Z</label> <input
                     ng-model="pwSettings.lower" type="checkbox" id="lower"><label
                     for="lower">a-z</label>

@@ -342,7 +342,7 @@ td.td_title {
   margin-bottom: 6px;
   height: 34px;
 }
-.editItem .tab input[type="text"],.editItem .tab input[type="password"]{
+.editItem .tab input[type="text"],.editItem .tab input[type="password"],editItem .tab {
   width: 100%;
   max-width: 300px;
   display: inline-block;
