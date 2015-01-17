@@ -118,6 +118,9 @@ input#itemSearch {
   transition: width 1s;
 }
 
+#searchTagContainer tags-input{
+  width: 90%;
+}
  
 #tagList .tag {
 	height: 50px;
@@ -308,7 +311,8 @@ td.td_title {
 }
 .editMenu li{
   float:left;
-  margin-right:10px;
+  /*margin-right:10px;*/
+  padding-right: 10px;
   position:relative;
 }
 .editMenu a{

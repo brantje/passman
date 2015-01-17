@@ -22,7 +22,8 @@ $(document).ready(function(){
             $('#firstRun').dialog('destroy').remove();
             $.get(OC.generateUrl('apps/passman/disablefirstrun'));
             $('.ui-widget-overlay.ui-front').remove();
-
+            clearInterval(window.editingItemsInterval);
+            $('.bottomRow .btn-danger').click();
         });
     });
 });
@@ -56,9 +57,11 @@ $(document).ready(function(){
             // 2
             var name = $(this).find("legend").html();
             $("#steps").append("<li id='stepDesc" + i + "'>Step " + (i + 1) + "<span>" + name + "</span></li>");
-            $(this).find("legend").remove()
+            $(this).find("legend").remove();
+
             if (i == 0) {
                 createNextButton(i);
+                createCancelButton(i)
                 selectStep(i);
             }
             else if (i == count - 1) {
@@ -72,9 +75,19 @@ $(document).ready(function(){
             }
         });
 
+        function createCancelButton(i) {
+            var stepName = "step" + i;
+            $("#" + stepName + "commands").append('<span class="btn btn-default" id="' + stepName + 'Cancel">Cancel</a>');
+
+            $("#" + stepName + "Cancel").bind("click", function(e) {
+                $('#firstRun').dialog('destroy').remove();
+                $.get(OC.generateUrl('apps/passman/disablefirstrun'));
+                $('.ui-widget-overlay.ui-front').remove();
+            });
+        }
         function createPrevButton(i) {
             var stepName = "step" + i;
-            $("#" + stepName + "commands").append("<a href='#' id='" + stepName + "Prev' class='prev button'>< Back</a>");
+            $("#" + stepName + "commands").append("<span href='#' id='" + stepName + "Prev' class='btn btn-default'>< Back</span>");
 
             $("#" + stepName + "Prev").bind("click", function(e) {
                 $("#" + stepName).hide();
@@ -86,7 +99,7 @@ $(document).ready(function(){
 
         function createNextButton(i) {
             var stepName = "step" + i;
-            $("#" + stepName + "commands").append("<a href='#' id='" + stepName + "Next' class='next button'>Next ></a>");
+            $("#" + stepName + "commands").append("<span href='#' id='" + stepName + "Next' class='next  btn btn-default'>Next ></span>");
 
             $("#" + stepName + "Next").bind("click", function(e) {
                 if(i==1){
@@ -121,7 +134,7 @@ $(document).ready(function(){
                 $("#step" + (i + 1)).show();
                 if (i + 2 == count){
                 console.log(i)
-                    $("#step" +(i+1) + "commands").append("<a href='#' id='finishFirstRun' class='next button'>Done ></a>");
+                    $("#step" +(i+1) + "commands").append("<button id='finishFirstRun' class='next btn btn-success'>Done ></button>");
                 }
                 selectStep(i + 1);
             });
@@ -147,15 +160,123 @@ $(document).ready(function(){
                 });
 
                 $('#pwList > li:first-child').click();
-                setTimeout(function() {
-                    $('#pwList > li:first-child .editMenu li').click();
-                },100);
+
             }
             if(i === 4){
-                $('#pwList').css({
-                    'position':'initial',
-                    'z-index': '2'
-                })
+                $('#pwList > li:first-child').click();
+                $('.firstRunUl > li').css('display','none');
+                $('#finishFirstRun').hide();
+                setTimeout(function() {
+                    var intervalTimer,isBlinking=false,counter=0;
+                    $('#pwList > li:first-child .editMenu li').click();
+
+                    intervalTimer = setInterval(function(){
+                        if(!isBlinking){
+                            $('.editMenu:eq(0)').find('ul > li:eq(0)').css('background','#c9c9c9');
+                            $('.editMenu:eq(0)').find('ul > li:eq(0) > a').css('color','black');
+                            isBlinking = true;
+                        } else{
+                            $('.editMenu:eq(0)').find('ul > li:eq(0)').css('background','#383C43');
+                            $('.editMenu:eq(0)').find('ul > li:eq(0) > a').css('color','#fff');
+                            isBlinking = false;
+                        }
+                        counter++;
+                        if(counter === 6){
+                            $('.editMenu:eq(0)').find('ul > li:eq(0)').css('background','#383C43');
+                            $('.editMenu:eq(0)').find('ul > li:eq(0) > a').css('color','#fff');
+                            isBlinking = false;
+                            clearInterval(intervalTimer);
+                        }
+                    },500);
+
+                    setTimeout(function(){
+                        var tabIndex = -1;
+
+                        var nextTbBtn = '<button class="btn btn-default next" id="frNextTab">Next tab</button>';
+                        var prevTbBtn = '<button class="btn btn-default next" id="frPrevTab">Previous tab</button>';
+                        $('#finishFirstRun').after(prevTbBtn).after(nextTbBtn);
+
+                        $('.editMenu:eq(0)').find('ul > li:eq(0) > a').click();
+                        var winHeight = $(window).height()-425;
+                        $('[aria-describedby="firstRun"]').animate({ top: winHeight },500);
+                        $('#pwList').css({
+                            'position':'initial',
+                            'z-index': '2'
+                        });
+                        $('.editItem').css({
+                            'position':'absolute',
+                            'z-index':'400' ,
+                            'background':'#fff',
+                            'width': '100%'
+                        });
+                        $('#introEdit').remove();
+                        var nextTab = function(){
+                            tabIndex++;
+                            console.log(tabIndex)
+                            if(tabIndex == 5){
+                                tabIndex = 1;
+                            }
+                            console.log('after if',tabIndex)
+                            $('.firstRunUl').children().css('display','none');
+                            $($('.firstRunUl').children()[tabIndex]).css('display','block');
+                            $($('.editItem .tabHeader').children()[tabIndex]).click();
+
+                            var animationTimeout = setTimeout(function() {
+                                if(tabIndex === 0 ){
+                                    $('[aria-describedby="firstRun"]').animate({ top: winHeight },500);
+                                }
+                                if (tabIndex === 1) { //password
+                                    $('[aria-describedby="firstRun"]').animate({top: 340}, 500);
+                                } else if (tabIndex === 2) { //Files
+                                    $('[aria-describedby="firstRun"]').animate({top: 200}, 500);
+                                } else if (tabIndex === 3) { //Custom fields
+                                    $('[aria-describedby="firstRun"]').animate({top: 280}, 500);
+                                } else if (tabIndex >= 4) { //OTP Settings
+                                    tabIndex = -1;
+                                    $('[aria-describedby="firstRun"]').animate({top: 230}, 500);
+                                    $('#finishFirstRun').show();
+                                }
+                                clearTimeout(animationTimeout);
+                            },50)
+                        };
+                        var prevTab = function(){
+                            $('.firstRunUl').children().css('display','none');
+                            tabIndex--;
+                            console.log(tabIndex)
+                            if(tabIndex==-2){
+                                tabIndex = 3
+                            }
+                            if(tabIndex === -1){
+                                tabIndex = 4;
+                            }
+
+                            console.log('after if',tabIndex)
+                            $($('.firstRunUl').children()[tabIndex]).css('display','block');
+                            $($('.editItem .tabHeader').children()[tabIndex]).click();
+                            var animationTimeout = setTimeout(function() {
+                                if(tabIndex <= 0){
+                                    $('[aria-describedby="firstRun"]').animate({ top: winHeight },500);
+                                }
+                                if (tabIndex === 1) { //password
+                                    $('[aria-describedby="firstRun"]').animate({top: 340}, 500);
+                                } else if (tabIndex === 2) { //Files
+                                    $('[aria-describedby="firstRun"]').animate({top: 200}, 500);
+                                } else if (tabIndex === 3) { //Custom fields
+                                    $('[aria-describedby="firstRun"]').animate({top: 280}, 500);
+                                } else if (tabIndex === 4) { //OTP Settings
+                                    $('[aria-describedby="firstRun"]').animate({top: 230}, 500);
+                                }
+                                clearTimeout(animationTimeout);
+                            },50)
+                        };
+
+                        //window.editingItemsInterval = setInterval(nextTab,6000);//Tab loop
+                        nextTab();
+                        $('#frNextTab').click(nextTab);
+                        $('#frPrevTab').click(prevTab);
+                    },3000);//Timer edit item
+                },100);
+                /* $('.editMenu:eq(0)').find('ul > li:eq(0) > a').click(); */
             }
         }
 
