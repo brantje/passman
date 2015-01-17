@@ -449,11 +449,11 @@ div[aria-describedby="editAddItemDialog"] {
 }
 .editMenu li.show ul{ /* Display the dropdown on hover */
   left: initial !important;
-  top: 68px;
+  top: 25px;
   min-width: 80px;
   background-color: #383C43;
   z-index: 99;
-  right: 21px;
+  right: 5px;
 }
 .editMenu li.show a{ /* These create persistent hover states, meaning the top-most link stays 'hovered' even when your cursor has moved down the list. */
   text-decoration:underline;
