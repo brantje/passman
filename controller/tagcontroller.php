@@ -50,6 +50,10 @@ class TagController extends Controller {
     return new JSONResponse($response);
   }
 
+  /**
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
   public function load($tag) {
     if ($this->tagBusinessLayer->search($tag, $this->userId, true)) {
       $response = $this->tagBusinessLayer->load($tag, $this->userId);
@@ -57,6 +61,10 @@ class TagController extends Controller {
     return new JSONResponse($response);
   }
 
+  /**
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
   public function update($min_pw_strength,$renewal_period,$tag_id,$tag_label) {
     $tag = array();
     $tag['min_pw_strength'] = $min_pw_strength;

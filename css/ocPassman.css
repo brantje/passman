@@ -310,8 +310,8 @@ td.td_title {
  cursor: pointer;
 }
 .editMenu li{
-  float:left;
-  margin-right:10px;
+  float:right;
+ /* margin-right:10px;*/
   /*padding-right: 10px;*/
   position:relative;
 }
@@ -448,15 +448,12 @@ div[aria-describedby="editAddItemDialog"] {
   white-space:nowrap; /* Stop text wrapping and creating multi-line dropdown items */
 }
 .editMenu li.show ul{ /* Display the dropdown on hover */
-  left: -50px;
-  top: 28px;
-  width: 70px;
-  background-color: #383c43;
- /* border-bottom-left-radius: 7px;
-  border-bottom: 1px #333 solid;
-  border-left: 1px #333 solid;
-  box-shadow: 0 0 7px rgb(29,45,68);*/
+  left: initial !important;
+  top: 68px;
+  min-width: 80px;
+  background-color: #383C43;
   z-index: 99;
+  right: 21px;
 }
 .editMenu li.show a{ /* These create persistent hover states, meaning the top-most link stays 'hovered' even when your cursor has moved down the list. */
   text-decoration:underline;
