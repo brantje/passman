@@ -55,7 +55,6 @@ OC.L10N.register(
     "Login" : "Prihlásenie",
     "URL" : "URL",
     "Icon" : "Ikona",
-    "Tags" : "Značky",
     "Minimal password score" : "Minimálne skóre hesla",
     "Override required password score" : "Prepísať vyžadované skóre hesla",
     "Current password score" : "Aktuálne skóre hesla",
@@ -82,6 +81,7 @@ OC.L10N.register(
     "Type" : "Typ",
     "Issuer" : "Vydavateľ",
     "Secret" : "Tajné",
+    "Tags" : "Značky",
     "Cancel" : "Zrušiť",
     "Save" : "Uložiť",
     "Sharing" : "Zdieľanie",
@@ -105,10 +105,12 @@ OC.L10N.register(
     "Users & Groups" : "Používatelia & Skupiny",
     "Links" : "Linky",
     "Name" : "Názov",
+    "%n minute::%n minutes" : ["","",""],
+    "%n day::%n days" : ["","",""],
+    "OTP Settings" : "OTP nastavenia",
     "Minutes" : "Minút",
     "Hours" : "Hodín",
     "Day" : "Deň",
-    "Days" : "Dni",
-    "OTP Settings" : "OTP nastavenia"
+    "Days" : "Dni"
 },
 "nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;");

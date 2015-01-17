@@ -53,7 +53,6 @@
     "Login" : "Login",
     "URL" : "URL",
     "Icon" : "Ikon",
-    "Tags" : "Mærker",
     "Minimal password score" : "Mindste score for kodeord",
     "Override required password score" : "Tilsidesæt score for påkrævet kodeord",
     "Current password score" : "Score for nuværende kodeord",
@@ -80,6 +79,7 @@
     "Type" : "Type",
     "Issuer" : "Udsteder",
     "Secret" : "Hemmelighed",
+    "Tags" : "Mærker",
     "Cancel" : "Annullér",
     "Save" : "Gem",
     "Sharing" : "Deling",
@@ -115,15 +115,17 @@
     "Enter your encryption key." : "Angiv din krypteringsnøgle",
     "If this if the first time you use Passman, this key will be used for encryption your\n    passwords" : "Hvis dette er første gang du ser Passman, denne nøgle vil blive brugt til at kryptere dine kodeord",
     "Remember this key " : "Husk denne nøgle",
-    "Minutes" : "Minutter",
-    "Hours" : "Timer",
-    "Day" : "Dag",
-    "Days" : "Dage",
+    "%n minute::%n minutes" : ["",""],
+    "%n day::%n days" : ["",""],
     "OTP Settings" : "EKO-indstillinger",
     "Minimal password scope" : "Minimal kodeords afgrænsning",
     "Override required score" : "Tilsidesæt krævet pointtal",
     "Current password scope" : "Nuværende kodeords afgrænsning",
     "Password will expire at " : "Kodeordet udløber om",
-    "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\r\n    passwords" : "Skriv din krypteringsnøgle. Hvis det er første gang du bruger Passman, denne nøgle vil blive brugt til at kryptere dine kodeord"
+    "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\r\n    passwords" : "Skriv din krypteringsnøgle. Hvis det er første gang du bruger Passman, denne nøgle vil blive brugt til at kryptere dine kodeord",
+    "Minutes" : "Minutter",
+    "Hours" : "Timer",
+    "Day" : "Dag",
+    "Days" : "Dage"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

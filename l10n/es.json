@@ -53,7 +53,6 @@
     "Login" : "Usuario",
     "URL" : "URL",
     "Icon" : "Icono",
-    "Tags" : "Etiquetas",
     "Minimal password score" : "Fortaleza mínima de la contraseña",
     "Override required password score" : "Ignorar la fortaleza requerida para la contraseña",
     "Current password score" : "Fortaleza actual de la contraseña",
@@ -80,6 +79,7 @@
     "Type" : "Tipo",
     "Issuer" : "Emisor",
     "Secret" : "Secreto",
+    "Tags" : "Etiquetas",
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
     "Sharing" : "Compartiendo",
@@ -116,15 +116,17 @@
     "Enter your encryption key." : "Introduzca su clave de encriptación.",
     "If this if the first time you use Passman, this key will be used for encryption your\n    passwords" : "Si ésta es la primera vez que usa Passman, esta clave se usará para encriptar sus contraseñas.",
     "Remember this key " : "Recuerde esta clave",
-    "Minutes" : "Minutos",
-    "Hours" : "Horas",
-    "Day" : "Día",
-    "Days" : "Días",
+    "%n minute::%n minutes" : ["",""],
+    "%n day::%n days" : ["",""],
     "OTP Settings" : "Ajustes de OTP",
     "Minimal password scope" : "Extensión mínima de la contraseña",
     "Override required score" : "Ignorar la fortaleza requerida",
     "Current password scope" : "Extensión actual de la contraseña",
     "Password will expire at " : "La contraseña expirará en",
-    "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\r\n    passwords" : "Introduca su clave de encriptación. Si ésta es la primera vez que usa Passman, esta clave se usará para encriptar sus contraseñas"
+    "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\r\n    passwords" : "Introduca su clave de encriptación. Si ésta es la primera vez que usa Passman, esta clave se usará para encriptar sus contraseñas",
+    "Minutes" : "Minutos",
+    "Hours" : "Horas",
+    "Day" : "Día",
+    "Days" : "Días"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
