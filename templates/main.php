@@ -396,9 +396,9 @@
           </div>
           <div class="col-sm-5 col-md-4 col-lg-2">
             <div class="row">
-              <span ng-click="showPwSettings=true" class="link col-xs-12" ng-show="!showPwSettings"><?php p($l->t('Show password generation settings')); ?></span>
-              <span ng-click="showPwSettings=false" class="link col-xs-12" ng-show="showPwSettings"><?php p($l->t('Hide password generation settings')); ?></span>
-              <div id="pwTools" ng-show="showPwSettings">
+              <!--<span ng-click="showPwSettings=true" class="link col-xs-12" ng-show="!showPwSettings"><?php p($l->t('Show password generation settings')); ?></span>
+              <span ng-click="showPwSettings=false" class="link col-xs-12" ng-show="showPwSettings"><?php p($l->t('Hide password generation settings')); ?></span>-->
+              <div id="pwTools">
                 <span id="custom_pw">
                     <span><?php p($l->t('Password length')); ?></span>
                     <input type="number" ng-model="pwSettings.length" style="width:50px"><br>
@@ -532,17 +532,22 @@
           </table>
         </div>
       </div>
-      <div class="row bottomRow">
-        <div class="col-xs-12">
-          <div class="pull-right btn btn-success" ng-click="saveItem(currentItem)">Save</div>
-          <div class="pull-right btn btn-danger" ng-click="closeDialog()">Cancel</div>
+      <div class="row tab" ng-show="errors.length > 0">
+        <div class="col-xs-12 col-md-4 col-lg-1 error">
+          <div ng-repeat="error in errors">{{error}}</div>
+        </div>
+      </div>
+      <div class="row tab bottomRow">
+        <div class="col-xs-12 nopadding">
+          <div class="pull-left btn btn-success" ng-click="saveItem(currentItem)">Save</div>
+          <div class="pull-left btn btn-danger" ng-click="closeDialog()">Cancel</div>
         </div>
       </div>
     </div>
 
     <!-- Add / edit item
     <div id="editAddItemDialog" style="display: none;" >
-      <div class="error" ng-show="errors.length > 0">
+      <div class="error" >
         <div ng-repeat="error in errors">{{error}}</div>
       </div>
       <form method="get" name="new_item" id="editNewItem">

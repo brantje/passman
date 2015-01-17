@@ -44,7 +44,7 @@ class PageController extends Controller {
   public function index() {
     $conf = \OCP\CONFIG::getUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 1);
     $params = array('user' => $this->userId);
-    if ($conf == 1) {
+    if (1 == 1) {
       \OCP\Util::addscript('passman', 'firstrun');
       $exampleItems = array();
       $exampleItems[0] = array(
@@ -56,7 +56,7 @@ class PageController extends Controller {
         'tags' => array(array('text'=>'Example tag 2'),array('text'=>'Example tag 3'))
       );
       foreach($exampleItems as $key => $val){
-        $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
+       // $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
       }
     }
 

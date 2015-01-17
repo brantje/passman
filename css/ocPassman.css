@@ -311,8 +311,8 @@ td.td_title {
 }
 .editMenu li{
   float:left;
-  /*margin-right:10px;*/
-  padding-right: 10px;
+  margin-right:10px;
+  /*padding-right: 10px;*/
   position:relative;
 }
 .editMenu a{
@@ -330,7 +330,7 @@ td.td_title {
 
 }
 .editItem .tabHeader > div{
-  border-left: 1px solid black;
+  border-left: 1px solid rgb(170, 170, 170);;
 }
 @media(max-width: 768px){
   .editItem .tabHeader{
