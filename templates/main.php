@@ -344,7 +344,7 @@
       </div>
       <div class="row tab" ng-show="tabActive === 2">
         <div class="row">
-          <div class="col-sm-5 col-md-7 col-lg-9">
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
             <div class="row">
               <div class="col-xs-12">
                 <label><?php p($l->t('Minimal password score')); ?>: {{requiredPWStrength}}</label>
@@ -423,73 +423,84 @@
       </div>
       <div class="row tab" ng-show="tabActive==3">
         <div class="row">
-          <div class="col-xs-11">
-            <input type="file" fileread="uploadQueue" item="currentItem"/>
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+            <div class="row">
+              <div class="col-xs-12">
+                <input type="file" fileread="uploadQueue" item="currentItem"/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <?php p($l->t('Existing files')); ?>
+                <ul id="fileList">
+                  <li ng-repeat="file in currentItem.files" class="fileListItem">{{file.filename}} ({{file.size | bytes}}) <span
+                      class="icon icon-delete" style="float:right;" ng-click="deleteFile(file)"></span></li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-11">
-            <?php p($l->t('Existing files')); ?>
-            <ul id="fileList">
-              <li ng-repeat="file in currentItem.files" class="fileListItem">{{file.filename}} ({{file.size | bytes}}) <span
-                  class="icon icon-delete" style="float:right;" ng-click="deleteFile(file)"></span></li>
-            </ul>
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+
           </div>
         </div>
       </div>
+
       <div class="row tab" ng-show="tabActive==4">
         <div class="row">
-          <div class="col-xs-11">
-            <h1><?php p($l->t('Add field')); ?></h1>
-            <table style="width: 100%;" class="customFields">
-              <thead>
-              <tr>
-                <td><?php p($l->t('Label')); ?></td>
-                <td><?php p($l->t('Value')); ?></td>
-                <td colspan="2"><?php p($l->t('Hidden')); ?>?</td>
-              </tr>
-              </thead>
-              <tr>
-                <td><input name="customFieldName" ng-model="newCustomfield.label" type="text"
-                           placeholder="Enter field name"/>
-                </td>
-                <td><input name="customFieldValue" ng-model="newCustomfield.value" type="text"
-                           placeholder="Enter field value"/>
-                </td>
-                <td><input type="checkbox" ng-model="newCustomfield.clicktoshow"/></td>
-                <td><span ng-click="addCField(newCustomfield)" class="icon-add icon"></span></td>
-              </tr>
-            </table>
-            <hr class="blue">
-            <h1><?php p($l->t('Existing fields')); ?></h1>
-            <table style="width: 100%;" ng-show="currentItem.customFields.length > 0">
-              <thead>
-              <tr>
-                <td><?php p($l->t('Label')); ?></td>
-                <td><?php p($l->t('Value')); ?></td>
-                <td colspan="2"><?php p($l->t('Hidden')); ?>?</td>
-              </tr>
-              </thead>
-              <tr ng-repeat="custom in currentItem.customFields">
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+            <div class="row">
+              <div class="col-xs-12">
+                <h1><?php p($l->t('Add field')); ?></h1>
+                <table style="width: 100%;" class="customFields">
+                  <thead>
+                  <tr>
+                    <td><?php p($l->t('Label')); ?></td>
+                    <td><?php p($l->t('Value')); ?></td>
+                    <td colspan="2"><?php p($l->t('Hidden')); ?>?</td>
+                  </tr>
+                  </thead>
+                  <tr>
+                    <td><input name="customFieldName" ng-model="newCustomfield.label" type="text"
+                               placeholder="Enter field name"/>
+                    </td>
+                    <td><input name="customFieldValue" ng-model="newCustomfield.value" type="text"
+                               placeholder="Enter field value"/>
+                    </td>
+                    <td><input type="checkbox" ng-model="newCustomfield.clicktoshow"/></td>
+                    <td><span ng-click="addCField(newCustomfield)" class="icon-add icon"></span></td>
+                  </tr>
+                </table>
+                <hr class="blue">
+                <h1><?php p($l->t('Existing fields')); ?></h1>
+                <table style="width: 100%;" ng-show="currentItem.customFields.length > 0">
+                  <thead>
+                  <tr>
+                    <td><?php p($l->t('Label')); ?></td>
+                    <td><?php p($l->t('Value')); ?></td>
+                    <td colspan="2"><?php p($l->t('Hidden')); ?>?</td>
+                  </tr>
+                  </thead>
+                  <tr ng-repeat="custom in currentItem.customFields">
 
-                <td valign="top" class="td_title">
-                  <span click-for-input value="custom.label"></span></td>
-                <td>
-                  <span click-for-input value="custom.value"></span>
-                </td>
-                <td>
-                  <input type="checkbox" ng-checked="custom.clicktoshow==1" ng-model="custom.clicktoshow"/>
-                </td>
-                <td>
-                  <i class="icon icon-delete" ng-click="removeCField(custom)"></i>
-                </td>
-              </tr>
-            </table>
+                    <td valign="top" class="td_title">
+                      <span click-for-input value="custom.label"></span></td>
+                    <td>
+                      <span click-for-input value="custom.value"></span>
+                    </td>
+                    <td>
+                      <input type="checkbox" ng-checked="custom.clicktoshow==1" ng-model="custom.clicktoshow"/>
+                    </td>
+                    <td>
+                      <i class="icon icon-delete" ng-click="removeCField(custom)"></i>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div class="row tab" ng-show="tabActive==5">
-
         <div class="col-xs-12">
           <div class="col-xs-2 nopadding">
             <?php p($l->t('OTP Type')); ?>
@@ -538,11 +549,12 @@
         </div>
       </div>
       <div class="row tab bottomRow">
-        <div class="col-xs-12 nopadding">
-          <div class="pull-left btn btn-success" ng-click="saveItem(currentItem)">Save</div>
+        <div class="col-xs-12 col-sm-push-9 col-md-push-8 col-lg-push-6 nopadding">
           <div class="pull-left btn btn-danger" ng-click="closeDialog()">Cancel</div>
+          <div class="pull-left btn btn-success" ng-click="saveItem(currentItem)">Save</div>
         </div>
       </div>
+
     </div>
 
     <!-- Add / edit item
