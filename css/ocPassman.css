@@ -242,7 +242,7 @@ div#topContent {
 #pwList li > span:first-child {
 	float: left;
 	background-repeat: no-repeat;
-	background-position: 3px 6px;
+	background-position: 0px 6px;
   cursor: pointer;
 }
 #pwList > li div {
@@ -310,7 +310,7 @@ td.td_title {
  cursor: pointer;
 }
 .editMenu li{
-  float:right;
+  /*float:right;*/
  /* margin-right:10px;*/
   /*padding-right: 10px;*/
   position:relative;
@@ -443,6 +443,7 @@ div[aria-describedby="editAddItemDialog"] {
 .editMenu ul li{
   padding-top:1px; /* Introducing a padding between the li and the a give the illusion spaced items */
   float:none;
+  padding-right: 10px;
 }
 .editMenu ul a{
   white-space:nowrap; /* Stop text wrapping and creating multi-line dropdown items */
@@ -453,7 +454,8 @@ div[aria-describedby="editAddItemDialog"] {
   min-width: 80px;
   background-color: #383C43;
   z-index: 99;
-  right: 5px;
+  right: -5px;
+  padding-right: 5px;
 }
 .editMenu li.show a{ /* These create persistent hover states, meaning the top-most link stays 'hovered' even when your cursor has moved down the list. */
   text-decoration:underline;
