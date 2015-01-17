@@ -87,8 +87,8 @@
     <div class="content" ng-show="!editingItem">
       <div id="topContent" >
         <button class="button" id="addItem" ng-click="addItem()"><?php p($l->t('Add item')); ?></button>
-        <input type="search" id="itemSearch" ng-model="itemFilter.label"
-               class="visible-md visible-lg visible-sm pull-right searchbox" placeholder="Search..."/>
+        <span><input type="text" id="itemSearch" ng-model="itemFilter.label"
+               class="visible-md visible-lg visible-sm pull-right" placeholder="Search..." clear-input />
       </div>
 
       <ul id="pwList">

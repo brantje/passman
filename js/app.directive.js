@@ -391,3 +391,40 @@ angular.module('offClick',[]).directive('offClick', ['$document',
     };
   }
 ]);
+app.directive('clearInput', function() {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    compile: function(tElement) {
+      var clearClass = 'clear_button',
+        divClass = clearClass + '_div';
+      if (!tElement.parent().hasClass(divClass)) {
+        tElement.wrap('<div style="position: relative;" class="' + divClass + '">' + tElement.html() + '</div>');
+        tElement.after('<a style="position: absolute; cursor: pointer;" tabindex="-1" class="' + clearClass + '">x</a>');
+        var btn = tElement.next();
+        btn.css('font-size', '14px');
+        btn.css('top', '8px');
+        btn.css('right', '8px');
+        btn.css('font-weight','400');
+        return function(scope, iElement, iAttrs) {
+          if (iElement[0].tagName == 'DIV') {
+            var text = angular.element(iElement.children()[0]);
+            btn.bind('mousedown', function(e) {
+              text.val('');
+              text.triggerHandler('input');
+              e.preventDefault();
+            });
+            scope.$watch(iAttrs.ngModel, function (v) {
+              console.log(v)
+              if (v && v.length > 0) {
+                btn.css('display', 'block');
+              } else {
+                btn.css('display', 'none');
+              }
+            });
+          }
+        }
+      }
+    }
+  }
+});

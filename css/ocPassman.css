@@ -117,9 +117,7 @@ input#itemSearch {
   -webkit-transition: width 1s; /* For Safari 3.1 to 6.0 */
   transition: width 1s;
 }
-input#itemSearch:focus {
-  width: 200px;
-}
+
  
 #tagList .tag {
 	height: 50px;
@@ -946,4 +944,8 @@ input.shareUrl {
     border-bottom: medium none !important;
     padding: 5px 0px 5px 0px !important;
     /*border-top: medium none !important;*/
+}
+.clear_button, .clear_button:hover {
+  color: darkgray;
+  text-decoration: none;
 }
