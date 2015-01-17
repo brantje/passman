@@ -935,6 +935,12 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     $scope.userSettings.settings.sharing.shareKeys = keypair;
   };
 
+  $scope.sGoToEditItem = function(item){
+    $scope.showItem(item.originalItem);
+    $scope.editItem(item.originalItem);
+    $('#settingsDialog').dialog('close');
+  }
+
 
   $scope.$watch("userSettings",function(newVal){
     if(!newVal){

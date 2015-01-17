@@ -323,8 +323,22 @@ td.td_title {
 }
 .editItem .tabHeader > div{
   height: 27px;
-}
 
+}
+.editItem .tabHeader > div{
+  border-left: 1px solid black;
+}
+@media(max-width: 768px){
+  .editItem .tabHeader{
+    height: 47px;
+  }
+  .editItem .tabHeader > div{
+    height: 44px;
+  }
+  .editItem .tabHeader > div:first-child{
+    margin-left: 56px;
+  }
+}
 .editItem .tab .ui-icon-copy{
   display: inline-block;
   position: relative;
@@ -774,6 +788,7 @@ div#settingTabs {
 }
 .tabHeader {
   height: 30px;
+  width: 100%;
 /*  border-bottom: 1px solid #c9c9c9;*/
   margin-left: -12px !important;
   margin-right: -12px !important;
@@ -809,7 +824,7 @@ div#settingTabs {
   text-align: center;
 }
 .tabHeader > div:not(:first-child){
-  border-left: 0px solid #898989;
+  /*border-left: 0px solid #898989;*/
 }
 .tabHeader > div.active.tab1{
   background: rgba(115, 200, 176, 1);

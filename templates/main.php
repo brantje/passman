@@ -88,7 +88,7 @@
       <div id="topContent" >
         <button class="button" id="addItem" ng-click="addItem()"><?php p($l->t('Add item')); ?></button>
         <span><input type="text" id="itemSearch" ng-model="itemFilter.label"
-               class="visible-md visible-lg visible-sm pull-right" placeholder="Search..." clear-input />
+               class="pull-right" placeholder="Search..." clear-input />
       </div>
 
       <ul id="pwList">
@@ -275,6 +275,27 @@
             </div>
             <div class="row">
               <div class="col-xs-12">
+                <label><?php p($l->t('Password')); ?></label>
+                <div style="max-width:300px;">
+                <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password"
+                       autocomplete="off" class="form-control">
+                <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
+                  <div style="position: relative; top: -32px; right: 5px; width: 80px; float: right; margin-bottom: -30px;">
+                  <span class="icon icon-history" ng-click="generatePW(); usePw();" tooltip="Generate tooltip"></span>
+                  <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
+                  <a clip-copy="currentItem.password" clip-click="copied('password')"
+                     class="ui-icon ui-icon-copy"></a></div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <label><?php p($l->t('Password (again)')); ?></label>
+                <input type="password" ng-model="currentItem.passwordConfirm" autocomplete="off" class="form-control">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
                 <label><?php p($l->t('E-mail')); ?></label>
                 <input type="text" name="email" ng-model="currentItem.email" autocomplete="off" class="form-control">
               </div>
@@ -292,15 +313,15 @@
               </div>
             </div>
           </div>
-          <div class="col-xs-12 col-sm-6 col-md-6">
+          <div class="col-xs-12 col-sm-5 col-md-5">
             <div class="row">
-              <div class="col-xs-8 col-sm-12 col-md-12">
+              <div class="col-xs-12 col-sm-12 col-md-12">
                 <label><?php p($l->t('Description')); ?></label>
                 <div text-angular ng-model="currentItem.description"  ta-toolbar="[['bold','italics','underline','undo','redo','insertLink']]"></div>
               </div>
             </div>
             <div class="row">
-              <div class="col-xs-8 col-sm-12 col-md-12">
+              <div class="col-xs-12 col-sm-12 col-md-12">
                 <label>Add tag</label>
                 <tags-input ng-model="currentItem.tags" class="inputCurrentTags" removeTagSymbol="x" min-length="1"
                             replace-spaces-with-dashes="false">
@@ -309,7 +330,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-xs-8 col-sm-12 col-md-12">
+              <div class="col-xs-12 col-sm-12 col-md-12">
                 <label>Tags</label>
                 <div class="currentTags">
                   <div ng-repeat="tag in currentItem.tags" class="pull-left tag">
@@ -337,13 +358,16 @@
             <div class="row">
               <div class="col-xs-12">
                 <label><?php p($l->t('Password')); ?></label>
-                <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password"
-                       autocomplete="off" class="form-control">
-                <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
-                <span class="icon icon-history" ng-click="generatePW(); usePw();"></span>
-                <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
-                <a clip-copy="currentItem.password" clip-click="copied('password')"
-                   class="ui-icon ui-icon-copy"></a>
+                <div style="max-width:300px;">
+                  <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password"
+                         autocomplete="off" class="form-control">
+                  <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
+                  <div style="position: relative; top: -32px; right: 5px; width: 80px; float: right; margin-bottom: -30px;">
+                    <span class="icon icon-history" ng-click="generatePW(); usePw();"></span>
+                    <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
+                    <a clip-copy="currentItem.password" clip-click="copied('password')"
+                       class="ui-icon ui-icon-copy"></a></div>
+                </div>
               </div>
             </div>
             <div class="row" ng-show="currentPWInfo.entropy">
@@ -859,7 +883,7 @@
 
                     <td>
                       <span pw="item.password" toggle-text-stars></span>
-                      <a ng-click="showItem(item.originalItem); editItem(item.originalItem)" class="link">[<?php p($l->t('edit')); ?>]</a>
+                      <a ng-click="sGoToEditItem(item)" class="link">[<?php p($l->t('edit')); ?>]</a>
                     </td>
                   </tr>
                 </tbody>
