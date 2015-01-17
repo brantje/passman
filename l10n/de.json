@@ -53,7 +53,6 @@
     "Login" : "Anmelden",
     "URL" : "URL",
     "Icon" : "Symbol",
-    "Tags" : "Schlagworte",
     "Minimal password score" : "Minimale Passwortstärke",
     "Override required password score" : "Erforderliche Passwortstärke überschreiben",
     "Current password score" : "Aktuelle Passwortstärke",
@@ -80,6 +79,7 @@
     "Type" : "Typ",
     "Issuer" : "Aussteller",
     "Secret" : "Geheime Zeichenkette",
+    "Tags" : "Schlagworte",
     "Cancel" : "Abbrechen",
     "Save" : "Speichern",
     "Sharing" : "Teilen",
@@ -116,15 +116,17 @@
     "Enter your encryption key." : "Deinen Verschlüsselungsschlüssel eingeben",
     "If this if the first time you use Passman, this key will be used for encryption your\n    passwords" : "Wenn dies die erste Benutzung von Passman ist, wird dieser Schlüssel zur Verschlüsselung Deiner\nPasswörter verwendet",
     "Remember this key " : "Merke Dir diesen Schlüssel",
-    "Minutes" : "Minuten",
-    "Hours" : "Stunden",
-    "Day" : "Tag",
-    "Days" : "Tage",
+    "%n minute::%n minutes" : ["",""],
+    "%n day::%n days" : ["",""],
     "OTP Settings" : "OTP-Einstellungen",
     "Minimal password scope" : "Minimale Passwortstärke",
     "Override required score" : "Erforderliche Stärke überschreiben",
     "Current password scope" : "Aktuelle Passwortstärke",
     "Password will expire at " : "Passwort wird ablaufen am",
-    "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\r\n    passwords" : "Deinen Verschlüsselungsschlüssel eingeben. Wenn dies die erste Benutzung von Passman ist, wird dieser Schlüssel zur Verschlüsselung Deiner\nPasswörter verwendet"
+    "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\r\n    passwords" : "Deinen Verschlüsselungsschlüssel eingeben. Wenn dies die erste Benutzung von Passman ist, wird dieser Schlüssel zur Verschlüsselung Deiner\nPasswörter verwendet",
+    "Minutes" : "Minuten",
+    "Hours" : "Stunden",
+    "Day" : "Tag",
+    "Days" : "Tage"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

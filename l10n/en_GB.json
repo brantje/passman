@@ -53,7 +53,6 @@
     "Login" : "Login",
     "URL" : "URL",
     "Icon" : "Icon",
-    "Tags" : "Tags",
     "Minimal password score" : "Minimal password score",
     "Override required password score" : "Override required password score",
     "Current password score" : "Current password score",
@@ -80,6 +79,7 @@
     "Type" : "Type",
     "Issuer" : "Issuer",
     "Secret" : "Secret",
+    "Tags" : "Tags",
     "Cancel" : "Cancel",
     "Save" : "Save",
     "Sharing" : "Sharing",
@@ -116,15 +116,17 @@
     "Enter your encryption key." : "Enter your encryption key.",
     "If this if the first time you use Passman, this key will be used for encryption your\n    passwords" : "If this is the first time you use Passman, this key will be used to encrypt your\n    passwords",
     "Remember this key " : "Remember this key ",
-    "Minutes" : "Minutes",
-    "Hours" : "Hours",
-    "Day" : "Day",
-    "Days" : "Days",
+    "%n minute::%n minutes" : ["",""],
+    "%n day::%n days" : ["",""],
     "OTP Settings" : "OTP Settings",
     "Minimal password scope" : "Minimal password scope",
     "Override required score" : "Override required score",
     "Current password scope" : "Current password scope",
     "Password will expire at " : "Password will expire at ",
-    "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\r\n    passwords" : "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\n    passwords"
+    "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\r\n    passwords" : "Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your\n    passwords",
+    "Minutes" : "Minutes",
+    "Hours" : "Hours",
+    "Day" : "Day",
+    "Days" : "Days"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
