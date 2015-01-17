@@ -117,8 +117,9 @@ input#itemSearch {
   -webkit-transition: width 1s; /* For Safari 3.1 to 6.0 */
   transition: width 1s;
 }
-input#itemSearch:focus {
-  width: 200px;
+
+#searchTagContainer tags-input{
+  width: 90%;
 }
  
 #tagList .tag {
@@ -196,6 +197,10 @@ div#topContent {
 	height: 40px;
   /*width: 100%;*/
   position: fixed;
+  top:45px;
+}
+.content{
+  overflow: hidden;
 }
 /*
  #menu li {
@@ -306,7 +311,8 @@ td.td_title {
 }
 .editMenu li{
   float:left;
-  margin-right:10px;
+  /*margin-right:10px;*/
+  padding-right: 10px;
   position:relative;
 }
 .editMenu a{
@@ -316,6 +322,57 @@ td.td_title {
   background:#333;*/
   text-decoration:none;
 }
+.editItem{
+  overflow-x: hidden;
+}
+.editItem .tabHeader > div{
+  height: 27px;
+
+}
+.editItem .tabHeader > div{
+  border-left: 1px solid black;
+}
+@media(max-width: 768px){
+  .editItem .tabHeader{
+    height: 47px;
+  }
+  .editItem .tabHeader > div{
+    height: 44px;
+  }
+  .editItem .tabHeader > div:first-child{
+    margin-left: 56px;
+  }
+}
+.editItem .tab .ui-icon-copy{
+  display: inline-block;
+  position: relative;
+  top: -4px;
+}
+.editItem .tab{
+  padding: 5px 35px 5px 35px;
+}
+.editItem .tab label{
+  display: block;
+}
+.editItem .tab .pwPreview{
+  width: 100%;
+  max-width: 300px;
+  display: inline-block;
+  margin-bottom: 6px;
+  height: 34px;
+}
+.editItem .tab input[type="text"],.editItem .tab input[type="password"],editItem .tab {
+  width: 100%;
+  max-width: 300px;
+  display: inline-block;
+}
+.editItem .bottomRow .btn{
+  margin-right: 10px;
+}
+.editItem .bottomRow{
+  margin-bottom: 10px;
+}
+
 #editAddItemDialog{
   height: 390px !important;
 }
@@ -735,6 +792,7 @@ div#settingTabs {
 }
 .tabHeader {
   height: 30px;
+  width: 100%;
 /*  border-bottom: 1px solid #c9c9c9;*/
   margin-left: -12px !important;
   margin-right: -12px !important;
@@ -770,7 +828,7 @@ div#settingTabs {
   text-align: center;
 }
 .tabHeader > div:not(:first-child){
-  border-left: 0px solid #898989;
+  /*border-left: 0px solid #898989;*/
 }
 .tabHeader > div.active.tab1{
   background: rgba(115, 200, 176, 1);
@@ -905,4 +963,8 @@ input.shareUrl {
     border-bottom: medium none !important;
     padding: 5px 0px 5px 0px !important;
     /*border-top: medium none !important;*/
+}
+.clear_button, .clear_button:hover {
+  color: darkgray;
+  text-decoration: none;
 }

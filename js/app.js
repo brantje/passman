@@ -77,8 +77,9 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
     }
     ItemService.getItems(tags, showDeleted).success(function (data) {
       $scope.tags = [];
-      $scope.items = data.items;
-      var tmp = [], i, t, tag;
+      //$scope.items = data.items;
+      var tmp = [], i, t, tag,item,items = [];
+
       for (i = 0; i < data.items.length; i++) {
         tags = data.items[i].tags;
         if (tags) {
@@ -94,7 +95,13 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
 
 
         }
+        item = data.items[i];
+        item.tags.sort(function(a,b) {
+          return a.text.toLowerCase() < b.text.toLowerCase()
+        });
+        items.push(item);
       }
+      $scope.items = items;
       tmp.sort(function (x, y) {
         var a = String(x).toUpperCase(), b = String(y).toUpperCase();
         if (a > b) {
@@ -346,8 +353,10 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
    */
 
   if (!$.jStorage.get('encryptionKey')) {
-    if( typeof firstRun !== undefined) {
-      $scope.loadItems([]);
+    if( typeof firstRun === "boolean") {
+      if(firstRun=== true){
+        $scope.loadItems([]);
+      }
     } else {
       $scope.showEncryptionKeyDialog();
     }
@@ -363,7 +372,7 @@ app.controller('navigationCtrl', function ($scope, TagService) {
   $scope.tagProps = {};
 
   $scope.tagSettings = function (tag, $event) {
-    console.log(tag)
+    var oldTag = angular.copy(tag);
     $event.stopPropagation();
     TagService.getTag(tag).success(function (data) {
       $scope.tagProps = data;
@@ -376,6 +385,23 @@ app.controller('navigationCtrl', function ($scope, TagService) {
             TagService.update($scope.tagProps).success(function () {
               $(t).dialog('close');
               $scope.tags[$scope.tags.indexOf(tag)] = $scope.tagProps.tag_label;
+              angular.forEach($scope.items,function(item){
+                var hadMatch = false;
+                angular.forEach(item.tags,function(itemTag){
+                  if(itemTag.text === oldTag){
+                    itemTag.text = $scope.tagProps.tag_label;
+                    hadMatch = true;
+                  }
+                });
+                if(hadMatch){
+                  item.tags.sort(function(a,b) {
+                    return a.text.toLowerCase() < b.text.toLowerCase();
+                  });
+                }
+              });
+              $scope.tags.sort(function(a,b) {
+                return a.toLowerCase() > b.toLowerCase();
+              });
             });
           },
           "Close": function () {
@@ -593,7 +619,17 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
     $scope.editItem(newItem);
 
   };
-  $scope.editItem = function (item) {
+  $rootScope.$on('closeEdit',function(){
+    $scope.editingItem = false;
+    setTimeout(window.resizeList,10);
+  })
+  $scope.editItem = function(item){
+    $scope.editingItem = true;
+    $scope.currentItem = item;
+    $sce.trustAsHtml($scope.currentItem.description);
+  };
+
+  /*$scope.editItem = function (item) {
     $scope.currentItem = item;
     $scope.editing = true;
     $sce.trustAsHtml($scope.currentItem.description);
@@ -615,11 +651,11 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
         $scope.errors = [];
       }
     });
-  };
+  };*/
 });
 
 
-app.controller('addEditItemCtrl', function ($scope, ItemService) {
+app.controller('addEditItemCtrl', function ($scope, ItemService,$rootScope) {
   console.log('addEditItemCtrl');
   $scope.pwFieldVisible = false;
   $scope.newCustomfield = {clicktoshow: 0};
@@ -720,13 +756,14 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
   };
 
   $scope.closeDialog = function () {
-    $('#editAddItemDialog').dialog('close');
     $scope.generatedPW = '';
     $scope.currentPWInfo = {};
     $scope.currentItem.overrrideComplex = false;
     $scope.editing = false;
     $scope.errors = [];
+    $rootScope.$broadcast('closeEdit');
   };
+
   $scope.generatePW = function () {
     $scope.generatedPW = generatePassword($scope.pwSettings.length, $scope.pwSettings.upper, $scope.pwSettings.lower, $scope.pwSettings.digits, $scope.pwSettings.special, $scope.pwSettings.mindigits, $scope.pwSettings.ambig, $scope.pwSettings.reqevery);
     $scope.pwInfo = zxcvbn($scope.generatedPW);
@@ -809,7 +846,6 @@ app.controller('addEditItemCtrl', function ($scope, ItemService) {
     /**
      *Field checking
      */
-    console.log(item)
     if (item.password !== item.passwordConfirm) {
       $scope.errors.push("Passwords do not match");
     }
@@ -898,6 +934,12 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     var keypair = shareService.generateShareKeys();
     $scope.userSettings.settings.sharing.shareKeys = keypair;
   };
+
+  $scope.sGoToEditItem = function(item){
+    $scope.showItem(item.originalItem);
+    $scope.editItem(item.originalItem);
+    $('#settingsDialog').dialog('close');
+  }
 
 
   $scope.$watch("userSettings",function(newVal){

@@ -56,7 +56,7 @@ class PageController extends Controller {
         'tags' => array(array('text'=>'Example tag 2'),array('text'=>'Example tag 3'))
       );
       foreach($exampleItems as $key => $val){
-       // $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
+        $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
       }
     }
 
