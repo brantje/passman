@@ -95,8 +95,6 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
         }
         if(data.items[i].id === $scope.selectThisItem){
           $scope.$broadcast('showItem',data.items[i]);
-
-
         }
         item = data.items[i];
         item.tags.sort(function(a,b) {
@@ -118,6 +116,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
       $scope.tags = tmp;
       $rootScope.$broadcast('loaded');
       $window.resizeList();
+      $location.hash('')
     });
   };
   //$scope.loadItems([]);

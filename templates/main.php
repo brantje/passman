@@ -94,7 +94,7 @@
       <ul id="pwList">
         <li ng-repeat="item in filteredItems = (items | orderBy: 'label' | filter: itemFilter)"
             ng-mouseleave="toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
-            ng-class="{'row-active': item.id === currentItem.id}">
+            ng-class="{'row-active': item.id === currentItem.id}" scroll-to="item.id === selectThisItem">
           <!-- if no image proxy -->
           <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
                style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
@@ -113,7 +113,8 @@
           <ul class="editMenu">
             <li ng-click="toggle.state = !toggle.state" ng-class="{'show' : toggle.state}"
                 off-click=' toggle.state = false'
-                off-click-if='toggle.state'>
+                off-click-if='toggle.state'
+                >
               <span class="icon-caret-dark more"></span>
               <ul ng-if="!showingDeletedItems">
                 <li><a ng-click="editItem(item)"><?php p($l->t('Edit')); ?></a></li>
