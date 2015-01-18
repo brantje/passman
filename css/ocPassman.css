@@ -369,7 +369,7 @@ td.td_title {
 .editItem .bottomRow .btn{
   margin-right: 10px;
 }
-.editItem .bottomRow{
+.editItem .bottomRow .btn:not(:last-child){
   margin-bottom: 10px;
 }
 

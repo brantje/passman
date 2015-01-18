@@ -32,6 +32,9 @@ $(document).ready(function () {
       }
     }
   });
+  /* Load javascript translations */
+  OC.L10N.load('passman',function(){ console.log('loaded'); });
+  /*Example usage: OC.L10N.translate('passman','Files') */
 });
 
 var app;
