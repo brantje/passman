@@ -5,7 +5,7 @@ $(document).ready(function () {
     $('<div id="firstRun">' + $(data).find('#firstRun').html() + '</div>').dialog({
       width: 460,
       modal: true,
-      draggable: false,
+      draggable: true,
       resizable: false,
       closeOnEscape: false,
       position: ['center', 'top+80']

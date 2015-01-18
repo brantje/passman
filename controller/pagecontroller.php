@@ -45,7 +45,7 @@ class PageController extends Controller {
     $conf = \OCP\CONFIG::getUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 1);
     $params = array('user' => $this->userId);
     $conf = ($this->userId ==='test') ? 1 : $conf;
-    if (1 == 1) {
+    if ($conf == 1) {
       \OCP\Util::addscript('passman', 'firstrun');
       $exampleItems = array();
       $exampleItems[0] = array(
