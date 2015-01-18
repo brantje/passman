@@ -124,7 +124,7 @@ input#itemSearch {
  
 #tagList .tag {
 	height: 50px;
-	width: 250px;
+	width: 249px;
 	vertical-align: middle;
 	padding-top: 15px;
 	cursor: pointer;
@@ -677,6 +677,11 @@ li.fileListItem .icon-delete {
 	div#topContent {
 		margin-left: 50px;
 		height: 44px;
+	}
+  .snapjs-left div#topContent {
+		margin-left: 50px;
+		height: 44px;
+    top: 0px;
 	}
 	#pwList .tag {
 		display: none;
