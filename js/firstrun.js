@@ -160,6 +160,10 @@ $(document).ready(function () {
       }
       if (i === 4) {
         $('#pwList > li:first-child').click();
+        $('[tooltip]').tooltip({
+          show: 50,
+          track: true
+        });
         $('.firstRunUl > li').css('display', 'none');
         $('#finishFirstRun').hide();
         setTimeout(function () {
