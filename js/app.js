@@ -623,11 +623,15 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
   };
   $rootScope.$on('closeEdit',function(){
     $scope.editingItem = false;
+    $scope.currentItem = $scope.decryptItem($scope.itemBackupData);
+    $scope.itemBackupData.oldItem.label = $scope.itemBackupData.label
     setTimeout(window.resizeList,10);
   })
   $scope.editItem = function(item){
     $scope.editingItem = true;
     $scope.currentItem = item;
+    $scope.itemBackupData = angular.copy(item)
+    $scope.itemBackupData.oldItem = item;
     $sce.trustAsHtml($scope.currentItem.description);
   };
 
