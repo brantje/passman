@@ -1134,8 +1134,8 @@
     <option value="15"><?php p($l->n('%n minute','%n minutes',15)); ?></option>
     <option value="30"><?php p($l->n('%n minute','%n minutes',30)); ?></option>
     <option value="60"><?php p($l->n('%n minute','%n minutes',60)); ?></option>
-    <option value="180"><?php p($l->t('%n hours','%n hours',3)); ?></option>
-    <option value="480"><?php p($l->t('%n hours','%n hours',8)); ?></option>
+    <option value="180"><?php p($l->n('%n hour','%n hours',3)); ?></option>
+    <option value="480"><?php p($l->n('%n hour','%n hours',8)); ?></option>
     <option value="1440"><?php p($l->n('%n day','%n days',1)); ?></option>
     <option value="10080"><?php p($l->n('%n day','%n days',7)); ?></option>
     <option value="43200"><?php p($l->n('%n day','%n days',30)); ?></option>
