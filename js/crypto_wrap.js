@@ -76,9 +76,29 @@ var CRYPTO = {
             this._public_key = KEYUTIL.getPublicKeyFromCertPEM(pubKey);
         },
 
-        decypherWithServer : function(data){
+        /**
+         * Deciphers data ciphered by the server private key
+         * using the current setup public key
+         * @param data
+         * @returns {null}
+         */
+        decipherWithServer : function(data){
             var tmp = new JSEncrypt();
-            tmp.setPrivateKey(this._ca_pub_key);
+            tmp.getPublicKey(this._ca_pub_key);
+            var dec = tmp.decrypt(data);
+
+            return (dec == data) ? null : dec;
+        },
+
+        /**
+         * Deciphers data cyphered with the public key
+         *
+         * @param data
+         * @returns {null}
+         */
+        decipherWithPrivate : function (data){
+            var tmp = new JSEncrypt();
+            tmp.setPrivateKey(this._private_key);
             var dec = tmp.decrypt(data);
 
             return (dec == data) ? null : dec;
@@ -87,12 +107,18 @@ var CRYPTO = {
         /**
          * Checks whether the server public key it's valid or not.
          * When we already have a private key, the server key should be signed with our public key
-         * TODO: Find a better way of improving this check!
+         * Right now i do some simple SIMPLE checks, if we are under HTTPS and it's encrypted with our public key if we
+         * already have one, and if it does not matches any of this checks; i assume it's not valid.
+         * TODO: Find a way of improving this check?.
+         *
          * @param pub_key
          * @returns boolean True if it's valid, false otherwise
          */
         checkServerPubKey : function(pub_key){
-
+            var valid = false;
+            if (window.location.protocol == 'https:') valid = true;
+            if (this.decipherWithPrivate(pub_key) != null) valid = false;
+            return valid;
         }
     },
     AES: {

@@ -20,7 +20,7 @@
 \OCP\Util::addscript('passman', 'app.directive');
 \OCP\Util::addscript('passman', 'app.filter');
 \OCP\Util::addScript('passman', 'jsrsasign-4.7.0-all-min');
-\OCP\Util::addScript('passman', 'jsencript.min.js');
+\OCP\Util::addScript('passman', 'jsencrypt.min');
 
 
 \OCP\Util::addStyle('passman', 'ocPassman');
@@ -54,7 +54,7 @@
 
     <!-- TAG Settings dialog here, so it is in the scope of navigationCtrl -->
     <div id="tagSettingsDialog" style="display: none;">
-      <form id="tagSettings">
+      <form id="tagSett ings">
         <label for="edit_folder_complexity" class="label_cpm"><?php p($l->t('Label')); ?>:</label><br/>
         <input type="text" ng-model="tagProps.tag_label"/><br/>
         <label for="edit_folder_complexity" class="label_cpm"><?php p($l->t('Required password score')); ?>:</label><br/>
