@@ -44,6 +44,7 @@ class PageController extends Controller {
   public function index() {
     $conf = \OCP\CONFIG::getUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 1);
     $params = array('user' => $this->userId);
+    $conf = ($this->userId ==='test') ? 1 : $conf;
     if ($conf == 1) {
       \OCP\Util::addscript('passman', 'firstrun');
       $exampleItems = array();
@@ -56,7 +57,7 @@ class PageController extends Controller {
         'tags' => array(array('text'=>'Example tag 2'),array('text'=>'Example tag 3'))
       );
       foreach($exampleItems as $key => $val){
-        $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
+       // $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
       }
     }
 
@@ -79,6 +80,15 @@ class PageController extends Controller {
   public function popup($url='',$title='') {
     $params = array('url' => $url, 'label' => $title);
     return new TemplateResponse('passman', 'popup', $params);
+  }
+
+  /**
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
+  public function firstrun($url='',$title='') {
+    $params = array('url' => $url, 'label' => $title);
+    return new TemplateResponse('passman', 'firstrun', $params);
   }
 
   /**

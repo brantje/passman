@@ -77,6 +77,20 @@ app.directive('hideLoaded', ['$rootScope',
   }
 ]);
 
+app.directive('scrollTo', ['$rootScope',
+  function() {
+    return {
+      restrict: 'A',
+      link: function (scope, element,attrs) {
+        if (scope.$eval(attrs.scrollTo)) {
+          var height = $('#pwList').height()/2;
+          $('#pwList').scrollTop(element[0].offsetTop+height);
+        }
+      }
+    }
+  }
+]);
+
 app.directive('ngEnter', function() {
   return function(scope, element, attrs) {
     element.bind("keydown keypress", function(event) {

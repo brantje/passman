@@ -32,6 +32,9 @@ $(document).ready(function () {
       }
     }
   });
+  /* Load javascript translations */
+  OC.L10N.load('passman',function(){ console.log('loaded'); });
+  /*Example usage: OC.L10N.translate('passman','Files') */
 });
 
 var app;
@@ -92,8 +95,6 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
         }
         if(data.items[i].id === $scope.selectThisItem){
           $scope.$broadcast('showItem',data.items[i]);
-
-
         }
         item = data.items[i];
         item.tags.sort(function(a,b) {
@@ -115,6 +116,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
       $scope.tags = tmp;
       $rootScope.$broadcast('loaded');
       $window.resizeList();
+      $location.hash('')
     });
   };
   //$scope.loadItems([]);
@@ -621,11 +623,15 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
   };
   $rootScope.$on('closeEdit',function(){
     $scope.editingItem = false;
+    $scope.currentItem = $scope.decryptItem($scope.itemBackupData);
+    $scope.itemBackupData.oldItem.label = $scope.itemBackupData.label
     setTimeout(window.resizeList,10);
   })
   $scope.editItem = function(item){
     $scope.editingItem = true;
     $scope.currentItem = item;
+    $scope.itemBackupData = angular.copy(item)
+    $scope.itemBackupData.oldItem = item;
     $sce.trustAsHtml($scope.currentItem.description);
   };
 

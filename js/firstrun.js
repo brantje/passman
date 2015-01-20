@@ -1,10 +1,11 @@
 firstRun = true;
 $(document).ready(function () {
-  var firstrun = $.get(OC.webroot + '/apps/passman/templates/firstrun.php', function (data) {
-    $('<div id="firstRun">' + data + '</div>').dialog({
+  var firstrun = $.get(OC.generateUrl('apps/passman/firstrun'), function (data) {
+    console.log();
+    $('<div id="firstRun">' + $(data).find('#firstRun').html() + '</div>').dialog({
       width: 460,
       modal: true,
-      draggable: false,
+      draggable: true,
       resizable: false,
       closeOnEscape: false,
       position: ['center', 'top+80']
@@ -27,9 +28,6 @@ $(document).ready(function () {
     });
   });
 });
-
-
-/* Created by jankoatwarpspeed.com */
 
 (function ($) {
   $.fn.formToWizard = function (options) {
@@ -74,7 +72,7 @@ $(document).ready(function () {
 
     function createCancelButton (i) {
       var stepName = "step" + i;
-      $("#" + stepName + "commands").append('<span class="btn btn-default" id="' + stepName + 'Cancel">Cancel</a>');
+      $("#" + stepName + "commands").append('<span class="btn btn-default" id="' + stepName + 'Cancel">'+ OC.L10N.translate('passman','Cancel') +'</a>');
 
       $("#" + stepName + "Cancel").bind("click", function (e) {
         $('#firstRun').dialog('destroy').remove();
@@ -85,7 +83,7 @@ $(document).ready(function () {
 
     function createPrevButton (i) {
       var stepName = "step" + i;
-      $("#" + stepName + "commands").append("<span href='#' id='" + stepName + "Prev' class='btn btn-default'>< Back</span>");
+      $("#" + stepName + "commands").append("<span href='#' id='" + stepName + "Prev' class='btn btn-default'>< "+ OC.L10N.translate('passman','Back') +"</span>");
 
       $("#" + stepName + "Prev").bind("click", function (e) {
         $("#" + stepName).hide();
@@ -97,7 +95,7 @@ $(document).ready(function () {
 
     function createNextButton (i) {
       var stepName = "step" + i;
-      $("#" + stepName + "commands").append("<span href='#' id='" + stepName + "Next' class='next  btn btn-default'>Next ></span>");
+      $("#" + stepName + "commands").append("<span href='#' id='" + stepName + "Next' class='next  btn btn-default'>"+ OC.L10N.translate('passman','Next') +" ></span>");
 
       $("#" + stepName + "Next").bind("click", function (e) {
         if (i == 1) {
@@ -111,7 +109,8 @@ $(document).ready(function () {
               }
             });
             if (invalidTags > 0) {
-              OC.Notification.showTimeout('You have to edit ' + invalidTags + ' tags to go to the next step');
+              var str = OC.L10N.translate('passman','You have to edit %s tags to go to the next step').replace(/%s/g, invalidTags);
+              OC.Notification.showTimeout(str);
             } else {
               return true
             }
@@ -124,14 +123,14 @@ $(document).ready(function () {
           if ($('#frEncKey').val() != '') {
             angular.element('#app').scope().setEncryptionKey($('#frEncKey').val());
           } else {
-            OC.Notification.showTimeout('Please set your encryption key');
+            OC.Notification.showTimeout( OC.L10N.translate('passman','Please set your encryption key') );
             return;
           }
         }
         $("#" + stepName).hide();
         $("#step" + (i + 1)).show();
         if (i + 2 == count) {
-          $("#step" + (i + 1) + "commands").append("<button id='finishFirstRun' class='next btn btn-success'>Done ></button>");
+          $("#step" + (i + 1) + "commands").append("<button id='finishFirstRun' class='next btn btn-success'>"+  OC.L10N.translate('passman','Done')  +" ></button>");
         }
         selectStep(i + 1);
       });
@@ -161,6 +160,10 @@ $(document).ready(function () {
       }
       if (i === 4) {
         $('#pwList > li:first-child').click();
+        $('[tooltip]').tooltip({
+          show: 50,
+          track: true
+        });
         $('.firstRunUl > li').css('display', 'none');
         $('#finishFirstRun').hide();
         setTimeout(function () {
@@ -189,8 +192,8 @@ $(document).ready(function () {
           setTimeout(function () {
             var tabIndex = -1;
 
-            var nextTbBtn = '<button class="btn btn-default next" id="frNextTab">Next tab</button>';
-            var prevTbBtn = '<button class="btn btn-default next" id="frPrevTab">Previous tab</button>';
+            var nextTbBtn = '<button class="btn btn-default next" id="frNextTab">'+  OC.L10N.translate('passman','Next tab') +'</button>';
+            var prevTbBtn = '<button class="btn btn-default next" id="frPrevTab">'+  OC.L10N.translate('passman','Previous tab')  +'</button>';
             $('#finishFirstRun').after(prevTbBtn).after(nextTbBtn);
 
             $('.editMenu:eq(0)').find('ul > li:eq(0) > a').click();

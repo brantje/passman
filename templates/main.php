@@ -94,7 +94,7 @@
       <ul id="pwList">
         <li ng-repeat="item in filteredItems = (items | orderBy: 'label' | filter: itemFilter)"
             ng-mouseleave="toggle.state = false" ng-click="showItem(item);" ng-dblclick="editItem(item)"
-            ng-class="{'row-active': item.id === currentItem.id}">
+            ng-class="{'row-active': item.id === currentItem.id}" scroll-to="item.id === selectThisItem">
           <!-- if no image proxy -->
           <img ng-src="{{item.favicon}}" fallback-src="noFavIcon"
                style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
@@ -113,7 +113,8 @@
           <ul class="editMenu">
             <li ng-click="toggle.state = !toggle.state" ng-class="{'show' : toggle.state}"
                 off-click=' toggle.state = false'
-                off-click-if='toggle.state'>
+                off-click-if='toggle.state'
+                >
               <span class="icon-caret-dark more"></span>
               <ul ng-if="!showingDeletedItems">
                 <li><a ng-click="editItem(item)"><?php p($l->t('Edit')); ?></a></li>
@@ -344,7 +345,7 @@
       </div>
       <div class="row tab" ng-show="tabActive === 2">
         <div class="row">
-          <div class="col-sm-5 col-md-7 col-lg-9">
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
             <div class="row">
               <div class="col-xs-12">
                 <label><?php p($l->t('Minimal password score')); ?>: {{requiredPWStrength}}</label>
@@ -394,11 +395,11 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-5 col-md-4 col-lg-2">
+          <div class="col-sm-5 col-md-5 col-lg-3">
             <div class="row">
-              <span ng-click="showPwSettings=true" class="link col-xs-12" ng-show="!showPwSettings"><?php p($l->t('Show password generation settings')); ?></span>
-              <span ng-click="showPwSettings=false" class="link col-xs-12" ng-show="showPwSettings"><?php p($l->t('Hide password generation settings')); ?></span>
-              <div id="pwTools" ng-show="showPwSettings">
+              <!--<span ng-click="showPwSettings=true" class="link col-xs-12" ng-show="!showPwSettings"><?php p($l->t('Show password generation settings')); ?></span>
+              <span ng-click="showPwSettings=false" class="link col-xs-12" ng-show="showPwSettings"><?php p($l->t('Hide password generation settings')); ?></span>-->
+              <div id="pwTools">
                 <span id="custom_pw">
                     <span><?php p($l->t('Password length')); ?></span>
                     <input type="number" ng-model="pwSettings.length" style="width:50px"><br>
@@ -423,73 +424,83 @@
       </div>
       <div class="row tab" ng-show="tabActive==3">
         <div class="row">
-          <div class="col-xs-11">
-            <input type="file" fileread="uploadQueue" item="currentItem"/>
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+            <div class="row">
+              <div class="col-xs-12">
+                <input type="file" fileread="uploadQueue" item="currentItem"/>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-11">
-            <?php p($l->t('Existing files')); ?>
-            <ul id="fileList">
-              <li ng-repeat="file in currentItem.files" class="fileListItem">{{file.filename}} ({{file.size | bytes}}) <span
-                  class="icon icon-delete" style="float:right;" ng-click="deleteFile(file)"></span></li>
-            </ul>
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+            <div class="row">
+              <div class="col-xs-12 col-md-10 col-lg-9">
+                <?php p($l->t('Existing files')); ?>
+                <ul id="fileList">
+                  <li ng-repeat="file in currentItem.files" class="fileListItem">{{file.filename}} ({{file.size | bytes}}) <span
+                      class="icon icon-delete" style="float:right;" ng-click="deleteFile(file)"></span></li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
       <div class="row tab" ng-show="tabActive==4">
         <div class="row">
-          <div class="col-xs-11">
-            <h1><?php p($l->t('Add field')); ?></h1>
-            <table style="width: 100%;" class="customFields">
-              <thead>
-              <tr>
-                <td><?php p($l->t('Label')); ?></td>
-                <td><?php p($l->t('Value')); ?></td>
-                <td colspan="2"><?php p($l->t('Hidden')); ?>?</td>
-              </tr>
-              </thead>
-              <tr>
-                <td><input name="customFieldName" ng-model="newCustomfield.label" type="text"
-                           placeholder="Enter field name"/>
-                </td>
-                <td><input name="customFieldValue" ng-model="newCustomfield.value" type="text"
-                           placeholder="Enter field value"/>
-                </td>
-                <td><input type="checkbox" ng-model="newCustomfield.clicktoshow"/></td>
-                <td><span ng-click="addCField(newCustomfield)" class="icon-add icon"></span></td>
-              </tr>
-            </table>
-            <hr class="blue">
-            <h1><?php p($l->t('Existing fields')); ?></h1>
-            <table style="width: 100%;" ng-show="currentItem.customFields.length > 0">
-              <thead>
-              <tr>
-                <td><?php p($l->t('Label')); ?></td>
-                <td><?php p($l->t('Value')); ?></td>
-                <td colspan="2"><?php p($l->t('Hidden')); ?>?</td>
-              </tr>
-              </thead>
-              <tr ng-repeat="custom in currentItem.customFields">
+          <div class="col-xs-12 col-sm-11 col-md-10 col-lg-7">
+            <div class="row">
+              <div class="col-xs-12">
+                <h1><?php p($l->t('Add field')); ?></h1>
+                <table style="width: 100%;" class="customFields">
+                  <thead>
+                  <tr>
+                    <td><?php p($l->t('Label')); ?></td>
+                    <td><?php p($l->t('Value')); ?></td>
+                    <td colspan="2"><?php p($l->t('Hidden')); ?>?</td>
+                  </tr>
+                  </thead>
+                  <tr>
+                    <td><input name="customFieldName" ng-model="newCustomfield.label" type="text"
+                               placeholder="Enter field name"/>
+                    </td>
+                    <td><input name="customFieldValue" ng-model="newCustomfield.value" type="text"
+                               placeholder="Enter field value"/>
+                    </td>
+                    <td><input type="checkbox" ng-model="newCustomfield.clicktoshow"/></td>
+                    <td><span ng-click="addCField(newCustomfield)" class="icon-add icon"></span></td>
+                  </tr>
+                </table>
+                <hr class="blue">
+                <h1><?php p($l->t('Existing fields')); ?></h1>
+                <table style="width: 100%;" ng-show="currentItem.customFields.length > 0">
+                  <thead>
+                  <tr>
+                    <td><?php p($l->t('Label')); ?></td>
+                    <td><?php p($l->t('Value')); ?></td>
+                    <td colspan="2"><?php p($l->t('Hidden')); ?>?</td>
+                  </tr>
+                  </thead>
+                  <tr ng-repeat="custom in currentItem.customFields">
 
-                <td valign="top" class="td_title">
-                  <span click-for-input value="custom.label"></span></td>
-                <td>
-                  <span click-for-input value="custom.value"></span>
-                </td>
-                <td>
-                  <input type="checkbox" ng-checked="custom.clicktoshow==1" ng-model="custom.clicktoshow"/>
-                </td>
-                <td>
-                  <i class="icon icon-delete" ng-click="removeCField(custom)"></i>
-                </td>
-              </tr>
-            </table>
+                    <td valign="top" class="td_title">
+                      <span click-for-input value="custom.label"></span></td>
+                    <td>
+                      <span click-for-input value="custom.value"></span>
+                    </td>
+                    <td>
+                      <input type="checkbox" ng-checked="custom.clicktoshow==1" ng-model="custom.clicktoshow"/>
+                    </td>
+                    <td>
+                      <i class="icon icon-delete" ng-click="removeCField(custom)"></i>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div class="row tab" ng-show="tabActive==5">
-
         <div class="col-xs-12">
           <div class="col-xs-2 nopadding">
             <?php p($l->t('OTP Type')); ?>
@@ -532,17 +543,23 @@
           </table>
         </div>
       </div>
-      <div class="row bottomRow">
-        <div class="col-xs-12">
+      <div class="row tab" ng-show="errors.length > 0">
+        <div class="col-xs-12 col-md-4 col-lg-1 error">
+          <div ng-repeat="error in errors">{{error}}</div>
+        </div>
+      </div>
+      <div class="row tab bottomRow">
+        <div class="col-xs-12 col-sm-11 col-md-10 col-lg-7">
           <div class="pull-right btn btn-success" ng-click="saveItem(currentItem)">Save</div>
           <div class="pull-right btn btn-danger" ng-click="closeDialog()">Cancel</div>
         </div>
       </div>
+
     </div>
 
     <!-- Add / edit item
     <div id="editAddItemDialog" style="display: none;" >
-      <div class="error" ng-show="errors.length > 0">
+      <div class="error" >
         <div ng-repeat="error in errors">{{error}}</div>
       </div>
       <form method="get" name="new_item" id="editNewItem">
@@ -1117,8 +1134,8 @@
     <option value="15"><?php p($l->n('%n minute','%n minutes',15)); ?></option>
     <option value="30"><?php p($l->n('%n minute','%n minutes',30)); ?></option>
     <option value="60"><?php p($l->n('%n minute','%n minutes',60)); ?></option>
-    <option value="180"><?php p($l->t('%n hours','%n hours',3)); ?></option>
-    <option value="480"><?php p($l->t('%n hours','%n hours',8)); ?></option>
+    <option value="180"><?php p($l->n('%n hour','%n hours',3)); ?></option>
+    <option value="480"><?php p($l->n('%n hour','%n hours',8)); ?></option>
     <option value="1440"><?php p($l->n('%n day','%n days',1)); ?></option>
     <option value="10080"><?php p($l->n('%n day','%n days',7)); ?></option>
     <option value="43200"><?php p($l->n('%n day','%n days',30)); ?></option>
