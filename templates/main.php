@@ -21,7 +21,7 @@
 \OCP\Util::addscript('passman', 'app.filter');
 \OCP\Util::addScript('passman', 'jsrsasign-4.7.0-all-min');
 \OCP\Util::addScript('passman', 'jsencrypt.min');
-
+\OCP\Util::addScript('passman', 'crypto_wrap');
 
 \OCP\Util::addStyle('passman', 'ocPassman');
 \OCP\Util::addStyle('passman', 'textAngular');
