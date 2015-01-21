@@ -3,7 +3,7 @@ Version 2.0 has a complete rewritten frontend in Angular.
 Place this app in **owncloud/apps/**   
    
 #Bountysource
-![](https://www.bountysource.com/badge/tracker?tracker_id=3291427)   
+[![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=3291427)](https://www.bountysource.com/trackers/3291427-brantje-passman?utm_source=3291427&utm_medium=shield&utm_campaign=TRACKER_BADGE)
 Passman on  [bountysource](https://www.bountysource.com/trackers/3291427-brantje-passman)
    
 #Repos   
