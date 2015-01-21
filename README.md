@@ -2,6 +2,10 @@
 Version 2.0 has a complete rewritten frontend in Angular.   
 Place this app in **owncloud/apps/**   
    
+#Bountysource
+![](https://www.bountysource.com/badge/tracker?tracker_id=3291427)   
+Passman on  [bountysource](https://www.bountysource.com/trackers/3291427-brantje-passman)
+   
 #Repos   
 master = development, stable enough (imo) for daily use   
 stable7 = Stable for ownCloud 7   
