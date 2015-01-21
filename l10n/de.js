@@ -168,7 +168,7 @@ OC.L10N.register(
     "If this if the first time you use Passman, this key will be used for encryption your\n    passwords" : "Wenn dies die erste Benutzung von Passman ist, wird dieser Schlüssel zur Verschlüsselung Deiner\nPasswörter verwendet",
     "Remember this key " : "Merke Dir diesen Schlüssel",
     "%n minute::%n minutes" : ["%n Minute","%n Minuten"],
-    "%n hour::%n hours" : ["",""],
+    "%n hour::%n hours" : ["%n Stunde","%n Stunden"],
     "%n day::%n days" : ["%n Tag","%n Tage"],
     "Minimal password scope" : "Minimale Passwortstärke",
     "Override required score" : "Erforderliche Stärke überschreiben",
