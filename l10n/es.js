@@ -70,7 +70,7 @@ OC.L10N.register(
     "Dropbox" : "Dropbox",
     "OneDrive" : "OneDrive",
     "iCloud" : "iCloud",
-    "And a lot" : "Y muchos",
+    "And a lot" : "Y un montón",
     "more" : "más",
     "Loading..." : "Cargando...",
     "Related tags" : "Etiquetas relacionadas",

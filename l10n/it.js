@@ -25,6 +25,7 @@ OC.L10N.register(
     "password score" : "punteggio della password",
     "icon" : "icona",
     "Set encryption key" : "Imposta la chiave di cifratura",
+    "Enter your encryption key in the field below" : "Digita la chiave di cifratura nel campo seguente",
     "Items" : "Elementi",
     "Hint: click on the arrow" : "Suggerimento: fai clic sulla freccia",
     "Editing items" : "Modifica degli elementi",
