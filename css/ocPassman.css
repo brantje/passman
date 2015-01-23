@@ -972,3 +972,7 @@ input.shareUrl {
   color: darkgray;
   text-decoration: none;
 }
+.undoDelete,.undoRestore{
+  font-weight: bold;
+  border-bottom: 1px dashed black;
+}

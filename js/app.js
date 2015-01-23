@@ -33,8 +33,32 @@ $(document).ready(function () {
     }
   });
   /* Load javascript translations */
-  OC.L10N.load('passman',function(){ console.log('loaded'); });
+ // OC.L10N.load('passman',function(){ console.log('loaded'); });
   /*Example usage: OC.L10N.translate('passman','Files') */
+
+  /**
+   * Notifications are powered by ownCloud, and therefore outside the scope of the app.
+   * With the following code we can still use the [Undo] feature.
+   */
+  window.findItemByID = function(id){
+    var items,foundItem=false;
+    items = angular.element('#app-content').scope().items;
+    angular.forEach(items, function(item){
+      if(item.id === id){
+        foundItem = item;
+      }
+    });
+   return foundItem;
+  };
+
+  $(document).on('click','.undoDelete',function(){
+    var item = findItemByID($(this).attr('data-item-id'));
+    angular.element('#app-content').scope().recoverItem(angular.element('#app-content').scope().lastDeletedItem);
+  });
+  $(document).on('click','.undoRestore',function(){
+    var item = findItemByID($(this).attr('data-item-id'));
+    angular.element('#app-content').scope().deleteItem(angular.element('#app-content').scope().lastRecoveredItem,true);
+  });
 });
 
 var app;
@@ -64,7 +88,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.selectedTags = [];
   $scope.noFavIcon = OC.imagePath('passman', 'lock.svg');
   $scope.sessionExpireTime = 0;
-  $scope.itemFilter = {};
+  $scope.itemFilter = {visible: true};
   $scope.expireNotificationShown = false;
   settingsService.getSettings().success(function(data){
     $scope.userSettings = data;
@@ -100,6 +124,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
         item.tags.sort(function(a,b) {
           return a.text.toLowerCase() < b.text.toLowerCase()
         });
+        item.visible = true;
         items.push(item);
       }
       $scope.items = items;
@@ -416,7 +441,7 @@ app.controller('navigationCtrl', function ($scope, TagService) {
 
 });
 
-app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,notificationService) {
+app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$timeout) {
   console.log('contentCtrl');
   $scope.currentItem = {};
   $scope.editing = false;
@@ -459,7 +484,17 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
     $scope.requiredPWStrength = 0;
   };
 
-  $scope.recoverItem = function (item) {
+
+  $scope.shareItem = function (item) {
+    $rootScope.$broadcast('shareItem', item);
+  };
+
+  $scope.showRevisions = function (item) {
+
+    $rootScope.$broadcast('showRevisions', item);
+  };
+
+  $scope.recoverItem = function (item,clickedOnUndo) {
     var saveThis = angular.copy(item), encryptedFields = ['account', 'email', 'password', 'description'], i;
     for (i = 0; i < encryptedFields.length; i++) {
       saveThis[encryptedFields[i]] = $scope.encryptThis(saveThis[encryptedFields[i]]);
@@ -477,26 +512,22 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
     saveThis.isRecovered = true;
     ItemService.recover(saveThis).success(function () {
       var idx;
-      for (i = 0; i < $scope.items.length; i++) {
-        if ($scope.items[i].id == item.id) {
-          idx = $scope.items.indexOf(item);
-          $scope.items.splice(idx, 1);
+      $scope.lastRecoveredItem = item;
+      if(window.findItemByID(item.id)) {
+        for (i = 0; i < $scope.items.length; i++) {
+          if ($scope.items[i].id == item.id) {
+            idx = $scope.items.indexOf(item);
+            $scope.items.splice(idx, 1);
+          }
         }
+      } else {
+        $scope.items.push(item);
       }
     });
-    OC.Notification.showTimeout('<div>' + item.label + ' recoverd</div>');
+    OC.Notification.showTimeout('<div>' + item.label + ' recoverd <span class="undoRestore" data-item-id="'+ item.id +'">[Undo]</span></span></div>');
   };
 
-  $scope.shareItem = function (item) {
-    $rootScope.$broadcast('shareItem', item);
-  };
-
-  $scope.showRevisions = function (item) {
-
-    $rootScope.$broadcast('showRevisions', item);
-  };
-
-  $scope.deleteItem = function (item, softDelete) {
+  $scope.deleteItem = function (item, softDelete, clickedOnUndo) {
     var i, idx;
     if (softDelete) {
       var saveThis = angular.copy(item), encryptedFields = ['account', 'email', 'password', 'description'], i;
@@ -514,16 +545,22 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
         saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
       }
       saveThis.isDeleted = true;
+
       ItemService.softDestroy(saveThis).success(function () {
-        for (i = 0; i < $scope.items.length; i++) {
-          if ($scope.items[i].id === item.id) {
-            idx = $scope.items.indexOf(item);
-            $scope.items.splice(idx, 1);
+        $scope.lastDeletedItem = angular.copy(item);
+        if(window.findItemByID(item.id)){
+          for (i = 0; i < $scope.items.length; i++) {
+            if ($scope.items[i].id === item.id) {
+              idx = $scope.items.indexOf(item);
+              $scope.items.splice(idx, 1);
+            }
           }
+        } else {
+          $scope.items.push(item);
         }
       });
-      OC.Notification.showTimeout('<div>' + item.label + ' deleted</div>');
-      ///notificationService.deleteItem(item);
+
+      OC.Notification.showTimeout('<div>' + item.label + ' deleted <span class="undoDelete" data-item-id="'+ item.id +'">[Undo]</span></div>',6500);
     } else {
       ItemService.destroy(item).success(function () {
         for (i = 0; i < $scope.items.length; i++) {
@@ -614,7 +651,8 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
       password: '',
       passwordConfirm: '',
       tags: [],
-      url: ''
+      url: '',
+      visible: true
     };
 
     $scope.requiredPWStrength = 0;
@@ -626,7 +664,8 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
     $scope.currentItem = $scope.decryptItem($scope.itemBackupData);
     $scope.itemBackupData.oldItem.label = $scope.itemBackupData.label
     setTimeout(window.resizeList,10);
-  })
+  });
+
   $scope.editItem = function(item){
     $scope.editingItem = true;
     $scope.currentItem = item;
