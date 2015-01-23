@@ -54,10 +54,12 @@ $(document).ready(function () {
   $(document).on('click','.undoDelete',function(){
     var item = findItemByID($(this).attr('data-item-id'));
     angular.element('#app-content').scope().recoverItem(angular.element('#app-content').scope().lastDeletedItem);
+    angular.element('#app-content').scope().$apply();
   });
   $(document).on('click','.undoRestore',function(){
     var item = findItemByID($(this).attr('data-item-id'));
     angular.element('#app-content').scope().deleteItem(angular.element('#app-content').scope().lastRecoveredItem,true);
+    angular.element('#app-content').scope().$apply();
   });
 });
 
