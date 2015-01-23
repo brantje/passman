@@ -148,6 +148,17 @@ var CRYPTO = {
         }
     },
     PASSWORD : {
+        getRandomPassword : function (length){
+            return generatePassword(
+                length,                 // Length of pw
+                true,                   //Use UPPERCASE letters
+                true,                   //Use lowercase letters
+                true,                   //Use digits
+                true,                   //Use special chars
+                Math.round(length/4)    //Minimum amount of digits
+            );
+        },
+
         /**
          * Callback will be called once the password its generated, it should accept one parameter, and the parameter will be the key (
          *  CRYPTO.PASSWORD.generate(function(password){
@@ -155,27 +166,81 @@ var CRYPTO = {
          *      // Do more stuff here
          *  });
          * )
-         * @param callback
+         * @param length    The minium length of the generated password (it generates in packs of 4 characters,
+         * so it can end up being up to 3 characters longer)
+         * @param callback  The function to be called after the password generation its done
          */
-        generate : function (callback) {
-            if (!sjcl.random.isReady(this._paranoia_level)) {
-                setTimeout (this.generate, 500);
+        generate : function (length, callback, start_string) {
+            if (!sjcl.random.isReady(CRYPTO._paranoia_level)) {
+                setTimeout (this.generate(length, callback, start_string), 500);
                 return;
             }
 
+            if (start_string == null) start_string = "";
+            if (start_string.length < length) {
+                start_string += CRYPTO.RANDOM.getRandomASCII();
+            }
+            else {
+                callback(start_string);
+                this.logRepeatedCharCount(start_string);
+                return;
+            }
+
+            setTimeout(this.generate(length, callback, start_string), 0);
         },
 
-        checkStrength : function (password, expected_strength) {
+        logRepeatedCharCount: function(str){
+            var chars = {};
+
+            for (i = 0; i < str.length; i++){
+                chars[str.charAt(i)] = (chars[str.charAt(i)] == null) ? 0 : chars[str.charAt(i)]+1;
+            }
+            console.log(chars);
+        },
+
+        checkStrength : function (password, expected_strength){
+            return zxcvbn(password);
         }
     },
+
     RANDOM : {
         /**
-         * Returns an string of 4 characters length
+         * Returns a random string of 4 characters length
+         * @param callback function that will be called when the generation it's done
          */
-        getRandomASCII : function (){
-            sjcl.random.randomWords(1, this._paranoia_level);
-            console.log(this._paranoia_level);
-            return "test";
+        getRandomASCII : function() {
+            console.warn(CRYPTO._paranoia_level);
+
+            var ret = "";
+            while (ret.length < 4) {
+                var int = sjcl.random.randomWords(1, CRYPTO._paranoia_level);
+                int = int[0];
+
+                var tmp = this._isASCII((int & 0xFF000000) >> 24);
+                if (tmp) ret += tmp;
+
+                tmp = this._isASCII((int & 0x00FF0000) >> 16);
+                if (tmp) ret += tmp;
+
+                tmp = this._isASCII((int & 0x0000FF00) >> 8);
+                if (tmp) ret += tmp;
+
+                tmp = this._isASCII(int & 0x000000FF);
+                if (tmp)  ret += tmp;
+            }
+
+            return ret;
+        },
+
+        /**
+         * Checks whether the given data it's an ascii character, returning the corresponding character; returns false otherwise
+         *
+         * @param data
+         * @returns {string}
+         * @private
+         */
+        _isASCII : function(data) {
+            return  (data>32 && data<127) ? String.fromCharCode(data) : false;
         }
     },
 
@@ -200,9 +265,12 @@ var CRYPTO = {
      * @param default_paranoia (0-10 integer)
      */
     initEngines : function (default_paranoia) {
-        if (default_paranoia == null) default_paranoia = 10;
-        this._paranoia_level = default_paranoia;
-        sjcl.random.setDefaultParanoia(default_paranoia);
+        this._paranoia_level = (default_paranoia == null)  ? 10 : default_paranoia;
+
+        sjcl.random.setDefaultParanoia(this._paranoia_level);
         sjcl.random.startCollectors();
+
+        console.warn('Crypto stuff initialized');
     }
 };
+Window.onload = function (){CRYPTO.initEngines();};
