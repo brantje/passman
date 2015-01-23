@@ -1172,6 +1172,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
       $scope.selectedExportFields.push(exportField);
     }
   };
+
   $scope.renewShareKeys = function(){
     var keypair = shareService.generateShareKeys();
     $scope.userSettings.settings.sharing.shareKeys = keypair;
@@ -1181,7 +1182,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     $scope.showItem(item.originalItem);
     $scope.editItem(item.originalItem);
     $('#settingsDialog').dialog('close');
-  }
+  };
 
 
   $scope.$watch("userSettings",function(newVal){

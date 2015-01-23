@@ -923,7 +923,7 @@
           <div class="col-md-4">
             <div><?php p($l->t('Export items as')); ?>
               <select ng-model="exportItemas">
-                <option value="csv">CSV</option>
+                <option value="csv" selected="selected">CSV</option>
                 <option value="json">Json</option>
                 <option value="xml">XML</option>
               </select> <button class="btn btn-success" ng-click="exportItemAs(exportItemas)"><?php p($l->t('Export')); ?></button>
@@ -955,6 +955,7 @@
                 ng-if="fieldName =='Custom fields'" ng-disabled="exportItemas==='csv'"> {{fieldName}}
             </label>
 
+            <b><?php p($l->t('WARNING: Password will be exported as plaintext')); ?></b>
           </div>
         </div>
       </div>
