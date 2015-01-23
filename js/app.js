@@ -661,12 +661,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$ti
     $scope.editItem(newItem);
 
   };
-  $rootScope.$on('closeEdit',function(){
-    $scope.editingItem = false;
-    $scope.currentItem = $scope.decryptItem($scope.itemBackupData);
-    $scope.itemBackupData.oldItem.label = $scope.itemBackupData.label
-    setTimeout(window.resizeList,10);
-  });
+
 
   $scope.editItem = function(item){
     $scope.editingItem = true;
@@ -699,11 +694,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$ti
       }
     });
   };*/
-});
 
-
-app.controller('addEditItemCtrl', function ($scope, ItemService,$rootScope) {
-  console.log('addEditItemCtrl');
   $scope.pwFieldVisible = false;
   $scope.newCustomfield = {clicktoshow: 0};
   $scope.newExpireTime = 0;
@@ -807,8 +798,20 @@ app.controller('addEditItemCtrl', function ($scope, ItemService,$rootScope) {
     $scope.currentPWInfo = {};
     $scope.currentItem.overrrideComplex = false;
     $scope.editing = false;
+    $scope.editingItem = false;
     $scope.errors = [];
-    $rootScope.$broadcast('closeEdit');
+
+  };
+
+  $scope.cancelDialog = function(currentItem){
+    var backupitem = $scope.itemBackupData;
+    delete backupitem.oldItem;
+    $scope.currentItem = $scope.decryptItem(backupitem);
+    $scope.editing = false;
+    $scope.editingItem = false;
+    $scope.errors = [];
+    $scope.currentItem.overrrideComplex = false;
+    currentItem.label = backupitem.label;
   };
 
   $scope.generatePW = function () {
@@ -922,7 +925,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService,$rootScope) {
           if (data.success) {
             $scope.errors = [];
             unEncryptedItem.expire_time = data.success.expire_time;
-            $scope.$parent.currentItem = unEncryptedItem;
+            $scope.$parent.currentItem = data.success;
             $scope.closeDialog();
           }
         });
@@ -977,6 +980,198 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     }
   };
 
+  $scope.exportItemAs = function(type){
+    console.log(type);
+
+    var exportAsCSV,exportTags=[],exportAsJson,exportAsXML;
+    /*
+    First check if we have tags
+     */
+    angular.forEach($scope.selectedExportTags, function(tag){
+      exportTags.push(tag.text);
+    });
+    exportAsCSV = function(){
+      var items,exportArr = [$scope.selectedExportFields];
+      items = angular.copy($scope.items);
+      angular.forEach(items,function(item){
+        var item = $scope.decryptItem(item);
+        var exportItem = [];
+        angular.forEach($scope.selectedExportFields,function(selectedField){
+          var lowerCase = selectedField.toLowerCase();
+          var value = item[lowerCase];
+          exportItem.push(value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm," "));
+        });
+        if($scope.selectedExportTags.length === 0){
+          exportArr.push(exportItem);
+        } else {
+          var foundTag = false;
+          angular.forEach(item.tags,function(itemTag){
+            if(exportTags.indexOf(itemTag.text) > -1 && foundTag === false){
+              exportArr.push(exportItem);
+              foundTag = true;
+            };
+          });
+        }
+      });
+      console.log(exportArr);
+      var content = exportArr;
+      var finalVal = '';
+
+      for (var i = 0; i < content.length; i++) {
+        var value = content[i];
+
+        for (var j = 0; j < value.length; j++) {
+          var innerValue =  value[j]===null?'':value[j].toString();
+          var result = innerValue.replace(/"/g, '""');
+          if (result.search(/("|,|\n)/g) >= 0)
+            result = '"' + result + '"';
+          if (j > 0)
+            finalVal += ',';
+          finalVal += result;
+        }
+
+        finalVal += '\n';
+      }
+      var encodedUri = encodeURI("data:text/csv;charset=utf-8,"+finalVal);
+      var link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", 'passman_items.csv');
+      link.click();
+    };
+
+    exportAsJson = function(returnData){
+      returnData = false || returnData;
+      var items,exportArr = [];
+      items = angular.copy($scope.items);
+      angular.forEach(items,function(item){
+        var item = $scope.decryptItem(item);
+        var exportItem = {};
+        angular.forEach($scope.selectedExportFields,function(selectedField){
+          var lowerCase = selectedField.toLowerCase();
+          lowerCase = lowerCase.replace('custom fields','customFields');
+          var value = item[lowerCase];
+          if(lowerCase ==='customFields'){
+            exportItem.customFields = [];
+            for(var i=0; i < item.customFields.length; i++){
+              delete item.customFields[i].id;
+              delete item.customFields[i].clicktoshow;
+              delete item.customFields[i].item_id;
+              delete item.customFields[i].user_id;
+              exportItem.customFields.push(item.customFields[i])
+            }
+          }
+          if(typeof value === "string"){
+            value = value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm," ");
+            exportItem[lowerCase] = value;
+          }
+        });
+        if($scope.selectedExportTags.length === 0){
+          exportArr.push(exportItem);
+        } else {
+          var foundTag = false;
+          angular.forEach(item.tags,function(itemTag){
+            if(exportTags.indexOf(itemTag.text) > -1 && foundTag === false){
+              exportArr.push(exportItem);
+              foundTag = true;
+            };
+          });
+        }
+      });
+      console.log(returnData)
+      if(!returnData) {
+        var encodedUri = encodeURI("text/json;charset=utf-8,"+ JSON.stringify(exportArr));
+        var link = document.createElement("a");
+        link.setAttribute("href", 'data:'+encodedUri);
+        link.setAttribute("download", 'passman_items.json');
+        link.click();
+      } else {
+        return exportArr;
+      }
+    };
+
+    exportAsXML =function() {
+      var o = exportAsJson(true);
+      var tab = '';
+      var toXml = function(v, name, ind) {
+        var xml = "";
+        if(typeof(v) === 'function'){
+          return '';
+        }
+        if (v instanceof Array) {
+          for (var i=0, n=v.length; i<n; i++)
+            xml += ind + toXml(v[i], name, ind+"\t") + "\n";
+        }
+        else if (typeof(v) == "object") {
+          var hasChild = false;
+          xml += ind + "<" + name;
+          for (var m in v) {
+            if (m.charAt(0) == "@")
+              xml += " " + m.substr(1) + "=\"" + v[m].toString() + "\"";
+            else
+              hasChild = true;
+          }
+          xml += hasChild ? ">" : "/>";
+          if (hasChild) {
+            for (var m in v) {
+              if (m == "#text")
+                xml += v[m];
+              else if (m == "#cdata")
+                xml += "<![CDATA[" + v[m] + "]]>";
+              else if (m.charAt(0) != "@")
+                xml += toXml(v[m], m, ind+"\t");
+            }
+            xml += (xml.charAt(xml.length-1)=="\n"?ind:"") + "</" + name + ">";
+          }
+        }
+        else {
+          xml += ind + "<" + name + ">" + v.toString() +  "</" + name + ">";
+        }
+        return xml;
+      }, xml="";
+      for (var m in o)
+        xml += toXml(o[m], m, "");
+      var result =  tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
+      var data = '<?xml version="1.0" encoding="utf-8"?>'+result;
+      console.log(data)
+      var blob = new Blob([data], {type: "text/xml"});
+
+      saveAs(blob, "passman items.xml");
+      /*
+      var link = document.createElement("a");
+      link.setAttribute("href", 'data:'+encodedUri);
+      link.setAttribute("download", 'passman_items.json');
+      link.click();*/
+    };
+
+
+    switch(type) {
+      case "csv":
+        exportAsCSV();
+        break;
+      case "json":
+        exportAsJson();
+        break;
+      case "xml":
+        exportAsXML();
+        break;
+    }
+  };
+  $scope.selectedExportTags = [];
+  $scope.exportFields = ['Label','Account','Email','Password','URL','Description','Custom fields'];
+  $scope.selectedExportFields= ['Label','Account','Email','Password','URL','Description'];
+  $scope.toggleExportFieldSelection = function toggleSelection(exportField) {
+    var idx = $scope.selectedExportFields.indexOf(exportField);
+
+    // is currently selected
+    if (idx > -1) {
+      $scope.selectedExportFields.splice(idx, 1);
+    }
+
+    // is newly selected
+    else {
+      $scope.selectedExportFields.push(exportField);
+    }
+  };
   $scope.renewShareKeys = function(){
     var keypair = shareService.generateShareKeys();
     $scope.userSettings.settings.sharing.shareKeys = keypair;

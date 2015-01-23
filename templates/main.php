@@ -247,7 +247,7 @@
         </table>
       </div><!-- end InfoContainer -->
     </div>
-    <div ng-show="editingItem" class="editItem" ng-controller="addEditItemCtrl">
+    <div ng-show="editingItem" class="editItem">
       <div class="row nomargin">
         <div class="tabHeader" ng-class="'tab'+tabActive" ng-init="tabActive=1">
           <div class="col-xs-2 nopadding tab1" ng-click="tabActive=1;" ng-class="{'active': tabActive==1}"><?php p($l->t('General')); ?></div>
@@ -551,7 +551,7 @@
       <div class="row tab bottomRow">
         <div class="col-xs-12 col-sm-11 col-md-10 col-lg-7">
           <div class="pull-right btn btn-success" ng-click="saveItem(currentItem)">Save</div>
-          <div class="pull-right btn btn-danger" ng-click="closeDialog()">Cancel</div>
+          <div class="pull-right btn btn-danger" ng-click="cancelDialog(currentItem)">Cancel</div>
         </div>
       </div>
 
@@ -846,6 +846,9 @@
           <div class="tab4 col-xs-3 col-md-2 nopadding" ng-click="tabActive=4" ng-class="{'active': tabActive==4}">
             <?php p($l->t('Bookmarklet')); ?>
           </div>
+          <div class="tab4 col-xs-3 col-md-2 nopadding" ng-click="tabActive=5" ng-class="{'active': tabActive==5}">
+            <?php p($l->t('Export')); ?>
+          </div>
         </div>
         <div class="col-md-12">
           <div ng-show="tabActive==1" class="row">
@@ -914,6 +917,44 @@
             <br/>
 
             <p ng-bind-html="bookmarklet"></p>
+          </div>
+        </div>
+        <div ng-show="tabActive==5" class="row">
+          <div class="col-md-4">
+            <div><?php p($l->t('Export items as')); ?>
+              <select ng-model="exportItemas">
+                <option value="csv">CSV</option>
+                <option value="json">Json</option>
+                <option value="xml">XML</option>
+              </select> <button class="btn btn-success" ng-click="exportItemAs(exportItemas)"><?php p($l->t('Export')); ?></button>
+            </div>
+            <div>
+              <?php p($l->t('Export only items with selected tags')); ?><br />
+              <?php p($l->t('Leave empty to export all tags')); ?><br />
+              <tags-input ng-model="selectedExportTags" removeTagSymbol="x" replace-spaces-with-dashes="false" min-length="1">
+                <auto-complete source="loadTags($query)" min-length="1"></auto-complete>
+              </tags-input>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <?php p($l->t('Select fields to export')); ?>
+            <label ng-repeat="fieldName in exportFields">
+              <input
+                type="checkbox"
+                name="selectedExportFields[]"
+                value="{{fruitName}}"
+                ng-checked="selectedExportFields.indexOf(fieldName) > -1"
+                ng-click="toggleExportFieldSelection(fieldName)"
+                ng-if="fieldName !='Custom fields'">
+              <input
+                type="checkbox"
+                name="selectedExportFields[]"
+                value="{{fruitName}}"
+                ng-checked="selectedExportFields.indexOf(fieldName) > -1"
+                ng-click="toggleExportFieldSelection(fieldName)"
+                ng-if="fieldName =='Custom fields'" ng-disabled="exportItemas==='csv'"> {{fieldName}}
+            </label>
+
           </div>
         </div>
       </div>
