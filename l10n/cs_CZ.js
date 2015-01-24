@@ -168,7 +168,7 @@ OC.L10N.register(
     "If this if the first time you use Passman, this key will be used for encryption your\n    passwords" : "Pokud teď používáte Passman poprvé, tento klíč bude použit pro zašifrování vašich\nhesel",
     "Remember this key " : "Zapamatovat tento klíč",
     "%n minute::%n minutes" : ["%n minuta","%n minuty","%n minut"],
-    "%n hour::%n hours" : ["","",""],
+    "%n hour::%n hours" : ["%n hodina","%n hodiny","%n hodin"],
     "%n day::%n days" : ["%n den","%n dny","%n dnů"],
     "Minimal password scope" : "Minimální skóre hesla",
     "Override required score" : "Potlačit požadované skóre",
