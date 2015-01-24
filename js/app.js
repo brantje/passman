@@ -33,8 +33,34 @@ $(document).ready(function () {
     }
   });
   /* Load javascript translations */
-  OC.L10N.load('passman',function(){ console.log('loaded'); });
+ // OC.L10N.load('passman',function(){ console.log('loaded'); });
   /*Example usage: OC.L10N.translate('passman','Files') */
+
+  /**
+   * Notifications are powered by ownCloud, and therefore outside the scope of the app.
+   * With the following code we can still use the [Undo] feature.
+   */
+  window.findItemByID = function(id){
+    var items,foundItem=false;
+    items = angular.element('#app-content').scope().items;
+    angular.forEach(items, function(item){
+      if(item.id === id){
+        foundItem = item;
+      }
+    });
+   return foundItem;
+  };
+
+  $(document).on('click','.undoDelete',function(){
+    var item = findItemByID($(this).attr('data-item-id'));
+    angular.element('#app-content').scope().recoverItem(angular.element('#app-content').scope().lastDeletedItem);
+    angular.element('#app-content').scope().$apply();
+  });
+  $(document).on('click','.undoRestore',function(){
+    var item = findItemByID($(this).attr('data-item-id'));
+    angular.element('#app-content').scope().deleteItem(angular.element('#app-content').scope().lastRecoveredItem,true);
+    angular.element('#app-content').scope().$apply();
+  });
 });
 
 var app;
@@ -64,7 +90,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.selectedTags = [];
   $scope.noFavIcon = OC.imagePath('passman', 'lock.svg');
   $scope.sessionExpireTime = 0;
-  $scope.itemFilter = {};
+  $scope.itemFilter = {visible: true};
   $scope.expireNotificationShown = false;
   settingsService.getSettings().success(function(data){
     $scope.userSettings = data;
@@ -100,6 +126,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
         item.tags.sort(function(a,b) {
           return a.text.toLowerCase() < b.text.toLowerCase()
         });
+        item.visible = true;
         items.push(item);
       }
       $scope.items = items;
@@ -416,7 +443,7 @@ app.controller('navigationCtrl', function ($scope, TagService) {
 
 });
 
-app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,notificationService) {
+app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$timeout) {
   console.log('contentCtrl');
   $scope.currentItem = {};
   $scope.editing = false;
@@ -459,7 +486,17 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
     $scope.requiredPWStrength = 0;
   };
 
-  $scope.recoverItem = function (item) {
+
+  $scope.shareItem = function (item) {
+    $rootScope.$broadcast('shareItem', item);
+  };
+
+  $scope.showRevisions = function (item) {
+
+    $rootScope.$broadcast('showRevisions', item);
+  };
+
+  $scope.recoverItem = function (item,clickedOnUndo) {
     var saveThis = angular.copy(item), encryptedFields = ['account', 'email', 'password', 'description'], i;
     for (i = 0; i < encryptedFields.length; i++) {
       saveThis[encryptedFields[i]] = $scope.encryptThis(saveThis[encryptedFields[i]]);
@@ -477,26 +514,22 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
     saveThis.isRecovered = true;
     ItemService.recover(saveThis).success(function () {
       var idx;
-      for (i = 0; i < $scope.items.length; i++) {
-        if ($scope.items[i].id == item.id) {
-          idx = $scope.items.indexOf(item);
-          $scope.items.splice(idx, 1);
+      $scope.lastRecoveredItem = item;
+      if(window.findItemByID(item.id)) {
+        for (i = 0; i < $scope.items.length; i++) {
+          if ($scope.items[i].id == item.id) {
+            idx = $scope.items.indexOf(item);
+            $scope.items.splice(idx, 1);
+          }
         }
+      } else {
+        $scope.items.push(item);
       }
     });
-    OC.Notification.showTimeout('<div>' + item.label + ' recoverd</div>');
+    OC.Notification.showTimeout('<div>' + item.label + ' recoverd <span class="undoRestore" data-item-id="'+ item.id +'">[Undo]</span></span></div>');
   };
 
-  $scope.shareItem = function (item) {
-    $rootScope.$broadcast('shareItem', item);
-  };
-
-  $scope.showRevisions = function (item) {
-
-    $rootScope.$broadcast('showRevisions', item);
-  };
-
-  $scope.deleteItem = function (item, softDelete) {
+  $scope.deleteItem = function (item, softDelete, clickedOnUndo) {
     var i, idx;
     if (softDelete) {
       var saveThis = angular.copy(item), encryptedFields = ['account', 'email', 'password', 'description'], i;
@@ -514,16 +547,22 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
         saveThis.otpsecret = $scope.encryptObject(saveThis.otpsecret);
       }
       saveThis.isDeleted = true;
+
       ItemService.softDestroy(saveThis).success(function () {
-        for (i = 0; i < $scope.items.length; i++) {
-          if ($scope.items[i].id === item.id) {
-            idx = $scope.items.indexOf(item);
-            $scope.items.splice(idx, 1);
+        $scope.lastDeletedItem = angular.copy(item);
+        if(window.findItemByID(item.id)){
+          for (i = 0; i < $scope.items.length; i++) {
+            if ($scope.items[i].id === item.id) {
+              idx = $scope.items.indexOf(item);
+              $scope.items.splice(idx, 1);
+            }
           }
+        } else {
+          $scope.items.push(item);
         }
       });
-      OC.Notification.showTimeout('<div>' + item.label + ' deleted</div>');
-      ///notificationService.deleteItem(item);
+
+      OC.Notification.showTimeout('<div>' + item.label + ' deleted <span class="undoDelete" data-item-id="'+ item.id +'">[Undo]</span></div>',6500);
     } else {
       ItemService.destroy(item).success(function () {
         for (i = 0; i < $scope.items.length; i++) {
@@ -614,19 +653,16 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
       password: '',
       passwordConfirm: '',
       tags: [],
-      url: ''
+      url: '',
+      visible: true
     };
 
     $scope.requiredPWStrength = 0;
     $scope.editItem(newItem);
 
   };
-  $rootScope.$on('closeEdit',function(){
-    $scope.editingItem = false;
-    $scope.currentItem = $scope.decryptItem($scope.itemBackupData);
-    $scope.itemBackupData.oldItem.label = $scope.itemBackupData.label
-    setTimeout(window.resizeList,10);
-  })
+
+
   $scope.editItem = function(item){
     $scope.editingItem = true;
     $scope.currentItem = item;
@@ -658,11 +694,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,not
       }
     });
   };*/
-});
 
-
-app.controller('addEditItemCtrl', function ($scope, ItemService,$rootScope) {
-  console.log('addEditItemCtrl');
   $scope.pwFieldVisible = false;
   $scope.newCustomfield = {clicktoshow: 0};
   $scope.newExpireTime = 0;
@@ -766,8 +798,20 @@ app.controller('addEditItemCtrl', function ($scope, ItemService,$rootScope) {
     $scope.currentPWInfo = {};
     $scope.currentItem.overrrideComplex = false;
     $scope.editing = false;
+    $scope.editingItem = false;
     $scope.errors = [];
-    $rootScope.$broadcast('closeEdit');
+
+  };
+
+  $scope.cancelDialog = function(currentItem){
+    var backupitem = $scope.itemBackupData;
+    delete backupitem.oldItem;
+    $scope.currentItem = $scope.decryptItem(backupitem);
+    $scope.editing = false;
+    $scope.editingItem = false;
+    $scope.errors = [];
+    $scope.currentItem.overrrideComplex = false;
+    currentItem.label = backupitem.label;
   };
 
   $scope.generatePW = function () {
@@ -881,7 +925,7 @@ app.controller('addEditItemCtrl', function ($scope, ItemService,$rootScope) {
           if (data.success) {
             $scope.errors = [];
             unEncryptedItem.expire_time = data.success.expire_time;
-            $scope.$parent.currentItem = unEncryptedItem;
+            $scope.$parent.currentItem = data.success;
             $scope.closeDialog();
           }
         });
@@ -936,6 +980,199 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     }
   };
 
+  $scope.exportItemAs = function(type){
+    console.log(type);
+
+    var exportAsCSV,exportTags=[],exportAsJson,exportAsXML;
+    /*
+    First check if we have tags
+     */
+    angular.forEach($scope.selectedExportTags, function(tag){
+      exportTags.push(tag.text);
+    });
+    exportAsCSV = function(){
+      var items,exportArr = [$scope.selectedExportFields];
+      items = angular.copy($scope.items);
+      angular.forEach(items,function(item){
+        var item = $scope.decryptItem(item);
+        var exportItem = [];
+        angular.forEach($scope.selectedExportFields,function(selectedField){
+          var lowerCase = selectedField.toLowerCase();
+          var value = item[lowerCase];
+          exportItem.push(value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm," "));
+        });
+        if($scope.selectedExportTags.length === 0){
+          exportArr.push(exportItem);
+        } else {
+          var foundTag = false;
+          angular.forEach(item.tags,function(itemTag){
+            if(exportTags.indexOf(itemTag.text) > -1 && foundTag === false){
+              exportArr.push(exportItem);
+              foundTag = true;
+            };
+          });
+        }
+      });
+      console.log(exportArr);
+      var content = exportArr;
+      var finalVal = '';
+
+      for (var i = 0; i < content.length; i++) {
+        var value = content[i];
+
+        for (var j = 0; j < value.length; j++) {
+          var innerValue =  value[j]===null?'':value[j].toString();
+          var result = innerValue.replace(/"/g, '""');
+          if (result.search(/("|,|\n)/g) >= 0)
+            result = '"' + result + '"';
+          if (j > 0)
+            finalVal += ',';
+          finalVal += result;
+        }
+
+        finalVal += '\n';
+      }
+      var encodedUri = encodeURI("data:text/csv;charset=utf-8,"+finalVal);
+      var link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", 'passman_items.csv');
+      link.click();
+    };
+
+    exportAsJson = function(returnData){
+      returnData = false || returnData;
+      var items,exportArr = [];
+      items = angular.copy($scope.items);
+      angular.forEach(items,function(item){
+        var item = $scope.decryptItem(item);
+        var exportItem = {};
+        angular.forEach($scope.selectedExportFields,function(selectedField){
+          var lowerCase = selectedField.toLowerCase();
+          lowerCase = lowerCase.replace('custom fields','customFields');
+          var value = item[lowerCase];
+          if(lowerCase ==='customFields'){
+            exportItem.customFields = [];
+            for(var i=0; i < item.customFields.length; i++){
+              delete item.customFields[i].id;
+              delete item.customFields[i].clicktoshow;
+              delete item.customFields[i].item_id;
+              delete item.customFields[i].user_id;
+              exportItem.customFields.push(item.customFields[i])
+            }
+          }
+          if(typeof value === "string"){
+            value = value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm," ");
+            exportItem[lowerCase] = value;
+          }
+        });
+        if($scope.selectedExportTags.length === 0){
+          exportArr.push(exportItem);
+        } else {
+          var foundTag = false;
+          angular.forEach(item.tags,function(itemTag){
+            if(exportTags.indexOf(itemTag.text) > -1 && foundTag === false){
+              exportArr.push(exportItem);
+              foundTag = true;
+            };
+          });
+        }
+      });
+      console.log(returnData)
+      if(!returnData) {
+        var encodedUri = encodeURI("text/json;charset=utf-8,"+ JSON.stringify(exportArr));
+        var link = document.createElement("a");
+        link.setAttribute("href", 'data:'+encodedUri);
+        link.setAttribute("download", 'passman_items.json');
+        link.click();
+      } else {
+        return exportArr;
+      }
+    };
+
+    exportAsXML =function() {
+      var o = exportAsJson(true);
+      var tab = '';
+      var toXml = function(v, name, ind) {
+        var xml = "";
+        if(typeof(v) === 'function'){
+          return '';
+        }
+        if (v instanceof Array) {
+          for (var i=0, n=v.length; i<n; i++)
+            xml += ind + toXml(v[i], name, ind+"\t") + "\n";
+        }
+        else if (typeof(v) == "object") {
+          var hasChild = false;
+          xml += ind + "<" + name;
+          for (var m in v) {
+            if (m.charAt(0) == "@")
+              xml += " " + m.substr(1) + "=\"" + v[m].toString() + "\"";
+            else
+              hasChild = true;
+          }
+          xml += hasChild ? ">" : "/>";
+          if (hasChild) {
+            for (var m in v) {
+              if (m == "#text")
+                xml += v[m];
+              else if (m == "#cdata")
+                xml += "<![CDATA[" + v[m] + "]]>";
+              else if (m.charAt(0) != "@")
+                xml += toXml(v[m], m, ind+"\t");
+            }
+            xml += (xml.charAt(xml.length-1)=="\n"?ind:"") + "</" + name + ">";
+          }
+        }
+        else {
+          xml += ind + "<" + name + ">" + v.toString() +  "</" + name + ">";
+        }
+        return xml;
+      }, xml="";
+      for (var m in o)
+        xml += toXml(o[m], m, "");
+      var result =  tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
+      var data = '<?xml version="1.0" encoding="utf-8"?>'+result;
+      console.log(data)
+      var blob = new Blob([data], {type: "text/xml"});
+
+      saveAs(blob, "passman items.xml");
+      /*
+      var link = document.createElement("a");
+      link.setAttribute("href", 'data:'+encodedUri);
+      link.setAttribute("download", 'passman_items.json');
+      link.click();*/
+    };
+
+
+    switch(type) {
+      case "csv":
+        exportAsCSV();
+        break;
+      case "json":
+        exportAsJson();
+        break;
+      case "xml":
+        exportAsXML();
+        break;
+    }
+  };
+  $scope.selectedExportTags = [];
+  $scope.exportFields = ['Label','Account','Email','Password','URL','Description','Custom fields'];
+  $scope.selectedExportFields= ['Label','Account','Email','Password','URL','Description'];
+  $scope.toggleExportFieldSelection = function toggleSelection(exportField) {
+    var idx = $scope.selectedExportFields.indexOf(exportField);
+
+    // is currently selected
+    if (idx > -1) {
+      $scope.selectedExportFields.splice(idx, 1);
+    }
+
+    // is newly selected
+    else {
+      $scope.selectedExportFields.push(exportField);
+    }
+  };
+
   $scope.renewShareKeys = function(){
     var keypair = shareService.generateShareKeys();
     $scope.userSettings.settings.sharing.shareKeys = keypair;
@@ -945,7 +1182,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     $scope.showItem(item.originalItem);
     $scope.editItem(item.originalItem);
     $('#settingsDialog').dialog('close');
-  }
+  };
 
 
   $scope.$watch("userSettings",function(newVal){

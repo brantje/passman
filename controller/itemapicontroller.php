@@ -224,7 +224,11 @@ class ItemApiController extends Controller {
       $remoteUrl = \OCP\Util::linkToRoute('passman.page.index').'#selectItem='. $item['id'];
       $self = ($curItem['user_id'] == $this->userId) ? '_self' : '';
       if(!$restoredRevision && !$isDeleted &&!$isRecovered){
-        $this->notification->add('item_edited'.$self,array($curItem['label'],$this->userId),'',array(),$remoteUrl,null, Activity::TYPE_ITEM_ACTION);
+        if($curItem['label'] === $item['label']) {
+          $this->notification->add('item_edited' . $self, array($curItem['label'], $this->userId), '', array(), $remoteUrl, null, Activity::TYPE_ITEM_ACTION);
+        } else {
+          $this->notification->add('item_renamed' . $self, array($curItem['label'],$item['label'], $this->userId), '', array(), $remoteUrl, null, Activity::TYPE_ITEM_ACTION);
+        }
       } else {
         if($restoredRevision) {
           $restoredRevision = \OC::$server->query('DateTimeFormatter')->formatDateTime($restoredRevision,'long', 'short');
