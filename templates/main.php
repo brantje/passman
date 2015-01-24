@@ -846,7 +846,7 @@
           <div class="tab4 col-xs-3 col-md-2 nopadding" ng-click="tabActive=4" ng-class="{'active': tabActive==4}">
             <?php p($l->t('Bookmarklet')); ?>
           </div>
-          <div class="tab4 col-xs-3 col-md-2 nopadding" ng-click="tabActive=5" ng-class="{'active': tabActive==5}">
+          <div class="tab5 col-xs-3 col-md-2 nopadding" ng-click="tabActive=5" ng-class="{'active': tabActive==5}">
             <?php p($l->t('Export')); ?>
           </div>
         </div>
@@ -922,7 +922,7 @@
         <div ng-show="tabActive==5" class="row">
           <div class="col-md-4">
             <div><?php p($l->t('Export items as')); ?>
-              <select ng-model="exportItemas">
+              <select ng-model="exportItemas" ng-init="exportItemas = 'csv'">
                 <option value="csv" selected="selected">CSV</option>
                 <option value="json">Json</option>
                 <option value="xml">XML</option>
@@ -952,7 +952,7 @@
                 value="{{fruitName}}"
                 ng-checked="selectedExportFields.indexOf(fieldName) > -1"
                 ng-click="toggleExportFieldSelection(fieldName)"
-                ng-if="fieldName =='Custom fields'" ng-disabled="exportItemas==='csv'"> {{fieldName}}
+                ng-if="fieldName =='Custom fields'" ng-disabled="exportItemas==='csv'" class="select2-disabled"> {{fieldName}}
             </label>
 
             <b><?php p($l->t('WARNING: Password will be exported as plaintext')); ?></b>
