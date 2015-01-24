@@ -161,41 +161,47 @@ var CRYPTO = {
 
         /**
          * Callback will be called once the password its generated, it should accept one parameter, and the parameter will be the key (
-         *  CRYPTO.PASSWORD.generate(function(password){
+         *  CRYPTO.PASSWORD.generate(100, function(password){
          *      console.log("The generated password is: " + password);
          *      // Do more stuff here
-         *  });
+         *  }, function (current_percentage){
+         *      console.log("The current password generation progress it's: " + current_percentage + "%");
+          *     // Do real stuff here, update a progressbar, etc.
+         *  }
+         *  );
          * )
          * @param length    The minium length of the generated password (it generates in packs of 4 characters,
          * so it can end up being up to 3 characters longer)
          * @param callback  The function to be called after the password generation its done
+         * @param progress  The process of the generation, optional, called each 4 characters generated.
          */
-        generate : function (length, callback, start_string) {
+        generate : function (length, callback, progress, start_string) {
             if (!sjcl.random.isReady(CRYPTO._paranoia_level)) {
-                setTimeout (this.generate(length, callback, start_string), 500);
+                setTimeout (this.generate(length, callback, progress, start_string), 500);
                 return;
             }
 
             if (start_string == null) start_string = "";
             if (start_string.length < length) {
                 start_string += CRYPTO.RANDOM.getRandomASCII();
+                if (progress != null) progress(start_string.length / length * 100);
             }
             else {
                 callback(start_string);
-                this.logRepeatedCharCount(start_string);
+                progress(100);
                 return;
             }
 
-            setTimeout(this.generate(length, callback, start_string), 0);
+            setTimeout(this.generate(length, callback, progress, start_string), 0);
         },
 
         logRepeatedCharCount: function(str){
-            var chars = {};
+            var chars = [];
 
             for (i = 0; i < str.length; i++){
                 chars[str.charAt(i)] = (chars[str.charAt(i)] == null) ? 0 : chars[str.charAt(i)]+1;
             }
-            console.log(chars);
+            return chars;
         },
 
         checkStrength : function (password, expected_strength){
@@ -240,7 +246,7 @@ var CRYPTO = {
          * @private
          */
         _isASCII : function(data) {
-            return  (data>32 && data<127) ? String.fromCharCode(data) : false;
+            return  (data>31 && data<127) ? String.fromCharCode(data) : false;
         }
     },
 
