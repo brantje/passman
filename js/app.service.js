@@ -18,7 +18,7 @@ app.factory('shareService', ['$http','$q', function ($http,$q) {
                 text: r.label,
                 type: (r.value.shareType===0) ? 'user' : 'group',
                 value: r.value
-              }
+              };
               res.push(tmp);
             });
             return res;
@@ -33,8 +33,7 @@ app.factory('shareService', ['$http','$q', function ($http,$q) {
         });
     },
     generateShareKeys: function(keysize){
-      var shareKeys = KEYUTIL.generateKeypair("RSA", keysize);
-      return shareKeys;
+      return KEYUTIL.generateKeypair("RSA", keysize);
     }
   };
 }]);
