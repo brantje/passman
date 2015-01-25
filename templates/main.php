@@ -849,6 +849,9 @@
           <div class="tab5 col-xs-3 col-md-2 nopadding" ng-click="tabActive=5" ng-class="{'active': tabActive==5}">
             <?php p($l->t('Export')); ?>
           </div>
+          <div class="tab6 col-xs-3 col-md-2 nopadding" ng-click="tabActive=6" ng-class="{'active': tabActive==6}">
+            <?php p($l->t('Import')); ?>
+          </div>
         </div>
         <div class="col-md-12">
           <div ng-show="tabActive==1" class="row">
@@ -919,7 +922,7 @@
             <p ng-bind-html="bookmarklet"></p>
           </div>
         </div>
-        <div ng-show="tabActive==5" class="row">
+        <div ng-show="tabActive==5" class="row" ng-controller="exportCtrl">
           <div class="col-md-4">
             <div><?php p($l->t('Export items as')); ?>
               <select ng-model="exportItemas" ng-init="exportItemas = 'csv'">
@@ -942,20 +945,34 @@
               <input
                 type="checkbox"
                 name="selectedExportFields[]"
-                value="{{fruitName}}"
+                value="{{fruitName.prop}}"
                 ng-checked="selectedExportFields.indexOf(fieldName) > -1"
                 ng-click="toggleExportFieldSelection(fieldName)"
-                ng-if="fieldName !='Custom fields'">
-              <input
-                type="checkbox"
-                name="selectedExportFields[]"
-                value="{{fruitName}}"
-                ng-checked="selectedExportFields.indexOf(fieldName) > -1"
-                ng-click="toggleExportFieldSelection(fieldName)"
-                ng-if="fieldName =='Custom fields'" ng-disabled="exportItemas==='csv'" class="select2-disabled"> {{fieldName}}
+                ng-disabled="fieldName.disabledFor.indexOf(exportItemas) !== -1">
+                {{fieldName.name}}
             </label>
 
             <b><?php p($l->t('WARNING: Password will be exported as plaintext')); ?></b>
+          </div>
+        </div>
+        <div ng-show="tabActive===6" class="row" ng-controller="importCtrl">
+          <div class="col-md-4">
+            <div><?php p($l->t('Import type')); ?>
+              <select ng-model="importItemas" ng-init="exportItemas = 'csv'">
+                <option value="csv" selected="selected">Passman CSV</option>
+                <option value="json">Passman JSON</option>
+                <option value="xml">Passman XML</option>
+              </select></br>
+
+              <button class="btn btn-success" ng-click="importItemAs(importItemas)"><?php p($l->t('Import')); ?></button>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                60%
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -980,12 +980,41 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     }
   };
 
+
+
+  $scope.renewShareKeys = function(){
+    var keypair = shareService.generateShareKeys();
+    $scope.userSettings.settings.sharing.shareKeys = keypair;
+  };
+
+  $scope.sGoToEditItem = function(item){
+    $scope.showItem(item.originalItem);
+    $scope.editItem(item.originalItem);
+    $('#settingsDialog').dialog('close');
+  };
+
+
+  $scope.$watch("userSettings",function(newVal){
+    if(!newVal){
+      return;
+    }
+    if(!$scope.shareSettingsLoaded){
+      $scope.shareSettingsLoaded = true;
+    } else {
+      console.log($scope.userSettings)
+      settingsService.saveSettings($scope.userSettings);
+      /** Settings have changed, if key size changed, generate new key pairs?? */
+    }
+  },true);
+
+});
+app.controller('exportCtrl', function($scope){
   $scope.exportItemAs = function(type){
     console.log(type);
 
     var exportAsCSV,exportTags=[],exportAsJson,exportAsXML;
     /*
-    First check if we have tags
+     First check if we have tags
      */
     angular.forEach($scope.selectedExportTags, function(tag){
       exportTags.push(tag.text);
@@ -1046,9 +1075,9 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
       angular.forEach(items,function(item){
         var item = $scope.decryptItem(item);
         var exportItem = {};
+
         angular.forEach($scope.selectedExportFields,function(selectedField){
-          var lowerCase = selectedField.toLowerCase();
-          lowerCase = lowerCase.replace('custom fields','customFields');
+          var lowerCase = selectedField.prop;
           var value = item[lowerCase];
           if(lowerCase ==='customFields'){
             exportItem.customFields = [];
@@ -1058,6 +1087,12 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
               delete item.customFields[i].item_id;
               delete item.customFields[i].user_id;
               exportItem.customFields.push(item.customFields[i])
+            }
+          }
+          if(lowerCase === 'tags'){
+            exportItem.tags = [];
+            for(var i=0; i < item.tags.length; i++){
+              exportItem.tags[i] = {text: item.tags[i].text };
             }
           }
           if(typeof value === "string"){
@@ -1077,7 +1112,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
           });
         }
       });
-      console.log(returnData)
+      console.log(exportArr);
       if(!returnData) {
         var encodedUri = encodeURI("text/json;charset=utf-8,"+ JSON.stringify(exportArr));
         var link = document.createElement("a");
@@ -1137,12 +1172,11 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
 
       saveAs(blob, "passman items.xml");
       /*
-      var link = document.createElement("a");
-      link.setAttribute("href", 'data:'+encodedUri);
-      link.setAttribute("download", 'passman_items.json');
-      link.click();*/
+       var link = document.createElement("a");
+       link.setAttribute("href", 'data:'+encodedUri);
+       link.setAttribute("download", 'passman_items.json');
+       link.click();*/
     };
-
 
     switch(type) {
       case "csv":
@@ -1156,9 +1190,51 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
         break;
     }
   };
+
+
   $scope.selectedExportTags = [];
-  $scope.exportFields = ['Label','Account','Email','Password','URL','Description','Custom fields'];
-  $scope.selectedExportFields= ['Label','Account','Email','Password','URL','Description'];
+  //$scope.exportFields = ['Label','Account','Email','Password','URL','Description','Custom fields'];
+
+  $scope.exportFields = [{
+    name: 'Label',
+    prop: 'label',
+    disabledFor: []
+  },
+  {
+    name: 'Account',
+    prop: 'account',
+    disabledFor: []
+  },{
+    name: 'Email',
+    prop: 'email',
+    disabledFor: []
+  },
+  {
+    name: 'Password',
+    prop: 'password',
+    disabledFor: []
+  },
+  {
+    name: 'URL',
+    prop: 'url',
+    disabledFor: []
+  },{
+    name: 'Description',
+    prop: 'description',
+    disabledFor: []
+  },
+  {
+    name: 'Custom Fields',
+    prop: 'customFields',
+    disabledFor: ['csv']
+  },
+  {
+    name: 'Tags',
+    prop: 'tags',
+    disabledFor: ['csv']
+  }];
+
+  $scope.selectedExportFields= [$scope.exportFields[0],$scope.exportFields[1],$scope.exportFields[2],$scope.exportFields[3],$scope.exportFields[4],$scope.exportFields[5]];
   $scope.toggleExportFieldSelection = function toggleSelection(exportField) {
     var idx = $scope.selectedExportFields.indexOf(exportField);
 
@@ -1172,32 +1248,21 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
       $scope.selectedExportFields.push(exportField);
     }
   };
-
-  $scope.renewShareKeys = function(){
-    var keypair = shareService.generateShareKeys();
-    $scope.userSettings.settings.sharing.shareKeys = keypair;
-  };
-
-  $scope.sGoToEditItem = function(item){
-    $scope.showItem(item.originalItem);
-    $scope.editItem(item.originalItem);
-    $('#settingsDialog').dialog('close');
-  };
-
-
-  $scope.$watch("userSettings",function(newVal){
-    if(!newVal){
-      return;
+});
+app.controller('importCtrl', function($scope){
+  $scope.importItemAs = function(type){
+    switch(type) {
+      case "csv":
+        exportAsCSV();
+        break;
+      case "json":
+        exportAsJson();
+        break;
+      case "xml":
+        exportAsXML();
+        break;
     }
-    if(!$scope.shareSettingsLoaded){
-      $scope.shareSettingsLoaded = true;
-    } else {
-      console.log($scope.userSettings)
-      settingsService.saveSettings($scope.userSettings);
-      /** Settings have changed, if key size changed, generate new key pairs?? */
-    }
-  },true);
-
+  }
 });
 app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope,ItemService) {
   $scope.revisionCompareArr = [];
@@ -1209,7 +1274,7 @@ app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope,Item
         user_id: item.user_id,
         revision_date:'current',
         data: item
-      }
+      };
       $scope.revisions.unshift(tmp);
       $('#revisions').dialog({
         width: 450,
