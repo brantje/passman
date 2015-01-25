@@ -11,10 +11,9 @@
 
 namespace OCA\Passman\Controller;
 
-use \OCA\Passman\BusinessLayer\TagBusinessLayer;
+
 use \OCA\Passman\BusinessLayer\ItemBusinessLayer;
 use \OCP\IRequest;
-use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http;
 use \OCP\AppFramework\Http\JSONResponse;
@@ -24,15 +23,17 @@ class ShareController extends Controller {
   private $ItemBusinessLayer;
   private $tagBusinessLayer;
   private $shareManager;
+  private $userGroups;
   public $request;
 
-  public function __construct($appName, IRequest $request, ItemBusinessLayer $ItemBusinessLayer, $userId, $tagBusinessLayer, $shareManager) {
+  public function __construct($appName, IRequest $request, ItemBusinessLayer $ItemBusinessLayer, $userId, $tagBusinessLayer, $shareManager/*,$userGroups*/) {
     parent::__construct($appName, $request);
-    $this->userId = $userId;
+  /*  $this->userId = $userId;
     $this->ItemBusinessLayer = $ItemBusinessLayer;
     $this->tagBusinessLayer = $tagBusinessLayer;
     $this->request = $request;
     $this->shareManager = $shareManager;
+    $this->userGroups = $userGroups;*/
   }
 
   public function search($k) {

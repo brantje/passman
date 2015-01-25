@@ -84,16 +84,12 @@ public function __construct(array $urlParams = array()) {
 
     $container->registerService('ShareController', function ($c) {
       return new ShareController(
-        /*$c->query('AppName'),
+        $c->query('AppName'),
         $c->query('Request'),
         $c->query('ItemBusinessLayer'),
         $c->query('UserId'),
         $c->query('TagBusinessLayer'),
-        $c->query('ShareManager')*/
-        $c->query('AppName'),
-        $c->query('Request'),
-        $c->query('UserId'),
-        $c->query('UserGroups')
+        $c->query('ShareManager')
       );
     });
 
