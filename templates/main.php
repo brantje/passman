@@ -74,8 +74,6 @@
       <div id="app-settings-content">
         <p class="link" ng-click="showSettings();"><?php p($l->t('Settings')); ?></p>
 
-        <p class="import link"><?php p($l->t('Import data')); ?></p>
-
         <div id="sessionTimeContainer" ng-show="sessionExpireTime!=0">
           <h2><?php p($l->t('Session time')); ?></h2>
           <em><?php p($l->t('Your session will expire in')); ?>:<br/> <span ng-bind="sessionExpireTime"></span></em>

@@ -68,6 +68,6 @@ $application->registerRoutes($this, array(
     array('name' => 'revision#getrevisions', 'url' => '/api/v1/item/{id}/history', 'verb' => 'GET'),
 
 
-    array('name' => 'share#search', 'url' => '/api/v1/sharing/search', 'verb' => 'GET'),
+    //array('name' => 'share#search', 'url' => '/api/v1/sharing/search', 'verb' => 'GET'),
     array('name' => 'share#share', 'url' => '/api/v1/sharing/share', 'verb' => 'PUT'),
 )));

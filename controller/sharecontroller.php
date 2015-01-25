@@ -36,9 +36,9 @@ class ShareController extends Controller {
     $this->userGroups = $userGroups;*/
   }
 
-  public function search($k) {
+ /* public function search($k) {
     $keyword = $k;
-    /* Setup some example results */
+
     $result[0]['text'] = 'User';
     $result[0]['type'] = 'user';
     $result[0]['id'] = 'user';
@@ -59,7 +59,7 @@ class ShareController extends Controller {
     $result[5]['id'] = 'test';
 
     return new JSONResponse($result);
-  }
+  }*/
   public function share($item,$shareWith){
     $result['item'] = $item;
     $result['shareWith'] = $shareWith;
