@@ -9,28 +9,28 @@ app.factory('shareService', ['$http','$q', function ($http,$q) {
       });
     },
     searchUsersAndGroups: function(k){
-          return $http.get( OC.generateUrl('core/ajax/share.php?fetch=getShareWith&search='+ k +'&itemType=file'))
-            .then(function(response) {
-              if (typeof response.data === 'object') {
-                var res = [];
-                angular.forEach(response.data.data,function(r) {
-                  var tmp = {
-                    text: r.label,
-                    type: (r.value.shareType===0) ? 'user' : 'group',
-                    value: r.value
-                  }
-                  res.push(tmp);
-                });
-                return res;
-              } else {
-                // invalid response
-                return $q.reject(response.data);
+      return $http.get( OC.generateUrl('core/ajax/share.php?fetch=getShareWith&search='+ k +'&itemType=file'))
+        .then(function(response) {
+          if (typeof response.data === 'object') {
+            var res = [];
+            angular.forEach(response.data.data,function(r) {
+              var tmp = {
+                text: r.label,
+                type: (r.value.shareType===0) ? 'user' : 'group',
+                value: r.value
               }
-
-            }, function(response) {
-              // something went wrong
-              return $q.reject(response.data);
+              res.push(tmp);
             });
+            return res;
+          } else {
+            // invalid response
+            return $q.reject(response.data);
+          }
+
+        }, function(response) {
+          // something went wrong
+          return $q.reject(response.data);
+        });
     },
     generateShareKeys: function(keysize){
       var shareKeys = KEYUTIL.generateKeypair("RSA", keysize);
