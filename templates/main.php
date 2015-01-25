@@ -19,6 +19,7 @@
 \OCP\Util::addscript('passman', 'app.service');
 \OCP\Util::addscript('passman', 'app.directive');
 \OCP\Util::addscript('passman', 'app.filter');
+\OCP\Util::addscript('passman', 'module.fileReader');
 \OCP\Util::addScript('passman', 'jsrsasign-4.7.0-all-min');
 
 
@@ -961,16 +962,16 @@
               <select ng-model="importItemas" ng-init="exportItemas = 'csv'">
                 <option value="csv" selected="selected">Passman CSV</option>
                 <option value="json">Passman JSON</option>
-                <option value="xml">Passman XML</option>
+                <!--<option value="xml">Passman XML</option> -->
               </select></br>
-
+              <input type="file" ng-file-select="onFileSelect($files)" >
               <button class="btn btn-success" ng-click="importItemAs(importItemas)"><?php p($l->t('Import')); ?></button>
             </div>
           </div>
           <div class="col-md-5">
             <div class="progress">
-              <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-                60%
+              <div class="progress-bar" role="progressbar" aria-valuenow="{{importProgress}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'width': importProgress+'%'}">
+                {{importProgress}}%
               </div>
             </div>
           </div>

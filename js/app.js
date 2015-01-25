@@ -1008,7 +1008,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
   },true);
 
 });
-app.controller('exportCtrl', function($scope){
+app.controller('exportCtrl', function($scope,ItemService){
   $scope.exportItemAs = function(type){
     console.log(type);
 
@@ -1019,30 +1019,39 @@ app.controller('exportCtrl', function($scope){
     angular.forEach($scope.selectedExportTags, function(tag){
       exportTags.push(tag.text);
     });
+
+
+
     exportAsCSV = function(){
-      var items,exportArr = [$scope.selectedExportFields];
-      items = angular.copy($scope.items);
+      var items,exportArr = [];
+      items = angular.copy($scope.exportItems);
+      var tmp = [];
+      angular.forEach($scope.selectedExportFields,function(selectedField){
+          tmp.push(selectedField.prop)
+      });
+      exportArr.push(tmp);
       angular.forEach(items,function(item){
         var item = $scope.decryptItem(item);
         var exportItem = [];
         angular.forEach($scope.selectedExportFields,function(selectedField){
-          var lowerCase = selectedField.toLowerCase();
+          var lowerCase = selectedField.prop;
           var value = item[lowerCase];
-          exportItem.push(value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm," "));
+          console.log(lowerCase,value)
+          exportItem.push(value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " "));
         });
+        exportArr.push(exportItem);/*
         if($scope.selectedExportTags.length === 0){
           exportArr.push(exportItem);
         } else {
           var foundTag = false;
           angular.forEach(item.tags,function(itemTag){
             if(exportTags.indexOf(itemTag.text) > -1 && foundTag === false){
-              exportArr.push(exportItem);
+
               foundTag = true;
             };
           });
-        }
+        }*/
       });
-      console.log(exportArr);
       var content = exportArr;
       var finalVal = '';
 
@@ -1061,17 +1070,17 @@ app.controller('exportCtrl', function($scope){
 
         finalVal += '\n';
       }
-      var encodedUri = encodeURI("data:text/csv;charset=utf-8,"+finalVal);
-      var link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", 'passman_items.csv');
-      link.click();
+     var encodedUri = encodeURI("data:text/csv;charset=utf-8,"+finalVal);
+     var link = document.createElement("a");
+     link.setAttribute("href", encodedUri);
+     link.setAttribute("download", 'passman_items.csv');
+     link.click();
     };
 
     exportAsJson = function(returnData){
       returnData = false || returnData;
       var items,exportArr = [];
-      items = angular.copy($scope.items);
+      items = angular.copy($scope.exportItems);
       angular.forEach(items,function(item){
         var item = $scope.decryptItem(item);
         var exportItem = {};
@@ -1083,7 +1092,6 @@ app.controller('exportCtrl', function($scope){
             exportItem.customFields = [];
             for(var i=0; i < item.customFields.length; i++){
               delete item.customFields[i].id;
-              delete item.customFields[i].clicktoshow;
               delete item.customFields[i].item_id;
               delete item.customFields[i].user_id;
               exportItem.customFields.push(item.customFields[i])
@@ -1100,7 +1108,8 @@ app.controller('exportCtrl', function($scope){
             exportItem[lowerCase] = value;
           }
         });
-        if($scope.selectedExportTags.length === 0){
+        exportArr.push(exportItem);
+        /*if($scope.selectedExportTags.length === 0){
           exportArr.push(exportItem);
         } else {
           var foundTag = false;
@@ -1110,9 +1119,8 @@ app.controller('exportCtrl', function($scope){
               foundTag = true;
             };
           });
-        }
+        }*/
       });
-      console.log(exportArr);
       if(!returnData) {
         var encodedUri = encodeURI("text/json;charset=utf-8,"+ JSON.stringify(exportArr));
         var link = document.createElement("a");
@@ -1167,7 +1175,6 @@ app.controller('exportCtrl', function($scope){
         xml += toXml(o[m], m, "");
       var result =  tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
       var data = '<?xml version="1.0" encoding="utf-8"?>'+result;
-      console.log(data)
       var blob = new Blob([data], {type: "text/xml"});
 
       saveAs(blob, "passman items.xml");
@@ -1177,18 +1184,20 @@ app.controller('exportCtrl', function($scope){
        link.setAttribute("download", 'passman_items.json');
        link.click();*/
     };
-
-    switch(type) {
-      case "csv":
-        exportAsCSV();
-        break;
-      case "json":
-        exportAsJson();
-        break;
-      case "xml":
-        exportAsXML();
-        break;
-    }
+    ItemService.getItems(exportTags, false).success(function(data){
+      $scope.exportItems = data.items;
+      switch(type) {
+        case "csv":
+          exportAsCSV();
+          break;
+        case "json":
+          exportAsJson();
+          break;
+        case "xml":
+          exportAsXML();
+          break;
+      }
+    });
   };
 
 
@@ -1249,17 +1258,196 @@ app.controller('exportCtrl', function($scope){
     }
   };
 });
-app.controller('importCtrl', function($scope){
+app.controller('importCtrl', function($scope,ItemService,fileReader){
+  $scope.importProgress = 0;
+
+  $scope.getFile = function () {
+    $scope.progress = 0;
+    fileReader.readAsText($scope.file, $scope)
+      .then(function(result) {
+        $scope.fileContent = result;
+      });
+  };
+
+  $scope.$on("fileProgress", function(e, progress) {
+    $scope.progress = progress.loaded / progress.total;
+  });
+
   $scope.importItemAs = function(type){
+    var importAsCSV,importAsJson,importAsXML;
+
+    var newItem = {
+      account: '',
+      created: '',
+      customFields: [],
+      delete_date: "0",
+      description: "",
+      email: '',
+      expire_time: 0,
+      favicon: '',
+      files: [],
+      label: '',
+      password: '',
+      passwordConfirm: '',
+      tags: [],
+      url: '',
+      visible: true
+    };
+
+    importAsCSV = function(){
+
+      // This will parse a delimited string into an array of
+      // arrays. The default delimiter is the comma, but this
+      // can be overriden in the second argument.
+      function CSVToArray( strData, strDelimiter ){
+        // Check to see if the delimiter is defined. If not,
+        // then default to comma.
+        strDelimiter = (strDelimiter || ",");
+
+        // Create a regular expression to parse the CSV values.
+        var objPattern = new RegExp(
+          (
+            // Delimiters.
+          "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+            // Quoted fields.
+          "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+            // Standard fields.
+          "([^\"\\" + strDelimiter + "\\r\\n]*))"
+          ),
+          "gi"
+        );
+
+
+        // Create an array to hold our data. Give the array
+        // a default empty first row.
+        var arrData = [[]];
+
+        // Create an array to hold our individual pattern
+        // matching groups.
+        var arrMatches = null;
+
+
+        // Keep looping over the regular expression matches
+        // until we can no longer find a match.
+        while (arrMatches = objPattern.exec( strData )){
+
+          // Get the delimiter that was found.
+          var strMatchedDelimiter = arrMatches[ 1 ];
+
+          // Check to see if the given delimiter has a length
+          // (is not the start of string) and if it matches
+          // field delimiter. If id does not, then we know
+          // that this delimiter is a row delimiter.
+          if (
+            strMatchedDelimiter.length &&
+            (strMatchedDelimiter != strDelimiter)
+          ){
+
+            // Since we have reached a new row of data,
+            // add an empty row to our data array.
+            arrData.push( [] );
+
+          }
+
+
+          // Now that we have our delimiter out of the way,
+          // let's check to see which kind of value we
+          // captured (quoted or unquoted).
+          if (arrMatches[ 2 ]){
+
+            // We found a quoted value. When we capture
+            // this value, unescape any double quotes.
+            var strMatchedValue = arrMatches[ 2 ].replace(
+              new RegExp( "\"\"", "g" ),
+              "\""
+            );
+
+          } else {
+
+            // We found a non-quoted value.
+            var strMatchedValue = arrMatches[ 3 ];
+
+          }
+
+
+          // Now that we have our value string, let's add
+          // it to the data array.
+          arrData[ arrData.length - 1 ].push( strMatchedValue );
+        }
+
+        // Return the parsed data.
+        return( arrData );
+      }
+      var items = CSVToArray($scope.fileContent),
+      tmpArr = [];
+
+      for(var i= 1; i < items.length; i++){
+        var props = items[0];
+        var tmpItem = {}
+        for(var p= 0; p < props.length; p++){
+          tmpItem[props[p]] = items[i][p];
+        }
+        tmpArr.push(tmpItem);
+      }
+      $scope.fileContent = JSON.stringify(tmpArr);
+      importAsJson();
+    };
+
+    importAsJson = function(){
+      try{
+        var items = JSON.parse($scope.fileContent);
+      } catch(e){
+        var items = null;
+        OC.Notification.showTimeout("Not a valid json file");
+      }
+      var curIndex = 0,totalLength=items.length,loopItems;
+
+      loopItems = function(){
+        var currentItem = items[curIndex];
+        currentItem = angular.extend({},newItem,currentItem);
+        if(!currentItem.label){
+          return;
+        }
+        console.log('Importing', currentItem);
+        var encrypedItem = $scope.encryptItem(angular.copy(currentItem));
+        ItemService.create(encrypedItem).success(function (data) {
+          encrypedItem.id = data.id;
+          $scope.items.push(encrypedItem);
+          curIndex++;
+          $scope.importProgress = percent(curIndex+1,totalLength);
+          if(curIndex <= totalLength){
+            loopItems();
+          }
+        }).error(function(){
+          curIndex++;
+          $scope.importProgress = percent(curIndex+1,totalLength);
+          if(curIndex <= totalLength) {
+            loopItems();
+          }
+        });
+
+      };
+      loopItems();
+    };
+    importAsXML = function(){
+
+    };
+
+
+
+
+
     switch(type) {
       case "csv":
-        exportAsCSV();
+        importAsCSV();
         break;
       case "json":
-        exportAsJson();
+        importAsJson();
         break;
       case "xml":
-        exportAsXML();
+        importAsXML();
         break;
     }
   }
