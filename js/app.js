@@ -1103,6 +1103,10 @@ app.controller('exportCtrl', function($scope,ItemService){
               exportItem.tags[i] = {text: item.tags[i].text };
             }
           }
+          if(lowerCase === 'otpsecret'){
+            exportItem.otpsecret = item.otpsecret;
+
+          }
           if(typeof value === "string"){
             value = value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm," ");
             exportItem[lowerCase] = value;
@@ -1235,6 +1239,11 @@ app.controller('exportCtrl', function($scope,ItemService){
   {
     name: 'Custom Fields',
     prop: 'customFields',
+    disabledFor: ['csv']
+  },
+  {
+    name: 'One time password',
+    prop: 'otpsecret',
     disabledFor: ['csv']
   },
   {
