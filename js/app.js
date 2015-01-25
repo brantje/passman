@@ -1645,7 +1645,8 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
     /* Enter the url where we get the search results for $query
      * As example i entered apps/passman/api/v1/sharing/search?k=
      */
-    return $http.get(OC.generateUrl('apps/passman/api/v1/sharing/search?k=' + $query));
+    return shareService.searchUsersAndGroups($query);
+    //return $http.get(OC.generateUrl('apps/passman/api/v1/sharing/search?k=' + $query));
   };
 
   $scope.createShareUrl = function () {
@@ -1721,7 +1722,7 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
 
 
       /** And then share it */
-      var shareItem = {item: item};
+      var shareItem = {item: item,shareWith: $scope.shareSettings.shareWith};
       shareService.shareItem(shareItem).success(function (data) {
         /** Data contains the response from server */
         console.log(data);

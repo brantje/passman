@@ -60,9 +60,10 @@ class ShareController extends Controller {
 
     return new JSONResponse($result);
   }
-  public function share($item){
-
-    return new JSONResponse($item);
+  public function share($item,$shareWith){
+    $result['item'] = $item;
+    $result['shareWith'] = $shareWith;
+    return new JSONResponse($result);
   }
   //public function userSearch($name)
 }
