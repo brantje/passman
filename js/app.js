@@ -1310,7 +1310,11 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
     $scope.progress = 0;
     fileReader.readAsText($scope.file, $scope)
       .then(function(result) {
-        $scope.fileContent = result;
+        if(result.length > 3) {
+          $scope.fileContent = result;
+        } else {
+          OC.Notification.showTimeout('Invalid file')
+        }
       });
   };
 
@@ -1339,8 +1343,8 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
       visible: true
     };
 
-    importAsCSV = function(keepass){
-      keepass = keepass || false;
+    importAsCSV = function(type){
+      type = type || undefined;
       // This will parse a delimited string into an array of
       // arrays. The default delimiter is the comma, but this
       // can be overriden in the second argument.
@@ -1427,13 +1431,12 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
       }
       var items = CSVToArray($scope.fileContent),
       tmpArr = [];
-
       for(var i= 1; i < items.length; i++){
         var props = items[0];
         var tmpItem = {};
         for(var p= 0; p < props.length; p++){
           var k;
-          if(keepass) {
+          if(type === 'keepass') {
             switch (props[p]) {
               case "Account":
                 k = 'account';
@@ -1452,10 +1455,39 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
                 break;
             }
           }
-          if(!keepass){
+          if(type === 'lastpass') {
+            switch (props[p]) {
+              case "account":
+                k = 'account';
+                break;
+              case "name":
+                k = 'label';
+                break;
+              case 'username':
+                k = 'account';
+                break;
+              case 'password':
+                k = 'password';
+                break;
+              case 'url':
+                k = 'url';
+                break;
+              case 'grouping':
+                k = 'tags';
+                break;
+              case 'extra':
+                k = 'description';
+                break;
+            }
+          }
+          if(!type){
             tmpItem[props[p]] = items[i][p];
-          } else {
-            tmpItem[k] = items[i][p];
+          } else if(type==='keepass' || type === 'lastpass'){
+            if(k!='tags'){
+              tmpItem[k] = items[i][p];
+            } else {
+              tmpItem[k] = [{text: items[i][p] }];
+            }
           }
         }
         tmpArr.push(tmpItem);
@@ -1514,7 +1546,10 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
         importAsCSV();
         break;
       case "keepasscsv":
-        importAsCSV(true);
+        importAsCSV('keepass');
+        break;
+      case "lastpasscsv":
+        importAsCSV('lastpass');
         break;
       case "json":
         importAsJson();

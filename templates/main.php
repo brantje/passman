@@ -963,6 +963,7 @@
               <select ng-model="importItemas" ng-init="exportItemas = 'csv'">
                 <option value="csv" selected="selected">Passman CSV</option>
                 <option value="keepasscsv" selected="selected">Keepass CSV</option>
+                <option value="lastpasscsv" selected="selected">Lastpass CSV</option>
                 <option value="json">Passman JSON</option>
                 <!--<option value="xml">Passman XML</option> -->
               </select></br>
