@@ -1010,9 +1010,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
 });
 app.controller('exportCtrl', function($scope,ItemService){
   $scope.exportItemAs = function(type){
-    console.log(type);
-
-    var exportAsCSV,exportTags=[],exportAsJson,exportAsXML;
+    var exportAsCSV,exportTags=[],exportAsJson,exportAsXML,exportAsKeePassCSV;
     /*
      First check if we have tags
      */
@@ -1051,6 +1049,42 @@ app.controller('exportCtrl', function($scope,ItemService){
             };
           });
         }*/
+      });
+      var content = exportArr;
+      var finalVal = '';
+
+      for (var i = 0; i < content.length; i++) {
+        var value = content[i];
+
+        for (var j = 0; j < value.length; j++) {
+          var innerValue =  value[j]===null?'':value[j].toString();
+          var result = innerValue.replace(/"/g, '""');
+          if (result.search(/("|,|\n)/g) >= 0)
+            result = '"' + result + '"';
+          if (j > 0)
+            finalVal += ',';
+          finalVal += result;
+        }
+
+        finalVal += '\n';
+      }
+     var encodedUri = encodeURI("data:text/csv;charset=utf-8,"+finalVal);
+     var link = document.createElement("a");
+     link.setAttribute("href", encodedUri);
+     link.setAttribute("download", 'passman_items.csv');
+     link.click();
+    };
+
+    exportAsKeePassCSV = function(){
+      var items,exportArr = [["Account","Login Name","Password","Web Site","Comments"]];
+      items = angular.copy($scope.exportItems);
+      var tmp = [];
+      exportArr.push(tmp);
+      angular.forEach(items,function(item){
+        var item = $scope.decryptItem(item);
+        var account = (item.account) ? item.account : item.email;
+        var exportItem = [item.label,account,item.password,item.url,'"'+item.description.replace(/<\/?[^>]+(>|$)/g, "")+'"'];
+        exportArr.push(exportItem);
       });
       var content = exportArr;
       var finalVal = '';
@@ -1194,6 +1228,9 @@ app.controller('exportCtrl', function($scope,ItemService){
         case "csv":
           exportAsCSV();
           break;
+        case "keepasscsv":
+          exportAsKeePassCSV();
+          break;
         case "json":
           exportAsJson();
           break;
@@ -1206,50 +1243,49 @@ app.controller('exportCtrl', function($scope,ItemService){
 
 
   $scope.selectedExportTags = [];
-  //$scope.exportFields = ['Label','Account','Email','Password','URL','Description','Custom fields'];
 
   $scope.exportFields = [{
     name: 'Label',
     prop: 'label',
-    disabledFor: []
+    disabledFor: ['keepasscsv']
   },
   {
     name: 'Account',
     prop: 'account',
-    disabledFor: []
+    disabledFor: ['keepasscsv']
   },{
     name: 'Email',
     prop: 'email',
-    disabledFor: []
+    disabledFor: ['keepasscsv']
   },
   {
     name: 'Password',
     prop: 'password',
-    disabledFor: []
+    disabledFor: ['keepasscsv']
   },
   {
     name: 'URL',
     prop: 'url',
-    disabledFor: []
+    disabledFor: ['keepasscsv']
   },{
     name: 'Description',
     prop: 'description',
-    disabledFor: []
+    disabledFor: ['keepasscsv']
   },
   {
     name: 'Custom Fields',
     prop: 'customFields',
-    disabledFor: ['csv']
+    disabledFor: ['csv','keepasscsv']
   },
   {
     name: 'One time password',
     prop: 'otpsecret',
-    disabledFor: ['csv']
+    disabledFor: ['csv','keepasscsv']
   },
   {
     name: 'Tags',
     prop: 'tags',
-    disabledFor: ['csv']
+    disabledFor: ['csv','keepasscsv']
   }];
 
   $scope.selectedExportFields= [$scope.exportFields[0],$scope.exportFields[1],$scope.exportFields[2],$scope.exportFields[3],$scope.exportFields[4],$scope.exportFields[5]];
@@ -1303,8 +1339,8 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
       visible: true
     };
 
-    importAsCSV = function(){
-
+    importAsCSV = function(keepass){
+      keepass = keepass || false;
       // This will parse a delimited string into an array of
       // arrays. The default delimiter is the comma, but this
       // can be overriden in the second argument.
@@ -1394,12 +1430,37 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
 
       for(var i= 1; i < items.length; i++){
         var props = items[0];
-        var tmpItem = {}
+        var tmpItem = {};
         for(var p= 0; p < props.length; p++){
-          tmpItem[props[p]] = items[i][p];
+          var k;
+          if(keepass) {
+            switch (props[p]) {
+              case "Account":
+                k = 'account';
+                break;
+              case 'Login Name':
+                k = 'username';
+                break;
+              case 'Password':
+                k = 'password';
+                break;
+              case 'Web Site':
+                k = 'url';
+                break;
+              case 'Comments':
+                k = 'description';
+                break;
+            }
+          }
+          if(!keepass){
+            tmpItem[props[p]] = items[i][p];
+          } else {
+            tmpItem[k] = items[i][p];
+          }
         }
         tmpArr.push(tmpItem);
       }
+      console.log(tmpArr);
       $scope.fileContent = JSON.stringify(tmpArr);
       importAsJson();
     };
@@ -1451,6 +1512,9 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
     switch(type) {
       case "csv":
         importAsCSV();
+        break;
+      case "keepasscsv":
+        importAsCSV(true);
         break;
       case "json":
         importAsJson();

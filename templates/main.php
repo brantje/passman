@@ -928,6 +928,7 @@
             <div><?php p($l->t('Export items as')); ?>
               <select ng-model="exportItemas" ng-init="exportItemas = 'csv'">
                 <option value="csv" selected="selected">CSV</option>
+                <option value="keepasscsv" selected="selected">Keepass CSV</option>
                 <option value="json">Json</option>
                 <option value="xml">XML</option>
               </select> <button class="btn btn-success" ng-click="exportItemAs(exportItemas)"><?php p($l->t('Export')); ?></button>
@@ -961,6 +962,7 @@
             <div><?php p($l->t('Import type')); ?>
               <select ng-model="importItemas" ng-init="exportItemas = 'csv'">
                 <option value="csv" selected="selected">Passman CSV</option>
+                <option value="keepasscsv" selected="selected">Keepass CSV</option>
                 <option value="json">Passman JSON</option>
                 <!--<option value="xml">Passman XML</option> -->
               </select></br>
