@@ -1,4 +1,4 @@
-app.factory('shareService', ['$http', function ($http) {
+app.factory('shareService', ['$http','$q', function ($http,$q) {
   return {
     shareItem: function (item) {
       var queryUrl = OC.generateUrl('apps/passman/api/v1/sharing/share');
@@ -8,15 +8,32 @@ app.factory('shareService', ['$http', function ($http) {
         data: item
       });
     },
-    generateShareKeys: function(){
-      //var shareKeys = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
-      console.log("Generating 2048 key");
-      CRYPTO.RSA.genKeyPair(2048, function(){
-        console.log("Key generation finished.");
-        console.log("Private: " + CRYPTO.RSA._private_key);
-        console.log("Public: " + CRYPTO.RSA._public_key);
-      });
-      //return shareKeys;
+    searchUsersAndGroups: function(k){
+      return $http.get( OC.generateUrl('core/ajax/share.php?fetch=getShareWith&search='+ k +'&itemType=file'))
+        .then(function(response) {
+          if (typeof response.data === 'object') {
+            var res = [];
+            angular.forEach(response.data.data,function(r) {
+              var tmp = {
+                text: r.label,
+                type: (r.value.shareType===0) ? 'user' : 'group',
+                value: r.value
+              };
+              res.push(tmp);
+            });
+            return res;
+          } else {
+            // invalid response
+            return $q.reject(response.data);
+          }
+
+        }, function(response) {
+          // something went wrong
+          return $q.reject(response.data);
+        });
+    },
+    generateShareKeys: function(keysize){
+      return KEYUTIL.generateKeypair("RSA", keysize);
     }
   };
 }]);

@@ -11,10 +11,9 @@
 
 namespace OCA\Passman\Controller;
 
-use \OCA\Passman\BusinessLayer\TagBusinessLayer;
+
 use \OCA\Passman\BusinessLayer\ItemBusinessLayer;
 use \OCP\IRequest;
-use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http;
 use \OCP\AppFramework\Http\JSONResponse;
@@ -24,20 +23,22 @@ class ShareController extends Controller {
   private $ItemBusinessLayer;
   private $tagBusinessLayer;
   private $shareManager;
+  private $userGroups;
   public $request;
 
-  public function __construct($appName, IRequest $request, ItemBusinessLayer $ItemBusinessLayer, $userId, $tagBusinessLayer, $shareManager) {
+  public function __construct($appName, IRequest $request, ItemBusinessLayer $ItemBusinessLayer, $userId, $tagBusinessLayer, $shareManager/*,$userGroups*/) {
     parent::__construct($appName, $request);
-    $this->userId = $userId;
+  /*  $this->userId = $userId;
     $this->ItemBusinessLayer = $ItemBusinessLayer;
     $this->tagBusinessLayer = $tagBusinessLayer;
     $this->request = $request;
     $this->shareManager = $shareManager;
+    $this->userGroups = $userGroups;*/
   }
 
-  public function search($k) {
+ /* public function search($k) {
     $keyword = $k;
-    /* Setup some example results */
+
     $result[0]['text'] = 'User';
     $result[0]['type'] = 'user';
     $result[0]['id'] = 'user';
@@ -58,10 +59,11 @@ class ShareController extends Controller {
     $result[5]['id'] = 'test';
 
     return new JSONResponse($result);
-  }
-  public function share($item){
-
-    return new JSONResponse($item);
+  }*/
+  public function share($item,$shareWith){
+    $result['item'] = $item;
+    $result['shareWith'] = $shareWith;
+    return new JSONResponse($result);
   }
   //public function userSearch($name)
 }

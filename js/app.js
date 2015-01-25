@@ -980,40 +980,76 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     }
   };
 
-  $scope.exportItemAs = function(type){
-    console.log(type);
 
-    var exportAsCSV,exportTags=[],exportAsJson,exportAsXML;
+
+  $scope.renewShareKeys = function(){
+    var keypair = shareService.generateShareKeys();
+    $scope.userSettings.settings.sharing.shareKeys = keypair;
+  };
+
+  $scope.sGoToEditItem = function(item){
+    $scope.showItem(item.originalItem);
+    $scope.editItem(item.originalItem);
+    $('#settingsDialog').dialog('close');
+  };
+
+
+  $scope.$watch("userSettings",function(newVal){
+    if(!newVal){
+      return;
+    }
+    if(!$scope.shareSettingsLoaded){
+      $scope.shareSettingsLoaded = true;
+    } else {
+      console.log($scope.userSettings)
+      settingsService.saveSettings($scope.userSettings);
+      /** Settings have changed, if key size changed, generate new key pairs?? */
+    }
+  },true);
+
+});
+app.controller('exportCtrl', function($scope,ItemService){
+  $scope.exportItemAs = function(type){
+    var exportAsCSV,exportTags=[],exportAsJson,exportAsXML,exportAsKeePassCSV;
     /*
-    First check if we have tags
+     First check if we have tags
      */
     angular.forEach($scope.selectedExportTags, function(tag){
       exportTags.push(tag.text);
     });
+
+
+
     exportAsCSV = function(){
-      var items,exportArr = [$scope.selectedExportFields];
-      items = angular.copy($scope.items);
+      var items,exportArr = [];
+      items = angular.copy($scope.exportItems);
+      var tmp = [];
+      angular.forEach($scope.selectedExportFields,function(selectedField){
+          tmp.push(selectedField.prop)
+      });
+      exportArr.push(tmp);
       angular.forEach(items,function(item){
         var item = $scope.decryptItem(item);
         var exportItem = [];
         angular.forEach($scope.selectedExportFields,function(selectedField){
-          var lowerCase = selectedField.toLowerCase();
+          var lowerCase = selectedField.prop;
           var value = item[lowerCase];
-          exportItem.push(value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm," "));
+          console.log(lowerCase,value)
+          exportItem.push(value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " "));
         });
+        exportArr.push(exportItem);/*
         if($scope.selectedExportTags.length === 0){
           exportArr.push(exportItem);
         } else {
           var foundTag = false;
           angular.forEach(item.tags,function(itemTag){
             if(exportTags.indexOf(itemTag.text) > -1 && foundTag === false){
-              exportArr.push(exportItem);
+
               foundTag = true;
             };
           });
-        }
+        }*/
       });
-      console.log(exportArr);
       var content = exportArr;
       var finalVal = '';
 
@@ -1032,40 +1068,86 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
 
         finalVal += '\n';
       }
-      var encodedUri = encodeURI("data:text/csv;charset=utf-8,"+finalVal);
-      var link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", 'passman_items.csv');
-      link.click();
+     var encodedUri = encodeURI("data:text/csv;charset=utf-8,"+finalVal);
+     var link = document.createElement("a");
+     link.setAttribute("href", encodedUri);
+     link.setAttribute("download", 'passman_items.csv');
+     link.click();
+    };
+
+    exportAsKeePassCSV = function(){
+      var items,exportArr = [["Account","Login Name","Password","Web Site","Comments"]];
+      items = angular.copy($scope.exportItems);
+      var tmp = [];
+      exportArr.push(tmp);
+      angular.forEach(items,function(item){
+        var item = $scope.decryptItem(item);
+        var account = (item.account) ? item.account : item.email;
+        var exportItem = [item.label,account,item.password,item.url,'"'+item.description.replace(/<\/?[^>]+(>|$)/g, "")+'"'];
+        exportArr.push(exportItem);
+      });
+      var content = exportArr;
+      var finalVal = '';
+
+      for (var i = 0; i < content.length; i++) {
+        var value = content[i];
+
+        for (var j = 0; j < value.length; j++) {
+          var innerValue =  value[j]===null?'':value[j].toString();
+          var result = innerValue.replace(/"/g, '""');
+          if (result.search(/("|,|\n)/g) >= 0)
+            result = '"' + result + '"';
+          if (j > 0)
+            finalVal += ',';
+          finalVal += result;
+        }
+
+        finalVal += '\n';
+      }
+     var encodedUri = encodeURI("data:text/csv;charset=utf-8,"+finalVal);
+     var link = document.createElement("a");
+     link.setAttribute("href", encodedUri);
+     link.setAttribute("download", 'passman_items.csv');
+     link.click();
     };
 
     exportAsJson = function(returnData){
       returnData = false || returnData;
       var items,exportArr = [];
-      items = angular.copy($scope.items);
+      items = angular.copy($scope.exportItems);
       angular.forEach(items,function(item){
         var item = $scope.decryptItem(item);
         var exportItem = {};
+
         angular.forEach($scope.selectedExportFields,function(selectedField){
-          var lowerCase = selectedField.toLowerCase();
-          lowerCase = lowerCase.replace('custom fields','customFields');
+          var lowerCase = selectedField.prop;
           var value = item[lowerCase];
           if(lowerCase ==='customFields'){
             exportItem.customFields = [];
             for(var i=0; i < item.customFields.length; i++){
               delete item.customFields[i].id;
-              delete item.customFields[i].clicktoshow;
               delete item.customFields[i].item_id;
               delete item.customFields[i].user_id;
               exportItem.customFields.push(item.customFields[i])
             }
+          }
+          if(lowerCase === 'tags'){
+            exportItem.tags = [];
+            for(var i=0; i < item.tags.length; i++){
+              exportItem.tags[i] = {text: item.tags[i].text };
+            }
+          }
+          if(lowerCase === 'otpsecret'){
+            exportItem.otpsecret = item.otpsecret;
+
           }
           if(typeof value === "string"){
             value = value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm," ");
             exportItem[lowerCase] = value;
           }
         });
-        if($scope.selectedExportTags.length === 0){
+        exportArr.push(exportItem);
+        /*if($scope.selectedExportTags.length === 0){
           exportArr.push(exportItem);
         } else {
           var foundTag = false;
@@ -1075,9 +1157,8 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
               foundTag = true;
             };
           });
-        }
+        }*/
       });
-      console.log(returnData)
       if(!returnData) {
         var encodedUri = encodeURI("text/json;charset=utf-8,"+ JSON.stringify(exportArr));
         var link = document.createElement("a");
@@ -1132,33 +1213,82 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
         xml += toXml(o[m], m, "");
       var result =  tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
       var data = '<?xml version="1.0" encoding="utf-8"?>'+result;
-      console.log(data)
       var blob = new Blob([data], {type: "text/xml"});
 
       saveAs(blob, "passman items.xml");
       /*
-      var link = document.createElement("a");
-      link.setAttribute("href", 'data:'+encodedUri);
-      link.setAttribute("download", 'passman_items.json');
-      link.click();*/
+       var link = document.createElement("a");
+       link.setAttribute("href", 'data:'+encodedUri);
+       link.setAttribute("download", 'passman_items.json');
+       link.click();*/
     };
-
-
-    switch(type) {
-      case "csv":
-        exportAsCSV();
-        break;
-      case "json":
-        exportAsJson();
-        break;
-      case "xml":
-        exportAsXML();
-        break;
-    }
+    ItemService.getItems(exportTags, false).success(function(data){
+      $scope.exportItems = data.items;
+      switch(type) {
+        case "csv":
+          exportAsCSV();
+          break;
+        case "keepasscsv":
+          exportAsKeePassCSV();
+          break;
+        case "json":
+          exportAsJson();
+          break;
+        case "xml":
+          exportAsXML();
+          break;
+      }
+    });
   };
+
+
   $scope.selectedExportTags = [];
-  $scope.exportFields = ['Label','Account','Email','Password','URL','Description','Custom fields'];
-  $scope.selectedExportFields= ['Label','Account','Email','Password','URL','Description'];
+
+  $scope.exportFields = [{
+    name: 'Label',
+    prop: 'label',
+    disabledFor: ['keepasscsv']
+  },
+  {
+    name: 'Account',
+    prop: 'account',
+    disabledFor: ['keepasscsv']
+  },{
+    name: 'Email',
+    prop: 'email',
+    disabledFor: ['keepasscsv']
+  },
+  {
+    name: 'Password',
+    prop: 'password',
+    disabledFor: ['keepasscsv']
+  },
+  {
+    name: 'URL',
+    prop: 'url',
+    disabledFor: ['keepasscsv']
+  },{
+    name: 'Description',
+    prop: 'description',
+    disabledFor: ['keepasscsv']
+  },
+  {
+    name: 'Custom Fields',
+    prop: 'customFields',
+    disabledFor: ['csv','keepasscsv']
+  },
+  {
+    name: 'One time password',
+    prop: 'otpsecret',
+    disabledFor: ['csv','keepasscsv']
+  },
+  {
+    name: 'Tags',
+    prop: 'tags',
+    disabledFor: ['csv','keepasscsv']
+  }];
+
+  $scope.selectedExportFields= [$scope.exportFields[0],$scope.exportFields[1],$scope.exportFields[2],$scope.exportFields[3],$scope.exportFields[4],$scope.exportFields[5]];
   $scope.toggleExportFieldSelection = function toggleSelection(exportField) {
     var idx = $scope.selectedExportFields.indexOf(exportField);
 
@@ -1172,32 +1302,263 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
       $scope.selectedExportFields.push(exportField);
     }
   };
+});
+app.controller('importCtrl', function($scope,ItemService,fileReader){
+  $scope.importProgress = 0;
 
-  $scope.renewShareKeys = function(){
-    var keypair = shareService.generateShareKeys();
-    $scope.userSettings.settings.sharing.shareKeys = keypair;
+  $scope.getFile = function () {
+    $scope.progress = 0;
+    fileReader.readAsText($scope.file, $scope)
+      .then(function(result) {
+        if(result.length > 3) {
+          $scope.fileContent = result;
+        } else {
+          OC.Notification.showTimeout('Invalid file')
+        }
+      });
   };
 
-  $scope.sGoToEditItem = function(item){
-    $scope.showItem(item.originalItem);
-    $scope.editItem(item.originalItem);
-    $('#settingsDialog').dialog('close');
-  };
+  $scope.$on("fileProgress", function(e, progress) {
+    $scope.progress = progress.loaded / progress.total;
+  });
+
+  $scope.importItemAs = function(type){
+    var importAsCSV,importAsJson,importAsXML;
+
+    var newItem = {
+      account: '',
+      created: '',
+      customFields: [],
+      delete_date: "0",
+      description: "",
+      email: '',
+      expire_time: 0,
+      favicon: '',
+      files: [],
+      label: '',
+      password: '',
+      passwordConfirm: '',
+      tags: [],
+      url: '',
+      visible: true
+    };
+
+    importAsCSV = function(type){
+      type = type || undefined;
+      // This will parse a delimited string into an array of
+      // arrays. The default delimiter is the comma, but this
+      // can be overriden in the second argument.
+      function CSVToArray( strData, strDelimiter ){
+        // Check to see if the delimiter is defined. If not,
+        // then default to comma.
+        strDelimiter = (strDelimiter || ",");
+
+        // Create a regular expression to parse the CSV values.
+        var objPattern = new RegExp(
+          (
+            // Delimiters.
+          "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+            // Quoted fields.
+          "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+            // Standard fields.
+          "([^\"\\" + strDelimiter + "\\r\\n]*))"
+          ),
+          "gi"
+        );
 
 
-  $scope.$watch("userSettings",function(newVal){
-    if(!newVal){
-      return;
+        // Create an array to hold our data. Give the array
+        // a default empty first row.
+        var arrData = [[]];
+
+        // Create an array to hold our individual pattern
+        // matching groups.
+        var arrMatches = null;
+
+
+        // Keep looping over the regular expression matches
+        // until we can no longer find a match.
+        while (arrMatches = objPattern.exec( strData )){
+
+          // Get the delimiter that was found.
+          var strMatchedDelimiter = arrMatches[ 1 ];
+
+          // Check to see if the given delimiter has a length
+          // (is not the start of string) and if it matches
+          // field delimiter. If id does not, then we know
+          // that this delimiter is a row delimiter.
+          if (
+            strMatchedDelimiter.length &&
+            (strMatchedDelimiter != strDelimiter)
+          ){
+
+            // Since we have reached a new row of data,
+            // add an empty row to our data array.
+            arrData.push( [] );
+
+          }
+
+
+          // Now that we have our delimiter out of the way,
+          // let's check to see which kind of value we
+          // captured (quoted or unquoted).
+          if (arrMatches[ 2 ]){
+
+            // We found a quoted value. When we capture
+            // this value, unescape any double quotes.
+            var strMatchedValue = arrMatches[ 2 ].replace(
+              new RegExp( "\"\"", "g" ),
+              "\""
+            );
+
+          } else {
+
+            // We found a non-quoted value.
+            var strMatchedValue = arrMatches[ 3 ];
+
+          }
+
+
+          // Now that we have our value string, let's add
+          // it to the data array.
+          arrData[ arrData.length - 1 ].push( strMatchedValue );
+        }
+
+        // Return the parsed data.
+        return( arrData );
+      }
+      var items = CSVToArray($scope.fileContent),
+      tmpArr = [];
+      for(var i= 1; i < items.length; i++){
+        var props = items[0];
+        var tmpItem = {};
+        for(var p= 0; p < props.length; p++){
+          var k;
+          if(type === 'keepass') {
+            switch (props[p]) {
+              case "Account":
+                k = 'account';
+                break;
+              case 'Login Name':
+                k = 'username';
+                break;
+              case 'Password':
+                k = 'password';
+                break;
+              case 'Web Site':
+                k = 'url';
+                break;
+              case 'Comments':
+                k = 'description';
+                break;
+            }
+          }
+          if(type === 'lastpass') {
+            switch (props[p]) {
+              case "account":
+                k = 'account';
+                break;
+              case "name":
+                k = 'label';
+                break;
+              case 'username':
+                k = 'account';
+                break;
+              case 'password':
+                k = 'password';
+                break;
+              case 'url':
+                k = 'url';
+                break;
+              case 'grouping':
+                k = 'tags';
+                break;
+              case 'extra':
+                k = 'description';
+                break;
+            }
+          }
+          if(!type){
+            tmpItem[props[p]] = items[i][p];
+          } else if(type==='keepass' || type === 'lastpass'){
+            if(k!='tags'){
+              tmpItem[k] = items[i][p];
+            } else {
+              tmpItem[k] = [{text: items[i][p] }];
+            }
+          }
+        }
+        tmpArr.push(tmpItem);
+      }
+      console.log(tmpArr);
+      $scope.fileContent = JSON.stringify(tmpArr);
+      importAsJson();
+    };
+
+    importAsJson = function(){
+      try{
+        var items = JSON.parse($scope.fileContent);
+      } catch(e){
+        var items = null;
+        OC.Notification.showTimeout("Not a valid json file");
+      }
+      var curIndex = 0,totalLength=items.length,loopItems;
+
+      loopItems = function(){
+        var currentItem = items[curIndex];
+        currentItem = angular.extend({},newItem,currentItem);
+        if(!currentItem.label){
+          return;
+        }
+        console.log('Importing', currentItem);
+        var encrypedItem = $scope.encryptItem(angular.copy(currentItem));
+        ItemService.create(encrypedItem).success(function (data) {
+          encrypedItem.id = data.id;
+          $scope.items.push(encrypedItem);
+          curIndex++;
+          $scope.importProgress = percent(curIndex+1,totalLength);
+          if(curIndex <= totalLength){
+            loopItems();
+          }
+        }).error(function(){
+          curIndex++;
+          $scope.importProgress = percent(curIndex+1,totalLength);
+          if(curIndex <= totalLength) {
+            loopItems();
+          }
+        });
+
+      };
+      loopItems();
+    };
+    importAsXML = function(){
+
+    };
+
+
+
+
+
+    switch(type) {
+      case "csv":
+        importAsCSV();
+        break;
+      case "keepasscsv":
+        importAsCSV('keepass');
+        break;
+      case "lastpasscsv":
+        importAsCSV('lastpass');
+        break;
+      case "json":
+        importAsJson();
+        break;
+      case "xml":
+        importAsXML();
+        break;
     }
-    if(!$scope.shareSettingsLoaded){
-      $scope.shareSettingsLoaded = true;
-    } else {
-      console.log($scope.userSettings)
-      settingsService.saveSettings($scope.userSettings);
-      /** Settings have changed, if key size changed, generate new key pairs?? */
-    }
-  },true);
-
+  }
 });
 app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope,ItemService) {
   $scope.revisionCompareArr = [];
@@ -1209,7 +1570,7 @@ app.controller('revisionCtrl', function ($scope, RevisionService,$rootScope,Item
         user_id: item.user_id,
         revision_date:'current',
         data: item
-      }
+      };
       $scope.revisions.unshift(tmp);
       $('#revisions').dialog({
         width: 450,
@@ -1284,7 +1645,8 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
     /* Enter the url where we get the search results for $query
      * As example i entered apps/passman/api/v1/sharing/search?k=
      */
-    return $http.get(OC.generateUrl('apps/passman/api/v1/sharing/search?k=' + $query));
+    return shareService.searchUsersAndGroups($query);
+    //return $http.get(OC.generateUrl('apps/passman/api/v1/sharing/search?k=' + $query));
   };
 
   $scope.createShareUrl = function () {
@@ -1360,7 +1722,7 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
 
 
       /** And then share it */
-      var shareItem = {item: item};
+      var shareItem = {item: item,shareWith: $scope.shareSettings.shareWith};
       shareService.shareItem(shareItem).success(function (data) {
         /** Data contains the response from server */
         console.log(data);
@@ -1375,7 +1737,8 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
       shareItem(data);
       if(!$scope.userSettings.settings.sharing.shareKeys){
         $timeout(function(){
-          var keypair = shareService.generateShareKeys();
+          var keySize = $scope.userSettings.settings.sharing.shareKeySize || 1024;
+          var keypair = shareService.generateShareKeys(keySize);
           $scope.userSettings.settings.sharing.shareKeys = keypair;
           settingsService.saveSettings($scope.userSettings);
         },500);

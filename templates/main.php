@@ -19,6 +19,7 @@
 \OCP\Util::addscript('passman', 'app.service');
 \OCP\Util::addscript('passman', 'app.directive');
 \OCP\Util::addscript('passman', 'app.filter');
+\OCP\Util::addscript('passman', 'module.fileReader');
 \OCP\Util::addScript('passman', 'jsrsasign-4.7.0-all-min');
 \OCP\Util::addScript('passman', 'jsencrypt.min');
 \OCP\Util::addScript('passman', 'crypto_wrap');
@@ -72,8 +73,6 @@
       </div>
       <div id="app-settings-content">
         <p class="link" ng-click="showSettings();"><?php p($l->t('Settings')); ?></p>
-
-        <p class="import link"><?php p($l->t('Import data')); ?></p>
 
         <div id="sessionTimeContainer" ng-show="sessionExpireTime!=0">
           <h2><?php p($l->t('Session time')); ?></h2>
@@ -849,6 +848,9 @@
           <div class="tab5 col-xs-3 col-md-2 nopadding" ng-click="tabActive=5" ng-class="{'active': tabActive==5}">
             <?php p($l->t('Export')); ?>
           </div>
+          <div class="tab6 col-xs-3 col-md-2 nopadding" ng-click="tabActive=6" ng-class="{'active': tabActive==6}">
+            <?php p($l->t('Import')); ?>
+          </div>
         </div>
         <div class="col-md-12">
           <div ng-show="tabActive==1" class="row">
@@ -919,13 +921,14 @@
             <p ng-bind-html="bookmarklet"></p>
           </div>
         </div>
-        <div ng-show="tabActive==5" class="row">
+        <div ng-show="tabActive==5" class="row" ng-controller="exportCtrl">
           <div class="col-md-4">
             <div><?php p($l->t('Export items as')); ?>
               <select ng-model="exportItemas" ng-init="exportItemas = 'csv'">
-                <option value="csv" selected="selected">CSV</option>
-                <option value="json">Json</option>
-                <option value="xml">XML</option>
+                <option value="csv" selected="selected"><?php p($l->t('Passman CSV'));?></option>
+                <option value="keepasscsv"><?php p($l->t('Keepass CSV'));?></option>
+                <option value="json"><?php p($l->t('Passman JSON'));?></option>
+                <option value="xml"><?php p($l->t('Passman XML'));?></option>
               </select> <button class="btn btn-success" ng-click="exportItemAs(exportItemas)"><?php p($l->t('Export')); ?></button>
             </div>
             <div>
@@ -942,20 +945,36 @@
               <input
                 type="checkbox"
                 name="selectedExportFields[]"
-                value="{{fruitName}}"
+                value="{{fruitName.prop}}"
                 ng-checked="selectedExportFields.indexOf(fieldName) > -1"
                 ng-click="toggleExportFieldSelection(fieldName)"
-                ng-if="fieldName !='Custom fields'">
-              <input
-                type="checkbox"
-                name="selectedExportFields[]"
-                value="{{fruitName}}"
-                ng-checked="selectedExportFields.indexOf(fieldName) > -1"
-                ng-click="toggleExportFieldSelection(fieldName)"
-                ng-if="fieldName =='Custom fields'" ng-disabled="exportItemas==='csv'" class="select2-disabled"> {{fieldName}}
+                ng-disabled="fieldName.disabledFor.indexOf(exportItemas) !== -1">
+                {{fieldName.name}}
             </label>
 
             <b><?php p($l->t('WARNING: Password will be exported as plaintext')); ?></b>
+          </div>
+        </div>
+        <div ng-show="tabActive===6" class="row" ng-controller="importCtrl">
+          <div class="col-md-4">
+            <div><?php p($l->t('Import type')); ?>
+              <select ng-model="importItemas" ng-init="importItemas = 'csv'">
+                <option value="csv" selected="selected"><?php p($l->t('Passman CSV'));?></option>
+                <option value="keepasscsv"><?php p($l->t('Keepass CSV'));?></option>
+                <option value="lastpasscsv"><?php p($l->t('Lastpass CSV'));?></option>
+                <option value="json"><?php p($l->t('Passman JSON'));?></option>
+                <!--<option value="xml">Passman XML</option> -->
+              </select></br>
+              <input type="file" ng-file-select="onFileSelect($files)" >
+              <button class="btn btn-success" ng-click="importItemAs(importItemas)"><?php p($l->t('Import')); ?></button>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" aria-valuenow="{{importProgress}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'width': importProgress+'%'}">
+                {{importProgress}}%
+              </div>
+            </div>
           </div>
         </div>
       </div>
