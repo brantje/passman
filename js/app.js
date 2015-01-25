@@ -1736,7 +1736,8 @@ app.controller('shareCtrl', function ($scope, $http, settingsService,$timeout,$r
       shareItem(data);
       if(!$scope.userSettings.settings.sharing.shareKeys){
         $timeout(function(){
-          var keypair = shareService.generateShareKeys();
+          var keySize = $scope.userSettings.settings.sharing.shareKeySize || 1024;
+          var keypair = shareService.generateShareKeys(keySize);
           $scope.userSettings.settings.sharing.shareKeys = keypair;
           settingsService.saveSettings($scope.userSettings);
         },500);

@@ -8,8 +8,8 @@ app.factory('shareService', ['$http', function ($http) {
         data: item
       });
     },
-    generateShareKeys: function(){
-      var shareKeys = KEYUTIL.generateKeypair("RSA", $scope.userSettings.settings.sharing.shareKeySize);
+    generateShareKeys: function(keysize){
+      var shareKeys = KEYUTIL.generateKeypair("RSA", keysize);
       return shareKeys;
     }
   };
