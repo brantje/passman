@@ -11,7 +11,7 @@
 
 
 \OC_Util::checkAdminUser();
-
+\OCP\Util::addScript('passman', 'admin');
 
 $tmpl = new OCP\Template('passman', 'admin');
 $tmpl->assign('keyLengthServer', \OCP\Config::getAppValue('passman', 'keyLengthServer'));

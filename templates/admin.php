@@ -37,5 +37,9 @@
        </textarea>
       </label>
     </div>
+    <div>
+      Regenerate server keys:
+      <input  class="regenerateShareKeys" type="button" value="Regenerate" original-title="">
+    </div>
   </form>
 </div>
