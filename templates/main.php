@@ -1187,8 +1187,7 @@
 
 <div id="encryptionKeyDialog" style="display: none;">
   <p><?php p($l->t('Enter your encryption key.')); ?></p>
-  <p><?php p($l->t('If this is the first time you use PassMan, this key will be used for encryption of your
-    passwords')); ?></p>
+  <p><?php p($l->t('If this is the first time you use Passman, this key will be used for encryption of your passwords')); ?></p>
   <input type="password" id="ecKey" style="width: 150px;" ng-enter="doLogin()"/><br/>
   <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember"><?php p($l->t('Remember this key ')); ?></label>
   <select id="rememberTime">

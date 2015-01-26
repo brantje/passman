@@ -2,16 +2,16 @@
 	<div id="fieldsetContainer">
 		<fieldset>
 			<legend><?php p($l->t('Welcome')); ?></legend>
-				<?php p($l->t('Welcome to PassMan, the password manager for ownCloud!'));?>
+				<?php p($l->t('Welcome to Passman, the password manager for ownCloud!'));?>
 				<br />
 				<?php p($l->t('In the next steps you will learn how to use it.')); ?>
 		</fieldset>
 		<fieldset>
 			<legend><?php p($l->t('Tags')); ?></legend>
 			<?php p($l->t('These are your example tags.'));?><br />
-			<?php p($l->t('Tags can be assigned to passwords, giving them common properties like minimal')); ?> <span tool-tip title="<?php p($l->t('PassMan automatically computes a score for each password to estimate its strength. A higher score means a stronger password.')); ?>" style="border-bottom: 1px dashed black"><?php p($l->t('password score')); ?></span> <?php p($l->t('and renewal time.')); ?><br />
-			<?php p($l->t('For example, a "banking" tag could require a ')); ?><span tool-tip title="<?php p($l->t('PassMan automatically computes a score for each password to estimate its strength. A higher score means a stronger password.')); ?>" style="border-bottom: 1px dashed black"><?php p($l->t('password score')); ?></span> <?php p($l->t('of 60 and to be changed every month.')); ?><br />
-			<?php p($l->t('While a "forums" tag requires a ')); ?><span tool-tip title="<?php p($l->t('PassMan automatically computes a score for each password to estimate its strength. A higher score means a stronger password.')); ?>" style="border-bottom: 1px dashed black"><?php p($l->t('password score')); ?></span> <?php p($l->t('of 30 and to be changed every year.')); ?>
+			<?php p($l->t('Tags can be assigned to passwords, giving them common properties like minimal')); ?> <span tool-tip title="<?php p($l->t('Passman automatically computes a score for each password to estimate its strength. A higher score means a stronger password.')); ?>" style="border-bottom: 1px dashed black"><?php p($l->t('password score')); ?></span> <?php p($l->t('and renewal time.')); ?><br />
+			<?php p($l->t('For example, a "banking" tag could require a ')); ?><span tool-tip title="<?php p($l->t('Passman automatically computes a score for each password to estimate its strength. A higher score means a stronger password.')); ?>" style="border-bottom: 1px dashed black"><?php p($l->t('password score')); ?></span> <?php p($l->t('of 60 and to be changed every month.')); ?><br />
+			<?php p($l->t('While a "forums" tag requires a ')); ?><span tool-tip title="<?php p($l->t('Passman automatically computes a score for each password to estimate its strength. A higher score means a stronger password.')); ?>" style="border-bottom: 1px dashed black"><?php p($l->t('password score')); ?></span> <?php p($l->t('of 30 and to be changed every year.')); ?>
 			<br />
 			<br />
 			<b><?php p($l->t('Assignment: Change the example tags to your likings, then click next.')); ?></b>
