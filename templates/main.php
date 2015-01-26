@@ -882,7 +882,7 @@
         </div>
         <div ng-show="tabActive==3" class="row">
           <div class="col-md-11">
-            <p><?php p($l->t('Here you can indentify weak passwords, we will list the items. List all password with a rating less
+            <p><?php p($l->t('Here you can indentify weak passwords, we will list the items. List all passwords with a rating less
               than')); ?></p>
             <input type="text" ng-model="settings.PSC.minStrength"/>
             <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
@@ -915,7 +915,7 @@
         </div>
         <div ng-show="tabActive==4" class="row">
           <div class="col-md-11">
-            <p><?php p($l->t('Drag this to your browser bookmarks and click it, when you want to save username / password quickly')); ?></p>
+            <p><?php p($l->t('Drag this to your browser bookmarks and click it, if you want to save username / password quickly')); ?></p>
             <br/>
 
             <p ng-bind-html="bookmarklet"></p>
@@ -1187,7 +1187,7 @@
 
 <div id="encryptionKeyDialog" style="display: none;">
   <p><?php p($l->t('Enter your encryption key.')); ?></p>
-  <p><?php p($l->t('If this if the first time you use Passman, this key will be used for encryption your
+  <p><?php p($l->t('If this is the first time you use PassMan, this key will be used for encryption of your
     passwords')); ?></p>
   <input type="password" id="ecKey" style="width: 150px;" ng-enter="doLogin()"/><br/>
   <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember"><?php p($l->t('Remember this key ')); ?></label>
