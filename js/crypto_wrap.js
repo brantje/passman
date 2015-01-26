@@ -140,15 +140,23 @@ var CRYPTO = {
         }
     },
     AES: {
+        execution_time : 0,
+
         cypher: function(data, key){
-            return sjcl.encrypt(key, data);
+            this.execution_time = new Date().getTime();
+            var cpr = sjcl.encrypt(key, data);
+            this.execution_time = new Date().getTime() - this.execution_time;
+            return cpr;
         },
         decipher: function(cryptogram, key){
-                return sjcl.decrypt(key, cryptogram);
+            this.execution_time = new Date().getTime();
+            var cpr = sjcl.decrypt(key, cryptogram);
+            this.execution_time = new Date().getTime() - this.execution_time;
+            return cpr;
         }
     },
     PASSWORD : {
-        getRandomPassword : function (length){
+        /*getRandomPassword : function (length){
             return generatePassword(
                 length,                 // Length of pw
                 true,                   //Use UPPERCASE letters
@@ -157,7 +165,7 @@ var CRYPTO = {
                 true,                   //Use special chars
                 Math.round(length/4)    //Minimum amount of digits
             );
-        },
+        },*/
 
         /**
          * Callback will be called once the password its generated, it should accept one parameter, and the parameter will be the key (
@@ -188,7 +196,7 @@ var CRYPTO = {
             }
             else {
                 callback(start_string);
-                progress(100);
+                if (progress != null) progress(100);
                 return;
             }
 

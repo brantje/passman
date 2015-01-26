@@ -75,4 +75,59 @@ class ShareController extends Controller {
     $result['result'] = 'done';
     return new JSONResponse($result);
   }
+
+    public function generateServerKeys($bit_length){
+        $dn = array(
+            "countryName" => "UK",
+            "stateOrProvinceName" => "CHANGEME",
+            "localityName" => "CHANGEME",
+            "organizationName" => "CHANGE ME",
+            "organizationalUnitName" => "CHANGE ME",
+            "commonName" => "Someone is Someone",
+            "emailAddress" => "someone@somewhere.where"
+        );
+        $days = 365;
+
+        echo "Generating server key<br>";
+        $key_conf['private_key_bits'] = 2048;
+        $server_key = openssl_pkey_new($key_conf);
+        $server_public = openssl_csr_new($dn, $server_key);
+        $server_public = openssl_csr_sign($server_public, null, $server_key, $days);
+        echo "Server key generated: <br><p>";
+        openssl_pkey_export($server_key, $out) and var_dump($out);
+        echo "</p>Server public signed key generated: <p>";
+        openssl_x509_export($server_public, $out) and var_dump($out);
+    }
+
+    public function getSignedCertificateFor($client){
+        echo "</p>Generating private / public key<br>";
+        $dn_c = array (
+            "countryName" => "UK",
+            "stateOrProvinceName" => "noone",
+            "localityName" => "meh!",
+            "organizationName" => "the wut?",
+            "organizationalUnitName" => "...",
+            "commonName" => "Noone is Someone",
+            "emailAddress" => "noone@somewhere.where"
+        );
+        $client_key = openssl_pkey_new($key_conf);
+        $client_public = openssl_csr_sign(openssl_csr_new($dn_c, $client_key), $server_public, $server_key, $days);
+        echo "Client key generated: <br><p>";
+        flush();
+
+        openssl_pkey_export($server_key, $out) and var_dump($out);
+        echo "</p>Client public signed certificate generated: <p>";
+        openssl_x509_export($client_public, $out) and var_dump($out);
+
+        echo "</p>rnd:<p>";
+        var_dump(openssl_pkey_get_details(openssl_pkey_get_public($out)));
+
+
+        echo "</p><br><br><p>";
+        // Show any errors that occurred here
+        while (($e = openssl_error_string()) !== false) {
+            echo $e . "\n";
+        }
+        echo "</p>";
+    }
 }
