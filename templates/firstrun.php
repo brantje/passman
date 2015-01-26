@@ -59,7 +59,7 @@
 				</li>
 				<li>
 					<b><?php p($l->t('Custom fields')); ?></b><br />
-					<?php p($l->t('If the default fields are not enough your you, then you can add your own fields here.')); ?><br />
+					<?php p($l->t('If the default fields are not sufficient for you, then you can add your own fields here.')); ?><br />
 					<?php p($l->t('It also offers an option to let the value be hidden so it is handled as a password.')); ?>
 				</li>
 				<li>
@@ -67,7 +67,7 @@
 					<?php p($l->t('Passman has a built-in OTP (One Time Password) generator.')); ?><br />
 					<?php p($l->t('If you don\'t know what a OTP is then I suggest you enable it.')); ?><br />
 					<?php p($l->t('Services that have options for a One Time Password')); ?><br />
-					- <a href="https://help.github.com/articles/about-two-factor-authentication/" target="_blank"><?php p($l->t('Github'));?></a><br />
+					- <a href="https://help.github.com/articles/about-two-factor-authentication/" target="_blank"><?php p($l->t('GitHub'));?></a><br />
 					- <a href="https://www.google.com/landing/2step/" target="_blank"><?php p($l->t('Google')); ?></a><br />
 					- <a href="https://www.dropbox.com/en/help/363" target="_blank"><?php p($l->t('Dropbox')); ?></a><br />
 					- <a href="http://windows.microsoft.com/en-us/windows/two-step-verification-faq" target="_blank"><?php p($l->t('OneDrive')); ?></a><br />
