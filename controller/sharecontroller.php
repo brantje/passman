@@ -66,4 +66,13 @@ class ShareController extends Controller {
     return new JSONResponse($result);
   }
   //public function userSearch($name)
+
+  /**
+   *
+   */
+  public function generateServerShareKeys(){
+    //DoGeneration();
+    $result['result'] = 'done';
+    return new JSONResponse($result);
+  }
 }
