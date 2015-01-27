@@ -288,7 +288,7 @@
 					<input type="file" qrread on-read="parseQR(qrdata)"
 						   ng-show="otpType==='image'"/>
 					<label
-						ng-show="otpType==='string'"><?php p($l->t('Enter the 2 factor secret')); ?>
+						ng-show="otpType==='string'"><?php p($l->t('Enter the two-factor secret')); ?>
 						<input type="text"
 							   ng-model="currentItem.otpsecret.secret"
 							   class="otpSecret"/></label>
@@ -335,8 +335,7 @@
 	</div>
 </div>
 <div id="encryptionKeyDialog" style="display: none;">
-	<p><?php p($l->t('Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your
-    passwords')); ?></p>
+	<p><?php p($l->t('Enter your encryption key. If this is the first time you use Passman, this key will be used for encryption of your passwords')); ?></p>
 	<input type="password" id="ecKey" style="width: 150px;" /><br/>
 	<input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember"><?php p($l->t('Remember this key ')); ?></label>
 	<select id="rememberTime">
