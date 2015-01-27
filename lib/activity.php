@@ -40,9 +40,9 @@ class Activity implements \OCP\Activity\IExtension {
 	public function getNotificationTypes($languageCode) {
 		$l = \OC::$server->getL10N('passman', $languageCode);
 		return array(
-			self::TYPE_ITEM_ACTION => $l->t('A passman item has been created, modified or deleted'),
-			self::TYPE_ITEM_EXPIRED => $l->t('A passman item has expired'),
-			self::TYPE_ITEM_SHARED => $l->t('A passman item has been shared')
+			self::TYPE_ITEM_ACTION => $l->t('A Passman item has been created, modified or deleted'),
+			self::TYPE_ITEM_EXPIRED => $l->t('A Passman item has expired'),
+			self::TYPE_ITEM_SHARED => $l->t('A Passman item has been shared')
 		);
 	}
 
