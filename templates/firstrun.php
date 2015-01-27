@@ -22,7 +22,7 @@
 		<fieldset>
 			<legend><?php p($l->t('Set encryption key')); ?></legend>
 			<?php p($l->t('This key is used to encrypt all your sensive data.')); ?><br />
-			<b><?php p($l->t('This key is private and never send to the server')); ?></b><br />
+			<b><?php p($l->t('This key is private and never sent to the server')); ?></b><br />
 			<?php p($l->t('Enter your encryption key in the field below')); ?><br />
 			<input id="frEncKey" type="password" autocomplete="false">
 		</fieldset>
@@ -31,7 +31,7 @@
 			<?php p($l->t('Here are your example items, you\'re free to edit or delete them.')); ?><br />
 			<?php p($l->t('Items contain your username / password or any other sensitive information.')); ?><br />
 
-			<?php p($l->t('Hint: click on the arrow')); ?> (<i class="icon icon-caret-dark more"></i>) <?php p($l->t('to expand an menu to display various options for an item.')); ?>
+			<?php p($l->t('Hint: click on the arrow')); ?> (<i class="icon icon-caret-dark more"></i>) <?php p($l->t('to expand a menu to display various options for an item.')); ?>
 		</fieldset>
 		<fieldset>
 			<legend>
