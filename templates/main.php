@@ -882,8 +882,7 @@
         </div>
         <div ng-show="tabActive==3" class="row">
           <div class="col-md-11">
-            <p><?php p($l->t('Here you can indentify weak passwords, we will list the items. List all passwords with a rating less
-              than')); ?></p>
+            <p><?php p($l->t('Here you can indentify weak passwords, all affected items will be listed. List all passwords with a score less than')); ?></p>
             <input type="text" ng-model="settings.PSC.minStrength"/>
             <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
             <div ng-show="settings.PSC.weakItemList.length > 0">You've got {{settings.PSC.weakItemList.length}} weak passwords</div>
@@ -1171,7 +1170,7 @@
         </div>
       </div>
       <div ng-show="!userSettings.settings.sharing.shareKeys">
-              <?php p($l->t(' Generating sharing keys, this is a one time thing, please wait.')); ?>
+              <?php p($l->t(' Generating sharing keys. This step is only necessary once, please wait.')); ?>
       </div>
     </div>
   </div>
