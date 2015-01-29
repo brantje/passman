@@ -196,10 +196,10 @@
           <tr ng-show="currentItem.email ">
             <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                     style="float: left; margin-right: .3em;">&nbsp;</span>
-              <span><?php p($l->t('E-mail')); ?></span> :
+              <span><?php p($l->t('Email')); ?></span> :
             </td>
             <td>
-              {{currentItem.email}} <a clip-copy="currentItem.email" clip-click="copied('E-mail')" class="link">[<?php p($l->t('Copy')); ?>]</a>
+              {{currentItem.email}} <a clip-copy="currentItem.email" clip-click="copied('Email')" class="link">[<?php p($l->t('Copy')); ?>]</a>
             </td>
           </tr>
           <tr ng-show="currentItem.url ">
@@ -296,7 +296,7 @@
             </div>
             <div class="row">
               <div class="col-xs-12">
-                <label><?php p($l->t('E-mail')); ?></label>
+                <label><?php p($l->t('Email')); ?></label>
                 <input type="text" name="email" ng-model="currentItem.email" autocomplete="off" class="form-control">
               </div>
             </div>
@@ -599,7 +599,7 @@
                                          autocomplete="off"></div>
           </div>
           <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('E-mail')); ?></div>
+            <div class="col-xs-1 formLabel"><?php p($l->t('Email')); ?></div>
             <div class="col-xs-7"><input type="text" name="email" ng-model="currentItem.email" autocomplete="off"></div>
           </div>
           <div class="row">
@@ -1076,7 +1076,7 @@
                 <tr ng-show="showRevision.data.email ">
                   <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                           style="float: left; margin-right: .3em;">&nbsp;</span>
-                    <span><?php p($l->t('E-mail')); ?></span> :
+                    <span><?php p($l->t('Email')); ?></span> :
                   </td>
                   <td>
                     {{showRevision.data.email}}
