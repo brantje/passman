@@ -21,7 +21,7 @@
 		</fieldset>
 		<fieldset>
 			<legend><?php p($l->t('Set encryption key')); ?></legend>
-			<?php p($l->t('This key is used to encrypt all your sensive data.')); ?><br />
+			<?php p($l->t('This key is used to encrypt all your sensitive data.')); ?><br />
 			<b><?php p($l->t('This key is private and never sent to the server')); ?></b><br />
 			<?php p($l->t('Enter your encryption key in the field below')); ?><br />
 			<input id="frEncKey" type="password" autocomplete="false">
