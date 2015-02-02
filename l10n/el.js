@@ -2,6 +2,9 @@ OC.L10N.register(
     "passman",
     {
     "Passwords" : "Κωδικοί Πρόσβασης",
+    "A Passman item has been created, modified or deleted" : "Ένα στοιχείο της εφαρμογής διαχείρισης κωδικών πρόσβασης δημιουργήθηκε, τροποποιήθηκε ή διαγράφηκε",
+    "A Passman item has expired" : "Ένα στοιχείο της εφαρμογής διαχείρισης κωδικών πρόσβασης έληξε",
+    "A Passman item has been shared" : "Ένα στοιχείο της εφαρμογής διαχείρισης κωδικών πρόσβασης διαμοιράστηκε",
     "%1$s has been created by %2$s" : "Το %1$s δημιουργήθηκε από %2$s",
     "You created %1$s" : "Δημιουργήσατε %1$s",
     "%1$s has been updated by %2$s" : "Το %1$s ενημερώθηκε από %2$s",
