@@ -92,7 +92,7 @@ OC.L10N.register(
     "No results" : "Keine Ergebnisse",
     "Copy" : "Kopieren",
     "Description" : "Beschreibung",
-    "Account" : "Nutzerkonto",
+    "Account" : "Benutzerkonto",
     "One time password" : "Einmal-Passwort",
     "OTP" : "Einmalpasswort",
     "Expires" : "Läuft ab",
