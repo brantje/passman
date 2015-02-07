@@ -124,6 +124,7 @@ $TRANSLATIONS = array(
 "OTP Type" => "Tipo OTP",
 "Upload an image" => "Enviar unha imaxe",
 "Set the secret manually" => "Estabelecer a secreta manualmente",
+"Enter the two-factor secret" => "Introducir a secreta de 2 elementos",
 "Current OTP settings" => "Axustes actuais do OTP",
 "Type" => "Escribir",
 "Issuer" => "Fornecedor",
