@@ -78,7 +78,7 @@
 			</div>
 			<div class="row">
 				<div
-					class="col-xs-1 formLabel"><?php p($l->t('E-mail')); ?></div>
+					class="col-xs-1 formLabel"><?php p($l->t('Email')); ?></div>
 				<div class="col-xs-7"><input type="text" name="email"
 											 ng-model="currentItem.email"
 											 autocomplete="off"></div>
