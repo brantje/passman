@@ -1,4 +1,4 @@
-<div id="firstRun">
+<div id="firstRun">
 	<div id="fieldsetContainer">
 		<fieldset>
 			<legend><?php p($l->t('Welcome')); ?></legend>
@@ -11,12 +11,12 @@
 			<?php p($l->t('These are your example tags.'));?><br />
 			<?php p($l->t('Tags can be assigned to passwords, giving them common properties like minimal')); ?> <span tool-tip title="<?php p($l->t('Passman automatically computes a score for each password to estimate its strength. A higher score means a stronger password.')); ?>" style="border-bottom: 1px dashed black"><?php p($l->t('password score')); ?></span> <?php p($l->t('and renewal time.')); ?><br />
 			<?php p($l->t('For example, a "banking" tag could require a') . ' '); ?><span tool-tip title="<?php p($l->t('Passman automatically computes a score for each password to estimate its strength. A higher score means a stronger password.')); ?>" style="border-bottom: 1px dashed black"><?php p($l->t('password score')); ?></span> <?php p($l->t('of 60 and to be changed every month.')); ?><br />
-			<?php p($l->t('While a "forums" tag requires a ')); ?><span tool-tip title="<?php p($l->t('Passman automatically computes a score for each password to estimate its strength. A higher score means a stronger password.')); ?>" style="border-bottom: 1px dashed black"><?php p($l->t('password score')); ?></span> <?php p($l->t('of 30 and to be changed every year.')); ?>
+			<?php p($l->t('While a "forums" tag requires a') . ' '); ?><span tool-tip title="<?php p($l->t('Passman automatically computes a score for each password to estimate its strength. A higher score means a stronger password.')); ?>" style="border-bottom: 1px dashed black"><?php p($l->t('password score')); ?></span> <?php p($l->t('of 30 and to be changed every year.')); ?>
 			<br />
 			<br />
 			<b><?php p($l->t('Assignment: Change the example tags to your likings, then click next.')); ?></b>
 			<br />
-			<?php p($l->t('Hint: Mouse over the tags to see the ')); ?><i class="icon icon-settings"></i> <?php p($l->t('icon')); ?>.
+			<?php p($l->t('Hint: Mouse over the tags to see the') . ' '); ?><i class="icon icon-settings"></i> <?php p($l->t('icon')); ?>.
 
 		</fieldset>
 		<fieldset>
