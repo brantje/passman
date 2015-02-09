@@ -91,6 +91,7 @@ OC.L10N.register(
     "One time password" : "Senha para uma entrada",
     "OTP" : "OTP",
     "Expires" : "Expira",
+    "Email" : "E-mail",
     "Open link" : "Link aberto",
     "Files & images" : "Arquivos & imagens",
     "One time password settings" : "Configuração de senha para acesso único",

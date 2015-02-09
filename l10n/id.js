@@ -89,6 +89,7 @@ OC.L10N.register(
     "One time password" : "One time password",
     "OTP" : "OTP",
     "Expires" : "Kadaluarsa",
+    "Email" : "Email",
     "Open link" : "Buka tautan",
     "Files & images" : "Berkas & gambar",
     "One time password settings" : "Pengaturan One time password",

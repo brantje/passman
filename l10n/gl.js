@@ -91,6 +91,7 @@ OC.L10N.register(
     "One time password" : "Contrasinal dun só uso",
     "OTP" : "OTP",
     "Expires" : "Caduca",
+    "Email" : "Correo",
     "Open link" : "Abrir ligazón",
     "Files & images" : "Ficheiros e imaxes",
     "One time password settings" : "Axustes do contrasinal dun só uso",

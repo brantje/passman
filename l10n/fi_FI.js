@@ -82,6 +82,7 @@ OC.L10N.register(
     "One time password" : "Kertakäyttösalasana",
     "OTP" : "OTP",
     "Expires" : "Vanhenee",
+    "Email" : "Sähköpostiosoite",
     "Open link" : "Avaa linki",
     "Files & images" : "Tiedostot ja kuvat",
     "One time password settings" : "Kertakäyttösalasanan asetukset",

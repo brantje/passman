@@ -91,6 +91,7 @@ OC.L10N.register(
     "One time password" : "Engangskodeord",
     "OTP" : "EKO",
     "Expires" : "Udløber",
+    "Email" : "E-mail",
     "Open link" : "Åbn link",
     "Files & images" : "Filer & billeder",
     "One time password settings" : "Indstillinger for éngangskodeord",

@@ -91,6 +91,7 @@ OC.L10N.register(
     "One time password" : "Heslo na jedno použitie",
     "OTP" : "OTP",
     "Expires" : "Expiruje",
+    "Email" : "Email",
     "Open link" : "Otvoriť odkaz",
     "Files & images" : "Súbory & obrázky",
     "One time password settings" : "Nastavenie jednorazového hesla",

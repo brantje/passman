@@ -90,6 +90,7 @@ $TRANSLATIONS = array(
 "One time password" => "Одноразовый пароль",
 "OTP" => "OTP",
 "Expires" => "Истекает",
+"Email" => "Email",
 "Open link" => "Открыть ссылку",
 "Files & images" => "Файлы и изображения",
 "One time password settings" => "Настройки одноразового пароля",
