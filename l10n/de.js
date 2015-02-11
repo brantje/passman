@@ -72,7 +72,7 @@ OC.L10N.register(
     "iCloud" : "iCloud",
     "And a lot" : "Und vieles",
     "more" : "mehr",
-    "Loading..." : "Lade...",
+    "Loading..." : "Laden…",
     "Related tags" : "Verwandte Schlagworte",
     "Label" : "Bezeichnung",
     "Required password score" : "Erforderlicher Passwortwert",
