@@ -183,7 +183,7 @@ OC.L10N.register(
     "%n hour::%n hours" : ["%n heure","%n heures"],
     "%n day::%n days" : ["%n jour","%n jours"],
     "Minimal password scope" : "Score minimum",
-    "Override required score" : "Outre-passer le score requis",
+    "Override required score" : "Outrepasser le score requis",
     "Current password scope" : "Score actuel",
     "Password will expire at " : "Le mot de passe expire le",
     "Enter your encryption key. If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Saisir la clef de chiffrement. Si c'est la première fois que vous utilisez Passman, cette clef sera utilisée pour le chiffrement de vos mots de passe",

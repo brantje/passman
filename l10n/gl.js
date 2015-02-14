@@ -2,8 +2,8 @@ OC.L10N.register(
     "passman",
     {
     "Passwords" : "Contrasinais",
-    "A Passman item has been created, modified or deleted" : "Creouse un elemento de Passman, modificouse ou eliminouse",
-    "A Passman item has expired" : "Un elemento de Passman caducou",
+    "A Passman item has been created, modified or deleted" : "Foi creado, modificado ou eliminado un elemento de Passman",
+    "A Passman item has expired" : "Caducou un elemento de Passman",
     "A Passman item has been shared" : "Comparteuse un elemento de Passman",
     "%1$s has been created by %2$s" : "%1$s foi creado por %2$s",
     "You created %1$s" : "Creou %1$s",
