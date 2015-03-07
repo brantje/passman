@@ -277,7 +277,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
       modal: true,
       width: '750px',
       title: 'Settings',
-      height: 545,
+      height: 600,
       position:['center','top+50'],
       open: function(){
        /* $('.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix').remove();*/
@@ -1017,11 +1017,21 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
 
   $scope.changepw = {}
   $scope.changePW = function(){
+
     var  myItems = [];
     var  itemsEncryptedWithNewPw = [];
     var filesToReEncrypt = [];
-
+    $scope.changepwerror = '';
     if($scope.changepw.oldpw && $scope.changepw.newpw  && $scope.changepw.newpwr){
+      if($scope.changepw.newpw  !==  $scope.changepw.newpwr){
+        $scope.status = 'Passwords do not match';
+        return;
+      }
+
+      if($scope.changepw.oldpw != $scope.getEncryptionKey()){
+        $scope.status = 'Incorrect password';
+        return;
+      }
       ItemService.getItems([], false).success(function (data) {
         myItems = myItems.concat(data.items);
         /* Load all deleted items */
@@ -1044,6 +1054,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
 
           }
           if(unEncrupted){
+            $scope.status = 'Encrypting '+ unEncrupted.label;
             var encrypted = $scope.encryptItem(unEncrupted,newpw);
             if(unEncrupted.files){
               filesToReEncrypt = filesToReEncrypt.concat(unEncrupted.files)
@@ -1052,7 +1063,6 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
           }
         });
         if(filesToReEncrypt.length === 0){
-          console.log('No files... wait abit with upload')
           setTimeout(function(){
             uploadBlob();
           },500)
@@ -1073,7 +1083,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
            var file = angular.copy(file);
            file.content = $scope.decryptThis(file.content,curpw);
            file.filename = $scope.decryptThis(file.filename,curpw);
-
+           $scope.status = 'Encrypting file '+ file.filename;
            file.content = $scope.encryptThis(file.content,newpw);
            file.filename = $scope.encryptThis(file.filename,newpw);
             encrypedFiles.push(file);
@@ -1081,12 +1091,14 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
           uploadBlob();
         };
         var uploadBlob = function(){
+          $scope.status = 'Saving new data';
           var updateblob = {
             items: itemsEncryptedWithNewPw,
             files: encrypedFiles
           };
           ItemService.updateall(updateblob).success(function(data){
             if(data.success){
+              OC.Notification.showTimeout("Password change success. Please re-login");
               $('#settingsDialog').dialog('close');
               $scope.lockSession();
             }
@@ -1094,7 +1106,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
         }
       }
     } else {
-      $scope.changepwerror = 'You forgot you fill in some fields'
+      $scope.status = 'You forgot you fill in some fields'
     }
   }
 });

@@ -866,12 +866,13 @@
               </div>
               <div class="col-md-3 pull-right">
                 <h2><?php p($l->t('Change passman password')); ?></h2>
-                <label>Current pw <input ng-model="changepw.oldpw" required></label>
-                <label>New pw <input ng-model="changepw.newpw" required></label>
-                <label>New pw (repeat)<input ng-model="changepw.newpwr" required ng-enter="changePW()"></label>
+                <label><?php p($l->t('Current password')); ?></label> <input ng-model="changepw.oldpw" required>
+                <label><?php p($l->t('New password')); ?></label> <input ng-model="changepw.newpw" required>
+                <label><?php p($l->t('New password (repeat)')); ?></label><input ng-model="changepw.newpwr" required ng-enter="changePW()">
                 <br />
-                <div class="btn btn-success" ng-click="changePW()">Change pw</div><br />
-                {{changepwerror}}
+                <br />
+                <div class="btn btn-success" ng-click="changePW()"><?php p($l->t('Change pw')); ?></div><br />
+                {{status}}
               </div>
             </div>
           </div>
