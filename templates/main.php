@@ -195,10 +195,10 @@
           <tr ng-show="currentItem.email ">
             <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                     style="float: left; margin-right: .3em;">&nbsp;</span>
-              <span><?php p($l->t('E-mail')); ?></span> :
+              <span><?php p($l->t('Email')); ?></span> :
             </td>
             <td>
-              {{currentItem.email}} <a clip-copy="currentItem.email" clip-click="copied('E-mail')" class="link">[<?php p($l->t('Copy')); ?>]</a>
+              {{currentItem.email}} <a clip-copy="currentItem.email" clip-click="copied('Email')" class="link">[<?php p($l->t('Copy')); ?>]</a>
             </td>
           </tr>
           <tr ng-show="currentItem.url ">
@@ -297,7 +297,7 @@
             </div>
             <div class="row">
               <div class="col-xs-12">
-                <label><?php p($l->t('E-mail')); ?></label>
+                <label><?php p($l->t('Email')); ?></label>
                 <input type="text" name="email" ng-model="currentItem.email" autocomplete="off" class="form-control">
               </div>
             </div>
@@ -514,7 +514,7 @@
           </div>
           <div class="col-xs-12 nopadding">
             <input type="file" qrread on-read="parseQR(qrdata)" ng-show="otpType==='image'"/>
-            <label ng-show="otpType==='string'"><?php p($l->t('Enter the 2 factor secret')); ?></label>
+            <label ng-show="otpType==='string'"><?php p($l->t('Enter the two-factor secret')); ?></label>
             <input type="text" ng-model="currentItem.otpsecret.secret" class="otpSecret form-control" ng-show="otpType==='string'"/>
           </div>
         </div>
@@ -603,7 +603,7 @@
                                          autocomplete="off"></div>
           </div>
           <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('E-mail')); ?></div>
+            <div class="col-xs-1 formLabel"><?php p($l->t('Email')); ?></div>
             <div class="col-xs-7"><input type="text" name="email" ng-model="currentItem.email" autocomplete="off"></div>
           </div>
           <div class="row">
@@ -788,7 +788,7 @@
             </div>
             <div class="col-xs-12 nopadding">
               <input type="file" qrread on-read="parseQR(qrdata)" ng-show="otpType==='image'"/>
-              <label ng-show="otpType==='string'"><?php p($l->t('Enter the 2 factor secret')); ?> <input type="text"
+              <label ng-show="otpType==='string'"><?php p($l->t('Enter the two-factor secret')); ?> <input type="text"
                                                                                    ng-model="currentItem.otpsecret.secret"
                                                                                    class="otpSecret"/></label>
             </div>
@@ -896,8 +896,7 @@
         </div>
         <div ng-show="tabActive==3" class="row">
           <div class="col-md-11">
-            <p><?php p($l->t('Here you can indentify weak passwords, we will list the items. List all password with a rating less
-              than')); ?></p>
+            <p><?php p($l->t('Here you can indentify weak passwords, all affected items will be listed. List all passwords with a score less than')); ?></p>
             <input type="text" ng-model="settings.PSC.minStrength"/>
             <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
             <div ng-show="settings.PSC.weakItemList.length > 0">You've got {{settings.PSC.weakItemList.length}} weak passwords</div>
@@ -929,7 +928,7 @@
         </div>
         <div ng-show="tabActive==4" class="row">
           <div class="col-md-11">
-            <p><?php p($l->t('Drag this to your browser bookmarks and click it, when you want to save username / password quickly')); ?></p>
+            <p><?php p($l->t('Drag this to your browser bookmarks and click it, if you want to save username / password quickly')); ?></p>
             <br/>
 
             <p ng-bind-html="bookmarklet"></p>
@@ -940,7 +939,7 @@
             <div><?php p($l->t('Export items as')); ?>
               <select ng-model="exportItemas" ng-init="exportItemas = 'csv'">
                 <option value="csv" selected="selected"><?php p($l->t('Passman CSV'));?></option>
-                <option value="keepasscsv"><?php p($l->t('Keepass CSV'));?></option>
+                <option value="keepasscsv"><?php p($l->t('KeePass CSV'));?></option>
                 <option value="json"><?php p($l->t('Passman JSON'));?></option>
                 <option value="xml"><?php p($l->t('Passman XML'));?></option>
               </select> <button class="btn btn-success" ng-click="exportItemAs(exportItemas)"><?php p($l->t('Export')); ?></button>
@@ -974,8 +973,8 @@
             <div><?php p($l->t('Import type')); ?>
               <select ng-model="importItemas" ng-init="importItemas = 'csv'">
                 <option value="csv" selected="selected"><?php p($l->t('Passman CSV'));?></option>
-                <option value="keepasscsv"><?php p($l->t('Keepass CSV'));?></option>
-                <option value="lastpasscsv"><?php p($l->t('Lastpass CSV'));?></option>
+                <option value="keepasscsv"><?php p($l->t('KeePass CSV'));?></option>
+                <option value="lastpasscsv"><?php p($l->t('LastPass CSV'));?></option>
                 <option value="json"><?php p($l->t('Passman JSON'));?></option>
                 <!--<option value="xml">Passman XML</option> -->
               </select></br>
@@ -1091,7 +1090,7 @@
                 <tr ng-show="showRevision.data.email ">
                   <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                           style="float: left; margin-right: .3em;">&nbsp;</span>
-                    <span><?php p($l->t('E-mail')); ?></span> :
+                    <span><?php p($l->t('Email')); ?></span> :
                   </td>
                   <td>
                     {{showRevision.data.email}}
@@ -1185,7 +1184,7 @@
         </div>
       </div>
       <div ng-show="!userSettings.settings.sharing.shareKeys">
-              <?php p($l->t(' Generating sharing keys, this is a one time thing, please wait.')); ?>
+              <?php p($l->t(' Generating sharing keys. This step is only necessary once, please wait.')); ?>
       </div>
     </div>
   </div>
