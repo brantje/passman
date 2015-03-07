@@ -90,6 +90,13 @@ app.factory('ItemService', ['$http',
           method: 'PATCH'
         });
       },
+      updateall: function (updateblob) {
+        return $http({
+          url: OC.generateUrl('apps/passman/api/v1/updateallitemsandfiles'),
+          data: updateblob,
+          method: 'PATCH'
+        });
+      },
       softDestroy: function (item) {
         item.delete_date = Math.floor(new Date().getTime() / 1000);
         return $http({

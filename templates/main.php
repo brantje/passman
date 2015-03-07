@@ -11,7 +11,6 @@
 \OCP\Util::addscript('passman', 'textAngular-rangy.min');
 \OCP\Util::addscript('passman', 'textAngular.min');
 
-\OCP\Util::addscript('passman', 'ng-click-select');
 \OCP\Util::addscript('passman', 'qrReader/llqrcode');
 \OCP\Util::addscript('passman', 'sha');
 \OCP\Util::addscript('passman', 'func');
@@ -279,7 +278,9 @@
                 <div style="max-width:300px;">
                 <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password"
                        autocomplete="off" class="form-control">
-                <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
+
+                <input ng-show="pwFieldVisible" type="text" name="password" ng-model="currentItem.password" click-select
+                       autocomplete="off" class="form-control">
                   <div style="position: relative; top: -32px; right: 5px; width: 80px; float: right; margin-bottom: -30px;">
                   <span class="icon icon-history" ng-click="generatePW(); usePw();" tooltip="Generate tooltip"></span>
                   <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
@@ -361,7 +362,8 @@
                 <div style="max-width:300px;">
                   <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password"
                          autocomplete="off" class="form-control">
-                  <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
+                  <input ng-show="pwFieldVisible" type="text" name="password" ng-model="currentItem.password"
+                         autocomplete="off" class="form-control">
                   <div style="position: relative; top: -32px; right: 5px; width: 80px; float: right; margin-bottom: -30px;">
                     <span class="icon icon-history" ng-click="generatePW(); usePw();"></span>
                     <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
@@ -463,7 +465,9 @@
                                placeholder="Enter field name"/>
                     </td>
                     <td><input name="customFieldValue" ng-model="newCustomfield.value" type="text"
-                               placeholder="Enter field value"/>
+                               placeholder="Enter field value" ng-if="!newCustomfield.clicktoshow"/>
+                      <input name="customFieldValue" ng-model="newCustomfield.value" type="password"
+                               placeholder="Enter field value" ng-if="newCustomfield.clicktoshow"/>
                     </td>
                     <td><input type="checkbox" ng-model="newCustomfield.clicktoshow"/></td>
                     <td><span ng-click="addCField(newCustomfield)" class="icon-add icon"></span></td>
@@ -855,10 +859,20 @@
         <div class="col-md-12">
           <div ng-show="tabActive==1" class="row">
             <div class="col-md-11">
+              <div class="col-md-4">
               <h2><?php p($l->t('General settings')); ?></h2>
-
-              <label><input type="checkbox" ng-model="userSettings.settings.useImageProxy"><?php p($l->t('Use image proxy on https pages')); ?></label>
-              <label><input type="checkbox" ng-model="userSettings.settings.noFavIcons"><?php p($l->t('Disable favicons')); ?></label>
+                <label><input type="checkbox" ng-model="userSettings.settings.useImageProxy"><?php p($l->t('Use image proxy on https pages')); ?></label>
+                <label><input type="checkbox" ng-model="userSettings.settings.noFavIcons"><?php p($l->t('Disable favicons')); ?></label>
+              </div>
+              <div class="col-md-3 pull-right">
+                <h2><?php p($l->t('Change passman password')); ?></h2>
+                <label>Current pw <input ng-model="changepw.oldpw" required></label>
+                <label>New pw <input ng-model="changepw.newpw" required></label>
+                <label>New pw (repeat)<input ng-model="changepw.newpwr" required ng-enter="changePW()"></label>
+                <br />
+                <div class="btn btn-success" ng-click="changePW()">Change pw</div><br />
+                {{changepwerror}}
+              </div>
             </div>
           </div>
         </div>
@@ -1164,7 +1178,7 @@
 
             <div ng-show="shareSettings.allowShareLink">
               <?php p($l->t('Your share link')); ?>:
-              <input type="text" ng-click-select ng-model="shareSettings.shareUrl" class="shareUrl"/>
+              <input type="text" click-select ng-model="shareSettings.shareUrl" class="shareUrl"/>
             </div>
           </div>
 
@@ -1178,31 +1192,24 @@
   <!-- end sharing -->
 
 
-
-
-</div>
-
-
-<!-- start revision dialog -->
-
-<div id="encryptionKeyDialog" style="display: none;">
-  <p><?php p($l->t('Enter your encryption key.')); ?></p>
-  <p><?php p($l->t('If this if the first time you use Passman, this key will be used for encryption your
+  <div id="encryptionKeyDialog" style="display: none;">
+    <p><?php p($l->t('Enter your encryption key.')); ?></p>
+    <p><?php p($l->t('If this if the first time you use Passman, this key will be used for encryption your
     passwords')); ?></p>
-  <input type="password" id="ecKey" style="width: 150px;" ng-enter="doLogin()"/><br/>
-  <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember"><?php p($l->t('Remember this key ')); ?></label>
-  <select id="rememberTime">
-    <option value="15"><?php p($l->n('%n minute','%n minutes',15)); ?></option>
-    <option value="30"><?php p($l->n('%n minute','%n minutes',30)); ?></option>
-    <option value="60"><?php p($l->n('%n minute','%n minutes',60)); ?></option>
-    <option value="180"><?php p($l->n('%n hour','%n hours',3)); ?></option>
-    <option value="480"><?php p($l->n('%n hour','%n hours',8)); ?></option>
-    <option value="1440"><?php p($l->n('%n day','%n days',1)); ?></option>
-    <option value="10080"><?php p($l->n('%n day','%n days',7)); ?></option>
-    <option value="43200"><?php p($l->n('%n day','%n days',30)); ?></option>
-    <option value="86400"><?php p($l->n('%n day','%n days',60)); ?></option>
-  </select>
-</div>
+    <input type="password" id="ecKey" style="width: 150px;"  ng-enter="doLogin()"/><br/>
+    <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember"><?php p($l->t('Remember this key ')); ?></label>
+    <select id="rememberTime">
+      <option value="15"><?php p($l->n('%n minute','%n minutes',15)); ?></option>
+      <option value="30"><?php p($l->n('%n minute','%n minutes',30)); ?></option>
+      <option value="60"><?php p($l->n('%n minute','%n minutes',60)); ?></option>
+      <option value="180"><?php p($l->n('%n hour','%n hours',3)); ?></option>
+      <option value="480"><?php p($l->n('%n hour','%n hours',8)); ?></option>
+      <option value="1440"><?php p($l->n('%n day','%n days',1)); ?></option>
+      <option value="10080"><?php p($l->n('%n day','%n days',7)); ?></option>
+      <option value="43200"><?php p($l->n('%n day','%n days',30)); ?></option>
+      <option value="86400"><?php p($l->n('%n day','%n days',60)); ?></option>
+    </select>
+  </div>
 
 </div>
 <!-- End appCtrl -->

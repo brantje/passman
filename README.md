@@ -24,9 +24,10 @@ Report issue's using the template: https://github.com/brantje/passman/blob/maste
 - Client side aes password encryption   
 - Option to remember the encryption key in the localstorage.   
 - Password generator with strength indicator   
-- Abillity to add files to an item (usefull for qr codes, serials, ssl keys etc).   
+- Ability to add files to an item (usefull for qr codes, serials, ssl keys etc).   
 - File uploading, files will be encrypted and then uploaded   
-
+- Different vaults (just use another master pw)
+   
 #Screenshots
 Coming soon   
 

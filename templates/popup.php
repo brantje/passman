@@ -7,7 +7,6 @@
 \OCP\Util::addscript('passman', 'jstorage');
 \OCP\Util::addscript('passman', 'bower_components/zxcvbn/zxcvbn-async');
 \OCP\Util::addscript('passman', 'pwgen');
-\OCP\Util::addscript('passman', 'ng-click-select');
 \OCP\Util::addscript('passman', 'qrReader/llqrcode');
 \OCP\Util::addscript('passman', 'sha');
 \OCP\Util::addscript('passman', 'func');
@@ -83,6 +82,37 @@
 											 ng-model="currentItem.email"
 											 autocomplete="off"></div>
 			</div>
+      <div class="row">
+        <div
+          class="col-xs-1 formLabel"><?php p($l->t('Password')); ?></div>
+        <div class="col-xs-4">
+          <input ng-show="!pwFieldVisible" type="password"
+                 name="password" ng-model="currentItem.password"
+                 autocomplete="off">
+          <input ng-show="pwFieldVisible" type="text" click-select
+                 name="password" ng-model="currentItem.password"
+                 autocomplete="off">
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 nopadding">
+					<span class="icon icon-history"
+                ng-click=" $event.preventDefault(); generatePW($evt); usePw();"></span>
+					<span title="Mask/Display the password"
+                class="icon icon-toggle"
+                ng-click="togglePWField()"></span>
+          <a clip-copy="currentItem.password"
+             clip-click="copied('password')"
+             class="ui-icon ui-icon-copy pull-right nomargin icon-copy"></a>
+        </div>
+      </div>
+      <div class="row">
+        <div
+          class="col-xs-1 formLabel"><?php p($l->t('Password (again)')); ?></div>
+        <div class="col-xs-4">
+          <input type="password"
+                 ng-model="currentItem.passwordConfirm"
+                 autocomplete="off">
+        </div>
+      </div>
 			<div class="row">
 				<div class="col-xs-1 formLabel"><?php p($l->t('URL')); ?></div>
 				<div class="col-xs-7"><input type="text" name="url"
@@ -130,11 +160,13 @@
 					<input ng-show="!pwFieldVisible" type="password"
 						   name="password" ng-model="currentItem.password"
 						   autocomplete="off">
-					<span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
+          <input ng-show="pwFieldVisible" type="text" click-select
+						   name="password" ng-model="currentItem.password"
+						   autocomplete="off">
 				</div>
 				<div class="col-xs-3 col-sm-3 col-md-3 nopadding">
 					<span class="icon icon-history"
-						  ng-click="generatePW(); usePw();"></span>
+						  ng-click="$event.preventDefault(); generatePW(); usePw();"></span>
 					<span title="Mask/Display the password"
 						  class="icon icon-toggle"
 						  ng-click="togglePWField()"></span>
@@ -227,7 +259,7 @@
 							<td><input name="customFieldValue"
 									   ng-model="newCustomfield.value"
 									   type="text"
-									   placeholder="Enter field value"/>
+									   placeholder="Enter field value" />
 							</td>
 							<td><input type="checkbox"
 									   ng-model="newCustomfield.clicktoshow"/>
