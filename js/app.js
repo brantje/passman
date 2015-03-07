@@ -500,7 +500,6 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$ti
   };
 
   $scope.showRevisions = function (item) {
-
     $rootScope.$broadcast('showRevisions', item);
   };
 
