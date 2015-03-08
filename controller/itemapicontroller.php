@@ -159,14 +159,14 @@ class ItemApiController extends Controller {
    * @NoAdminRequired
    * @NoCSRFRequired
    */
-  public function massupdate($items,$files) {
+  public function massupdate($items,$files,$revs) {
     /*
 
 
 
     */
     foreach($items as $item){
-      $this->update(
+     $this->update(
         $item['id'],
         $item['account'],
         $item['created'],
@@ -191,6 +191,10 @@ class ItemApiController extends Controller {
       $this->deletefile($file['id']);
       $this->addfile($file['item_id'],$file['filename'],$file['type'],$file['mimetype'],$file['size'],$file['content']);
     }
+    foreach($revs as $revision){
+      $this->revisionController->update($revision);
+    }
+
     $response = array("success"=>true);
     return new JSONResponse($response);
   }

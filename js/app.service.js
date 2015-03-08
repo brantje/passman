@@ -186,6 +186,12 @@ app.factory('RevisionService', ['$http',
           method: 'PUT',
           data: tag
         });
-      }
+      },
+      getAll: function(){
+        return $http({
+          url: OC.generateUrl('apps/passman/api/v1/items/revisions'),
+          method: 'GET'
+        });
+	    }
     };
   }]);

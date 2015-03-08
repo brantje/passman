@@ -952,7 +952,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$ti
   };
 });
 
-app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareService,ItemService) {
+app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareService,ItemService,RevisionService) {
   $scope.settings = {
     PSC: {
       minStrength: 40,
@@ -1068,7 +1068,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
         });
         if(filesToReEncrypt.length === 0){
           setTimeout(function(){
-            uploadBlob();
+			  updateRevisions();
           },500)
         }
         var downloadedFiles = [];
@@ -1092,14 +1092,37 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
            file.filename = $scope.encryptThis(file.filename,newpw);
             encrypedFiles.push(file);
           });
-          uploadBlob();
+			    updateRevisions();
         };
+
+        var updatedRevisions = [];
+        var updateRevisions = function(){
+          RevisionService.getAll().success(function(revisions){
+            angular.forEach(revisions,function(revision){
+              $scope.status = 'Encrypting revision '+ revision.data.label;
+              try{
+                revision.data =  $scope.decryptItem(revision.data,curpw);
+              } catch(e){
+                revision.data = null
+              }
+              if(revision.data !== null){
+                revision.data = $scope.encryptItem(revision.data,newpw);
+                updatedRevisions.push(revision);
+              }
+            });
+            console.log(updatedRevisions)
+            uploadBlob()
+          });
+        };
+
         var uploadBlob = function(){
           $scope.status = 'Saving new data';
           var updateblob = {
             items: itemsEncryptedWithNewPw,
-            files: encrypedFiles
+            files: encrypedFiles,
+            revs: updatedRevisions
           };
+
           ItemService.updateall(updateblob).success(function(data){
             if(data.success){
               OC.Notification.showTimeout("Password change success. Please re-login");

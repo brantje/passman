@@ -46,5 +46,28 @@ class RevisionManager {
     }
     return $rows;
   }
+  public function getAllRevisions($userId){
+    $sql = 'SELECT * from `*PREFIX*passman_revisions` WHERE user_id=? ORDER BY `revision_date` DESC';
+    $query = $this->db->prepareQuery($sql);
+    $query->bindParam(1, $userId, \PDO::PARAM_INT);
+    $result = $query->execute();
+
+    $rows = array();
+    while ($row = $result->fetchRow()) {
+        $row['data'] = json_decode($row['data']);
+        array_push($rows,$row);
+    }
+    return $rows;
+  }
+
+  public function update($revision){
+    $revision['data'] = json_encode($revision['data']);
+    $sql = 'UPDATE `*PREFIX*passman_revisions` SET `data`= ? WHERE item_id=?';
+    $query = $this->db->prepareQuery($sql);
+    $query->bindParam(1, $revision['data'], \PDO::PARAM_STR);
+    $query->bindParam(2, $revision['item_id'], \PDO::PARAM_INT);
+    $result = $query->execute();
+    return $result;
+  }
 }
 
