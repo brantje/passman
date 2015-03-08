@@ -111,7 +111,7 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
 
       for (i = 0; i < data.items.length; i++) {
         item = data.items[i];
-		if(!$window.firstRun){
+		if(!$window.firstRun && item.password !== ''){
 			try{
 			  canDecrypt = ($scope.decryptThis(item.password)) ? true : false;
 			  items.push(item);
