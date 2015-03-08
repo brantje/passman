@@ -122,10 +122,12 @@ $(document).ready(function () {
         if (i == 2) {
           if ($('#frEncKey').val() != '') {
             angular.element('#app').scope().setEncryptionKey($('#frEncKey').val());
+            angular.element('#app').scope().loadItems([],false);
+
           } else {
-            OC.Notification.showTimeout( OC.L10N.translate('passman','Please set your encryption key') );
-            return;
-          }
+			  OC.Notification.showTimeout( OC.L10N.translate('passman','Please set your encryption key') );
+			  return;
+		  }
         }
         $("#" + stepName).hide();
         $("#step" + (i + 1)).show();

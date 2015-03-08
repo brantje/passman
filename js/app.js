@@ -111,12 +111,17 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
 
       for (i = 0; i < data.items.length; i++) {
         item = data.items[i];
-        try{
-          canDecrypt = ($scope.decryptThis(item.password)) ? true : false;
-          items.push(item);
-        } catch(e){
-          canDecrypt = false;
-        }
+		if(!$window.firstRun){
+			try{
+			  canDecrypt = ($scope.decryptThis(item.password)) ? true : false;
+			  items.push(item);
+			} catch(e){
+			  canDecrypt = false;
+			}
+		} else {
+			items.push(item);
+			canDecrypt = true;
+		}
         if(canDecrypt){
           tags = data.items[i].tags;
           if (tags) {
