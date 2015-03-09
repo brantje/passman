@@ -177,7 +177,6 @@ OC.L10N.register(
     "Your share link" : "Ваша ссылка доступа",
     " Generating sharing keys. This step is only necessary once, please wait." : "Создание общих ключей. Этот шаг необходимо пройти только раз, пожалуйста подождите.",
     "Enter your encryption key." : "Укажите ключ шифрования.",
-    "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Если вы впервые используете Passman, то этот ключ будет использован для шифрования ваших паролей",
     "Remember this key " : "Запомнить этот ключ",
     "_%n minute_::_%n minutes_" : ["%n минута","%n минуты","%n минут"],
     "_%n hour_::_%n hours_" : ["%n час","%n часа","%n часов"],

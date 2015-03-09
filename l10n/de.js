@@ -177,7 +177,6 @@ OC.L10N.register(
     "Your share link" : "Dein geteilter Link",
     " Generating sharing keys. This step is only necessary once, please wait." : "Die Schlüssel für das Teilen werden generiert. Dieser Schritt ist nur einmal notwendig, bitte warten.",
     "Enter your encryption key." : "Deinen Verschlüsselungsschlüssel eingeben",
-    "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Wenn Du Passman zum ersten Mal benutzt, wird dieser Schlüssel zur Verschlüsselung Deiner Passwörter verwendet",
     "Remember this key " : "Merke Dir diesen Schlüssel",
     "_%n minute_::_%n minutes_" : ["%n Minute","%n Minuten"],
     "_%n hour_::_%n hours_" : ["%n Stunde","%n Stunden"],

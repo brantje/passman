@@ -177,7 +177,6 @@ OC.L10N.register(
     "Your share link" : "Din lenke for deling",
     " Generating sharing keys. This step is only necessary once, please wait." : "Genererer delte nøkler. Dette trinnet kreves bare én gang. Vennligst vent.",
     "Enter your encryption key." : "Legg inn krypteringsnøkkelen din.",
-    "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Hvis dette er første gang du bruker Passman, vil denne nøkkelen bli brukt til å kryptere passordene dine",
     "Remember this key " : "Husk denne nøkkelen",
     "_%n minute_::_%n minutes_" : ["%n minutt","%n minutter"],
     "_%n hour_::_%n hours_" : ["%n time","%n timer"],

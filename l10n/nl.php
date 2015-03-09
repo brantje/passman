@@ -176,7 +176,6 @@ $TRANSLATIONS = array(
 "Your share link" => "U deelt link",
 " Generating sharing keys. This step is only necessary once, please wait." => "Genereren sleutels voor het delen, dit gebeurt eenmalig, even geduld.",
 "Enter your encryption key." => "Geef uw encryptiesleutel op.",
-"If this is the first time you use Passman, this key will be used for encryption of your passwords" => "Als dit de eerste keer is dat u Passman gebruikt, wordt deze sleutel gebruikt voor uw\nwachtwoorden",
 "Remember this key " => "Onthoud deze sleutel",
 "_%n minute_::_%n minutes_" => array("%n minuut","%n minuten"),
 "_%n hour_::_%n hours_" => array("%n uur","%n uren"),

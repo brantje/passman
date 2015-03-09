@@ -175,7 +175,6 @@
     "Your share link" : "Ihr geteilter Link",
     " Generating sharing keys. This step is only necessary once, please wait." : "Die Schlüssel für das Teilen werden generiert. Dieser Schritt ist nur einmal notwendig, bitte warten.",
     "Enter your encryption key." : "Ihren Verschlüsselungsschlüssel eingeben",
-    "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Wenn Sie Passman zum ersten Mal benutzen, wird dieser Schlüssel zur Verschlüsselung Ihrer Passwörter verwendet",
     "Remember this key " : "Merken Sie sich diesen Schlüssel",
     "_%n minute_::_%n minutes_" : ["%n Minute","%n Minuten"],
     "_%n hour_::_%n hours_" : ["%n Stunde","%n Stunden"],

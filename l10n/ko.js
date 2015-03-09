@@ -177,7 +177,6 @@ OC.L10N.register(
     "Your share link" : "내 공유 링크",
     " Generating sharing keys. This step is only necessary once, please wait." : "공유 키를 만들고 있습니다. 이 작업은 한 번만 실행됩니다. 기다려 주십시오.",
     "Enter your encryption key." : "암호화 키를 입력하십시오.",
-    "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Passman을 최초로 사용한다면, 이 키는 입력한 암호를 암호화하는 데 사용됩니다.",
     "Remember this key " : "이 키 기억하기 ",
     "_%n minute_::_%n minutes_" : ["%n분"],
     "_%n hour_::_%n hours_" : ["%n시간"],

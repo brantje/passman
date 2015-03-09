@@ -176,7 +176,6 @@ $TRANSLATIONS = array(
 "Your share link" => "Váš odkaz",
 " Generating sharing keys. This step is only necessary once, please wait." => "Generovanie kľúčov zdieľania. Tento krok je nutný iba raz, počkajte prosím.",
 "Enter your encryption key." => "Zadajte svoj šifrovací kľúč.",
-"If this is the first time you use Passman, this key will be used for encryption of your passwords" => "Ak je to prvýkrát, čo používate Passman, bude tento kľúč použitý na šifrovanie vašich hesiel",
 "Remember this key " => "Zapamätať si tento kľúč",
 "_%n minute_::_%n minutes_" => array("%n minútu","%n minút","%n minút"),
 "_%n hour_::_%n hours_" => array("%n hodina","%n hodiny","%n hodín"),

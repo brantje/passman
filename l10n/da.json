@@ -175,7 +175,6 @@
     "Your share link" : "Dit dele link",
     " Generating sharing keys. This step is only necessary once, please wait." : "Opretter dele nøgler, dette skal kun udføres én gang, vent venligst.",
     "Enter your encryption key." : "Angiv din krypteringsnøgle",
-    "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Hvis dette er første gang du ser Passman, vil denne nøgle blive brugt til at kryptere dine kodeord",
     "Remember this key " : "Husk denne nøgle",
     "_%n minute_::_%n minutes_" : ["%n minut","%n minutter"],
     "_%n hour_::_%n hours_" : ["%n time","%n timer"],
