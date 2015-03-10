@@ -140,6 +140,8 @@ OC.L10N.register(
     "General settings" : "Paramètres généraux",
     "Use image proxy on https pages" : "Utiliser le proxy image pour les pages https",
     "Disable favicons" : "Désactiver les favicons",
+    "Current password" : "Mot de passe actuel",
+    "New password" : "Nouveau mot de passe",
     "Key size" : "Taille de clef",
     "Low" : "Bas",
     "Medium" : "Moyen",

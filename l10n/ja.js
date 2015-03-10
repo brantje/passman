@@ -106,6 +106,8 @@ OC.L10N.register(
     "General settings" : "一般設定",
     "Use image proxy on https pages" : "httpsのページで画像プロキシを使用する",
     "Disable favicons" : "faviconを無効に",
+    "Current password" : "現在のパスワード",
+    "New password" : "新しいパスワード",
     "Key size" : "鍵サイズ",
     "Low" : "低い",
     "Medium" : "中間",

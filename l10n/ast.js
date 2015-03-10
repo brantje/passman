@@ -138,6 +138,8 @@ OC.L10N.register(
     "General settings" : "Axustes xenerales",
     "Use image proxy on https pages" : "Usa'l proxy d'imáxenes nes páxines https",
     "Disable favicons" : "Deshabilitar favicons",
+    "Current password" : "Contraseña actual",
+    "New password" : "Contraseña nueva",
     "Key size" : "Tamañu de la clave",
     "Low" : "Baxu",
     "Medium" : "Mediu",

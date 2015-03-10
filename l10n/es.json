@@ -138,6 +138,8 @@
     "General settings" : "Ajustes generales",
     "Use image proxy on https pages" : "Usar \"proxy\" de imagen en páginas https",
     "Disable favicons" : "Deshabilitar favicons",
+    "Current password" : "Contraseña actual",
+    "New password" : "Nueva contraseña",
     "Key size" : "Tamaño de la clave",
     "Low" : "Bajo",
     "Medium" : "Medio",

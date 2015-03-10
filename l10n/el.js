@@ -129,6 +129,8 @@ OC.L10N.register(
     "General settings" : "Γενικές ρυθμίσεις",
     "Use image proxy on https pages" : "Χρήση ενδιάμεσου διακομιστή εικόνων σε σελίδες https",
     "Disable favicons" : "Απενεργοποίηση favicons",
+    "Current password" : "Τρέχων συνθηματικό",
+    "New password" : "Νέο συνθηματικό",
     "Key size" : "Μέγεθος κλειδιού",
     "Low" : "Μικρή",
     "Medium" : "Μέτρια",

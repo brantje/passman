@@ -140,6 +140,8 @@ OC.L10N.register(
     "General settings" : "Všeobecné nastavenia",
     "Use image proxy on https pages" : "Používať proxy na stránkach https",
     "Disable favicons" : "Vypnúť favikony",
+    "Current password" : "Aktuálne heslo",
+    "New password" : "Nové heslo",
     "Key size" : "Dĺžka kľúča",
     "Low" : "Nízka",
     "Medium" : "Stredná",
