@@ -41,6 +41,7 @@ $TRANSLATIONS = array(
 "Password" => "Salasana",
 "Password generation & password generation settings." => "Salasanan generointi ja salasanan generoinnin asetukset.",
 "If you require a more complex password, this is the tab you need" => "Jos tarvitset monimutkaisen salasana, tämä on kaipaamasi välilehti",
+"It has a built-in password generator with many settings." => "Se sisältää sisäänrakennetun generaattorin useiden asetuksien kera.",
 "Files" => "Tiedostot",
 "You can upload files with a maximum of 5 MB." => "Voit lähettää korkeintaan viiden megatavun tiedostoja.",
 "Files are first encrypted with your encryption key and then sent to the server." => "Tiedostot salataan ensin salausavaimellasi, jonka jälkeen tiedostot lähetetään palvelimelle.",

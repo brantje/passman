@@ -171,6 +171,7 @@ OC.L10N.register(
     "Your share link" : "Tautan berbagi Anda",
     " Generating sharing keys. This step is only necessary once, please wait." : "Menghasilkan kunci berbagi. Langkah ini hanya diperlukan sekali, silakan tunggu.",
     "Enter your encryption key." : "Masukkan kunci enkripsi Anda.",
+    "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Jika ini adalah pertama kali Anda menggunakan Passman, kunci ini akan digunakan untuk enkripsi kata sandi Anda",
     "Remember this key " : "Ingat kunci ini",
     "_%n minute_::_%n minutes_" : ["%n menit"],
     "_%n hour_::_%n hours_" : ["%n jam"],

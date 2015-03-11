@@ -178,6 +178,7 @@ $TRANSLATIONS = array(
 "Your share link" => "Su enlace compartido",
 " Generating sharing keys. This step is only necessary once, please wait." => "Generando claves compartidas, esto se hace sólo una vez. Espere, por favor.",
 "Enter your encryption key." => "Introduzca su clave de encriptación.",
+"If this is the first time you use Passman, this key will be used for encryption of your passwords" => "Si ésta es la primera vez que usa Passman, esta clave se usará para encriptar sus contraseñas",
 "Remember this key " => "Recuerde esta clave",
 "_%n minute_::_%n minutes_" => array("%n minuto","%n minutos"),
 "_%n hour_::_%n hours_" => array("%n hora","%n horas"),

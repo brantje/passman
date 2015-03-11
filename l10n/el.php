@@ -156,6 +156,7 @@ $TRANSLATIONS = array(
 "Create share link" => "Δημιουργία συνδέσμου διαμοιρασμού",
 "Your share link" => "Ο σύνδεσμος διαμοιρασμού σας",
 "Enter your encryption key." => "Εισάγετε το κρυπτογραφικό κλειδί σας",
+"If this is the first time you use Passman, this key will be used for encryption of your passwords" => "Εάν αυτή είναι η πρώτη φορά που χρησιμοποιείτε την εφαρμογή διαχείρισης κωδικών πρόσβασης, αυτό το κλειδί θα χρησιμοποιηθεί για την κρυπτογράφηση των κωδικών πρόσβασής σας",
 "Remember this key " => "Αποθήκευση αυτού του κλειδιού",
 "_%n minute_::_%n minutes_" => array("%n λεπτό","%n λεπτά"),
 "_%n hour_::_%n hours_" => array("%n ώρα","%n ώρες"),
