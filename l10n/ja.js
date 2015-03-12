@@ -108,6 +108,7 @@ OC.L10N.register(
     "Disable favicons" : "faviconを無効に",
     "Current password" : "現在のパスワード",
     "New password" : "新しいパスワード",
+    "Change pw" : "パスワードを変更",
     "Key size" : "鍵サイズ",
     "Low" : "低い",
     "Medium" : "中間",
