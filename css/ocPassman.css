@@ -93,7 +93,8 @@ ul#tagList {
 	padding-bottom: 15px;
 	background: #f8f8f8;
 	width: 241px;
-    height: 70px;
+  margin-left: 10px;
+  /*height: 70px;*/
 }
 
 /*.tag {

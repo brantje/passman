@@ -43,9 +43,11 @@
         <auto-complete source="loadTags($query)" min-length="1"></auto-complete>
       </tags-input>
     </div>
+
+
     <span style="margin-left: 5px; font-weight: bold;"><?php p($l->t('Related tags')); ?></span>
     <ul id="tagList">
-      <li class="tag" ng-click="selectTag(tag)" ng-repeat="tag in tags" ng-mouseover="mouseOver = true"
+      <li class="tag" ng-click="selectTag(tag)" ng-repeat="tag in tags" ng-mouseover="mouseOver = true" ng-if="arrayObjectIndexOf(selectedTags,tag) === -1"
           ng-mouseleave="mouseOver = false">
         <span class="value">{{tag}}</span>
         <i ng-show="mouseOver" ng-click="tagSettings(tag,$event);" class="icon icon-settings button"></i>

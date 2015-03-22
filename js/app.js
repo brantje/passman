@@ -99,6 +99,9 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   if($location.hash().match(/selectItem=([0-9]+)/)){
     $scope.selectThisItem = $location.hash().match(/selectItem=([0-9]+)/)[1];
   }
+  $scope.arrayObjectIndexOf = function(arr, obj) {
+    return angular.toJson(arr).indexOf(obj)
+  };
   $scope.loadItems = function (tags, showDeleted) {
     var idx = tags.indexOf('is:Deleted');
     if (idx >= 0) {
