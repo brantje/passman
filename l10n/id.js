@@ -132,6 +132,8 @@ OC.L10N.register(
     "General settings" : "Pengaturan umum",
     "Use image proxy on https pages" : "Gunakan gambar proksi pada halaman https",
     "Disable favicons" : "Nonaktifkan favicon",
+    "Current password" : "Sandi saat ini",
+    "New password" : "Sandi baru",
     "Key size" : "Ukuran kunci",
     "Low" : "Rendah",
     "Medium" : "Sedang",

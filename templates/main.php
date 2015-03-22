@@ -594,10 +594,10 @@
                 <label><input type="checkbox" ng-model="userSettings.settings.noFavIcons"><?php p($l->t('Disable favicons')); ?></label>
               </div>
               <div class="col-md-3 pull-right">
-                <h2><?php p($l->t('Change passman password')); ?></h2>
-                <label><?php p($l->t('Current password')); ?></label> <input class="form-control" ng-model="changepw.oldpw" type="password" required>
-                <label><?php p($l->t('New password')); ?></label> <input ng-model="changepw.newpw" type="password" required>
-                <label><?php p($l->t('New password (repeat)')); ?></label><input ng-model="changepw.newpwr" type="password" required ng-enter="changePW()">
+                <h2><?php p($l->t('Change Passman password')); ?></h2>
+                <label><?php p($l->t('Current password')); ?></label> <input ng-model="changepw.oldpw" required>
+                <label><?php p($l->t('New password')); ?></label> <input ng-model="changepw.newpw" required>
+                <label><?php p($l->t('New password (repeat)')); ?></label><input ng-model="changepw.newpwr" required ng-enter="changePW()">
                 <br />
                 <br />
                 <div class="btn btn-success" ng-click="changePW()"><?php p($l->t('Change pw')); ?></div><br />
@@ -923,8 +923,7 @@
 
   <div id="encryptionKeyDialog" style="display: none;">
     <p><?php p($l->t('Enter your encryption key.')); ?></p>
-    <p><?php p($l->t('If this if the first time you use Passman, this key will be used for encryption your
-    passwords')); ?></p>
+    <p><?php p($l->t('If this is the first time you use Passman, this key will be used for encryption of your passwords')); ?></p>
     <input type="password" id="ecKey" style="width: 150px;"  ng-enter="doLogin()"/><br/>
     <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember"><?php p($l->t('Remember this key ')); ?></label>
     <select id="rememberTime">
