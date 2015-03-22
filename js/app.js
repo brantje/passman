@@ -1110,7 +1110,6 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
                 updatedRevisions.push(revision);
               }
             });
-            console.log(updatedRevisions)
             uploadBlob()
           });
         };

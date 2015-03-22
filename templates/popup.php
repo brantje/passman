@@ -144,7 +144,7 @@
 		<div class="row nomargin" ng-show="tabActive==2">
 			<div class="row">
 				<div
-					class="col-xs-12 formLabel"><?php p($l->t('Minimal password scope')); ?>
+					class="col-xs-12 formLabel"><?php p($l->t('Minimal password score')); ?>
 					: {{requiredPWStrength}}
 				</div>
 				<div class="col-xs-12">
@@ -177,7 +177,7 @@
 			</div>
 			<div class="row" ng-show="currentPWInfo">
 				<div class="col-xs-11">
-					<span><?php p($l->t('Current password scope')); ?>:</span>
+					<span><?php p($l->t('Current password score')); ?>:</span>
 					{{currentPWInfo.entropy}}<br/>
 					<span><?php p($l->t('Crack time')); ?>:</span><br>
 					<small>{{currentPWInfo.crack_time | secondstohuman}}</small>
