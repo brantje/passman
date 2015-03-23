@@ -112,8 +112,6 @@ OC.L10N.register(
     "Type" : "Tyyppi",
     "Issuer" : "Myöntäjä",
     "Secret" : "Salaisuus",
-    "Cancel" : "Peruuta",
-    "Save" : "Tallenna",
     "Sharing" : "Jakaminen",
     "Tools" : "Työkalut",
     "Bookmarklet" : "Kirjanmerkitsin",

@@ -128,8 +128,6 @@ OC.L10N.register(
     "Type" : "Triba",
     "Issuer" : "Emisor",
     "Secret" : "Secretu",
-    "Cancel" : "Encaboxar",
-    "Save" : "Guardar",
     "Sharing" : "Compartiendo",
     "Tools" : "Ferramientes",
     "Bookmarklet" : "Marcador de JavaScript",
