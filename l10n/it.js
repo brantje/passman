@@ -180,7 +180,7 @@ OC.L10N.register(
     "Your share link" : "Il tuo collegamento di condivisione",
     " Generating sharing keys. This step is only necessary once, please wait." : "Generazione delle chiavi di condivisione. Questa operazione è eseguita una sola volta, attendi.",
     "Enter your encryption key." : "Digita la chiave di cifratura.",
-    "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Se questa è la prima volta che usi Passman, questa chiave sarà utilizzata per la cifratura\ndelle tue password",
+    "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Se questa è la prima volta che usi Passman, questa chiave sarà utilizzata per la cifratura delle tue password",
     "Remember this key " : "Ricorda questa chiave",
     "_%n minute_::_%n minutes_" : ["%n minuto","%n minuti"],
     "_%n hour_::_%n hours_" : ["%n ora","%n ore"],
