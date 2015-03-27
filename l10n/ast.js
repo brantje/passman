@@ -148,9 +148,6 @@ OC.L10N.register(
     "edit" : "editar",
     "by" : "por",
     "Name" : "Nome",
-    "_%n minute_::_%n minutes_" : ["",""],
-    "_%n hour_::_%n hours_" : ["",""],
-    "_%n day_::_%n days_" : ["",""],
     "Minutes" : "Minutos",
     "Hours" : "Hores",
     "Day" : "Día"
