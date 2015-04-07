@@ -180,7 +180,7 @@
     "Enter your encryption key." : "Унесите ваш кључ за шифровање",
     "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Ако је ово први пут да користите Passman, овај кључ ће бити кориштен за шифровање ваших лозинки",
     "Remember this key " : "Запамти овај кључ",
-    "_%n minute_::_%n minutes_" : ["%n минута","%n минуте","%n минута"],
+    "_%n minute_::_%n minutes_" : ["%n минут","%n минута","%n минута"],
     "_%n hour_::_%n hours_" : ["%n сат","%n сата","%n сати"],
     "_%n day_::_%n days_" : ["%n дан","%n дана","%n дана"],
     "Override required score" : "Прескочите тражену оцену",
