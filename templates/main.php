@@ -142,7 +142,7 @@
               <span><?php p($l->t('Label')); ?></span>:
             </td>
             <td>
-              {{currentItem.label}} <a clip-copy="currentItem.label" clip-click="copied('label')" class="link">[<?php p($l->t('Copy')); ?>]</a>
+              {{currentItem.label}} <a clip-copy="currentItem.label" clip-click="copied('label')" class="link" ng-if="hasFlash">[<?php p($l->t('Copy')); ?>]</a>
             </td>
           </tr>
           <tr ng-show="currentItem.description">
@@ -152,7 +152,7 @@
             </td>
             <td>
               <div ng-bind-html="currentItem.description  | to_trusted" class="description"></div>
-              <a clip-copy="currentItem.description" clip-click="copied('description')" class="link">[<?php p($l->t('Copy')); ?>]</a>
+              <a clip-copy="currentItem.description" clip-click="copied('description')" class="link" ng-if="hasFlash">[<?php p($l->t('Copy')); ?>]</a>
             </td>
           </tr>
           <tr ng-show="currentItem.account ">
@@ -162,18 +162,18 @@
             </td>
             <td>
               {{currentItem.account}} <a clip-copy="currentItem.account" clip-click="copied('account')"
-                                         class="link">[<?php p($l->t('Copy')); ?>]</a>
+                                         class="link" ng-if="hasFlash">[<?php p($l->t('Copy')); ?>]</a>
             </td>
           </tr>
           <tr ng-show="currentItem.password ">
-            <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+            <td style="vertical-align: middle !important;" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                     style="float: left; margin-right: .3em;">&nbsp;</span>
               <span><?php p($l->t('Password')); ?></span> :
             </td>
             <td>
               <span pw="currentItem.password" toggle-text-stars></span> <a clip-copy="currentItem.password"
                                                                            clip-click="copied('password')"
-                                                                           class="link">[<?php p($l->t('Copy')); ?>]</a>
+                                                                           class="link" ng-if="hasFlash">[<?php p($l->t('Copy')); ?>]</a>
             </td>
           </tr>
           <tr ng-if="currentItem.otpsecret ">
