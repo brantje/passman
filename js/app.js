@@ -940,6 +940,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$ti
           if (data.success) {
             $scope.errors = [];
             unEncryptedItem.expire_time = data.success.expire_time;
+            unEncryptedItem.changed = data.success.changed;
             $scope.$parent.currentItem = data.success;
             $scope.closeDialog();
           }

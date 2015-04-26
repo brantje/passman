@@ -206,11 +206,29 @@
           <tr ng-show="currentItem.url ">
             <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                     style="float: left; margin-right: .3em;">&nbsp;</span>
-              <span>URL</span> :
+              <span><?php p($l->t('URL')); ?></span> :
             </td>
             <td>
               {{currentItem.url}} <a clip-copy="currentItem.url" clip-click="copied('URL')" class="link">[<?php p($l->t('Copy')); ?>]</a> <a
                   make-url url="currentItem.url" class="link" target="_blank">[<?php p($l->t('Open link')); ?>]</a>
+            </td>
+          </tr>
+		  <tr ng-show="currentItem.created ">
+            <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                    style="float: left; margin-right: .3em;">&nbsp;</span>
+              <span><?php p($l->t('Created')); ?></span> :
+            </td>
+            <td>
+              {{currentItem.created | phpTime}}
+            </td>
+          </tr>
+		  <tr ng-show="currentItem.changed ">
+            <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                    style="float: left; margin-right: .3em;">&nbsp;</span>
+              <span><?php p($l->t('Last changed')); ?></span> :
+            </td>
+            <td>
+              {{currentItem.changed | phpTime}}
             </td>
           </tr>
           <tr ng-show="currentItem.files.length > 0 && currentItem.files">

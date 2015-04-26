@@ -224,6 +224,7 @@ class ItemApiController extends Controller {
     $item['url'] = $url;
     $item['otpsecret'] = $otpsecret; $this->params('otpsecret');
 
+
     $maxRenewalPeriod = 0;
     if (empty($label)) {
       array_push($item['label'], 'Label is mandatory');
@@ -269,7 +270,7 @@ class ItemApiController extends Controller {
       $result['success'] = $this->ItemBusinessLayer->update($item);
       $this->revisionController->save($item['id'],json_encode($curItem));
 ;
-      $remoteUrl = \OCP\Util::linkToRoute('passman.page.index').'#selectItem='. $item['id'];
+      $remoteUrl = \OC::$server->getURLGenerator()->linkToRoute('passman.page.index').'#selectItem='. $item['id']; //\OCP\Util::linkToRoute().;
       $self = ($curItem['user_id'] == $this->userId) ? '_self' : '';
       if(!$skipNotifications){
         if(!$restoredRevision && !$isDeleted &&!$isRecovered){

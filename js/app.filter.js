@@ -1,3 +1,15 @@
+app.filter('phpTime', function($filter)
+{
+	return function(input)
+	{
+		if(input == null){ return ""; }
+
+		var _date = $filter('date')(new Date(input*1000), 'dd-mm-yyyy H:mm:ss');
+
+		return _date.toUpperCase();
+
+	};
+});
 
 app.filter('secondstohuman', function() {
   return function(seconds,shortNotation) {
