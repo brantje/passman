@@ -120,6 +120,11 @@
 				<default>0</default>
 			</field>
 			<field>
+				<name>changed</name>
+				<type>bigint</type>
+				<default>0</default>
+			</field>
+			<field>
 				<name>password</name>
 				<type>clob</type>
 			</field>
