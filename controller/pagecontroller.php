@@ -100,6 +100,11 @@ class PageController extends Controller {
     $result['settings'] = json_decode(\OCP\CONFIG::getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',$default));
     return new JSONResponse($result);
   }
+	
+  /**
+  * @NoAdminRequired
+  * @NoCSRFRequired
+  */
   public function savesettings($settings){
     $result = \OCP\CONFIG::setUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',json_encode($settings));
 
