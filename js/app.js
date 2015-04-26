@@ -114,9 +114,9 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
 
       for (i = 0; i < data.items.length; i++) {
         item = data.items[i];
-		if(!$window.firstRun && item.password !== ''){
+		if(!$window.firstRun){
 			try{
-			  canDecrypt = ($scope.decryptThis(item.password)) ? true : false;
+			  canDecrypt = ($scope.decryptItem(item)) ? true : false;
 			  items.push(item);
 			} catch(e){
 			  canDecrypt = false;
@@ -979,7 +979,6 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
           try{
             pwd = zxcvbn($scope.decryptThis(tmp.password));
             if (pwd.entropy < $scope.settings.PSC.minStrength) {
-              console.log(pwd);
               tmp.score = pwd.entropy;
               tmp.password = pwd.password;
               tmp.crack_time_display = pwd.crack_time_display;
@@ -1016,7 +1015,6 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     if(!$scope.shareSettingsLoaded){
       $scope.shareSettingsLoaded = true;
     } else {
-      console.log($scope.userSettings)
       settingsService.saveSettings($scope.userSettings);
       /** Settings have changed, if key size changed, generate new key pairs?? */
     }
@@ -1165,7 +1163,6 @@ app.controller('exportCtrl', function($scope,ItemService){
         angular.forEach($scope.selectedExportFields,function(selectedField){
           var lowerCase = selectedField.prop;
           var value = item[lowerCase];
-          console.log(lowerCase,value)
           exportItem.push(value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " "));
         });
         exportArr.push(exportItem);/*
@@ -1623,7 +1620,6 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
         }
         tmpArr.push(tmpItem);
       }
-      console.log(tmpArr);
       $scope.fileContent = JSON.stringify(tmpArr);
       importAsJson();
     };
