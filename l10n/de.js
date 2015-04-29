@@ -98,6 +98,8 @@ OC.L10N.register(
     "Email" : "E-Mail",
     "URL" : "URL",
     "Open link" : "Link öffnen",
+    "Created" : "Erstellt",
+    "Last changed" : "Letzte Änderung",
     "Files & images" : "Dateien & Bilder",
     "One time password settings" : "Einmalpasswort-Einstellungen",
     "OTP settings" : "Einmalpasswort-Einstellungen",
