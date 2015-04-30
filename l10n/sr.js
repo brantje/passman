@@ -20,7 +20,7 @@ OC.L10N.register(
     "The password of %1$s has expired, renew it now." : "Лозинка %1$s је истекла, обновите је одмах.",
     "%s has been shared" : "%s је био дељен",
     "Welcome" : "Добродошли",
-    "Welcome to Passman, the password manager for ownCloud!" : "Добродошли у Пасман, менаџер лозинки за ОунКлауд",
+    "Welcome to Passman, the password manager for ownCloud!" : "Добродошли у Пасман, менаџер лозинки за оунКлауд!",
     "In the next steps you will learn how to use it." : "У следећих неколико корака научићете како да га користите.",
     "Tags" : "Ознаке",
     "These are your example tags." : "Ово су примери ознака.",
