@@ -8,6 +8,7 @@ $TRANSLATIONS = array(
 "You created %1\$s" => "Sie haben %1\$s erstellt",
 "%1\$s has been updated by %2\$s" => "%1\$s wurde durch %2\$s aktualisiert",
 "You changed %1\$s" => "Sie haben %1\$s geändert",
+"%2\$s has revised %1\$s to the revision of %3\$s" => "%2\$s hat %1\$s auf die Revision %3\$s revidiert",
 "You reverted %1\$s back to the revision of %3\$s" => "Sie haben %1\$s auf die Revision %3\$s zurück gesetzt",
 "%1\$s has been deleted by %2\$s" => "%1\$s wurde durch %2\$s gelöscht",
 "You deleted %1\$s" => "Sie haben %1\$s gelöscht",
