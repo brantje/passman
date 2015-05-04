@@ -180,9 +180,9 @@ $TRANSLATIONS = array(
 "Enter your encryption key." => "Укажите ключ шифрования.",
 "If this is the first time you use Passman, this key will be used for encryption of your passwords" => "Если вы впервые используете Passman, то этот ключ будет использован для шифрования ваших паролей",
 "Remember this key " => "Запомнить этот ключ",
-"_%n minute_::_%n minutes_" => array("%n минута","%n минуты","%n минут"),
-"_%n hour_::_%n hours_" => array("%n час","%n часа","%n часов"),
-"_%n day_::_%n days_" => array("%n день","%n дня","%n дней"),
+"_%n minute_::_%n minutes_" => array("%n минута","%n минуты","%n минут","%n минут"),
+"_%n hour_::_%n hours_" => array("%n час","%n часа","%n часов","%n часов"),
+"_%n day_::_%n days_" => array("%n день","%n дня","%n дней","%n дней"),
 "Override required score" => "Переопределить требуемую оценку надежности пароля",
 "Password will expire at " => "Пароль истекает",
 "Enter your encryption key. If this is the first time you use Passman, this key will be used for encryption of your passwords" => "Введите ваш ключ шифрования. Если вы впервые используете Passman, то этот ключ будет использоваться для шифрования ваших паролей",
@@ -191,4 +191,4 @@ $TRANSLATIONS = array(
 "Day" => "День",
 "Days" => "Дни"
 );
-$PLURAL_FORMS = "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);";
+$PLURAL_FORMS = "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);";
