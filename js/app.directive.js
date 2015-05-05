@@ -3,13 +3,7 @@ app.directive('clickSelect', function () {
     restrict: 'A',
     link: function (scope, element, attrs) {
       element.on('click', function () {
-		    try{
-          this.select();
-        } catch(e){
-          if(e.toString().indexOf('this.select is not a function')){
-              console.log(this)
-          }
-        }
+        this.select();
       });
     }
   };
@@ -133,10 +127,7 @@ app.directive('toggleTextStars', ['$compile',
       link: function (scope, element) {
         scope.curPW = '******';
         scope.hSText = 'Show';
-        var el = angular.element('<span>' +
-        '<span ng-if="!pwVisible">{{curPW}}</span> ' +
-        '<span ng-if="pwVisible"><input type="text" click-select value="{{curPW}}" class="passwordSelect"/></span> ' +
-        '<span ng-click="togglePW()" class="link">[{{hSText}}]</span></span>');
+        var el = angular.element('<span>{{curPW}} <span ng-click="togglePW()" class="link">[{{hSText}}]</span></span>');
         element.html($compile(el)(scope));
         scope.pwVisible = false;
 
@@ -144,7 +135,6 @@ app.directive('toggleTextStars', ['$compile',
           if (!scope.pwVisible) {
             scope.curPW = scope.pw;
             scope.pwVisible = true;
-
             scope.hSText = 'Hide';
           } else {
             scope.curPW = '******';
@@ -210,7 +200,7 @@ app.directive('otpGenerator', ['$compile','$timeout',
             $timeout.cancel(scope.timer);
           }
         },true);
-        var html = '<span pw="otp" toggle-text-stars></span> <a clip-copy="otp" clip-click="copiedotp()" class="link" ng-if="hasFlash">[Copy]</a> Time left: <span ng-bind="timeleft"></span>';
+        var html = '<span pw="otp" toggle-text-stars></span> <a clip-copy="otp" clip-click="copiedotp()" class="link">[Copy]</a> Time left: <span ng-bind="timeleft"></span>';
         element.html($compile(html)(scope));
 
         scope.$on(

@@ -506,16 +506,7 @@ div[aria-describedby="editAddItemDialog"] {
 	display: block;
 }
 .td_title{
-  vertical-align: top;
-}
-.passwordSelect{
-	background-color: #EFEFEF !important;
-	outline: 0 !important;
-	color: #000 !important;
-	border: 0 !important;
-	padding: 0 !important;
-	margin: 0 !important;
-	width: auto !important;
+  vertical-align: top !important;
 }
 #infoContainer span.ui-icon.ui-icon-carat-1-e {
 	margin: 0px;
