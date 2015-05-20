@@ -11,7 +11,6 @@
 \OCP\Util::addscript('passman', 'textAngular-rangy.min');
 \OCP\Util::addscript('passman', 'textAngular.min');
 
-\OCP\Util::addscript('passman', 'ng-click-select');
 \OCP\Util::addscript('passman', 'qrReader/llqrcode');
 \OCP\Util::addscript('passman', 'sha');
 \OCP\Util::addscript('passman', 'func');
@@ -44,9 +43,11 @@
         <auto-complete source="loadTags($query)" min-length="1"></auto-complete>
       </tags-input>
     </div>
+
+
     <span style="margin-left: 5px; font-weight: bold;"><?php p($l->t('Related tags')); ?></span>
     <ul id="tagList">
-      <li class="tag" ng-click="selectTag(tag)" ng-repeat="tag in tags" ng-mouseover="mouseOver = true"
+      <li class="tag" ng-click="selectTag(tag)" ng-repeat="tag in tags" ng-mouseover="mouseOver = true" ng-if="arrayObjectIndexOf(selectedTags,tag) === -1"
           ng-mouseleave="mouseOver = false">
         <span class="value">{{tag}}</span>
         <i ng-show="mouseOver" ng-click="tagSettings(tag,$event);" class="icon icon-settings button"></i>
@@ -196,20 +197,38 @@
           <tr ng-show="currentItem.email ">
             <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                     style="float: left; margin-right: .3em;">&nbsp;</span>
-              <span><?php p($l->t('E-mail')); ?></span> :
+              <span><?php p($l->t('Email')); ?></span> :
             </td>
             <td>
-              {{currentItem.email}} <a clip-copy="currentItem.email" clip-click="copied('E-mail')" class="link">[<?php p($l->t('Copy')); ?>]</a>
+              {{currentItem.email}} <a clip-copy="currentItem.email" clip-click="copied('Email')" class="link">[<?php p($l->t('Copy')); ?>]</a>
             </td>
           </tr>
           <tr ng-show="currentItem.url ">
             <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                     style="float: left; margin-right: .3em;">&nbsp;</span>
-              <span>URL</span> :
+              <span><?php p($l->t('URL')); ?></span> :
             </td>
             <td>
               {{currentItem.url}} <a clip-copy="currentItem.url" clip-click="copied('URL')" class="link">[<?php p($l->t('Copy')); ?>]</a> <a
                   make-url url="currentItem.url" class="link" target="_blank">[<?php p($l->t('Open link')); ?>]</a>
+            </td>
+          </tr>
+		  <tr ng-show="currentItem.created ">
+            <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                    style="float: left; margin-right: .3em;">&nbsp;</span>
+              <span><?php p($l->t('Created')); ?></span> :
+            </td>
+            <td>
+              {{currentItem.created | phpTime}}
+            </td>
+          </tr>
+		  <tr ng-show="currentItem.changed ">
+            <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
+                                                    style="float: left; margin-right: .3em;">&nbsp;</span>
+              <span><?php p($l->t('Last changed')); ?></span> :
+            </td>
+            <td>
+              {{currentItem.changed | phpTime}}
             </td>
           </tr>
           <tr ng-show="currentItem.files.length > 0 && currentItem.files">
@@ -279,7 +298,9 @@
                 <div style="max-width:300px;">
                 <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password"
                        autocomplete="off" class="form-control">
-                <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
+
+                <input ng-show="pwFieldVisible" type="text" name="password" ng-model="currentItem.password" click-select
+                       autocomplete="off" class="form-control">
                   <div style="position: relative; top: -32px; right: 5px; width: 80px; float: right; margin-bottom: -30px;">
                   <span class="icon icon-history" ng-click="generatePW(); usePw();" tooltip="Generate tooltip"></span>
                   <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
@@ -296,7 +317,7 @@
             </div>
             <div class="row">
               <div class="col-xs-12">
-                <label><?php p($l->t('E-mail')); ?></label>
+                <label><?php p($l->t('Email')); ?></label>
                 <input type="text" name="email" ng-model="currentItem.email" autocomplete="off" class="form-control">
               </div>
             </div>
@@ -361,7 +382,8 @@
                 <div style="max-width:300px;">
                   <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password"
                          autocomplete="off" class="form-control">
-                  <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
+                  <input ng-show="pwFieldVisible" type="text" name="password" ng-model="currentItem.password"
+                         autocomplete="off" class="form-control">
                   <div style="position: relative; top: -32px; right: 5px; width: 80px; float: right; margin-bottom: -30px;">
                     <span class="icon icon-history" ng-click="generatePW(); usePw();"></span>
                     <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
@@ -463,7 +485,9 @@
                                placeholder="Enter field name"/>
                     </td>
                     <td><input name="customFieldValue" ng-model="newCustomfield.value" type="text"
-                               placeholder="Enter field value"/>
+                               placeholder="Enter field value" ng-if="!newCustomfield.clicktoshow"/>
+                      <input name="customFieldValue" ng-model="newCustomfield.value" type="password"
+                               placeholder="Enter field value" ng-if="newCustomfield.clicktoshow"/>
                     </td>
                     <td><input type="checkbox" ng-model="newCustomfield.clicktoshow"/></td>
                     <td><span ng-click="addCField(newCustomfield)" class="icon-add icon"></span></td>
@@ -510,7 +534,7 @@
           </div>
           <div class="col-xs-12 nopadding">
             <input type="file" qrread on-read="parseQR(qrdata)" ng-show="otpType==='image'"/>
-            <label ng-show="otpType==='string'"><?php p($l->t('Enter the 2 factor secret')); ?></label>
+            <label ng-show="otpType==='string'"><?php p($l->t('Enter the two-factor secret')); ?></label>
             <input type="text" ng-model="currentItem.otpsecret.secret" class="otpSecret form-control" ng-show="otpType==='string'"/>
           </div>
         </div>
@@ -555,277 +579,6 @@
       </div>
 
     </div>
-
-    <!-- Add / edit item
-    <div id="editAddItemDialog" style="display: none;" >
-      <div class="error" >
-        <div ng-repeat="error in errors">{{error}}</div>
-      </div>
-      <form method="get" name="new_item" id="editNewItem">
-        <div class="tabHeader" ng-class="'tab'+tabActive" ng-init="tabActive=1">
-          <div class="col-xs-2 nopadding tab1" ng-click="tabActive=1;" ng-class="{'active': tabActive==1}"><?php p($l->t('General')); ?></div>
-          <div class="col-xs-2 nopadding tab2" ng-click="tabActive=2;" ng-class="{'active': tabActive==2}"><?php p($l->t('Password')); ?></div>
-          <div class="col-xs-2 nopadding tab3" ng-click="tabActive=3;" ng-class="{'active': tabActive==3}" ng-show="currentItem.id"><?php p($l->t('Files')); ?></div>
-          <div class="col-xs-3 nopadding tab4" ng-click="tabActive=4" ng-class="{'active': tabActive==4}"><?php p($l->t('Custom fields')); ?></div>
-          <div class="col-xs-3 nopadding tab5" ng-click="tabActive=5" ng-class="{'active': tabActive==5}"><?php p($l->t('OTP settings')); ?></div>
-        </div>
-        <div class="row nomargin" ng-show="tabActive==1">
-          <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('Label')); ?></div>
-            <div class="col-xs-7"><input type="text" ng-model="currentItem.label" autocomplete="off" id="labell"
-                                         required></div>
-            <div class="col-xs-1"><!-- if no image proxy
-              <img ng-src="{{currentItem.favicon}}" fallback-src="noFavIcon"
-                   style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
-                   ng-if="currentItem.favicon && !userSettings.settings.useImageProxy">
-              <img style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
-                   ng-src="{{noFavIcon}}" ng-if="!currentItem.favicon && !userSettings.settings.useImageProxy">
-              <!-- end if -->
-
-              <!-- If image proxy === true
-              <img image-proxy image="currentItem.favicon" fallback="noFavIcon"
-                   style="height: 16px; width: 16px; float: left; margin-left: 8px; margin-right: 4px; margin-top: 5px;"
-                   ng-if="userSettings.settings.useImageProxy">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('Description')); ?></div>
-            <div class="col-xs-7">
-              <div text-angular ng-model="currentItem.description"  ta-toolbar="[['bold','italics','underline','undo','redo','insertLink']]"></div></div>
-          </div>
-          <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('Login')); ?></div>
-            <div class="col-xs-7"><input type="text" name="account" ng-model="currentItem.account" id="account"
-                                         autocomplete="off"></div>
-          </div>
-          <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('E-mail')); ?></div>
-            <div class="col-xs-7"><input type="text" name="email" ng-model="currentItem.email" autocomplete="off"></div>
-          </div>
-          <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('URL')); ?></div>
-            <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.url" autocomplete="off" ng-model-options="{debounce: 750}"></div><div ng-show="favIconLoading" class="loader smallloader" ></div>
-          </div>
-          <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('Icon')); ?></div>
-            <div class="col-xs-7"><input type="text" name="url" ng-model="currentItem.favicon" autocomplete="off"></div>
-          </div>
-          <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('Tags')); ?></div>
-            <div class="col-xs-7">
-              <tags-input ng-model="currentItem.tags" class="inputCurrentTags" removeTagSymbol="x" min-length="1"
-                          replace-spaces-with-dashes="false">
-                <auto-complete source="loadTags($query)" min-length="1" max-results-to-show="2"></auto-complete>
-              </tags-input>
-            </div>
-            <div class="col-xs-9">
-              <div class="currentTags">
-                <div ng-repeat="tag in currentItem.tags" class="pull-left tag">
-                  {{tag.text}} <span ng-click="removeTag(tag)" class="icon icon-delete"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row nomargin" ng-show="tabActive==2">
-          <div class="row">
-            <div class="col-xs-12 formLabel"><?php p($l->t('Minimal password score')); ?>: {{requiredPWStrength}}</div>
-            <div class="col-xs-12">
-              <input type="checkbox" ng-model="currentItem.overrrideComplex"><label class="label_cpm"><?php p($l->t('Override required password score')); ?></label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('Password')); ?></div>
-            <div class="col-xs-5">
-              <input ng-show="!pwFieldVisible" type="password" name="password" ng-model="currentItem.password"
-                     autocomplete="off">
-              <span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
-            </div>
-            <div class="col-xs-3 col-sm-3 col-md-3 nopadding">
-              <span class="icon icon-history" ng-click="generatePW(); usePw();"></span>
-              <span title="Mask/Display the password" class="icon icon-toggle" ng-click="togglePWField()"></span>
-              <a clip-copy="currentItem.password" clip-click="copied('password')"
-                 class="ui-icon ui-icon-copy pull-right nomargin icon-copy"></a>
-            </div>
-          </div>
-          <div class="row" ng-show="currentPWInfo">
-            <div class="col-xs-11">
-              <span><?php p($l->t('Current password score')); ?>:</span> {{currentPWInfo.entropy}}<br/>
-              <span><?php p($l->t('Crack time')); ?>:</span><br>
-              <small>{{currentPWInfo.crack_time | secondstohuman}}</small>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-1 formLabel"><?php p($l->t('Password (again)')); ?></div>
-            <div class="col-xs-5">
-              <input type="password" ng-model="currentItem.passwordConfirm" autocomplete="off">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-11">
-            <span ng-show="!newExpireTime && currentItem.expire_time != 0"><?php p($l->t('Password will expire at')); ?>
-              <span ng-bind="currentItem.expire_time | date"></span>
-            </span>
-            <span ng-show="newExpireTime"><?php p($l->t('Password will expire at')); ?>
-              <span ng-bind="newExpireTime | date"></span>
-            </span>
-            </div>
-          </div>
-          <div class="row">
-            <span ng-click="showPwSettings=true" class="link col-xs-12" ng-show="!showPwSettings"><?php p($l->t('Show password generation settings')); ?></span>
-            <span ng-click="showPwSettings=false" class="link col-xs-12" ng-show="showPwSettings"><?php p($l->t('Hide password generation settings')); ?></span>
-
-            <div id="pwTools" ng-show="showPwSettings">
-          <span id="custom_pw">
-              <span><?php p($l->t('Password length')); ?></span>
-              <input type="number" ng-model="pwSettings.length" style="width:30px"><br>
-              <input type="checkbox" ng-model="pwSettings.upper"><label for="upper">A-Z</label> <input
-                ng-model="pwSettings.lower" type="checkbox" id="lower"><label
-                for="lower">a-z</label>
-              <input ng-model="pwSettings.digits" type="checkbox" id="digits"><label
-                for="digits">0-9</label>
-              <input type="checkbox" id="special" ng-model="pwSettings.special"><label
-                for="special"><?php p($l->t('Special')); ?></label><br>
-              <label for="mindigits"><?php p($l->t('Minimum digit count')); ?></label> <input
-                ng-model="pwSettings.mindigits" type="text" id="mindigits" style="width:30px"><br>
-              <input type="checkbox" id="ambig" ng-model="pwSettings.ambig"><label
-                for="ambig"><?php p($l->t('Avoid ambiguous characters')); ?></label><br>
-              <input type="checkbox" ng-model="pwSettings.reqevery" id="reqevery"><label
-                for="reqevery"><?php p($l->t('Require every character type')); ?></label><br>
-          </span>
-              <!--button class="button" ng-click="generatePW()">Generate password</button>
-              <button class="button" ng-show="generatedPW!=''"
-                      ng-click="usePw()">Use password
-              </button>
-              <div ng-show="generatedPW"><span>Generated password:</span> <br />{{generatedPW}}</div>
-              <b ng-show="generatedPW"><span>Generated password score</span>:
-                                                                            {{pwInfo.entropy}}</b><br />
-              <b ng-show="generatedPW"><span>Crack time</span>: {{pwInfo.crack_time | secondstohuman}}</b->
-            </div>
-          </div>
-        </div>
-        <div class="row nomargin" ng-show="tabActive==3">
-          <div class="row">
-            <div class="col-xs-11">
-              <input type="file" fileread="uploadQueue" item="currentItem"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-11">
-              <?php p($l->t('Existing files')); ?>
-              <ul id="fileList">
-                <li ng-repeat="file in currentItem.files" class="fileListItem">{{file.filename}} ({{file.size | bytes}}) <span
-                      class="icon icon-delete" style="float:right;" ng-click="deleteFile(file)"></span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="row nomargin" ng-show="tabActive==4">
-          <div class="row">
-            <div class="col-xs-11">
-              <h1><?php p($l->t('Add field')); ?></h1>
-              <table style="width: 100%;" class="customFields">
-                <thead>
-                <tr>
-                  <td><?php p($l->t('Label')); ?></td>
-                  <td><?php p($l->t('Value')); ?></td>
-                  <td colspan="2"><?php p($l->t('Hidden')); ?>?</td>
-                </tr>
-                </thead>
-                <tr>
-                  <td><input name="customFieldName" ng-model="newCustomfield.label" type="text"
-                             placeholder="Enter field name"/>
-                  </td>
-                  <td><input name="customFieldValue" ng-model="newCustomfield.value" type="text"
-                             placeholder="Enter field value"/>
-                  </td>
-                  <td><input type="checkbox" ng-model="newCustomfield.clicktoshow"/></td>
-                  <td><span ng-click="addCField(newCustomfield)" class="icon-add icon"></span></td>
-                </tr>
-              </table>
-              <hr class="blue">
-              <h1><?php p($l->t('Existing fields')); ?></h1>
-              <table style="width: 100%;" ng-show="currentItem.customFields.length > 0">
-                <thead>
-                <tr>
-                  <td><?php p($l->t('Label')); ?></td>
-                  <td><?php p($l->t('Value')); ?></td>
-                  <td colspan="2"><?php p($l->t('Hidden')); ?>?</td>
-                </tr>
-                </thead>
-                <tr ng-repeat="custom in currentItem.customFields">
-
-                  <td valign="top" class="td_title">
-                    <span click-for-input value="custom.label"></span></td>
-                  <td>
-                    <span click-for-input value="custom.value"></span>
-                  </td>
-                  <td>
-                    <input type="checkbox" ng-checked="custom.clicktoshow==1" ng-model="custom.clicktoshow"/>
-                  </td>
-                  <td>
-                    <i class="icon icon-delete" ng-click="removeCField(custom)"></i>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="row nomargin" ng-show="tabActive==5">
-
-          <div class="col-xs-12">
-            <div class="col-xs-2 nopadding">
-              <?php p($l->t('OTP Type')); ?>
-            </div>
-            <div class="col-xs-6 nopadding">
-              <input type="radio" name="seletcOTPType" value="image" ng-model="otpType" id="otpImg"><label for="otpImg"><?php p($l->t('Upload an image')); ?></label><br/>
-              <input type="radio" name="seletcOTPType" value="string" ng-model="otpType" id="otpStr"><label
-                  for="otpStr"><?php p($l->t('Set the secret manually')); ?></label>
-            </div>
-            <div class="col-xs-12 nopadding">
-              <input type="file" qrread on-read="parseQR(qrdata)" ng-show="otpType==='image'"/>
-              <label ng-show="otpType==='string'"><?php p($l->t('Enter the 2 factor secret')); ?> <input type="text"
-                                                                                   ng-model="currentItem.otpsecret.secret"
-                                                                                   class="otpSecret"/></label>
-            </div>
-          </div>
-          <hr>
-          <div class="col-sm-12"><?php p($l->t('Current OTP settings')); ?></div>
-          <div class="col-sm-4">
-            <img ng-src="{{currentItem.otpsecret.qrCode}}" ng-show="currentItem.otpsecret.qrCode" height="120"
-                 width="120">
-          </div>
-          <div class="col-sm-4">
-            <table ng-show="currentItem.otpsecret">
-              <tr ng-show="currentItem.otpsecret.type">
-                <td><?php p($l->t('Type')); ?>:</td>
-                <td>{{currentItem.otpsecret.type}}</td>
-              </tr>
-              <tr ng-show="currentItem.otpsecret.label">
-                <td><?php p($l->t('Label')); ?>:</td>
-                <td>{{currentItem.otpsecret.label}}</td>
-              </tr>
-              <tr ng-show="currentItem.otpsecret.issuer">
-                <td><?php p($l->t('Issuer')); ?>:</td>
-                <td>{{currentItem.otpsecret.issuer}}</td>
-              </tr>
-              <tr ng-show="currentItem.otpsecret.secret">
-                <td><?php p($l->t('Secret')); ?>:</td>
-                <td><span pw="currentItem.otpsecret.secret" toggle-text-stars></span> <a
-                      clip-copy="currentItem.otpsecret.secret" clip-click="copied('URL')" class="link">[<?php p($l->t('Copy')); ?>]</a></td>
-              </tr>
-            </table>
-          </div>
-        </div>
-      </form>
-      <button class="button cancel" ng-click="closeDialog()"><?php p($l->t('Cancel')); ?></button>
-      <button class="button save" ng-click="saveItem(currentItem)" ng-disabled="!new_item.$valid"><?php p($l->t('Save')); ?></button>
-    </div>
-    <!-- end add / edit item -->
-
-
-
-
     <div id="dialog_files" style="display: none;">
       <img id="fileImg"/><br/>
       <span id="downloadImage"></span>
@@ -855,10 +608,21 @@
         <div class="col-md-12">
           <div ng-show="tabActive==1" class="row">
             <div class="col-md-11">
+              <div class="col-md-4">
               <h2><?php p($l->t('General settings')); ?></h2>
-
-              <label><input type="checkbox" ng-model="userSettings.settings.useImageProxy"><?php p($l->t('Use image proxy on https pages')); ?></label>
-              <label><input type="checkbox" ng-model="userSettings.settings.noFavIcons"><?php p($l->t('Disable favicons')); ?></label>
+                <label><input type="checkbox" ng-model="userSettings.settings.useImageProxy"><?php p($l->t('Use image proxy on https pages')); ?></label>
+                <label><input type="checkbox" ng-model="userSettings.settings.noFavIcons"><?php p($l->t('Disable favicons')); ?></label>
+              </div>
+              <div class="col-md-3 pull-right">
+                <h2><?php p($l->t('Change Passman password')); ?></h2>
+                <label><?php p($l->t('Current password')); ?></label> <input ng-model="changepw.oldpw" required>
+                <label><?php p($l->t('New password')); ?></label> <input ng-model="changepw.newpw" required>
+                <label><?php p($l->t('New password (repeat)')); ?></label><input ng-model="changepw.newpwr" required ng-enter="changePW()">
+                <br />
+                <br />
+                <div class="btn btn-success" ng-click="changePW()"><?php p($l->t('Change pw')); ?></div><br />
+                {{status}}
+              </div>
             </div>
           </div>
         </div>
@@ -882,8 +646,7 @@
         </div>
         <div ng-show="tabActive==3" class="row">
           <div class="col-md-11">
-            <p><?php p($l->t('Here you can indentify weak passwords, we will list the items. List all passwords with a rating less
-              than')); ?></p>
+            <p><?php p($l->t('Here you can indentify weak passwords, all affected items will be listed. List all passwords with a score less than')); ?></p>
             <input type="text" ng-model="settings.PSC.minStrength"/>
             <button class="btn" ng-click="checkPasswords()">Show weak passwords</button>
             <div ng-show="settings.PSC.weakItemList.length > 0">You've got {{settings.PSC.weakItemList.length}} weak passwords</div>
@@ -926,7 +689,7 @@
             <div><?php p($l->t('Export items as')); ?>
               <select ng-model="exportItemas" ng-init="exportItemas = 'csv'">
                 <option value="csv" selected="selected"><?php p($l->t('Passman CSV'));?></option>
-                <option value="keepasscsv"><?php p($l->t('Keepass CSV'));?></option>
+                <option value="keepasscsv"><?php p($l->t('KeePass CSV'));?></option>
                 <option value="json"><?php p($l->t('Passman JSON'));?></option>
                 <option value="xml"><?php p($l->t('Passman XML'));?></option>
               </select> <button class="btn btn-success" ng-click="exportItemAs(exportItemas)"><?php p($l->t('Export')); ?></button>
@@ -960,8 +723,8 @@
             <div><?php p($l->t('Import type')); ?>
               <select ng-model="importItemas" ng-init="importItemas = 'csv'">
                 <option value="csv" selected="selected"><?php p($l->t('Passman CSV'));?></option>
-                <option value="keepasscsv"><?php p($l->t('Keepass CSV'));?></option>
-                <option value="lastpasscsv"><?php p($l->t('Lastpass CSV'));?></option>
+                <option value="keepasscsv"><?php p($l->t('KeePass CSV'));?></option>
+                <option value="lastpasscsv"><?php p($l->t('LastPass CSV'));?></option>
                 <option value="json"><?php p($l->t('Passman JSON'));?></option>
                 <!--<option value="xml">Passman XML</option> -->
               </select></br>
@@ -1077,7 +840,7 @@
                 <tr ng-show="showRevision.data.email ">
                   <td valign="top" class="td_title"><span class="ui-icon ui-icon-carat-1-e"
                                                           style="float: left; margin-right: .3em;">&nbsp;</span>
-                    <span><?php p($l->t('E-mail')); ?></span> :
+                    <span><?php p($l->t('Email')); ?></span> :
                   </td>
                   <td>
                     {{showRevision.data.email}}
@@ -1164,44 +927,37 @@
 
             <div ng-show="shareSettings.allowShareLink">
               <?php p($l->t('Your share link')); ?>:
-              <input type="text" ng-click-select ng-model="shareSettings.shareUrl" class="shareUrl"/>
+              <input type="text" click-select ng-model="shareSettings.shareUrl" class="shareUrl"/>
             </div>
           </div>
 
         </div>
       </div>
       <div ng-show="!userSettings.settings.sharing.shareKeys">
-              <?php p($l->t(' Generating sharing keys, this is a one time thing, please wait.')); ?>
+              <?php p($l->t(' Generating sharing keys. This step is only necessary once, please wait.')); ?>
       </div>
     </div>
   </div>
   <!-- end sharing -->
 
 
-
-
-</div>
-
-
-<!-- start revision dialog -->
-
-<div id="encryptionKeyDialog" style="display: none;">
-  <p><?php p($l->t('Enter your encryption key.')); ?></p>
-  <p><?php p($l->t('If this is the first time you use Passman, this key will be used for encryption of your passwords')); ?></p>
-  <input type="password" id="ecKey" style="width: 150px;" ng-enter="doLogin()"/><br/>
-  <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember"><?php p($l->t('Remember this key ')); ?></label>
-  <select id="rememberTime">
-    <option value="15"><?php p($l->n('%n minute','%n minutes',15)); ?></option>
-    <option value="30"><?php p($l->n('%n minute','%n minutes',30)); ?></option>
-    <option value="60"><?php p($l->n('%n minute','%n minutes',60)); ?></option>
-    <option value="180"><?php p($l->n('%n hour','%n hours',3)); ?></option>
-    <option value="480"><?php p($l->n('%n hour','%n hours',8)); ?></option>
-    <option value="1440"><?php p($l->n('%n day','%n days',1)); ?></option>
-    <option value="10080"><?php p($l->n('%n day','%n days',7)); ?></option>
-    <option value="43200"><?php p($l->n('%n day','%n days',30)); ?></option>
-    <option value="86400"><?php p($l->n('%n day','%n days',60)); ?></option>
-  </select>
-</div>
+  <div id="encryptionKeyDialog" style="display: none;">
+    <p><?php p($l->t('Enter your encryption key.')); ?></p>
+    <p><?php p($l->t('If this is the first time you use Passman, this key will be used for encryption of your passwords')); ?></p>
+    <input type="password" id="ecKey" style="width: 150px;"  ng-enter="doLogin()"/><br/>
+    <input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember"><?php p($l->t('Remember this key ')); ?></label>
+    <select id="rememberTime">
+      <option value="15"><?php p($l->n('%n minute','%n minutes',15)); ?></option>
+      <option value="30"><?php p($l->n('%n minute','%n minutes',30)); ?></option>
+      <option value="60"><?php p($l->n('%n minute','%n minutes',60)); ?></option>
+      <option value="180"><?php p($l->n('%n hour','%n hours',3)); ?></option>
+      <option value="480"><?php p($l->n('%n hour','%n hours',8)); ?></option>
+      <option value="1440"><?php p($l->n('%n day','%n days',1)); ?></option>
+      <option value="10080"><?php p($l->n('%n day','%n days',7)); ?></option>
+      <option value="43200"><?php p($l->n('%n day','%n days',30)); ?></option>
+      <option value="86400"><?php p($l->n('%n day','%n days',60)); ?></option>
+    </select>
+  </div>
 
 </div>
 <!-- End appCtrl -->

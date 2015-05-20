@@ -1,7 +1,7 @@
 $(document).ready(function(){
   $('#header').remove();
 });
-var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick', 'ngClickSelect']).config(['$httpProvider',
+var app = angular.module('passman', ['ngResource', 'ngTagsInput', 'ngClipboard', 'offClick']).config(['$httpProvider',
     function ($httpProvider) {
         $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
     }]);
@@ -173,7 +173,8 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
       }
     }
   }, true);
-  $scope.generatePW = function () {
+  $scope.generatePW = function ($evt) {
+    console.log($evt);
     $scope.generatedPW = generatePassword($scope.pwSettings.length, $scope.pwSettings.upper, $scope.pwSettings.lower, $scope.pwSettings.digits, $scope.pwSettings.special, $scope.pwSettings.mindigits, $scope.pwSettings.ambig, $scope.pwSettings.reqevery);
     $scope.pwInfo = zxcvbn($scope.generatedPW);
   };
@@ -295,7 +296,7 @@ app.controller('popupCtrl', function ($scope,ItemService,$window,$http,$timeout)
         ItemService.create(saveThis).success(function () {
           OC.Notification.showTimeout('Item created!',3000);
           $timeout(function(){
-            //$window.close();
+            $window.close();
           },3400);
         });
       }

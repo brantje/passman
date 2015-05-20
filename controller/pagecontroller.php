@@ -57,7 +57,7 @@ class PageController extends Controller {
         'tags' => array(array('text'=>'Example tag 2'),array('text'=>'Example tag 3'))
       );
       foreach($exampleItems as $key => $val){
-       // $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
+        $this->itemAPI->create('','','','','',$val['label'],'','','','',$val['tags'],array());
       }
     }
 
@@ -100,6 +100,11 @@ class PageController extends Controller {
     $result['settings'] = json_decode(\OCP\CONFIG::getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',$default));
     return new JSONResponse($result);
   }
+
+  /**
+  * @NoAdminRequired
+  * @NoCSRFRequired
+  */
   public function savesettings($settings){
     $result = \OCP\CONFIG::setUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',json_encode($settings));
 

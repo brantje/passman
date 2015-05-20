@@ -152,6 +152,54 @@ class ItemApiController extends Controller {
   }
 
   /**
+   * Mass Update items
+   *
+   * @param Folder ID
+   *
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
+  public function massupdate($items,$files,$revs) {
+    /*
+
+
+
+    */
+    foreach($items as $item){
+     $this->update(
+        $item['id'],
+        $item['account'],
+        $item['created'],
+        $item['description'],
+        $item['email'],
+        $item['favicon'],
+        $item['label'],
+        $item['password'],
+        $item['expire_time'],
+        $item['delete_date'],
+        $item['url'],
+        $item['otpsecret'],
+        $item['tags'],
+        $item['customFields'],
+        false,
+        false,
+        false,
+        true
+      );
+    }
+    foreach($files as $file){
+      $this->deletefile($file['id']);
+      $this->addfile($file['item_id'],$file['filename'],$file['type'],$file['mimetype'],$file['size'],$file['content']);
+    }
+    foreach($revs as $revision){
+      $this->revisionController->update($revision);
+    }
+
+    $response = array("success"=>true);
+    return new JSONResponse($response);
+  }
+
+  /**
    * Update to create and edit items
    *
    * @param Folder ID
@@ -159,7 +207,7 @@ class ItemApiController extends Controller {
    * @NoAdminRequired
    * @NoCSRFRequired
    */
-  public function update($id,$account,$created,$description,$email,$favicon,$label,$password,$expire_time,$delete_date=0,$url,$otpsecret,$tags,$customFields,$restoredRevision=false,$isDeleted=false,$isRecovered=false) {
+  public function update($id,$account,$created,$description,$email,$favicon,$label,$password,$expire_time,$delete_date=0,$url,$otpsecret,$tags,$customFields,$restoredRevision=false,$isDeleted=false,$isRecovered=false,$skipNotifications=false) {
     $errors = array();
 
     $item = array();
@@ -175,6 +223,7 @@ class ItemApiController extends Controller {
     $item['delete_date'] = $delete_date;
     $item['url'] = $url;
     $item['otpsecret'] = $otpsecret; $this->params('otpsecret');
+
 
     $maxRenewalPeriod = 0;
     if (empty($label)) {
@@ -221,27 +270,28 @@ class ItemApiController extends Controller {
       $result['success'] = $this->ItemBusinessLayer->update($item);
       $this->revisionController->save($item['id'],json_encode($curItem));
 ;
-      $remoteUrl = \OCP\Util::linkToRoute('passman.page.index').'#selectItem='. $item['id'];
+      $remoteUrl = \OC::$server->getURLGenerator()->linkToRoute('passman.page.index').'#selectItem='. $item['id']; //\OCP\Util::linkToRoute().;
       $self = ($curItem['user_id'] == $this->userId) ? '_self' : '';
-      if(!$restoredRevision && !$isDeleted &&!$isRecovered){
-        if($curItem['label'] === $item['label']) {
-          $this->notification->add('item_edited' . $self, array($curItem['label'], $this->userId), '', array(), $remoteUrl, null, Activity::TYPE_ITEM_ACTION);
+      if(!$skipNotifications){
+        if(!$restoredRevision && !$isDeleted &&!$isRecovered){
+          if($curItem['label'] === $item['label']) {
+            $this->notification->add('item_edited' . $self, array($curItem['label'], $this->userId), '', array(), $remoteUrl, null, Activity::TYPE_ITEM_ACTION);
+          } else {
+            $this->notification->add('item_renamed' . $self, array($curItem['label'],$item['label'], $this->userId), '', array(), $remoteUrl, null, Activity::TYPE_ITEM_ACTION);
+          }
         } else {
-          $this->notification->add('item_renamed' . $self, array($curItem['label'],$item['label'], $this->userId), '', array(), $remoteUrl, null, Activity::TYPE_ITEM_ACTION);
-        }
-      } else {
-        if($restoredRevision) {
-          $restoredRevision = \OC::$server->query('DateTimeFormatter')->formatDateTime($restoredRevision,'long', 'short');
-          $this->notification->add('item_apply_revision'.$self, array($curItem['label'], $this->userId, $restoredRevision),'',array(),$remoteUrl,null, Activity::TYPE_ITEM_ACTION);
-        }
-        if($isDeleted){
-          $this->notification->add('item_deleted'.$self,array($curItem['label'],$this->userId),'',array(),'', null, Activity::TYPE_ITEM_ACTION);
-        }
-        if($isRecovered){
-          $this->notification->add('item_recovered'.$self,array($curItem['label'],$this->userId),'',array(),$remoteUrl,null, Activity::TYPE_ITEM_ACTION);
+          if($restoredRevision) {
+            $restoredRevision = \OC::$server->query('DateTimeFormatter')->formatDateTime($restoredRevision,'long', 'short');
+            $this->notification->add('item_apply_revision'.$self, array($curItem['label'], $this->userId, $restoredRevision),'',array(),$remoteUrl,null, Activity::TYPE_ITEM_ACTION);
+          }
+          if($isDeleted){
+            $this->notification->add('item_deleted'.$self,array($curItem['label'],$this->userId),'',array(),'', null, Activity::TYPE_ITEM_ACTION);
+          }
+          if($isRecovered){
+            $this->notification->add('item_recovered'.$self,array($curItem['label'],$this->userId),'',array(),$remoteUrl,null, Activity::TYPE_ITEM_ACTION);
+          }
         }
       }
-
     } else {
       $result['errors'] = $errors;
     }

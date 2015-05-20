@@ -52,4 +52,17 @@ class RevisionController extends Controller {
     return $result;
   }
 
+  /**
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
+  function getallrevisions(){
+    $result = $this->revisionManager->getAllRevisions($this->userId);
+    return $result;
+  }
+  function update($revision){
+    $result = $this->revisionManager->update($revision);
+    return $result;
+  }
+
 }

@@ -123,7 +123,8 @@ class ItemManager {
    * Update item
    */
   public function update($item) {
-    $sql = 'UPDATE `*PREFIX*passman_items` SET `label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=?,favicon=?,delete_date=?,otpsecret=? WHERE id=?';
+    $item['changed'] = time();
+    $sql = 'UPDATE `*PREFIX*passman_items` SET `label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=?,favicon=?,delete_date=?,otpsecret=?,changed=? WHERE id=?';
     $query = $this->db->prepareQuery($sql);
     $query->bindParam(1, $item['label'], \PDO::PARAM_STR);
     $query->bindParam(2, $item['description'], \PDO::PARAM_STR);
@@ -135,7 +136,8 @@ class ItemManager {
     $query->bindParam(8, $item['favicon'], \PDO::PARAM_STR);
     $query->bindParam(9, $item['delete_date'], \PDO::PARAM_STR);
     $query->bindParam(10, $item['otpsecret'], \PDO::PARAM_STR);
-    $query->bindParam(11, $item['id'], \PDO::PARAM_INT);
+    $query->bindParam(11, $item['changed'], \PDO::PARAM_STR);
+    $query->bindParam(12, $item['id'], \PDO::PARAM_INT);
     $result = $query->execute();
     return $item;
   }

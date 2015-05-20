@@ -7,7 +7,6 @@
 \OCP\Util::addscript('passman', 'jstorage');
 \OCP\Util::addscript('passman', 'bower_components/zxcvbn/zxcvbn-async');
 \OCP\Util::addscript('passman', 'pwgen');
-\OCP\Util::addscript('passman', 'ng-click-select');
 \OCP\Util::addscript('passman', 'qrReader/llqrcode');
 \OCP\Util::addscript('passman', 'sha');
 \OCP\Util::addscript('passman', 'func');
@@ -78,11 +77,42 @@
 			</div>
 			<div class="row">
 				<div
-					class="col-xs-1 formLabel"><?php p($l->t('E-mail')); ?></div>
+					class="col-xs-1 formLabel"><?php p($l->t('Email')); ?></div>
 				<div class="col-xs-7"><input type="text" name="email"
 											 ng-model="currentItem.email"
 											 autocomplete="off"></div>
 			</div>
+      <div class="row">
+        <div
+          class="col-xs-1 formLabel"><?php p($l->t('Password')); ?></div>
+        <div class="col-xs-4">
+          <input ng-show="!pwFieldVisible" type="password"
+                 name="password" ng-model="currentItem.password"
+                 autocomplete="off">
+          <input ng-show="pwFieldVisible" type="text" click-select
+                 name="password" ng-model="currentItem.password"
+                 autocomplete="off">
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 nopadding">
+					<span class="icon icon-history"
+                ng-click=" $event.preventDefault(); generatePW($evt); usePw();"></span>
+					<span title="Mask/Display the password"
+                class="icon icon-toggle"
+                ng-click="togglePWField()"></span>
+          <a clip-copy="currentItem.password"
+             clip-click="copied('password')"
+             class="ui-icon ui-icon-copy pull-right nomargin icon-copy"></a>
+        </div>
+      </div>
+      <div class="row">
+        <div
+          class="col-xs-1 formLabel"><?php p($l->t('Password (again)')); ?></div>
+        <div class="col-xs-4">
+          <input type="password"
+                 ng-model="currentItem.passwordConfirm"
+                 autocomplete="off">
+        </div>
+      </div>
 			<div class="row">
 				<div class="col-xs-1 formLabel"><?php p($l->t('URL')); ?></div>
 				<div class="col-xs-7"><input type="text" name="url"
@@ -114,7 +144,7 @@
 		<div class="row nomargin" ng-show="tabActive==2">
 			<div class="row">
 				<div
-					class="col-xs-12 formLabel"><?php p($l->t('Minimal password scope')); ?>
+					class="col-xs-12 formLabel"><?php p($l->t('Minimal password score')); ?>
 					: {{requiredPWStrength}}
 				</div>
 				<div class="col-xs-12">
@@ -130,11 +160,13 @@
 					<input ng-show="!pwFieldVisible" type="password"
 						   name="password" ng-model="currentItem.password"
 						   autocomplete="off">
-					<span ng-show="pwFieldVisible" class="pwPreview">{{currentItem.password}}</span>
+          <input ng-show="pwFieldVisible" type="text" click-select
+						   name="password" ng-model="currentItem.password"
+						   autocomplete="off">
 				</div>
 				<div class="col-xs-3 col-sm-3 col-md-3 nopadding">
 					<span class="icon icon-history"
-						  ng-click="generatePW(); usePw();"></span>
+						  ng-click="$event.preventDefault(); generatePW(); usePw();"></span>
 					<span title="Mask/Display the password"
 						  class="icon icon-toggle"
 						  ng-click="togglePWField()"></span>
@@ -145,7 +177,7 @@
 			</div>
 			<div class="row" ng-show="currentPWInfo">
 				<div class="col-xs-11">
-					<span><?php p($l->t('Current password scope')); ?>:</span>
+					<span><?php p($l->t('Current password score')); ?>:</span>
 					{{currentPWInfo.entropy}}<br/>
 					<span><?php p($l->t('Crack time')); ?>:</span><br>
 					<small>{{currentPWInfo.crack_time | secondstohuman}}</small>
@@ -227,7 +259,7 @@
 							<td><input name="customFieldValue"
 									   ng-model="newCustomfield.value"
 									   type="text"
-									   placeholder="Enter field value"/>
+									   placeholder="Enter field value" />
 							</td>
 							<td><input type="checkbox"
 									   ng-model="newCustomfield.clicktoshow"/>
@@ -288,7 +320,7 @@
 					<input type="file" qrread on-read="parseQR(qrdata)"
 						   ng-show="otpType==='image'"/>
 					<label
-						ng-show="otpType==='string'"><?php p($l->t('Enter the 2 factor secret')); ?>
+						ng-show="otpType==='string'"><?php p($l->t('Enter the two-factor secret')); ?>
 						<input type="text"
 							   ng-model="currentItem.otpsecret.secret"
 							   class="otpSecret"/></label>
@@ -335,8 +367,7 @@
 	</div>
 </div>
 <div id="encryptionKeyDialog" style="display: none;">
-	<p><?php p($l->t('Enter your encryption key. If this if the first time you use Passman, this key will be used for encryption your
-    passwords')); ?></p>
+	<p><?php p($l->t('Enter your encryption key. If this is the first time you use Passman, this key will be used for encryption of your passwords')); ?></p>
 	<input type="password" id="ecKey" style="width: 150px;" /><br/>
 	<input type="checkbox" id="ecRemember" name="ecRemember"/><label for="ecRemember"><?php p($l->t('Remember this key ')); ?></label>
 	<select id="rememberTime">

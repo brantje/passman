@@ -107,7 +107,7 @@ class Activity implements \OCP\Activity\IExtension {
 				case self::SUBJECT_ITEM_EDITED_SELF:
 					return $l->t('You changed %1$s', $params)->__toString();
 				case self::SUBJECT_APPLY_REV:
-					return $l->t('%2$s has been revised %1$s to the revision of %3$s', $params)->__toString();
+					return $l->t('%2$s has revised %1$s to the revision of %3$s', $params)->__toString();
 				case self::SUBJECT_APPLY_REV_SELF:
 					return $l->t('You reverted %1$s back to the revision of %3$s', $params)->__toString();
 				case self::SUBJECT_ITEM_DELETED:
