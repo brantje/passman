@@ -4,7 +4,7 @@ app.filter('phpTime', function($filter)
 	{
 		if(input == null){ return ""; }
 
-		var _date = $filter('date')(new Date(input*1000), 'dd-mm-yyyy H:mm:ss');
+		var _date = $filter('date')(new Date(input*1000), 'dd-MM-yyyy H:mm:ss');
 
 		return _date.toUpperCase();
 
