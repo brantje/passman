@@ -32,9 +32,12 @@ app.factory('shareService', ['$http','$q', function ($http,$q) {
           return $q.reject(response.data);
         });
     },
-    generateShareKeys: function(keysize){
-      return KEYUTIL.generateKeypair("RSA", keysize);
+    saveSharingKeys : function (priv_k, pub_k){
+
     }
+    //generateShareKeys: function(keysize){
+    //  return KEYUTIL.generateKeypair("RSA", keysize);
+    //}
   };
 }]);
 app.factory('notificationService', ['$http', function ($http) {

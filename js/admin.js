@@ -5,4 +5,8 @@ $(document).ready(function(){
       console.log(r);
     });
   });
+  $(document).on('click', '.sharingKeyServerSettings', function(e){
+    e.preventDefault();
+    $('.sharingGenerationSettings').show(500);
+  });
 });

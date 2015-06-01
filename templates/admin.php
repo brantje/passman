@@ -38,8 +38,14 @@
       </label>
     </div>
     <div>
-      Regenerate server keys:
-      <input  class="regenerateShareKeys" type="button" value="Regenerate" original-title="">
+      <input class="sharingKeyServerSettings" type="button" value="Key generation settings" />
+      <input  class="regenerateShareKeys" type="button" value="Regenerate server keys" original-title=""/>
+      <span id="sharingGenerationSettings" style="visibility: collapse; ">
+        <form name="passman_server_key">
+          <input type="text" name="keyLength" />
+          <input type="text" name="serverName" />
+        </form>
+      </span>
     </div>
   </form>
 </div>

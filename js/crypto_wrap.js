@@ -7,22 +7,19 @@
  * @author Marcos Zuriaga <wolfi@wolfi.es>
  * @copyright Marcos Zuriarga 2014
  */
-
-var CRYPTO = {
+app.factory('cryptoSvc', [function () {
     // Global variables of the object:
-    _paranoia_level : null,
+    var paranoia_level = null;
 
-    // Sub object of this object
+        // Sub object of this object
 
     /**
      * The private key object
      */
-    RSA: {
+    var RSA = {
         _ca_pub_key  : null,
         _private_key : null,
-        _public_key  : null,
-
-
+        _public_key : null,
         //From now on, just methods
 
         /**
@@ -30,11 +27,12 @@ var CRYPTO = {
          * @param size
          * @param callback A function called after the generation its done
          */
-        genKeyPair : function (size, callback) {
-            setTimeout(function(){
-                _cb(KEYUTIL.generateKeypair("RSA", size, null));
-                callback();
-            }, 200);
+        genKeyPair : function (size, callback, progress) {
+            setTimeout(function () {
+                forge.RSA
+                RSA._genKeyPairCallback
+                callback(RSA._private_key, RSA._public_key);
+            }, 1);
         },
         _genKeyPairCallback : function (key) {
             this._private_key = key['prvKeyObj'];
@@ -45,16 +43,17 @@ var CRYPTO = {
          * Returns a PKCS encoded string containing the private key
          * @returns string
          */
-        getPrivKeyPKCS : function(){
+        getPrivKeyPKCS : function () {
             //if (_priv_key == null) Check if privkey its null before calling this method
-            return KEYUTIL.getPEM(this._private_key, 'PKCS1PRV');
+            console.log("Attempting to get priv key pkcs");
+            return KEYUTIL.getPEM(this._private_key, 'PKCS8PRV');
         },
 
         /**
          * Sets the object private key from the given PKCS8 PEM string
          * @param key (string)
          */
-        setPrivKeyFromPKCS : function(key){
+        setPrivKeyFromPKCS : function (key) {
             this._private_key = KEYUTIL.getKeyFromPublicPKCS8PEM(key);
         },
 
@@ -62,7 +61,7 @@ var CRYPTO = {
          * Sets the server (CA) public key
          * @param pub_key
          */
-        setServerPublicKey : function(pub_key){
+        setServerPublicKey : function (pub_key) {
             this._ca_pub_key = pub_key;
         },
 
@@ -70,14 +69,15 @@ var CRYPTO = {
          * Returns a PEM with the public key of the PRIVATE key
          * @returns {*}
          */
-        getPublicPEM : function(){
-            return KEYUTIL.getPEM(this._private_key);
+        getPublicPEM : function () {
+            console.log("attempting to get pub key pem");
+            return KEYUTIL.getPEM(this._public_key);//this._private_key);
         },
         /**
          * Sets the public key from a PEM
          * @param pubKey
          */
-        setPublicPEM : function(pubKey){
+        setPublicPEM : function (pubKey) {
             this._public_key = KEYUTIL.getPublicKeyFromCertPEM(pubKey);
         },
 
@@ -87,7 +87,7 @@ var CRYPTO = {
          * @param data
          * @returns {null}
          */
-        decipherWithServer : function(data){
+        decipherWithServer : function (data) {
             var tmp = new JSEncrypt();
             tmp.getPublicKey(this._ca_pub_key);
             var dec = tmp.decrypt(data);
@@ -101,7 +101,7 @@ var CRYPTO = {
          * @param data
          * @returns {null}
          */
-        decipherWithPrivate : function (data){
+        decipherWithPrivate : function (data) {
             var tmp = new JSEncrypt();
             tmp.setPrivateKey(this._private_key);
             var dec = tmp.decrypt(data);
@@ -132,40 +132,41 @@ var CRYPTO = {
          * @param pub_key
          * @returns boolean True if it's valid, false otherwise
          */
-        checkServerPubKey : function(pub_key){
+        checkServerPubKey : function (pub_key) {
             var valid = false;
             if (window.location.protocol == 'https:') valid = true;
             if (this.decipherWithPrivate(pub_key) != null) valid = false;
             return valid;
         }
-    },
-    AES: {
-        execution_time : 0,
+    };
 
-        cypher: function(data, key){
+    var AES = {
+        execution_time : 0,
+        cypher : function (data, key) {
             this.execution_time = new Date().getTime();
             var cpr = sjcl.encrypt(key, data);
             this.execution_time = new Date().getTime() - this.execution_time;
             return cpr;
         },
-        decipher: function(cryptogram, key){
+        decipher: function (cryptogram, key) {
             this.execution_time = new Date().getTime();
             var cpr = sjcl.decrypt(key, cryptogram);
             this.execution_time = new Date().getTime() - this.execution_time;
             return cpr;
         }
-    },
-    PASSWORD : {
+    };
+
+    var PASSWORD = {
         /*getRandomPassword : function (length){
-            return generatePassword(
-                length,                 // Length of pw
-                true,                   //Use UPPERCASE letters
-                true,                   //Use lowercase letters
-                true,                   //Use digits
-                true,                   //Use special chars
-                Math.round(length/4)    //Minimum amount of digits
-            );
-        },*/
+         return generatePassword(
+         length,                 // Length of pw
+         true,                   //Use UPPERCASE letters
+         true,                   //Use lowercase letters
+         true,                   //Use digits
+         true,                   //Use special chars
+         Math.round(length/4)    //Minimum amount of digits
+         );
+         },*/
 
         /**
          * Callback will be called once the password its generated, it should accept one parameter, and the parameter will be the key (
@@ -185,7 +186,7 @@ var CRYPTO = {
          */
         generate : function (length, callback, progress, start_string) {
             if (!sjcl.random.isReady(CRYPTO._paranoia_level)) {
-                setTimeout (this.generate(length, callback, progress, start_string), 500);
+                setTimeout(this.generate(length, callback, progress, start_string), 500);
                 return;
             }
 
@@ -203,26 +204,26 @@ var CRYPTO = {
             setTimeout(this.generate(length, callback, progress, start_string), 0);
         },
 
-        logRepeatedCharCount: function(str){
+        logRepeatedCharCount: function (str) {
             var chars = [];
 
-            for (i = 0; i < str.length; i++){
-                chars[str.charAt(i)] = (chars[str.charAt(i)] == null) ? 0 : chars[str.charAt(i)]+1;
+            for (i = 0; i < str.length; i++) {
+                chars[str.charAt(i)] = (chars[str.charAt(i)] == null) ? 0 : chars[str.charAt(i)] + 1;
             }
             return chars;
         },
 
-        checkStrength : function (password, expected_strength){
+        checkStrength : function (password, expected_strength) {
             return zxcvbn(password);
         }
-    },
+    };
 
-    RANDOM : {
+    var RANDOM = {
         /**
          * Returns a random string of 4 characters length
          * @param callback function that will be called when the generation it's done
          */
-        getRandomASCII : function() {
+        getRandomASCII : function () {
             console.warn(CRYPTO._paranoia_level);
 
             var ret = "";
@@ -253,10 +254,10 @@ var CRYPTO = {
          * @returns {string}
          * @private
          */
-        _isASCII : function(data) {
-            return  (data>31 && data<127) ? String.fromCharCode(data) : false;
+        _isASCII : function (data) {
+            return (data > 31 && data < 127) ? String.fromCharCode(data) : false;
         }
-    },
+    };
 
     /**
      * Initializes the random and other cryptographic engines needed for this library to work
@@ -278,13 +279,33 @@ var CRYPTO = {
      *
      * @param default_paranoia (0-10 integer)
      */
-    initEngines : function (default_paranoia) {
-        this._paranoia_level = (default_paranoia == null)  ? 10 : default_paranoia;
+    initEngines = function (default_paranoia) {
+        paranoia_level = default_paranoia || 10;
 
         sjcl.random.setDefaultParanoia(this._paranoia_level);
         sjcl.random.startCollectors();
 
         console.warn('Crypto stuff initialized');
+    };
+
+    initEngines();
+
+    return {
+
+
+        RSA : {
+            genKeyPair : function (size, callback){
+                RSA.genKeyPair(size, callback);
+            },
+            getPKCS : function(priv_k, pub_k){
+                RSA._private_key = priv_k || RSA._private_key;
+                RSA._public_key = pub_k || RSA._public_key;
+                console.log(RSA._private_key);
+                return{
+                    private : RSA.getPrivKeyPKCS(),
+                    public  : RSA.getPublicPEM()
+                }
+            }
+        }
     }
-};
-Window.onload = function (){CRYPTO.initEngines();};
+}]);

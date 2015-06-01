@@ -956,7 +956,7 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$ti
   };
 });
 
-app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareService,ItemService,RevisionService) {
+app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareService,ItemService,RevisionService, cryptoSvc) {
   $scope.settings = {
     PSC: {
       minStrength: 40,
@@ -968,7 +968,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
   var http = location.protocol, slashes = http.concat("//"), host = slashes.concat(window.location.hostname), complete = host + location.pathname;
   $scope.bookmarklet = $sce.trustAsHtml("<a class=\"button\" href=\"javascript:(function(){var a=window,b=document,c=encodeURIComponent,e=c(document.title),d=a.open('" + complete + "add?url='+c(b.location)+'&title='+e,'bkmk_popup','left='+((a.screenX||a.screenLeft)+10)+',top='+((a.screenY||a.screenTop)+10)+',height=565px,width=375px,resizable=0,alwaysRaised=1');a.setTimeout(function(){d.focus()},300);})();\">Save in passman</a>");
 
-
+$scope.sharing = null;
 
   $scope.checkPasswords = function () {
     $scope.settings.PSC.weakItemList = [];
@@ -995,12 +995,15 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     }
   };
 
-
-
-  $scope.renewShareKeys = function(){
-    var keypair = shareService.generateShareKeys();
-    $scope.userSettings.settings.sharing.shareKeys = keypair;
-  };
+    $scope.renewShareKeys = function(){
+        //var keypair = shareService.generateShareKeys();
+        cryptoSvc.RSA.genKeyPair($scope.userSettings.settings.sharing.shareKeySize, function(priv_k, pub_k){
+            //var keys = cryptoSvc.RSA.getPKCS();
+            $scope.userSettings.settings.sharing.shareKeys.prvKeyObj = priv_k;
+            $scope.userSettings.settings.sharing.shareKeys.pubKeyObj = pub_k;
+        });
+        //$scope.userSettings.settings.sharing.shareKeys =  keypair;
+    };
 
   $scope.sGoToEditItem = function(item){
     $scope.showItem(item.originalItem);
@@ -1008,6 +1011,11 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
     $('#settingsDialog').dialog('close');
   };
 
+    $scope.$watch("sharing", function(newVal, oldVal){
+        if (!newVal || newVal === oldVal) return;
+
+        // TODO: Send to a service for further processing
+    });
 
   $scope.$watch("userSettings",function(newVal){
     if(!newVal){
@@ -1023,7 +1031,6 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
 
   $scope.changepw = {}
   $scope.changePW = function(){
-
     var  myItems = [];
     var  itemsEncryptedWithNewPw = [];
     var filesToReEncrypt = [];
