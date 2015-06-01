@@ -65,6 +65,7 @@ class PageController extends Controller {
     $response =  new TemplateResponse('passman', 'main', $params);
     $csp = new ContentSecurityPolicy();
     $csp->addAllowedObjectDomain('\'self\'');
+    $csp->addAllowedImageDomain('data:');
     $response->setContentSecurityPolicy($csp);
     return $response;
     // templates/main.php
