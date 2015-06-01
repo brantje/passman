@@ -92,6 +92,12 @@ app.controller('appCtrl', function ($scope, ItemService, $http, $window, $timeou
   $scope.sessionExpireTime = 0;
   $scope.itemFilter = {visible: true};
   $scope.expireNotificationShown = false;
+  $scope.hasFlash = false;
+  try {
+    $scope.hasFlash = Boolean(new ActiveXObject('ShockwaveFlash.ShockwaveFlash'));
+  } catch(exception) {
+    $scope.hasFlash = ('undefined' != typeof navigator.mimeTypes['application/x-shockwave-flash']);
+  }
   settingsService.getSettings().success(function(data){
     $scope.userSettings = data;
     $window.userSettings = data;
@@ -1622,7 +1628,8 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
         tmpArr.push(tmpItem);
       }
       $scope.fileContent = JSON.stringify(tmpArr);
-      importAsJson();
+	  console.log(tmpArr)
+      //importAsJson();
     };
 
     importAsJson = function(){
@@ -1678,6 +1685,8 @@ app.controller('importCtrl', function($scope,ItemService,fileReader){
         break;
       case "lastpasscsv":
         importAsCSV('lastpass');
+	  case "passpackcsv":
+        importAsCSV('passpack');
         break;
       case "json":
         importAsJson();
