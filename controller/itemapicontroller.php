@@ -274,7 +274,7 @@ class ItemApiController extends Controller {
       $self = ($curItem['user_id'] == $this->userId) ? '_self' : '';
       if(!$skipNotifications){
         if(!$restoredRevision && !$isDeleted &&!$isRecovered){
-          if($curItem['label'] === $item['label']) {
+          if($curItem['label'] == $item['label']) {
             $this->notification->add('item_edited' . $self, array($curItem['label'], $this->userId), '', array(), $remoteUrl, null, Activity::TYPE_ITEM_ACTION);
           } else {
             $this->notification->add('item_renamed' . $self, array($curItem['label'],$item['label'], $this->userId), '', array(), $remoteUrl, null, Activity::TYPE_ITEM_ACTION);
