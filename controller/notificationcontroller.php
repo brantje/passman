@@ -62,7 +62,7 @@ class NotificationController extends Controller {
   public function add($subject,$subjectParams=array(),$message='',$messageParams=array(),$link='',$user=null,$type='',$priority=30) {
     $affectedUser = ($user) ? $user : $this->userId;
     //$type = 'passman_'.$subject;
-    var_dump(func_get_args());
+
     \OC::$server->getActivityManager()-> publishActivity(
     'passman',
     $subject,
