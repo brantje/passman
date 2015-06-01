@@ -63,6 +63,23 @@ app.directive('makeUrl', ['$rootScope',
   }
 ]);
 
+app.directive('progressBar', ['$rootScope',
+  function($rootScope) {
+    return {
+      restrict : 'A',
+      transclude: false,
+      scope:{
+        percent: '=',
+        width:'='
+      },
+      template: '<div class="progress" style="width: {{width}}px;"><div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{percent}}%;"><span class="sr-only">{{percent}}% Complete</span></div></div>',
+      link : function(scope, element) {
+        console.log(scope)
+      }
+    };
+  }
+]);
+
 app.directive('showLoaded', ['$rootScope',
   function($rootScope) {
     return {
