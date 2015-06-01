@@ -142,7 +142,7 @@
               <span><?php p($l->t('Label')); ?></span>:
             </td>
             <td>
-              {{currentItem.label}} <a clip-copy="currentItem.label" clip-click="copied('label')" class="link">[<?php p($l->t('Copy')); ?>]</a> <div progress-bar percent="60" width="200"></div>
+              {{currentItem.label}} <a clip-copy="currentItem.label" clip-click="copied('label')" class="link">[<?php p($l->t('Copy')); ?>]</a>
             </td>
           </tr>
           <tr ng-show="currentItem.description">
