@@ -16,7 +16,7 @@ use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Http\Response;
 use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Controller;
-use OCP\AppFramework\Http\ContentSecurityPolicy;
+//use OCP\AppFramework\Http\ContentSecurityPolicy;
 
 class PageController extends Controller {
 
@@ -63,10 +63,10 @@ class PageController extends Controller {
 
 
     $response =  new TemplateResponse('passman', 'main', $params);
-    $csp = new ContentSecurityPolicy();
-    $csp->addAllowedObjectDomain('\'self\'');
-    $csp->addAllowedImageDomain('data:');
-    $response->setContentSecurityPolicy($csp);
+//    $csp = new ContentSecurityPolicy();
+//    $csp->addAllowedObjectDomain('\'self\'');
+//    $csp->addAllowedImageDomain('data:');
+//    $response->setContentSecurityPolicy($csp);
     return $response;
     // templates/main.php
   }

@@ -1003,7 +1003,7 @@ $scope.sharing = null;
 
     $scope.renewShareKeys = function(){
         //var keypair = shareService.generateShareKeys();
-        cryptoSvc.RSA.genKeyPair($scope.userSettings.settings.sharing.shareKeySize, function(priv_k, pub_k){
+        cryptoSvc.RSA.genKeyPair(2048, function(priv_k, pub_k){//$scope.userSettings.settings.sharing.shareKeySize, function(priv_k, pub_k){
             //var keys = cryptoSvc.RSA.getPKCS();
             $scope.userSettings.settings.sharing.shareKeys.prvKeyObj = priv_k;
             $scope.userSettings.settings.sharing.shareKeys.pubKeyObj = pub_k;

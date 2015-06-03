@@ -27,11 +27,18 @@ app.factory('cryptoSvc', [function () {
          * @param size
          * @param callback A function called after the generation its done
          */
-        genKeyPair : function (size, callback, progress) {
+        genKeyPair : function (size, callback) {
             setTimeout(function () {
-                forge.RSA
-                RSA._genKeyPairCallback
-                callback(RSA._private_key, RSA._public_key);
+                var rsa = forge.pki.rsa;
+                var state = rsa.stepKeyPairGenerationState(size, 0x10001);
+                var step = function (){
+                    if (!rsa.stepKeyPairGenerationState(state, 100)){
+                        setTimeout(step, 1);
+                    }
+                    else callback(state.keys.pu, state.keys);
+                };
+                setTimeout(step, 1);
+                //callback(RSA._private_key, RSA._public_key);
             }, 1);
         },
         _genKeyPairCallback : function (key) {
@@ -296,15 +303,6 @@ app.factory('cryptoSvc', [function () {
         RSA : {
             genKeyPair : function (size, callback){
                 RSA.genKeyPair(size, callback);
-            },
-            getPKCS : function(priv_k, pub_k){
-                RSA._private_key = priv_k || RSA._private_key;
-                RSA._public_key = pub_k || RSA._public_key;
-                console.log(RSA._private_key);
-                return{
-                    private : RSA.getPrivKeyPKCS(),
-                    public  : RSA.getPublicPEM()
-                }
             }
         }
     }
