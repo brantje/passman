@@ -3,6 +3,7 @@
     "A Passman item has been created, modified or deleted" : "Passman-kohde on luotu, muokattu tai poistettu",
     "A Passman item has expired" : "Passman-kohde on vanhentunut",
     "A Passman item has been shared" : "Passman-kohde on jaettu",
+    "A Passman item has been renamed" : "Passman-kohde on nimetty uudelleen",
     "%1$s has been created by %2$s" : "%1$s on luotu käyttäjän %2$s toimesta",
     "You created %1$s" : "Loit kohteen %1$s",
     "%1$s has been updated by %2$s" : "%1$s on päivitetty käyttäjän %2$s toimesta",

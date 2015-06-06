@@ -54,7 +54,7 @@
     "It has a built-in password generator with many settings." : "Постоји уграђени генератор лозинки са много подешавања.",
     "Files" : "Фајлови",
     "You can upload files with a maximum of 5 MB." : "Можете отпремити фајлове максималне величине 5 Mb",
-    "Files are first encrypted with your encryption key and then sent to the server." : "Датотека су прво шифроване са вашим кључевима за шифровање, а затим ће бити прослеђени на сервер",
+    "Files are first encrypted with your encryption key and then sent to the server." : "Фајлови се најпре шифрују вашим кључем за шифровање а затим прослеђују на сервер.",
     "Because encryption / decryption is a complex process it can take a while on mobile phones." : "Пошто је шифровање / дешифровање комплексан процес биће потребно време на мобилним телефонима",
     "Custom fields" : "Прилагођена поља",
     "If the default fields are not sufficient for you, then you can add your own fields here." : "Ако вам нису довољна подразумевана поља, можете додати ваша поља овде.",
