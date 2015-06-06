@@ -29,39 +29,13 @@ app.factory('cryptoSvc', [function () {
          */
         genKeyPair : function (size, callback) {
             setTimeout(function () {
-                var rsa = forge.pki.rsa;
-                var state = rsa.stepKeyPairGenerationState(size, 0x10001);
-                var step = function (){
-                    if (!rsa.stepKeyPairGenerationState(state, 100)){
-                        setTimeout(step, 1);
-                    }
-                    else callback(state.keys.pu, state.keys);
-                };
-                setTimeout(step, 1);
-                //callback(RSA._private_key, RSA._public_key);
+                var keys = forge.rsa.generateKeyPair(size);
+                callback(keys.privateKey, keys.publicKey);
             }, 1);
         },
         _genKeyPairCallback : function (key) {
             this._private_key = key['prvKeyObj'];
             this._public_key = key['pubKeyObj'];
-        },
-
-        /**
-         * Returns a PKCS encoded string containing the private key
-         * @returns string
-         */
-        getPrivKeyPKCS : function () {
-            //if (_priv_key == null) Check if privkey its null before calling this method
-            console.log("Attempting to get priv key pkcs");
-            return KEYUTIL.getPEM(this._private_key, 'PKCS8PRV');
-        },
-
-        /**
-         * Sets the object private key from the given PKCS8 PEM string
-         * @param key (string)
-         */
-        setPrivKeyFromPKCS : function (key) {
-            this._private_key = KEYUTIL.getKeyFromPublicPKCS8PEM(key);
         },
 
         /**
@@ -298,11 +272,15 @@ app.factory('cryptoSvc', [function () {
     initEngines();
 
     return {
-
-
         RSA : {
             genKeyPair : function (size, callback){
                 RSA.genKeyPair(size, callback);
+            },
+            publicKeyToPEM : function (key){
+                return forge.pki.publicKeyToPem(key);
+            },
+            privateKeyToPEM : function (key){
+                return forge.pki.privateKeyToPem(key);
             }
         }
     }
