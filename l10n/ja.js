@@ -96,6 +96,7 @@ OC.L10N.register(
     "Existing fields" : "既存のフィールド",
     "OTP Type" : "OTPタイプ",
     "Upload an image" : "画像をアップロード",
+    "Enter the two-factor secret" : "二要素認証を入力",
     "Current OTP settings" : "現在のOTP設定",
     "Type" : "種類",
     "Issuer" : "発行者",
