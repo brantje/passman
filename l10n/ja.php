@@ -115,6 +115,7 @@ $TRANSLATIONS = array(
 "Disable favicons" => "faviconを無効に",
 "Current password" => "現在のパスワード",
 "New password" => "新しいパスワード",
+"New password (repeat)" => "新しいパスワード (くり返し)",
 "Change pw" => "パスワードを変更",
 "Key size" => "鍵サイズ",
 "Low" => "低い",
