@@ -47,7 +47,7 @@ OC.L10N.register(
     "Custom fields" : "カスタムフィールド",
     "OTP Settings" : "OTP設定",
     "Passman has a built-in OTP (One Time Password) generator." : "Passmanにはビルトインワンタイムパスワード(OTP)生成機能があります。",
-    "If you don't know what a OTP is then I suggest you enable it." : "もしOTPが分からない場合は有効にすることをお勧めします。",
+    "If you don't know what a OTP is then I suggest you enable it." : "OTPが分からない場合は、有効にすることをおすすめします。",
     "GitHub" : "GitHub",
     "Google" : "Google",
     "Dropbox" : "Dropbox",
