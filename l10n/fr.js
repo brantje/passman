@@ -102,7 +102,7 @@ OC.L10N.register(
     "Email" : "Adresse courriel",
     "URL" : "URL",
     "Open link" : "Ouvrir le lien",
-    "Created" : "Créé",
+    "Created" : "Créé le ",
     "Last changed" : "Modifié",
     "Files & images" : "Fichiers & images",
     "One time password settings" : "Paramètres OTP",
