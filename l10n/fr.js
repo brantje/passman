@@ -130,7 +130,7 @@ OC.L10N.register(
     "OTP Type" : "Type OTP",
     "Upload an image" : "Télécharger une image",
     "Set the secret manually" : "Configurer le secret manuellement",
-    "Enter the two-factor secret" : "Saisir le secret à deux facteurs",
+    "Enter the two-factor secret" : "Saisir le secret deux facteurs",
     "Current OTP settings" : "Paramètres OTP courants",
     "Type" : "Type",
     "Issuer" : "Émetteur",
