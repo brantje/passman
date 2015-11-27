@@ -221,7 +221,7 @@ div#topContent {
 	color: #555;
 }
 #addItem{
-	width: 120px;
+	width: auto;
 	white-space: nowrap; 
 }
 #addItem:disabled, #editItem:disabled, #deleteItem:disabled {
