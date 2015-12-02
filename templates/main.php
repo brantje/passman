@@ -11,23 +11,22 @@
 \OCP\Util::addscript('passman', 'textAngular-rangy.min');
 \OCP\Util::addscript('passman', 'textAngular.min');
 
+\OCP\Util::addScript('passman', 'forge.min');
 \OCP\Util::addscript('passman', 'qrReader/llqrcode');
 \OCP\Util::addscript('passman', 'sha');
 \OCP\Util::addscript('passman', 'func');
 \OCP\Util::addscript('passman', 'app');
+\OCP\Util::addScript('passman', 'crypto_wrap');
 \OCP\Util::addscript('passman', 'app.service');
 \OCP\Util::addscript('passman', 'app.directive');
 \OCP\Util::addscript('passman', 'app.filter');
 \OCP\Util::addscript('passman', 'module.fileReader');
-\OCP\Util::addScript('passman', 'forge');
-\OCP\Util::addScript('passman', 'crypto_wrap');
 
 \OCP\Util::addStyle('passman', 'ocPassman');
 \OCP\Util::addStyle('passman', 'textAngular');
 \OCP\Util::addStyle('passman', 'ng-tags-input.min');
 \OCP\Util::addStyle('passman', 'bootstrapGrid');
 \OCP\Util::addStyle('passman', 'fontawsome/font-awesome');
-
 
 ?>
 
@@ -633,14 +632,19 @@
                 <option value="4096"><?php p($l->t('High')); ?> (4096)</option>
               </select></label>
             <?php p($l->t('Public key')); ?><br>
-            <textarea
-                style="width: 100%; height: 200px;">{{userSettings.settings.sharing.shareKeys.pubKeyObj}}</textarea>
+            <textarea readonly="readonly"
+                style="width: 100%; height: 200px;">{{sharing.publicKey}}</textarea>
           </div>
           <div class="col-sm-5">
             <label><?php p($l->t('Renew sharing keys')); ?>: <input type="button" ng-click="renewShareKeys()" value="Renew"></label>
-            <?php p($l->t('Private key')); ?><br/>
-            <textarea
-                style="width: 100%; height: 200px;">{{userSettings.settings.sharing.shareKeys.prvKeyObj}}</textarea>
+            <?php p($l->t('Private key') . ' ' . $l->t('version') . ' '); ?> {{sharing.version}}
+            <span class="link" ng-click="sharing.showPrivateKey = !sharing.showPrivateKey">[
+                <span ng-if="!sharing.showPrivateKey"><?php p($l->t('show')); ?></span>
+                <span ng-if="sharing.showPrivateKey"><?php p($l->t('hide')); ?></span>
+            ]</span>
+            <br/>
+            <textarea readonly="readonly" ng-if="sharing.showPrivateKey"
+                style="width: 100%; height: 200px;">{{sharing.privateKey}}</textarea>
           </div>
         </div>
         <div ng-show="tabActive==3" class="row">

@@ -5,276 +5,233 @@
  * later. See the COPYING file.
  *
  * @author Marcos Zuriaga <wolfi@wolfi.es>
- * @copyright Marcos Zuriarga 2014
+ * @copyright Marcos Zuriarga 2015
  */
-app.factory('cryptoSvc', [function () {
+app.factory('cryptoSvc', [function (shareService) {
     // Global variables of the object:
     var paranoia_level = null;
 
         // Sub object of this object
+    
+    var WRAP = {
+        RSA: {
 
-    /**
-     * The private key object
-     */
-    var RSA = {
-        _ca_pub_key  : null,
-        _private_key : null,
-        _public_key : null,
-        //From now on, just methods
+            /***
+             * 
+             * @param {type} key_length
+             * @returns 
+             */
+            generateKeyPair : function(key_length){
+                return forge.pki.rsa.generateKeyPair(key_length);
+            },
 
-        /**
-         * Generates the private and public random keys for a given key size
-         * @param size
-         * @param callback A function called after the generation its done
-         */
-        genKeyPair : function (size, callback) {
-            setTimeout(function () {
-                var keys = forge.rsa.generateKeyPair(size);
-                callback(keys.privateKey, keys.publicKey);
-            }, 1);
-        },
-        _genKeyPairCallback : function (key) {
-            this._private_key = key['prvKeyObj'];
-            this._public_key = key['pubKeyObj'];
-        },
+            generateKeyPairAsync : function(key_length, callback){
+                throw { 
+                    name : "Not implemented", 
+                    message: "Method not yet implemented (FORGE async generation is buggy right now)", 
+                    location: "RSA.generateKeyPairAsync()" 
+                };
+            },
 
-        /**
-         * Sets the server (CA) public key
-         * @param pub_key
-         */
-        setServerPublicKey : function (pub_key) {
-            this._ca_pub_key = pub_key;
-        },
+            /***
+             * Returns an object containing data, sha1, and the signed message 
+             * {data, sha1, signedMessage}
+             * 
+             * All three fields of the object returned by this funciton are strings
+             * @param string message                The message to be signed, it will be encoded in utf8
+             * @param forgePrivateKey privateKey    The private key that will sign the message
+             * @returns {data, sha1, signedMessage} 
+             */
+            signMessage : function (message, privateKey){
+                var data = {
+                    data: message,
+                    sha1: "",
+                    signedMessage: ""
+                };
 
-        /**
-         * Returns a PEM with the public key of the PRIVATE key
-         * @returns {*}
-         */
-        getPublicPEM : function () {
-            console.log("attempting to get pub key pem");
-            return KEYUTIL.getPEM(this._public_key);//this._private_key);
-        },
-        /**
-         * Sets the public key from a PEM
-         * @param pubKey
-         */
-        setPublicPEM : function (pubKey) {
-            this._public_key = KEYUTIL.getPublicKeyFromCertPEM(pubKey);
-        },
+                var sha1 = forge.md.sha1.create();
+                sha1.update(message, 'utf8');
+                data.sha1 = sha1.digest().toHex();
+                data.signedMessage = forge.util.encode64(privateKey.sign(sha1));
+            },
 
-        /**
-         * Deciphers data ciphered by the server private key
-         * using the current setup public key
-         * @param data
-         * @returns {null}
-         */
-        decipherWithServer : function (data) {
-            var tmp = new JSEncrypt();
-            tmp.getPublicKey(this._ca_pub_key);
-            var dec = tmp.decrypt(data);
+            /***
+             * Checks wether a signed message is valid, it takes the original message
+             * makes a checksum, compares that checksum with the received checksum and 
+             * this received checksum with the signed data
+             * 
+             * @param string message                    The original message
+             * @param string messageSha1HexString       The recieved signed checksum
+             * @param raw_unencoded signedCypherData    The recieved signed cyper data encoded in base 64
+             * @param forgePublicKey publicKey          The public key that is meant to check it
+             * @returns boolean                         True if is valid, false otherwhise
+             */
+            verifySHA1Message : function (message, messageSha1HexString, signedCypherData, publicKey, utf8) {
+                var sha1 = forge.md.sha1.create();
+                (utf8 === undefined) ? sha1.update(message) : sha1.update(message, 'utf8');
+                if (sha1.digest().toHex().toString() !== messageSha1HexString.toString()) {
+                    return false;
+                }
 
-            return (dec == data) ? null : dec;
-        },
-
-        /**
-         * Deciphers data cyphered with the public key
-         *
-         * @param data
-         * @returns {null}
-         */
-        decipherWithPrivate : function (data) {
-            var tmp = new JSEncrypt();
-            tmp.setPrivateKey(this._private_key);
-            var dec = tmp.decrypt(data);
-
-            return (dec == data) ? null : dec;
-        },
-
-        /**
-         * Deciphers data with the given public key, returns null if the data was not successfully decrypted
-         * @param data
-         * @returns {null}
-         */
-        decipherWithPublic : function (data) {
-            var tmp = new JSEncrypt();
-            tmp.setPublicKey(this._public_key);
-            var dec = tmp.decrypt(data);
-
-            return (dec == data) ? null : dec;
-        },
-
-        /**
-         * Checks whether the server public key it's valid or not.
-         * When we already have a private key, the server key should be signed with our public key
-         * Right now i do some simple SIMPLE checks, if we are under HTTPS and it's encrypted with our public key if we
-         * already have one, and if it does not matches any of this checks; i assume it's not valid.
-         * TODO: Find a way of improving this check?.
-         *
-         * @param pub_key
-         * @returns boolean True if it's valid, false otherwise
-         */
-        checkServerPubKey : function (pub_key) {
-            var valid = false;
-            if (window.location.protocol == 'https:') valid = true;
-            if (this.decipherWithPrivate(pub_key) != null) valid = false;
-            return valid;
-        }
-    };
-
-    var AES = {
-        execution_time : 0,
-        cypher : function (data, key) {
-            this.execution_time = new Date().getTime();
-            var cpr = sjcl.encrypt(key, data);
-            this.execution_time = new Date().getTime() - this.execution_time;
-            return cpr;
-        },
-        decipher: function (cryptogram, key) {
-            this.execution_time = new Date().getTime();
-            var cpr = sjcl.decrypt(key, cryptogram);
-            this.execution_time = new Date().getTime() - this.execution_time;
-            return cpr;
-        }
-    };
-
-    var PASSWORD = {
-        /*getRandomPassword : function (length){
-         return generatePassword(
-         length,                 // Length of pw
-         true,                   //Use UPPERCASE letters
-         true,                   //Use lowercase letters
-         true,                   //Use digits
-         true,                   //Use special chars
-         Math.round(length/4)    //Minimum amount of digits
-         );
-         },*/
-
-        /**
-         * Callback will be called once the password its generated, it should accept one parameter, and the parameter will be the key (
-         *  CRYPTO.PASSWORD.generate(100, function(password){
-         *      console.log("The generated password is: " + password);
-         *      // Do more stuff here
-         *  }, function (current_percentage){
-         *      console.log("The current password generation progress it's: " + current_percentage + "%");
-          *     // Do real stuff here, update a progressbar, etc.
-         *  }
-         *  );
-         * )
-         * @param length    The minium length of the generated password (it generates in packs of 4 characters,
-         * so it can end up being up to 3 characters longer)
-         * @param callback  The function to be called after the password generation its done
-         * @param progress  The process of the generation, optional, called each 4 characters generated.
-         */
-        generate : function (length, callback, progress, start_string) {
-            if (!sjcl.random.isReady(CRYPTO._paranoia_level)) {
-                setTimeout(this.generate(length, callback, progress, start_string), 500);
-                return;
+                return publicKey.verify(forge.util.hexToBytes(messageSha1HexString), forge.util.decode64(signedCypherData));
             }
-
-            if (start_string == null) start_string = "";
-            if (start_string.length < length) {
-                start_string += CRYPTO.RANDOM.getRandomASCII();
-                if (progress != null) progress(start_string.length / length * 100);
-            }
-            else {
-                callback(start_string);
-                if (progress != null) progress(100);
-                return;
-            }
-
-            setTimeout(this.generate(length, callback, progress, start_string), 0);
         },
-
-        logRepeatedCharCount: function (str) {
-            var chars = [];
-
-            for (i = 0; i < str.length; i++) {
-                chars[str.charAt(i)] = (chars[str.charAt(i)] == null) ? 0 : chars[str.charAt(i)] + 1;
+        AES: {
+            execution_time : 0,
+            cypher : function (data, key) {
+                this.execution_time = new Date().getTime();
+                var cpr = sjcl.encrypt(key, data);
+                this.execution_time = new Date().getTime() - this.execution_time;
+                return cpr;
+            },
+            decipher: function (cryptogram, key) {
+                this.execution_time = new Date().getTime();
+                var cpr = sjcl.decrypt(key, cryptogram);
+                this.execution_time = new Date().getTime() - this.execution_time;
+                return cpr;
             }
-            return chars;
         },
+        PASSWORD : {
+            /*getRandomPassword : function (length){
+             return generatePassword(
+             length,                 // Length of pw
+             true,                   //Use UPPERCASE letters
+             true,                   //Use lowercase letters
+             true,                   //Use digits
+             true,                   //Use special chars
+             Math.round(length/4)    //Minimum amount of digits
+             );
+             },*/
 
-        checkStrength : function (password, expected_strength) {
-            return zxcvbn(password);
-        }
-    };
+            /**
+             * Callback will be called once the password its generated, it should accept one parameter, and the parameter will be the key (
+             *  CRYPTO.PASSWORD.generate(100, function(password){
+             *      console.log("The generated password is: " + password);
+             *      // Do more stuff here
+             *  }, function (current_percentage){
+             *      console.log("The current password generation progress it's: " + current_percentage + "%");
+              *     // Do real stuff here, update a progressbar, etc.
+             *  }
+             *  );
+             * )
+             * @param length    The minium length of the generated password (it generates in packs of 4 characters,
+             * so it can end up being up to 3 characters longer)
+             * @param callback  The function to be called after the password generation its done
+             * @param progress  The process of the generation, optional, called each 4 characters generated.
+             */
+            generate : function (length, callback, progress, start_string) {
+                if (!sjcl.random.isReady(paranoia_level)) {
+                    setTimeout(this.generate(length, callback, progress, start_string), 500);
+                    return;
+                }
 
-    var RANDOM = {
+                if (start_string == null) start_string = "";
+                if (start_string.length < length) {
+                    start_string += RANDOM.getRandomASCII();
+                    if (progress != null) progress(start_string.length / length * 100);
+                }
+                else {
+                    callback(start_string);
+                    if (progress != null) progress(100);
+                    return;
+                }
+
+                setTimeout(this.generate(length, callback, progress, start_string), 0);
+            },
+
+            logRepeatedCharCount: function (str) {
+                var chars = [];
+
+                for (i = 0; i < str.length; i++) {
+                    chars[str.charAt(i)] = (chars[str.charAt(i)] == null) ? 0 : chars[str.charAt(i)] + 1;
+                }
+                return chars;
+            },
+
+            checkStrength : function (password, expected_strength) {
+                return zxcvbn(password);
+            }
+        },
+        
+        RANDOM: {
+            /**
+             * Returns a random string of 4 characters length
+             * @param callback function that will be called when the generation it's done
+             */
+            getRandomASCII : function () {
+                console.warn(paranoia_level);
+
+                var ret = "";
+                while (ret.length < 4) {
+                    var int = sjcl.random.randomWords(1, paranoia_level);
+                    int = int[0];
+
+                    var tmp = this._isASCII((int & 0xFF000000) >> 24);
+                    if (tmp) ret += tmp;
+
+                    tmp = this._isASCII((int & 0x00FF0000) >> 16);
+                    if (tmp) ret += tmp;
+
+                    tmp = this._isASCII((int & 0x0000FF00) >> 8);
+                    if (tmp) ret += tmp;
+
+                    tmp = this._isASCII(int & 0x000000FF);
+                    if (tmp)  ret += tmp;
+                }
+
+                return ret;
+            },
+
+            /**
+             * Checks whether the given data it's an ascii character, returning the corresponding character; returns false otherwise
+             *
+             * @param data
+             * @returns {string}
+             * @private
+             */
+            _isASCII : function (data) {
+                return (data > 31 && data < 127) ? String.fromCharCode(data) : false;
+            }
+        },
+        
         /**
-         * Returns a random string of 4 characters length
-         * @param callback function that will be called when the generation it's done
-         */
-        getRandomASCII : function () {
-            console.warn(CRYPTO._paranoia_level);
+        * Initializes the random and other cryptographic engines needed for this library to work
+        * The default paranoia, in case no paranoia level it's provided, it's 10 (1024).
+        * The higher paranoia level allowed by sjcl.
+        *
+        * PARANOIA_LEVELS:
+        *  0 = 0
+        *  1 = 48
+        *  2 = 64
+        *  3 = 96
+        *  4 = 128
+        *  5 = 192
+        *  6 = 256
+        *  7 = 384
+        *  8 = 512
+        *  9 = 768
+        *  10 = 1024
+        *
+        * @param default_paranoia (0-10 integer)
+        */
+       initEngines : function (default_paranoia) {
+           paranoia_level = default_paranoia || 10;
 
-            var ret = "";
-            while (ret.length < 4) {
-                var int = sjcl.random.randomWords(1, CRYPTO._paranoia_level);
-                int = int[0];
+           sjcl.random.setDefaultParanoia(this._paranoia_level);
+           sjcl.random.startCollectors();
 
-                var tmp = this._isASCII((int & 0xFF000000) >> 24);
-                if (tmp) ret += tmp;
-
-                tmp = this._isASCII((int & 0x00FF0000) >> 16);
-                if (tmp) ret += tmp;
-
-                tmp = this._isASCII((int & 0x0000FF00) >> 8);
-                if (tmp) ret += tmp;
-
-                tmp = this._isASCII(int & 0x000000FF);
-                if (tmp)  ret += tmp;
-            }
-
-            return ret;
-        },
-
-        /**
-         * Checks whether the given data it's an ascii character, returning the corresponding character; returns false otherwise
-         *
-         * @param data
-         * @returns {string}
-         * @private
-         */
-        _isASCII : function (data) {
-            return (data > 31 && data < 127) ? String.fromCharCode(data) : false;
-        }
+           console.warn('Crypto stuff initialized');
+       }
     };
+    
+    
 
-    /**
-     * Initializes the random and other cryptographic engines needed for this library to work
-     * The default paranoia, in case no paranoia level it's provided, it's 10 (1024).
-     * The higher paranoia level allowed by sjcl.
-     *
-     * PARANOIA_LEVELS:
-     *  0 = 0
-     *  1 = 48
-     *  2 = 64
-     *  3 = 96
-     *  4 = 128
-     *  5 = 192
-     *  6 = 256
-     *  7 = 384
-     *  8 = 512
-     *  9 = 768
-     *  10 = 1024
-     *
-     * @param default_paranoia (0-10 integer)
-     */
-    initEngines = function (default_paranoia) {
-        paranoia_level = default_paranoia || 10;
-
-        sjcl.random.setDefaultParanoia(this._paranoia_level);
-        sjcl.random.startCollectors();
-
-        console.warn('Crypto stuff initialized');
-    };
-
-    initEngines();
+    WRAP.initEngines();
 
     return {
         RSA : {
             genKeyPair : function (size, callback){
-                RSA.genKeyPair(size, callback);
+                callback(WRAP.RSA.generateKeyPair(size));
             },
             publicKeyToPEM : function (key){
                 return forge.pki.publicKeyToPem(key);

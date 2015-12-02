@@ -963,65 +963,120 @@ app.controller('contentCtrl', function ($scope, $sce, ItemService,$rootScope,$ti
 });
 
 app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareService,ItemService,RevisionService, cryptoSvc) {
-  $scope.settings = {
-    PSC: {
-      minStrength: 40,
-      weakItemList: []
-    }
-  };
-  $scope.shareSettingsLoaded = false;
+    $scope.settings = {
+      PSC: {
+        minStrength: 40,
+        weakItemList: []
+      }
+    };
+    $scope.shareSettingsLoaded = false;
 
-  var http = location.protocol, slashes = http.concat("//"), host = slashes.concat(window.location.hostname), complete = host + location.pathname;
-  $scope.bookmarklet = $sce.trustAsHtml("<a class=\"button\" href=\"javascript:(function(){var a=window,b=document,c=encodeURIComponent,e=c(document.title),d=a.open('" + complete + "add?url='+c(b.location)+'&title='+e,'bkmk_popup','left='+((a.screenX||a.screenLeft)+10)+',top='+((a.screenY||a.screenTop)+10)+',height=565px,width=375px,resizable=0,alwaysRaised=1');a.setTimeout(function(){d.focus()},300);})();\">Save in passman</a>");
+    var http = location.protocol, slashes = http.concat("//"), host = slashes.concat(window.location.hostname), complete = host + location.pathname;
+    $scope.bookmarklet = $sce.trustAsHtml("<a class=\"button\" href=\"javascript:(function(){var a=window,b=document,c=encodeURIComponent,e=c(document.title),d=a.open('" + complete + "add?url='+c(b.location)+'&title='+e,'bkmk_popup','left='+((a.screenX||a.screenLeft)+10)+',top='+((a.screenY||a.screenTop)+10)+',height=565px,width=375px,resizable=0,alwaysRaised=1');a.setTimeout(function(){d.focus()},300);})();\">Save in passman</a>");
 
-$scope.sharing = null;
+    $scope.sharing = {
+        loaded          : false,
+        showPrivateKey  : false,
+        publicKey       : null,
+        privateKey      : null,
+        version         : null,
+        
+        togglePrivateKeyVisibility : function(){
+            this.showPrivateKey = !this.showPrivateKey;
+            
+        }
+    };
 
-  $scope.checkPasswords = function () {
-    $scope.settings.PSC.weakItemList = [];
-    var i, pwd, tmp;
-    for (i = 0; i < $scope.items.length; i++) {
-      tmp = angular.copy($scope.items[i]);
-      console.log('Checking ',tmp.label);
-        if(tmp.password){
-          try{
-            pwd = zxcvbn($scope.decryptThis(tmp.password));
-            if (pwd.entropy < $scope.settings.PSC.minStrength) {
-              tmp.score = pwd.entropy;
-              tmp.password = pwd.password;
-              tmp.crack_time_display = pwd.crack_time_display;
-              tmp.originalItem = $scope.items[i];
-              if (tmp.password !== '') {
-                $scope.settings.PSC.weakItemList.push(tmp);
+    $scope.checkPasswords = function () {
+      $scope.settings.PSC.weakItemList = [];
+      var i, pwd, tmp;
+      for (i = 0; i < $scope.items.length; i++) {
+        tmp = angular.copy($scope.items[i]);
+        console.log('Checking ',tmp.label);
+          if(tmp.password){
+            try{
+              pwd = zxcvbn($scope.decryptThis(tmp.password));
+              if (pwd.entropy < $scope.settings.PSC.minStrength) {
+                tmp.score = pwd.entropy;
+                tmp.password = pwd.password;
+                tmp.crack_time_display = pwd.crack_time_display;
+                tmp.originalItem = $scope.items[i];
+                if (tmp.password !== '') {
+                  $scope.settings.PSC.weakItemList.push(tmp);
+                }
               }
+            }  catch (e){
+              console.log('Error ',e);
             }
-          }  catch (e){
-          console.log('Error ',e)
-          }
-       }
-    }
-  };
+         }
+      }
+    };
 
     $scope.renewShareKeys = function(){
         //var keypair = shareService.generateShareKeys();
-        cryptoSvc.RSA.genKeyPair(2048, function(priv_k, pub_k){//$scope.userSettings.settings.sharing.shareKeySize, function(priv_k, pub_k){
+        cryptoSvc.RSA.genKeyPair($scope.userSettings.settings.sharing.shareKeySize, function(keypair){ //$scope.userSettings.settings.sharing.shareKeySize, function(priv_k, pub_k){
             //var keys = cryptoSvc.RSA.getPKCS();
-            $scope.userSettings.settings.sharing.shareKeys.prvKeyObj = cryptoSvc.RSA.privateKeyToPEM(priv_k);
-            $scope.userSettings.settings.sharing.shareKeys.pubKeyObj = cryptoSvc.RSA.publicKeyToPEM(pub_k);
+            var prik = cryptoSvc.RSA.privateKeyToPEM(keypair.privateKey);
+            var pubk = cryptoSvc.RSA.publicKeyToPEM(keypair.publicKey);
+            shareService.getLatestKeyVersion().then(function(data, err){
+                if (data.status == 200){
+                    shareService.saveSharingKeys(prik, pubk, parseInt(data.data.lastVersion) + 1);
+                    $scope.loadKeyData();
+                }
+            });
         });
         //$scope.userSettings.settings.sharing.shareKeys =  keypair;
     };
 
-  $scope.sGoToEditItem = function(item){
-    $scope.showItem(item.originalItem);
-    $scope.editItem(item.originalItem);
-    $('#settingsDialog').dialog('close');
-  };
+    $scope.sGoToEditItem = function(item){
+      $scope.showItem(item.originalItem);
+      $scope.editItem(item.originalItem);
+      $('#settingsDialog').dialog('close');
+    };
 
     $scope.$watch("sharing", function(newVal, oldVal){
         if (!newVal || newVal === oldVal) return;
 
         // TODO: Send to a service for further processing
     });
+    
+    $scope.$watch("tabActive", function(newVal){
+        if (newVal == 2){
+            console.log("sharing shown");
+            if ($scope.sharing.loaded === false){
+                $scope.loadKeyData(function(){
+                    $scope.sharing.loaded = true;
+                });
+            }
+        }
+    });
+    
+    $scope.loadKeyData = function (callback){
+        shareService.getLatestKeyVersion().then(function(data){
+            console.log("got version");
+            console.log(data);
+            if (data.status == 200){
+                $scope.sharing.version = data.data.lastVersion;
+                shareService.getKeyForVersion($scope.sharing.version).then(function(data){
+                    console.log("got key");
+                    console.log(data);
+                    if (data.status == 200){
+                        $scope.sharing.privateKey = data.data.privateKey;
+                        $scope.sharing.publicKey  = data.data.publicKey;
+                        if (callback !== undefined){
+                            callback();
+                        }
+                    }
+                    else{
+                        // TODO: Error control?
+                    }
+                });
+            }
+            else {
+                // TODO: Error control?
+            }
+        });
+    };
 
   $scope.$watch("userSettings",function(newVal){
     if(!newVal){

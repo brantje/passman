@@ -17,23 +17,29 @@ use \OCP\IRequest;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http;
 use \OCP\AppFramework\Http\JSONResponse;
+use OCA\Passman\Db\ShareKeyMapper;
+use OCA\Passman\Db\KeyItem;
 
 class ShareController extends Controller {
   private $userId;
+  /**
+   * @var ItemBusinessLayer
+   */
   private $ItemBusinessLayer;
-  private $tagBusinessLayer;
-  private $shareManager;
-  private $userGroups;
-  public $request;
+  /**
+   * @var ShareMapper
+   */
+  private $shareKeyMapper;
+  //private $userGroups;
 
-  public function __construct($appName, IRequest $request, ItemBusinessLayer $ItemBusinessLayer, $userId, $tagBusinessLayer, $shareManager/*,$userGroups*/) {
+  public function __construct($appName, IRequest $request, $userId, ShareKeyMapper $shareMapper/*,$userGroups*/) {
     parent::__construct($appName, $request);
-  /*  $this->userId = $userId;
-    $this->ItemBusinessLayer = $ItemBusinessLayer;
-    $this->tagBusinessLayer = $tagBusinessLayer;
-    $this->request = $request;
-    $this->shareManager = $shareManager;
-    $this->userGroups = $userGroups;*/
+    $this->userId               = $userId;
+//    $this->ItemBusinessLayer    = $ItemBusinessLayer;
+//    $this->tagBusinessLayer     = $tagBusinessLayer;
+    $this->request              = $request;
+    $this->shareKeyMapper       = $shareMapper;
+    //$this->userGroups = $userGroups;
   }
 
  /* public function search($k) {
@@ -66,7 +72,7 @@ class ShareController extends Controller {
     return new JSONResponse($result);
   }
   //public function userSearch($name)
-
+  
   /**
    *
    */
@@ -78,13 +84,13 @@ class ShareController extends Controller {
 
     public function generateServerKeys($bit_length){
         $dn = array(
-            "countryName" => "UK",
-            "stateOrProvinceName" => "CHANGEME",
-            "localityName" => "CHANGEME",
-            "organizationName" => "CHANGE ME",
-            "organizationalUnitName" => "CHANGE ME",
-            "commonName" => "Someone is Someone",
-            "emailAddress" => "someone@somewhere.where"
+            "countryName"           => "UK",
+            "stateOrProvinceName"   => "CHANGEME",
+            "localityName"          => "CHANGEME",
+            "organizationName"      => "CHANGE ME",
+            "organizationalUnitName"=> "CHANGE ME",
+            "commonName"            => "Someone is Someone",
+            "emailAddress"          => "someone@somewhere.where"
         );
         $days = 365;
 
@@ -129,5 +135,55 @@ class ShareController extends Controller {
             echo $e . "\n";
         }
         echo "</p>";
+    }
+    
+    /**
+     * 
+     * @param type $publicKey
+     * @param type $privateKey
+     * @param type $version
+     * @NoAdminRequired
+     */
+    public function saveKey($publicKey, $privateKey, $version){
+        $it = new KeyItem();
+        $it->setId(NULL);
+        $it->setUserId($this->userId);
+        $it->setPublicKey($publicKey);
+        $it->setPrivateKey($privateKey);
+        $it->setVersion($version);
+        
+        $this->shareKeyMapper->saveKey($it);
+    }
+    
+    /**
+     * 
+     * @NoAdminRequired
+     */
+    public function lastKeyVersion(){
+        $tmp = new \stdClass();
+        $tmp->lastVersion = $this->shareKeyMapper->getLatestUserKeyId($this->userId);
+        
+        return new JSONResponse($tmp);
+    }
+    
+    /**
+     * 
+     * @param type $version
+     * @return type
+     * @NoAdminRequired
+     */
+    public function getKeyForVersion($version){
+        $data = null;
+        
+        try {
+            $tmp = $this->shareKeyMapper->getUserKeyDataVersion($this->userId, $version);
+            $data = new Http\DataResponse($tmp);
+        }
+        catch (\OCP\AppFramework\Db\DoesNotExistException $ex){
+            $data = new Http\DataResponse(null, Http::STATUS_NOT_FOUND);
+        }
+        
+        return $data;
+
     }
 }

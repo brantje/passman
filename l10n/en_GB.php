@@ -154,6 +154,7 @@ $TRANSLATIONS = array(
 "Public key" => "Public key",
 "Renew sharing keys" => "Renew sharing keys",
 "Private key" => "Private key",
+"version" => "version:",
 "Here you can indentify weak passwords, all affected items will be listed. List all passwords with a score less than" => "Here you can indentify weak passwords, all affected items will be listed. List all passwords with a score less than",
 "Score" => "Score",
 "edit" => "edit",

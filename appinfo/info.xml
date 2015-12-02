@@ -2,9 +2,16 @@
 <info>
     <id>passman</id>
     <name>Passman</name>
+    <namespace>Passman</namespace>
     <description>A password manager for ownCloud</description>
     <licence>agpl</licence>
     <author>Sander Brand</author>
-    <version>1.3.38</version>
+    <version>1.3.383</version>
     <requiremin>8</requiremin>
+    
+    <dependencies>
+        <!--<php min-version="5.4" max-version="5.5"/>-->
+        <database>mysql</database>
+        <!--<os>Linux</os>-->
+    </dependencies>
 </info>

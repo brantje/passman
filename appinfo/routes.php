@@ -73,6 +73,29 @@ $application->registerRoutes($this, array(
 
 
     //array('name' => 'share#search', 'url' => '/api/v1/sharing/search', 'verb' => 'GET'),
-    array('name' => 'share#share', 'url' => '/api/v1/sharing/share', 'verb' => 'PUT'),
-    array('name' => 'share#generateServerShareKeys', 'url' => '/generatesharekeys', 'verb' => 'GET'),
+    [
+        'name'  => 'share#share', 
+        'url'   => '/api/v1/sharing/share', 
+        'verb'  => 'PUT'
+    ],
+    [
+        'name'  => 'share#saveKey', 
+        'url'   => '/api/v1/sharing/saveKey', 
+        'verb'  => 'PUT'
+    ],
+    [
+        'name'  => 'share#generateServerShareKeys', 
+        'url'   => '/generatesharekeys', 
+        'verb'  => 'GET'
+    ],
+    [
+        'name'  => 'share#lastKeyVersion',
+        'url'   => '/api/v1/sharing/lastKeyVersion',
+        'verb'  => 'GET'
+    ],
+    [
+        'name'  => 'share#getKeyForVersion',
+        'url'   => '/api/v1/sharing/getKeyForVersion/{version}',
+        'verb'  => 'GET'
+    ]
 )));

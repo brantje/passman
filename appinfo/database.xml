@@ -169,6 +169,7 @@
 				<default>0</default>
 				<unsigned>true</unsigned>
 			</field>
+                        <!-- /Requiered to identify the shared passwords as they store different kind of data -->
 			<index>
 				<name>item_id_index</name>
 				<field>
@@ -327,9 +328,26 @@
                     <notnull>true</notnull>
                 </field>
                 <field>
-                    <name>key</name>
+                    <name>user_id</name>
+                    <type>text</type>
+                    <notnull>true</notnull>
+                    <length>64</length>
+                </field>
+                <field>
+                    <name>public_key</name>
                     <type>clob</type>
                     <notnull>true</notnull>
+                </field>
+                <field>
+                    <name>private_key</name>
+                    <type>clob</type>
+                    <notnull>true</notnull>
+                </field>
+                <field>
+                    <name>version</name>
+                    <type>integer</type>
+                    <notnull>true</notnull>
+                    <unsigned>true</unsigned>
                 </field>
             </declaration>
         </table>
@@ -337,10 +355,16 @@
             <name>*dbprefix*passman_share</name>
             <declaration>
                 <field>
-                    <name>kid</name>
-                    <type>integer</type>
-                    <length>41</length>
+                    <name>user_id</name>
+                    <type>text</type>
                     <notnull>true</notnull>
+                    <length>64</length>
+                </field>
+                <field>
+                    <name>key_id</name>
+                    <type>integer</type>
+                    <notnull>true</notnull>
+                    <unsigned>true</unsigned>
                 </field>
                 <field>
                     <name>target</name>
@@ -356,12 +380,6 @@
                     <notnull>true</notnull>
                 </field>
                 <field>
-                    <name>uid</name>
-                    <type>text</type>
-                    <notnull>false</notnull>
-                    <length>64</length>
-                </field>
-                <field>
                     <name>gid</name>
                     <type>text</type>
                     <length>64</length>
@@ -370,7 +388,7 @@
                 <index>
                     <name>share_user_id_index</name>
                     <field>
-                            <name>uid</name>
+                            <name>user_id</name>
                     </field>
                 </index>
                 <index>

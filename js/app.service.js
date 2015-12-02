@@ -32,8 +32,33 @@ app.factory('shareService', ['$http','$q', function ($http,$q) {
           return $q.reject(response.data);
         });
     },
-    saveSharingKeys : function (priv_k, pub_k){
-
+    saveSharingKeys : function (priv_k, pub_k, version){
+        return $http({
+            url: OC.generateUrl('apps/passman/api/v1/sharing/saveKey'),
+            method: 'PUT',
+            data: {
+                publicKey: pub_k,
+                privateKey: priv_k,
+                version: version
+            }
+        });
+    },
+    
+    getLatestKeyVersion : function(){
+        return $http({
+            url: OC.generateUrl('apps/passman/api/v1/sharing/lastKeyVersion'),
+            method: 'GET'
+        });
+    },
+    
+    getKeyForVersion : function(version) {
+        return $http({
+            url: OC.generateUrl('apps/passman/api/v1/sharing/getKeyForVersion/' + version),
+            method: 'GET',
+            data:{
+                version: version
+            }
+        });
     }
     //generateShareKeys: function(keysize){
     //  return KEYUTIL.generateKeypair("RSA", keysize);

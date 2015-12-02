@@ -82,7 +82,7 @@ public function __construct(array $urlParams = array()) {
       );
     });
 
-    $container->registerService('ShareController', function ($c) {
+    /*$container->registerService('ShareController', function ($c) {
       return new ShareController(
         $c->query('AppName'),
         $c->query('Request'),
@@ -91,7 +91,7 @@ public function __construct(array $urlParams = array()) {
         $c->query('TagBusinessLayer'),
         $c->query('ShareManager')
       );
-    });
+    });*/
 
     $container->registerService('RevisionController', function ($c) {
         return new RevisionController(
