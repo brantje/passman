@@ -101,7 +101,7 @@ class Activity implements \OCP\Activity\IExtension {
 	 * @return string|false
 	 */
 	public function translate($app, $text, $params, $stripPath, $highlightParams, $languageCode) {
-		$l = \OC::$server->getL10N('passman', $languageCode);
+		$l = new \OC_L10N('passman', $languageCode);
 		if ($app === 'passman') {
 			switch ($text) {
 				case self::SUBJECT_ITEM_CREATED:
