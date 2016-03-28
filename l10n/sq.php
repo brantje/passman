@@ -136,6 +136,7 @@ $TRANSLATIONS = array(
 "Secret" => "Sekret",
 "Sharing" => "Ndarje",
 "Tools" => "Mjete",
+"Bookmarklet" => "Përmbajtës faqerojtësish",
 "Export" => "Eksporto",
 "Import" => "Importo",
 "General settings" => "Rregullime të përgjithshme",
