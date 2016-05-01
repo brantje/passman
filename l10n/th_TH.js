@@ -135,7 +135,7 @@ OC.L10N.register(
     "Type" : "ประเภท",
     "Issuer" : "ผู้ออก",
     "Secret" : "ความลับ",
-    "Sharing" : "การแชร์ข้อมูล",
+    "Sharing" : "แชร์ข้อมูล",
     "Tools" : "เครื่องมือ",
     "Bookmarklet" : "Bookmarklet",
     "Export" : "ส่งออก",
