@@ -90,7 +90,7 @@ OC.L10N.register(
     "Share" : "แชร์",
     "Revisions" : "การปรับ",
     "Delete" : "ลบ",
-    "Restore" : "คืนค่า",
+    "Restore" : "กู้คืน",
     "Destroy" : "ทำลาย",
     "No results" : "ไม่มีผลลัพธ์",
     "Copy" : "คัดลอก",
