@@ -130,7 +130,7 @@ OC.L10N.register(
     "OTP Type" : "ประเภทของ OTP",
     "Upload an image" : "อัพโหลดรูปภาพ",
     "Set the secret manually" : "ตั้งค่าความลับด้วยตนเอง",
-    "Enter the two-factor secret" : "ใส่ความลับทั้งสองตัวประกอบ",
+    "Enter the two-factor secret" : "ใส่รหัสลับขั้นตอนที่สอง",
     "Current OTP settings" : "การตั้งค่ารหัสผ่าน OTP ปัจจุบัน",
     "Type" : "ประเภท",
     "Issuer" : "ผู้ออก",
