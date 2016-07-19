@@ -46,6 +46,7 @@ $TRANSLATIONS = array(
 "Password" => "Geslo",
 "Password generation & password generation settings." => "Ustvarjanje in nastavitve gesel",
 "Files" => "Datoteke",
+"You can upload files with a maximum of 5 MB." => "V oblak je mogoče poslati le datoteke do 5 MB velikosti.",
 "Custom fields" => "Polja po meri",
 "OTP Settings" => "Nastavitve OTP",
 "Passman has a built-in OTP (One Time Password) generator." => "Program Passman podpira zmožnost OTP (One Time Password).",
