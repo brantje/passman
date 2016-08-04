@@ -100,6 +100,7 @@ OC.L10N.register(
     "Minimal password score" : "Najnižja ocena cesla",
     "Override required password score" : "Zavrni zahtevano oceno gesla",
     "Current password score" : "Trenutna ocena gesla",
+    "Password will expire at" : "Geslo bo poteklo",
     "Show password generation settings" : "Pokaži nastavitve ustvarjanja gesel",
     "Hide password generation settings" : "Skrij nastavitve ustvarjanja gesel",
     "Password length" : "Dolžina gesla",
