@@ -51,6 +51,7 @@ $TRANSLATIONS = array(
 "Files" => "Datoteke",
 "You can upload files with a maximum of 5 MB." => "V oblak je mogoče poslati le datoteke do 5 MB velikosti.",
 "Files are first encrypted with your encryption key and then sent to the server." => "Datoteke se najprej šifrirajo z uporabo določenega šifrirnega ključa, nato pa so poslane na strežnik.",
+"Because encryption / decryption is a complex process it can take a while on mobile phones." => "Ker je šifriranje zapleteno opravilo, je lahko to dejanje na mobilnih napravah dolgotrajno.",
 "Custom fields" => "Polja po meri",
 "If the default fields are not sufficient for you, then you can add your own fields here." => "V kolikor privzeto določena polja niso dovolj, je mogoče dodati nova polja.",
 "It also offers an option to let the value be hidden so it is handled as a password." => "Omogoča tudi možnost, da je vrednost skrita in je tako upravljana kot geslo.",
