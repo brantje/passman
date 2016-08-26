@@ -1,6 +1,6 @@
 { "translations": {
     "Passwords" : "パスワード",
-    "A Passman item has been created, modified or deleted" : "Passmanアイテムは作成もしくは更新，削除されました",
+    "A Passman item has been created, modified or deleted" : "Passmanアイテムが作成または更新または削除されました",
     "A Passman item has expired" : "Passmanアイテムの期限が切れました",
     "A Passman item has been shared" : "Passmanアイテムを共有しました",
     "A Passman item has been renamed" : "Passmanアイテムの名前を変更しました",
@@ -156,7 +156,7 @@
     "Here you can indentify weak passwords, all affected items will be listed. List all passwords with a score less than" : "ここでは、弱いパスワードを見つけることができ、影響を受けるすべての項目が表示されます。スコア未満のすべてのパスワードのリストを表示",
     "Score" : "スコア",
     "edit" : "編集",
-    "Drag this to your browser bookmarks and click it, if you want to save username / password quickly" : "すぐにユーザー名/パスワードを保存したい場合は、このブックマークレットをあなたのブラウザのブックマークにドラッグし、クリックしてください。",
+    "Drag this to your browser bookmarks and click it, if you want to save username / password quickly" : "すぐにユーザー名/パスワードを保存したい場合は、このブックマークレットをあなたのブラウザーのブックマークにドラッグし、クリックしてください。",
     "Export items as" : "項目をエクスポート",
     "Passman CSV" : "Passman CSV",
     "KeePass CSV" : "KeePass CSV",
