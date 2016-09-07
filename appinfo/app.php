@@ -11,7 +11,6 @@
 
 namespace OCA\Passman\AppInfo;
 \OCP\App::registerAdmin('passman', 'admin-settings');
-$l10n = new \OC_L10N('Passwords');
 \OCP\App::addNavigationEntry(array(
   // the string under which your app will be referenced in owncloud
   'id' => 'passman',
@@ -29,9 +28,9 @@ $l10n = new \OC_L10N('Passwords');
 
   // the title of your application. This will be used in the
   // navigation or on the settings page of your app
-  'name' => $l10n->t('Passwords')
+  'name' => \OCP\Util::getL10N('passman')->t('Passwords')
 ));
-\OCP\Backgroundjob::registerJob('OCA\Passman\Cron\RunCron');
+
 \OC::$server->getActivityManager()->registerExtension(function() {
   return new \OCA\Passman\Activity();
 });
