@@ -1145,6 +1145,7 @@ app.controller('settingsCtrl', function ($scope,$sce,settingsService,shareServic
   }
 });
 app.controller('exportCtrl', function($scope,ItemService){
+  $scope.export_encryption_key = '';
   $scope.exportItemAs = function(type){
     var exportAsCSV,exportTags=[],exportAsJson,exportAsXML,exportAsKeePassCSV;
     /*
@@ -1153,7 +1154,7 @@ app.controller('exportCtrl', function($scope,ItemService){
     angular.forEach($scope.selectedExportTags, function(tag){
       exportTags.push(tag.text);
     });
-
+    console.log('kom ik hier', $scope.export_encryption_key)
 
 
     exportAsCSV = function(){
@@ -1165,7 +1166,7 @@ app.controller('exportCtrl', function($scope,ItemService){
       });
       exportArr.push(tmp);
       angular.forEach(items,function(item){
-        var item = $scope.decryptItem(item);
+        var item = $scope.decryptItem(item, $scope.export_encryption_key);
         var exportItem = [];
         angular.forEach($scope.selectedExportFields,function(selectedField){
           var lowerCase = selectedField.prop;
@@ -1216,7 +1217,7 @@ app.controller('exportCtrl', function($scope,ItemService){
       var tmp = [];
       exportArr.push(tmp);
       angular.forEach(items,function(item){
-        var item = $scope.decryptItem(item);
+        var item = $scope.decryptItem(item, $scope.export_encryption_key);
         var account = (item.account) ? item.account : item.email;
         var exportItem = [item.label,account,item.password,item.url,'"'+item.description.replace(/<\/?[^>]+(>|$)/g, "")+'"'];
         exportArr.push(exportItem);
@@ -1250,38 +1251,66 @@ app.controller('exportCtrl', function($scope,ItemService){
       returnData = false || returnData;
       var items,exportArr = [];
       items = angular.copy($scope.exportItems);
-      angular.forEach(items,function(item){
-        var item = $scope.decryptItem(item);
+
+      angular.forEach(items,function(rawItem){
+        var item = rawItem, encryptedFields = ['account', 'email', 'password', 'description'], i;
+        console.log(item);
+        try {
+          if (!item.decrypted) {
+            for (i = 0; i < encryptedFields.length; i++) {
+              if (item[encryptedFields[i]]) {
+                if (item[encryptedFields[i]]) {
+                  item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
+                }
+              }
+            }
+            for (i = 0; i < item.customFields.length; i++) {
+              item.customFields[i].label = $scope.decryptThis(item.customFields[i].label);
+              item.customFields[i].value = $scope.decryptThis(item.customFields[i].value);
+            }
+            for (i = 0; i < item.files.length; i++) {
+              item.files[i].filename = $scope.decryptThis(item.files[i].filename);
+              item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
+            }
+            if (item.otpsecret) {
+              item.otpsecret = $scope.decryptObject(item.otpsecret);
+            }
+          }
+        } catch (e){
+
+        }
+
         var exportItem = {};
-
-        angular.forEach($scope.selectedExportFields,function(selectedField){
-          var lowerCase = selectedField.prop;
-          var value = item[lowerCase];
-          if(lowerCase ==='customFields'){
-            exportItem.customFields = [];
-            for(var i=0; i < item.customFields.length; i++){
-              delete item.customFields[i].id;
-              delete item.customFields[i].item_id;
-              delete item.customFields[i].user_id;
-              exportItem.customFields.push(item.customFields[i])
+        if(item) {
+          angular.forEach($scope.selectedExportFields, function (selectedField) {
+            var lowerCase = selectedField.prop;
+            var value = item[lowerCase];
+            if (lowerCase === 'customFields') {
+              exportItem.customFields = [];
+              for (var i = 0; i < item.customFields.length; i++) {
+                delete item.customFields[i].id;
+                delete item.customFields[i].item_id;
+                delete item.customFields[i].user_id;
+                exportItem.customFields.push(item.customFields[i])
+              }
             }
-          }
-          if(lowerCase === 'tags'){
-            exportItem.tags = [];
-            for(var i=0; i < item.tags.length; i++){
-              exportItem.tags[i] = {text: item.tags[i].text };
+            if (lowerCase === 'tags') {
+              exportItem.tags = [];
+              for (var i = 0; i < item.tags.length; i++) {
+                exportItem.tags[i] = {text: item.tags[i].text};
+              }
             }
-          }
-          if(lowerCase === 'otpsecret'){
-            exportItem.otpsecret = item.otpsecret;
+            if (lowerCase === 'otpsecret') {
+              exportItem.otpsecret = item.otpsecret;
 
-          }
-          if(typeof value === "string"){
-            value = value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm," ");
-            exportItem[lowerCase] = value;
-          }
-        });
-        exportArr.push(exportItem);
+            }
+            if (typeof value === "string") {
+              value = value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " ");
+              exportItem[lowerCase] = value;
+            }
+          });
+          exportArr.push(exportItem);
+        }
         /*if($scope.selectedExportTags.length === 0){
           exportArr.push(exportItem);
         } else {
@@ -1358,18 +1387,23 @@ app.controller('exportCtrl', function($scope,ItemService){
        link.click();*/
     };
     ItemService.getItems(exportTags, false).success(function(data){
+      console.log('requested items, starting export');
       $scope.exportItems = data.items;
       switch(type) {
         case "csv":
+          console.log('export as passmancsv')
           exportAsCSV();
           break;
         case "keepasscsv":
+          console.log('export as keepasscsv')
           exportAsKeePassCSV();
           break;
         case "json":
+          console.log('export as json')
           exportAsJson();
           break;
         case "xml":
+          console.log('export as xml')
           exportAsXML();
           break;
       }
