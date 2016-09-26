@@ -1154,7 +1154,6 @@ app.controller('exportCtrl', function($scope,ItemService){
     angular.forEach($scope.selectedExportTags, function(tag){
       exportTags.push(tag.text);
     });
-    console.log('kom ik hier', $scope.export_encryption_key)
 
 
     exportAsCSV = function(){
