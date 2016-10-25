@@ -141,7 +141,7 @@ OC.L10N.register(
     "Export" : "ส่งออก",
     "Import" : "นำเข้า",
     "General settings" : "การตั้งค่าทั่วไป",
-    "Use image proxy on https pages" : "ใช้พร็อกซี่รูปภาพบนหน้า Https",
+    "Use image proxy on https pages" : "ใช้พร็อกซี่รูปภาพบนหน้า HTTPS",
     "Disable favicons" : "ปิดการใช้งาน favicons",
     "Change Passman password" : "เปลี่ยนรหัสผ่าน Passman",
     "Current password" : "รหัสผ่านปัจจุบัน",
