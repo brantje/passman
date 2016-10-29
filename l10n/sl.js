@@ -169,6 +169,7 @@ OC.L10N.register(
     "Files & Images" : "Datoteke in slike",
     "Users & Groups" : "Uporabniki in skupine",
     "Links" : "Povezave",
+    "Enter the users / groups you want to share the password with" : "Vpišite uporabnike ali skupine, s katerimi želite omogočiti souporabo",
     "Name" : "Ime",
     "Create share link" : "Ustvari povezavo za souporabo",
     "Your share link" : "Povezava za souporabo",

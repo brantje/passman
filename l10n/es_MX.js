@@ -53,6 +53,7 @@ OC.L10N.register(
     "There is also a password field." : "También hay un campo para contraseña.",
     "Password" : "Contraseña",
     "Files" : "Archivos",
+    "Dropbox" : "Dropbox",
     "Settings" : "Ajustes",
     "Edit" : "Editar",
     "Share" : "Compartir",
