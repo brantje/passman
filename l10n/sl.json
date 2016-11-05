@@ -26,6 +26,7 @@
     "Tags can be assigned to passwords, giving them common properties like minimal" : "Oznake je mogoče dodeliti geslom, s čimer se določijo lastnosti, kot na primer najmanjša",
     "Passman automatically computes a score for each password to estimate its strength. A higher score means a stronger password." : "Program samodejno izračuna oceno gesla in določi njegovo kakovost. Višja ocena pomeni boljše geslo.",
     "password score" : "ocena gesla",
+    "and renewal time." : "in čas obnovitve.",
     "Assignment: Change the example tags to your likings, then click next." : "Naloga: spremenite primere oznak in nato kliknite za nadaljevanje.",
     "Hint: Mouse over the tags to see the" : "Namig: z miško nad oznako je mogoč ogled",
     "icon" : "ikona",
