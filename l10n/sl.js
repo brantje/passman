@@ -66,6 +66,7 @@ OC.L10N.register(
     "Dropbox" : "Dropbox",
     "OneDrive" : "OneDrive",
     "iCloud" : "iCloud",
+    "And a lot" : "In veliko",
     "more" : "več",
     "Loading..." : "Poteka nalaganje ...",
     "Related tags" : "Sorodne oznake",
