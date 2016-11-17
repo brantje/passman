@@ -31,7 +31,7 @@ OC.L10N.register(
     "and renewal time." : "in čas obnovitve.",
     "For example, a \"banking\" tag could require a" : "Na primer, oznaka »bančništvo« lahko zahteva",
     "of 60 and to be changed every month." : "od 60 in se zamenja vsak mesec.",
-    "While a \"forums\" tag requires a" : "Oznaka »forumi« pa zahteva",
+    "While a \"forums\" tag requires a" : "Oznaka »forumi« zahteva",
     "of 30 and to be changed every year." : "od 30 in se zamenja enkrat letno.",
     "Assignment: Change the example tags to your likings, then click next." : "Naloga: spremenite primere oznak in nato kliknite za nadaljevanje.",
     "Hint: Mouse over the tags to see the" : "Namig: z miško nad oznako je mogoč ogled",
