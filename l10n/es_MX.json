@@ -146,6 +146,7 @@
     "Enter your encryption key." : "Ingresa tu llave de cifrado.",
     "If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Si ésta es la primera vez que usas Passman, esta llave será usada para el cifrado de tus contraseñas",
     "Remember this key " : "Recuerda esta llave",
+    "_%n hour_::_%n hours_" : ["%n hora","%n horas"],
     "Override required score" : "Anular la calificación requerida",
     "Password will expire at " : "La contraseña expirará el",
     "Enter your encryption key. If this is the first time you use Passman, this key will be used for encryption of your passwords" : "Ingresa tu llave de cifrado. Si ésta es la primera vez que usas Passman, esta llave será usada para el cifrado de tus contraseñas",
