@@ -46,6 +46,7 @@ OC.L10N.register(
     "Here are your example items, you're free to edit or delete them." : "Tu so primeri predmetov, ki jih lahko urejate ali izbrišete.",
     "Items contain your username / password or any other sensitive information." : "Predmeti vsebujejo uporabniško ime in geslo oziroma druge občutljive podatke.",
     "Hint: click on the arrow" : "Namig: kliknite na puščico",
+    "to expand a menu to display various options for an item." : "za razširitev menija in prikaz različnih možnosti predmeta",
     "Editing items" : "Urejanje predmetov",
     "Click on edit to edit an item" : "Kliknite na gumb za urejanje predmeta",
     "General" : "Splošno",
