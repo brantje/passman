@@ -121,6 +121,7 @@ OC.L10N.register(
     "Hidden" : "Piilotettu",
     "Existing fields" : "Olemassa olevat kentät",
     "OTP Type" : "OTP-tyyppi",
+    "Upload an image" : "Lähetä kuva",
     "Current OTP settings" : "Nykyiset OTP-asetukset",
     "Type" : "Tyyppi",
     "Issuer" : "Myöntäjä",
