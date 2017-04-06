@@ -106,7 +106,7 @@ OC.L10N.register(
     "Last changed" : "Última modificação",
     "Files & images" : "Ficheiros e Imagens",
     "One time password settings" : "Definições 'one time password'",
-    "OTP settings" : "Definições OTP",
+    "OTP settings" : "Definições de OTP",
     "Login" : "Iniciar Sessão",
     "Password (again)" : "Palavra-passe (novamente)",
     "Icon" : "Ícone",
