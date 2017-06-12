@@ -1245,92 +1245,162 @@ app.controller('exportCtrl', function($scope,ItemService){
      link.setAttribute("download", 'passman_items.csv');
      link.click();
     };
+    
+    $scope.getCredentialsWithFiles = function(credentials, ItemService, $scope) {
+	var t = {
+	    cred: credentials,
+	    IS: ItemService,
+	    ES: $scope
+	}
 
+	return new C_Promise(function() {
+	    _this = this.parent;
+	    var credentials = _this.cred;
+	    this.parent.total = 0;
+	    this.parent.finished = 0;
+	    this.parent.fileGUID_cred = [];
+	    this.parent.files = [];
+	    this.parent.step = (function(file) {
+		this.parent.finished ++;
+		this.call_progress({
+		    total: this.parent.total,
+		    finished: this.parent.finished
+		});
+
+		var dta = this.parent.fileGUID_cred[file.data.id];
+
+		file.data.filename = this.parent.ES.decryptThis(file.data.filename);
+		file.data.content = this.parent.ES.decryptThis(file.data.content);
+
+		// Files and custom_fields have different field structure
+		if (dta.on === 'files') {
+		    this.parent.cred[dta.cred_pos][dta.on][dta.at] = file.data;
+		}
+		else {
+		    this.parent.cred[dta.cred_pos][dta.on][dta.at].value = file.data;
+		}
+
+		// We have finished downloading everything, so let's hand over job to somewhere else!
+		if (this.parent.total === this.parent.finished) {
+		    this.call_then(this.parent.cred);
+		}
+	    }).bind(this);
+
+	    for (var i = 0; i < credentials.length; i++) {
+
+		var item = credentials[i];
+
+		// Also get all files
+		for (var c = 0; c < item.files.length; c++) {
+		    this.parent.total ++;
+		    this.parent.fileGUID_cred[item.files[c].id] = {
+			cred_pos: i,
+			on: 'files',
+			at: c
+		    };
+
+		    this.parent.IS.getFile(item.files[c].id).then((function(data){
+			this.parent.step(data);
+		    }).bind(this));
+		}
+	    }
+	}, t);
+    };
+    
     exportAsJson = function(returnData){
       returnData = false || returnData;
       var items,exportArr = [];
       items = angular.copy($scope.exportItems);
+      
+      
+      $scope.getCredentialsWithFiles(items, ItemService, $scope).then(function(items) {
+	  console.log('Got files!');
+	  console.log(items);
+	  angular.forEach(items,function(rawItem){
+	    var item = rawItem, encryptedFields = ['account', 'email', 'password', 'description'], i;
+	    console.log(item);
+	    try {
+	      if (!item.decrypted) {
+		for (i = 0; i < encryptedFields.length; i++) {
+		  if (item[encryptedFields[i]]) {
+		    if (item[encryptedFields[i]]) {
+		      item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
+		    }
+		  }
+		}
+		for (i = 0; i < item.customFields.length; i++) {
+		  item.customFields[i].label = $scope.decryptThis(item.customFields[i].label);
+		  item.customFields[i].value = $scope.decryptThis(item.customFields[i].value);
+		}
+//		for (i = 0; i < item.files.length; i++) {
+//		  item.files[i].filename = $scope.decryptThis(item.files[i].filename);
+//		  item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
+//		}
+		if (item.otpsecret) {
+		  item.otpsecret = $scope.decryptObject(item.otpsecret);
+		}
+	      }
+	    } catch (e){
 
-      angular.forEach(items,function(rawItem){
-        var item = rawItem, encryptedFields = ['account', 'email', 'password', 'description'], i;
-        console.log(item);
-        try {
-          if (!item.decrypted) {
-            for (i = 0; i < encryptedFields.length; i++) {
-              if (item[encryptedFields[i]]) {
-                if (item[encryptedFields[i]]) {
-                  item[encryptedFields[i]] = $scope.decryptThis(item[encryptedFields[i]]);
-                }
-              }
-            }
-            for (i = 0; i < item.customFields.length; i++) {
-              item.customFields[i].label = $scope.decryptThis(item.customFields[i].label);
-              item.customFields[i].value = $scope.decryptThis(item.customFields[i].value);
-            }
-            for (i = 0; i < item.files.length; i++) {
-              item.files[i].filename = $scope.decryptThis(item.files[i].filename);
-              item.files[i].icon = (item.files[i].type.indexOf('image') !== -1) ? 'filetype-image' : 'filetype-file';
-            }
-            if (item.otpsecret) {
-              item.otpsecret = $scope.decryptObject(item.otpsecret);
-            }
-          }
-        } catch (e){
+	    }
+	    
+	    var exportItem = {};
+	    if(item) {
+	      angular.forEach($scope.selectedExportFields, function (selectedField) {
+		var lowerCase = selectedField.prop;
+		var value = item[lowerCase];
+		if (lowerCase === 'customFields') {
+		  exportItem.customFields = [];
+		  for (var i = 0; i < item.customFields.length; i++) {
+		    delete item.customFields[i].id;
+		    delete item.customFields[i].item_id;
+		    delete item.customFields[i].user_id;
+		    exportItem.customFields.push(item.customFields[i])
+		  }
+		}
+		if (lowerCase === 'tags') {
+		  exportItem.tags = [];
+		  for (var i = 0; i < item.tags.length; i++) {
+		    exportItem.tags[i] = {text: item.tags[i].text};
+		  }
+		}
+		if (lowerCase === 'otpsecret') {
+		  exportItem.otpsecret = item.otpsecret;
 
-        }
-
-        var exportItem = {};
-        if(item) {
-          angular.forEach($scope.selectedExportFields, function (selectedField) {
-            var lowerCase = selectedField.prop;
-            var value = item[lowerCase];
-            if (lowerCase === 'customFields') {
-              exportItem.customFields = [];
-              for (var i = 0; i < item.customFields.length; i++) {
-                delete item.customFields[i].id;
-                delete item.customFields[i].item_id;
-                delete item.customFields[i].user_id;
-                exportItem.customFields.push(item.customFields[i])
-              }
-            }
-            if (lowerCase === 'tags') {
-              exportItem.tags = [];
-              for (var i = 0; i < item.tags.length; i++) {
-                exportItem.tags[i] = {text: item.tags[i].text};
-              }
-            }
-            if (lowerCase === 'otpsecret') {
-              exportItem.otpsecret = item.otpsecret;
-
-            }
-            if (typeof value === "string") {
-              value = value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " ");
-              exportItem[lowerCase] = value;
-            }
-          });
-          exportArr.push(exportItem);
-        }
-        /*if($scope.selectedExportTags.length === 0){
-          exportArr.push(exportItem);
-        } else {
-          var foundTag = false;
-          angular.forEach(item.tags,function(itemTag){
-            if(exportTags.indexOf(itemTag.text) > -1 && foundTag === false){
-              exportArr.push(exportItem);
-              foundTag = true;
-            };
-          });
-        }*/
+		}
+		if (lowerCase === 'files') {
+		    exportItem.files = item.files;
+		}
+		if (typeof value === "string") {
+		  value = value.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " ");
+		  exportItem[lowerCase] = value;
+		}
+	      });
+	      exportArr.push(exportItem);
+	    }
+	    /*if($scope.selectedExportTags.length === 0){
+	      exportArr.push(exportItem);
+	    } else {
+	      var foundTag = false;
+	      angular.forEach(item.tags,function(itemTag){
+		if(exportTags.indexOf(itemTag.text) > -1 && foundTag === false){
+		  exportArr.push(exportItem);
+		  foundTag = true;
+		};
+	      });
+	    }*/
+	  });
+	  if(!returnData) {
+	    var encodedUri = encodeURI("text/json;charset=utf-8,"+ JSON.stringify(exportArr));
+	    var link = document.createElement("a");
+	    link.setAttribute("href", 'data:'+encodedUri);
+	    link.setAttribute("download", 'passman_items.json');
+	    link.click();
+	  } else {
+	    return exportArr;
+	  }
       });
-      if(!returnData) {
-        var encodedUri = encodeURI("text/json;charset=utf-8,"+ JSON.stringify(exportArr));
-        var link = document.createElement("a");
-        link.setAttribute("href", 'data:'+encodedUri);
-        link.setAttribute("download", 'passman_items.json');
-        link.click();
-      } else {
-        return exportArr;
-      }
+      
     };
 
     exportAsXML =function() {
@@ -1454,6 +1524,11 @@ app.controller('exportCtrl', function($scope,ItemService){
     name: 'Tags',
     prop: 'tags',
     disabledFor: ['csv','keepasscsv']
+  },
+  {
+    name: 'Files',
+    prop: 'files',
+    disabledFor: ['csv','keepasscsv', 'xml']
   }];
 
   $scope.selectedExportFields= [$scope.exportFields[0],$scope.exportFields[1],$scope.exportFields[2],$scope.exportFields[3],$scope.exportFields[4],$scope.exportFields[5]];

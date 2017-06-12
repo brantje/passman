@@ -14,6 +14,7 @@
 \OCP\Util::addscript('passman', 'qrReader/llqrcode');
 \OCP\Util::addscript('passman', 'sha');
 \OCP\Util::addscript('passman', 'func');
+\OCP\Util::addscript('passman', 'promise');
 \OCP\Util::addscript('passman', 'app');
 \OCP\Util::addscript('passman', 'app.service');
 \OCP\Util::addscript('passman', 'app.directive');
