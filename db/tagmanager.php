@@ -27,9 +27,10 @@ class TagManager {
   public function search($tag, $userId, $exactMatch) {
     $sql = 'SELECT tag_id as id, tag_label as label,renewal_period,min_pw_strength FROM `*PREFIX*passman_tags` WHERE `user_id` = ? AND tag_label COLLATE UTF8_GENERAL_CI LIKE ?';
     $tag = (!$exactMatch) ? '%' . $tag . '%' : $tag;
-    $result = $this->db->prepareQuery($sql)->execute(array($userId, $tag));
+    $result = $this->db->prepare($sql);
+    $result->execute(array($userId, $tag));
     $rows = array();
-    while ($row = $result->fetchRow()) {
+    while ($row = $result->fetch()) {
       $rows[] = array('id' => $row['id'], 'text' => $row['label'], 'renewal_period' => $row['renewal_period'], 'min_pw_strength' => $row['min_pw_strength']);
     }
     return $rows;
@@ -37,7 +38,7 @@ class TagManager {
 
   public function create($tag, $userId) {
     $sql = "INSERT INTO `*PREFIX*passman_tags` (user_id,tag_label) VALUES(?,?)";
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $userId, \PDO::PARAM_INT);
     $query->bindParam(2, $tag, \PDO::PARAM_STR);
     $result = $query->execute();
@@ -46,7 +47,7 @@ class TagManager {
 
   public function linkTagXItem($tagId, $itemId) {
     $sql = "INSERT INTO `*PREFIX*passman_items_tags_xref` (tag_id,item_id) VALUES(?,?) ";
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $tagId, \PDO::PARAM_INT);
     $query->bindParam(2, $itemId, \PDO::PARAM_INT);
     $result = $query->execute();
@@ -55,14 +56,14 @@ class TagManager {
 
   public function removeTags($itemId) {
     $sql = 'DELETE FROM `*PREFIX*passman_items_tags_xref` where item_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $itemId, \PDO::PARAM_INT);
     $result = $query->execute();
   }
 
   public function loadAll($userId) {
     $sql = 'SELECT `t`.`tag_label` as `text` from `*PREFIX*passman_tags` t where user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $userId, \PDO::PARAM_STR);
     $result = $query->execute();
     $tags = array();
@@ -74,7 +75,7 @@ class TagManager {
 
   public function load($tag, $userId) {
     $sql = 'SELECT * from `*PREFIX*passman_tags` where tag_label=? and user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $tag, \PDO::PARAM_STR);
     $query->bindParam(2, $userId, \PDO::PARAM_STR);
     return $result = $query->execute()->fetchRow();
@@ -82,7 +83,7 @@ class TagManager {
 
   public function update($tag, $userId) {
     $sql = "UPDATE `*PREFIX*passman_tags` SET tag_label=?, min_pw_strength=?, renewal_period=? WHERE tag_id=? and user_id=?";
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $tag['tag_label'], \PDO::PARAM_STR);
     $query->bindParam(2, $tag['min_pw_strength'], \PDO::PARAM_INT);
     $query->bindParam(3, $tag['renewal_period'], \PDO::PARAM_INT);

@@ -14,21 +14,24 @@ namespace OCA\Passman\Controller;
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Http\Response;
+use \OCP\AppFramework\Http\DataDisplayResponse;
 use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Controller;
-use OCP\AppFramework\Http\ContentSecurityPolicy;
+use \OCP\AppFramework\Http\ContentSecurityPolicy;
 
 class PageController extends Controller {
 
   private $userId;
   private $itemAPI;
   private $appStorage;
+  private $config;
 
-  public function __construct($appName, IRequest $request, $userId, $ItemAPI, $appStorage) {
+  public function __construct($appName, IRequest $request, $userId, $ItemAPI, $appStorage, $config) {
     parent::__construct($appName, $request);
     $this->userId = $userId;
     $this->itemAPI = $ItemAPI;
     $this->appStorage = $appStorage;
+    $this->config = $config;
   }
 
   /**
@@ -42,7 +45,7 @@ class PageController extends Controller {
    * @NoCSRFRequired
    */
   public function index() {
-    $conf = \OCP\CONFIG::getUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 1);
+    $conf = $this->config->getUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 1);
     $params = array('user' => $this->userId);
     $conf = ($this->userId ==='test') ? 1 : $conf;
     if ($conf == 1) {
@@ -75,7 +78,7 @@ class PageController extends Controller {
    * @NoAdminRequired
    */
   public function disablefirstrun() {
-    \OCP\Config::setUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 0);
+    $this->config->setUserValue(\OCP\User::getUser(), 'firstpassmanrun', 'show', 0);
     echo "Succes!";
   }
 
@@ -103,7 +106,7 @@ class PageController extends Controller {
    */
   public function settings(){
     $default = json_encode(array('sharing'=>array('shareKeySize'=>1024),'useImageProxy'=>true));
-    $result['settings'] = json_decode(\OCP\CONFIG::getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',$default));
+    $result['settings'] = json_decode($this->config->getUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',$default));
     return new JSONResponse($result);
   }
 
@@ -112,7 +115,7 @@ class PageController extends Controller {
   * @NoCSRFRequired
   */
   public function savesettings($settings){
-    $result = \OCP\CONFIG::setUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',json_encode($settings));
+    $result = $this->config->setUserValue(\OC::$server->getUserSession()->getUser()->getUID(), 'passman', 'settings',json_encode($settings));
 
     return new JSONResponse($settings);
   }
@@ -125,11 +128,11 @@ class PageController extends Controller {
     if (filter_var($url, FILTER_VALIDATE_URL) === false) {
       die('Not a valid URL');
     }
-    $fileInfo = getimagesize($url);
+    $fileInfo = @getimagesize($url);
     $imageType = $fileInfo['mime'];
     preg_match('/image\/(.*)/',$imageType,$match);
 
-    $response = New Response();
+    $response = New DataDisplayResponse();
     $response->setStatus(304);
     $response->cacheFor((60*60*24*90));
     if($match){
@@ -150,7 +153,8 @@ class PageController extends Controller {
           $f .='<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" height="16px" width="16px" version="1.1" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 71 100">';
           $f .='<path d="m65.5 45v-15c0-16.542-13.458-30-30-30s-30 13.458-30 30v15h-5.5v55h71v-55h-5.5zm-52-15c0-12.131 9.869-22 22-22s22 9.869 22 22v15h-44v-15z"/>';
           $f .= '</svg>';
-          echo $f;
+          $response->setData($f);
+	  return $response;
         }
 
       } else{
@@ -167,7 +171,7 @@ class PageController extends Controller {
       $f .='<path d="m65.5 45v-15c0-16.542-13.458-30-30-30s-30 13.458-30 30v15h-5.5v55h71v-55h-5.5zm-52-15c0-12.131 9.869-22 22-22s22 9.869 22 22v15h-44v-15z"/>';
       $f .= '</svg>';
     }
-    echo $f;
+    $response->setData($f);
     return $response;
     //
 

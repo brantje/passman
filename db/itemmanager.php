@@ -27,11 +27,11 @@ class ItemManager {
    */
   public function listItems($userId) {
     $sql = 'SELECT id,label FROM `*PREFIX*passman_items` WHERE `user_id` = ?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $userId, \PDO::PARAM_INT);
     $result = $query->execute();
     $rows = array();
-    while ($row = $result->fetchRow()) {
+    while ($row = $query->fetch()) {
       $rows[$row['id']] = $row;
     }
     return $rows;
@@ -43,7 +43,7 @@ class ItemManager {
   public function search($itemName, $userId) {
     $sql = 'SELECT  * FROM `*PREFIX*passman_items`';
     $sql .= 'WHERE label COLLATE UTF8_GENERAL_CI LIKE  ? and user_id=? AND delete_date=0';
-    $result = $this->db->prepareQuery($sql)->execute(array('%' . $itemName . '%', $userId));
+    $result = $this->db->prepare($sql)->execute(array('%' . $itemName . '%', $userId));
     $rows = array();
     while ($row = $result->fetchRow()) {
       $rows[] = $row;
@@ -59,11 +59,11 @@ class ItemManager {
     $sql .= 'LEFT JOIN `*PREFIX*passman_items_tags_xref` AS xref ON xref.item_id = item.id ';
     $sql .= 'LEFT JOIN `*PREFIX*passman_tags` AS tags ON tags.tag_id = xref.tag_id ';
     $sql .= 'WHERE item.id = ? and item.user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $itemId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_STR);
     $result = $query->execute();
-    return $result->fetchRow();
+    return $query->fetch();
 
   }
 
@@ -90,10 +90,10 @@ class ItemManager {
     }
     $sql .= ' ORDER BY UPPER(item.label) ASC, tags.tag_label ASC';
     //echo $sql;
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $params = array_merge($userId, $tags);
-    $results = $query->execute($params)->fetchAll();
-    return $results;
+    $results = $query->execute($params);//->fetchAll();
+    return $query->fetchAll();
   }
 
   /**
@@ -102,7 +102,7 @@ class ItemManager {
   public function insert($item) {
     $sql = 'INSERT INTO `*PREFIX*passman_items` (`user_id`,`label`,`description`,`password`,`account`,`email`,`url`,`expire_time`,`favicon`,`created`,`otpsecret`)';
     $sql .= ' VALUES (?,?,?,?,?,?,?,?,?,?,?)';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $item['user_id'], \PDO::PARAM_INT);
     $query->bindParam(2, $item['label'], \PDO::PARAM_STR);
     $query->bindParam(3, $item['description'], \PDO::PARAM_STR);
@@ -125,7 +125,7 @@ class ItemManager {
   public function update($item) {
     $item['changed'] = time();
     $sql = 'UPDATE `*PREFIX*passman_items` SET `label`=?,`description`=?,`password`=?,`account`=?,`email`=?,`url`=?,expire_time=?,favicon=?,delete_date=?,otpsecret=?,changed=? WHERE id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $item['label'], \PDO::PARAM_STR);
     $query->bindParam(2, $item['description'], \PDO::PARAM_STR);
     $query->bindParam(3, $item['password'], \PDO::PARAM_STR);
@@ -147,7 +147,7 @@ class ItemManager {
    */
   public function delete($itemId, $userId) {
     $sql = 'DELETE FROM `*PREFIX*passman_items` WHERE `id`=? AND user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $itemId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_STR);
     $result = $query->execute();
@@ -159,7 +159,7 @@ class ItemManager {
    */
   public function restore($itemId, $userId) {
     $sql = 'UPDATE `*PREFIX*passman_items` set `delete_date`= 0 WHERE `id`=? AND user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $itemId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_STR);
     $result = $query->execute();
@@ -172,7 +172,7 @@ class ItemManager {
   public function addFile($file) {
     $sql = 'INSERT INTO `*PREFIX*passman_files` (`item_id`,`user_id`,`filename`,`type`,`mimetype`,`content`,`size`)';
     $sql .= ' VALUES (?,?,?,?,?,?,?)';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $file['item_id'], \PDO::PARAM_INT);
     $query->bindParam(2, $file['user_id'], \PDO::PARAM_INT);
     $query->bindParam(3, $file['filename'], \PDO::PARAM_STR);
@@ -191,12 +191,12 @@ class ItemManager {
    */
   public function getFiles($itemId, $userId) {
     $sql = 'SELECT id,item_id,user_id,filename,type,mimetype,size from `*PREFIX*passman_files` WHERE `item_id`=? AND user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $itemId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_INT);
     $result = $query->execute();
     $files = array();
-    while ($row = $result->fetchRow()) {
+    while ($row = $query->fetch()) {
       $files[] = $row;
     }
     return $files;
@@ -210,11 +210,11 @@ class ItemManager {
    */
   public function getFile($fileId, $userId) {
     $sql = 'SELECT * from `*PREFIX*passman_files` WHERE `id`=? AND user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $fileId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_STR);
     $result = $query->execute();
-    return $result->fetchRow();
+    return $query->fetch();
   }
 
   /**
@@ -225,7 +225,7 @@ class ItemManager {
    */
   public function deleteFile($fileId, $userId) {
     $sql = 'DELETE FROM `*PREFIX*passman_files` WHERE `id`=? AND user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $fileId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_STR);
     $result = $query->execute();
@@ -239,7 +239,7 @@ class ItemManager {
   public function createItemField($field, $userId, $itemId) {
     $sql = 'INSERT INTO `*PREFIX*passman_custom_fields` (`item_id`,`user_id`,`label`,`value`,`clicktoshow`)';
     $sql .= ' VALUES (?,?,?,?,?)';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $itemId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_INT);
     $query->bindParam(3, $field['label'], \PDO::PARAM_STR);
@@ -255,12 +255,12 @@ class ItemManager {
    */
   public function getFields($itemId, $userId) {
     $sql = 'SELECT * from `*PREFIX*passman_custom_fields` WHERE `item_id`=? AND user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $itemId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_INT);
     $result = $query->execute();
     $fields = array();
-    while ($row = $result->fetchRow()) {
+    while ($row = $query->fetch()) {
       $fields[] = $row;
     }
     return $fields;
@@ -271,7 +271,7 @@ class ItemManager {
    */
   public function updateItemField($field, $userId, $itemId) {
     $sql = 'UPDATE `*PREFIX*passman_custom_fields` SET `label`=?,value=?,`clicktoshow`=? WHERE id=? AND user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $field['label'], \PDO::PARAM_STR);
     $query->bindParam(2, $field['value'], \PDO::PARAM_STR);
     $query->bindParam(3, $field['clicktoshow'], \PDO::PARAM_STR);
@@ -285,7 +285,7 @@ class ItemManager {
    */
   public function removeItemField($fieldId, $userId) {
     $sql = 'DELETE FROM `*PREFIX*passman_custom_fields` WHERE `id`=? AND user_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $fieldId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_INT);
     $result = $query->execute();
