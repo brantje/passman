@@ -56,7 +56,8 @@ public function __construct(array $urlParams = array()) {
         $c->query('Request'),
         $c->query('UserId'),
         $c->query('ItemApiController'),
-        $c->query('AppStorage')
+        $c->query('AppStorage'),
+	\OC::$server->getConfig()
       );
     });
 
@@ -133,24 +134,24 @@ public function __construct(array $urlParams = array()) {
      */
     $container->registerService('ItemManager', function ($c) {
       return new ItemManager(
-        $c->query('ServerContainer')->getDb()
+        $c->query('ServerContainer')->getDatabaseConnection()
       );
     });
     $container->registerService('TagManager', function ($c) {
       return new TagManager(
-        $c->query('ServerContainer')->getDb()
+        $c->query('ServerContainer')->getDatabaseConnection()
       );
     });
 
     $container->registerService('ShareManager', function ($c) {
       return new ShareManager(
-        $c->query('ServerContainer')->getDb()
+        $c->query('ServerContainer')->getDatabaseConnection()
       );
     });
 
     $container->registerService('RevisionManager', function ($c) {
       return new RevisionManager(
-        $c->query('ServerContainer')->getDb()
+        $c->query('ServerContainer')->getDatabaseConnection()
       );
     });
 
@@ -167,7 +168,7 @@ public function __construct(array $urlParams = array()) {
     /** Cron  **/
     $container->registerService('CronService', function ($c) {
       return new CronService(
-        $c->query('ServerContainer')->getDb(),
+        $c->query('ServerContainer')->getDatabaseConnection(),
         $c->query('NotificationController'),
         $c->query('Logger')
       );

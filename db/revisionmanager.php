@@ -23,7 +23,7 @@ class RevisionManager {
 
   public function save($itemId,$userId,$data){
     $sql = "INSERT INTO `*PREFIX*passman_revisions` (item_id,user_id,data,revision_date) VALUES(?,?,?,?)";
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $time = time();
     $query->bindParam(1, $itemId, \PDO::PARAM_INT);
     $query->bindParam(2, $userId, \PDO::PARAM_INT);
@@ -35,7 +35,7 @@ class RevisionManager {
 
   public function getRevisions($itemId,$userId){
     $sql = 'SELECT * from `*PREFIX*passman_revisions` WHERE item_id=? ORDER BY `revision_date` DESC';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $itemId, \PDO::PARAM_INT);
     $result = $query->execute();
 
@@ -48,7 +48,7 @@ class RevisionManager {
   }
   public function getAllRevisions($userId){
     $sql = 'SELECT * from `*PREFIX*passman_revisions` WHERE user_id=? ORDER BY `revision_date` DESC';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $userId, \PDO::PARAM_INT);
     $result = $query->execute();
 
@@ -63,7 +63,7 @@ class RevisionManager {
   public function update($revision){
     $revision['data'] = json_encode($revision['data']);
     $sql = 'UPDATE `*PREFIX*passman_revisions` SET `data`= ? WHERE item_id=?';
-    $query = $this->db->prepareQuery($sql);
+    $query = $this->db->prepare($sql);
     $query->bindParam(1, $revision['data'], \PDO::PARAM_STR);
     $query->bindParam(2, $revision['item_id'], \PDO::PARAM_INT);
     $result = $query->execute();
